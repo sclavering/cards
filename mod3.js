@@ -1,0 +1,133 @@
+var Mod3 = new CardGame();
+
+
+Mod3.init = function() {
+  this.shortname = "mod3";
+  this.initStacks(0,0,0,true,false,4,8);
+  this.stockDealTargets = this.stacks[3]; // this is for the dealFromStock() functions in CardGame.js
+  //
+  var stacks = new Array();
+  for(var i = 0; i < 4; i++)
+    stacks = stacks.concat(this.stacks[i]);
+  this.dragDropTargets = stacks;
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// start game
+Mod3.deal = function() {
+  // get 2 decks, remove the aces, shuffle
+  var cards = this.getCardDecks(2);
+  cards.splice(91,1); cards.splice(78,1); cards.splice(65,1);
+  cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
+  cards.splice(13,1); cards.splice(0, 1);
+  cards = this.shuffle(cards);
+  // deal
+  for(var i = 0; i < 4; i++)
+    for(var j = 0; j < 8; j++)
+      this.dealToStack(cards,this.stacks[i][j],0,1);
+  this.dealToStack(cards,this.stock,cards.length,0);
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// Moving
+//Mod3.canMoveCard = Mod3.canMoveCard_LastOnPile;
+Mod3.canMoveCard = function(card) {
+  return (card.faceUp() && card.isLastOnPile());
+};
+Mod3.canMoveTo = function(card, stack) {
+  var r = stack.row;
+  if(stack.row!=3) {
+    // row 0 has 2,5,8,J in it,  row 1 has 3,6,9,Q,  row 2 has 4,7,10,K
+    if(!stack.hasChildNodes()) return (card.number()==stack.row+2);
+    var last = stack.lastChild;
+    return (card.isSameSuit(last) && card.number()==last.number()+3
+      && last.number()==(r-1)+3*stack.childNodes.length);
+  }
+  // anything may be moved into an empty space in 4th row (row 3)
+  return !stack.hasChildNodes();
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// hint
+Mod3.getHint = function() {
+  for(var i = 0; i < 4; i++) {
+    for(var j = 0; j < 8; j++) {
+      var lastcard = this.stacks[i][j].lastChild;
+      if(lastcard) {
+        var targets = this.findTargets(lastcard);
+        if(targets) return {source: lastcard, destinations: targets}
+      }
+    }
+  }
+  return null;
+};
+// searches the appropriate row for a place to put the current card being examined for getHint
+Mod3.findTargets = function(card) {
+  var row = (card.number() - 2) % 3;
+  var targets = new Array();
+  for(var j = 0; j < 8; j++) {
+    var stack = this.stacks[row][j];
+    if(this.canMoveTo(card,stack)) {
+      // cases where the hint is useful are:
+      //  - the target is an empty stack, but not on the same row the card is already on
+      //    (this applies for 2,3,4's, prevents us from suggesting moving the card along the row)
+      //  - the card is in rows 0-2 and is not on top of another card
+      //    (this is so we don't suggest moving a 5H from one 2H to another)
+      //  - the card is in row 3
+      if(card.parentNode.row==3
+          || (stack.hasChildNodes() && card.previousSibling==null)
+          || (!stack.hasChildNodes() && card.parentNode.row!=row))
+        targets.push(stack);
+    }
+  }
+  return (targets.length==0 ? null : targets);
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// smart move
+Mod3.smartMove = function(card) {
+  if(!this.canMoveCard(card)) return false;
+  var targets = this.findTargets(card);
+  if(targets) {
+    this.moveTo(card,targets[0]);
+    return true;
+  } else {
+    // try and move to an empty space in the 4th row
+    for(var j = 0; j < 8; j++) {
+      if(!this.stacks[3][j].hasChildNodes()) {
+        this.moveTo(card,this.stacks[3][j]);
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// Autoplay
+
+
+
+///////////////////////////////////////////////////////////
+//// winning, scoring, undo
+Mod3.hasBeenWon = function() {
+  // game won if all stacks in top 3 rows have 4 cards
+  for(var i = 0; i < 3; i++)
+    for(var j = 0; j < 8; j++)
+      if(this.stacks[i][j].childNodes.length!=4)
+        return false;
+  return true;
+};
+
+
+Games["Mod3"] = Mod3;

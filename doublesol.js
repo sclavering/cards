@@ -148,9 +148,9 @@ DoubleSol.cardsOnFoundations = function(colour, number) {
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
 DoubleSol.hasBeenWon = function() {
-  // game won if all 4 Foundations have 13 cards
+  // game won if all 4 Foundations have 25==13*2-1 cards
   for(var i = 0; i < 4; i++)
-    if(this.foundations[i].childNodes.length!=13)
+    if(this.foundations[i].childNodes.length!=25)
       return false;
   return true;
 };

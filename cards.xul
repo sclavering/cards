@@ -135,7 +135,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <reserve id="canfield-reserve"/><flex/>
     </hbox>
     <rowspacer/>
-    <hbox flex="1">
+    <hbox>
       <flex/>
       <pilespacer/><flex/>
       <pilespacer/><flex2/>
@@ -161,7 +161,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <foundation id="doublesol-foundation-3"/><flex/>
     </hbox>
     <rowspacer/>
-    <hbox flex="1">
+    <hbox>
       <flex/>
       <pile class="fan-down" id="doublesol-pile-0"/><flex/>
       <pile class="fan-down" id="doublesol-pile-1"/><flex/>
@@ -187,7 +187,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <foundation id="fan-foundation-3"/><flex3/>
     </hbox>
     <rowspacer/>
-    <hbox flex="1">
+    <hbox>
       <colspacer/>
       <hbox flex="1" equalsize="always">
       <vbox flex="1">
@@ -547,7 +547,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile id="montana-pile-49"/><flex/>
       <pile id="montana-pile-50"/><flex/>
       <pile id="montana-pile-51"/><flex/>
-    </hbox><flex/>
+    </hbox>
   </vbox>
 
   <!-- Pyramid -->
@@ -638,16 +638,15 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     <rowspacer/>
     <hbox>
       <flex/>
-      <!-- first 4 foundations are built up from Ace, last 4 down from King -->
       <foundation id="regiment-foundation-0"/><flex/>
       <foundation id="regiment-foundation-1"/><flex/>
       <foundation id="regiment-foundation-2"/><flex/>
-      <foundation id="regiment-foundation-3"/><flex/>
+      <foundation id="regiment-foundation-3"/><flex2/>
       <foundation id="regiment-foundation-4"/><flex/>
       <foundation id="regiment-foundation-5"/><flex/>
       <foundation id="regiment-foundation-6"/><flex/>
       <foundation id="regiment-foundation-7"/><flex/>
-    </hbox><rowspacer/>
+    </hbox><rowspacer/><rowspacer/>
     <hbox>
       <flex/>
       <pile id="regiment-pile-0"/><flex/>
@@ -680,7 +679,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile id="regiment-pile-13"/><flex/>
       <pile id="regiment-pile-14"/><flex/>
       <pile id="regiment-pile-15"/><flex/>
-    </hbox><flex/>
+    </hbox>
   </vbox>
 
   <!-- Sanibel -->
@@ -701,7 +700,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox>
     <rowspacer/>
     <hbox>
-      <flex/>
+      <flex2/>
       <pile class="fan-down" id="sanibel-pile-0"/><flex/>
       <pile class="fan-down" id="sanibel-pile-1"/><flex/>
       <pile class="fan-down" id="sanibel-pile-2"/><flex/>
@@ -711,7 +710,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="sanibel-pile-6"/><flex/>
       <pile class="fan-down" id="sanibel-pile-7"/><flex/>
       <pile class="fan-down" id="sanibel-pile-8"/><flex/>
-      <pile class="fan-down" id="sanibel-pile-9"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-9"/><flex2/>
     </hbox>
   </vbox>
 

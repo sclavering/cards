@@ -3,8 +3,6 @@
 var FreeCellGame = {
   __proto__: BaseCardGame,
 
-  mouseHandling: "click-to-select",
-
   get insufficientSpacesMessage() {
     var ths = FreeCellGame;
     delete ths.insufficientSpacesMessage;
@@ -28,9 +26,10 @@ var FreeCellGame = {
     return (!target.hasChildNodes() && !card.nextSibling);
   },
 
-  moveTo: function(card, target) {
-    var source = card.parentNode;
-    if(target.isNormalPile && card.nextSibling) {
+  // dontShowStepsOfMove is freecell/towers specific
+  moveTo: function(card, target, dontShowStepsOfMove) {
+    var source = card.parentNode.source;
+    if(!dontShowStepsOfMove && target.isNormalPile && card.nextSibling) {
       this.doAction(new FreeCellMoveAction(card, source, target, this.emptyCells, this.getEmptyPiles(target)));
     } else {
       var action = new MoveAction(card,source,target);
@@ -42,9 +41,10 @@ var FreeCellGame = {
 
   // must override global version to deal with oddities of canMoveTo in Freecell-like games
   // (it returns 0, not false, if the move is legal but there aren't enough spaces for it)
+  // xxx in passing true for moveTo's dontShowStepsOfMove we're relying on this function only being called by the drag+drop handler
   attemptMove: function(source, target) {
-    var can = Game.canMoveTo(source, target);
-    if(can) return Game.moveTo(source,target);
+    var can = this.canMoveTo(source, target);
+    if(can) return this.moveTo(source, target, true);
     if(can===0) showInsufficientSpacesMsg();
     return false;
   },

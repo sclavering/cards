@@ -1,5 +1,3 @@
-document.window = window;
-
 // these are defined as getters so they're not enumerable (so for(... in ...) loops ignore them)
 Array.prototype.__defineGetter__("flattenedOnce", function() { return this.concat.apply([], this); });
 Array.prototype.__defineGetter__("copy", function() { return this.slice(0); });
@@ -129,13 +127,13 @@ function init() {
 
   for(game in Games) {
     var gamee = Games[game];
-    if(gamee===true) Games[game] = AllGames[game];
-    else Games[game] = new DifficultyLevelsController(game, gamee.ids, gamee.names);
+    Games[game] = (gamee===true) ? AllGames[game]
+        : new DifficultyLevelsController(game, gamee.ids, gamee.names);
   }
 
   // switch to last played game
-  try { game = gPrefs.getCharPref("current-game"); }
-  catch(e) { game = "klondike"; }
+  game = "klondike";
+  try { game = gPrefs.getCharPref("current-game"); } catch(e) {}
   if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
 
   // set window title. (setting window.title does not work while the app. is starting)
@@ -663,14 +661,19 @@ function showGameWon() {
 }
 
 
+// this gets called from FreeCellMover.attemptMove, which is called by the drag+drop handler's mouseUp
+// event listener.  the setTimeout is used to ensure the mouse event that triggered the call does not
+// immediately hide the message again
 function showInsufficientSpacesMsg() {
   disableUI();
   gInsufficientSpacesMsg.hidden = false;
-  window.onclick = function(e) {
-    window.onclick = null;
-    gInsufficientSpacesMsg.hidden = true;
-    enableUI();
-  };
+  setTimeout(function() { window.onclick = doneShowingInsufficientSpacesMsg; }, 0);
+}
+
+function doneShowingInsufficientSpacesMsg(e) {
+  window.onclick = null;
+  gInsufficientSpacesMsg.hidden = true;
+  enableUI();
 }
 
 

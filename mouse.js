@@ -9,10 +9,6 @@ to one of:
     it, and if it can be legally dropped there.
     Middle-click is used for smartMove.
     Double-left-click is calls Game.sendToFoundations(..)
-  "click-to-select":
-    Player must click a card once to highlight/select it, then click on the desired
-    destination.
-    Middle-click and double-click as for drag+drop.
 
 BaseCardGame.initialise() then sets the "mouseHandler" field of the game to the appropriate
 member of MouseHandlers[].  A game could just set mouseHandler directly if it needs strange
@@ -138,67 +134,6 @@ MouseHandlers["drag+drop"] = {
   }
 };
 
-
-
-
-MouseHandlers["click-to-select"] = {
-  source: null,
-
-  get highlighter() {
-    delete this.highlighter;
-    return this.highlighter = createHighlighter();
-  },
-
-  reset: function() {
-    this.source = null;
-    this.highlighter.unhighlight();
-  },
-
-  mouseUp: function(e) {},
-  mouseDown: function(e) {},
-  mouseMove: function(e) {},
-
-  mouseClick: function(e) {
-    // don't let the event end up hiding the insufficient-spaces-msg as soon as we show it
-    e.stopPropagation();
-
-    var t = e.target;
-    if(e.button==0) {
-      if(e.detail==2) {
-        this.highlighter.unhighlight();
-        // in a double click the first click will have highlighted the card, so the
-        // second click's target is the highlight box
-        if("isHighlighter" in t) Game.sendToFoundations(this.source);
-        this.source = null;
-      } else {
-        if(this.source) {
-          this.highlighter.unhighlight();
-          // we move to a pile, not to the card the user clicks on :)
-          if(t.isCard) t = t.parentNode;
-          // must check if target is a cell or foundation, to avoid trying
-          // to move card into the highlight box or main display stack :(
-          if(t.isPile || t.isCell || t.isFoundation)
-            if(t != this.source.parentNode)
-              Game.attemptMove(this.source,t);
-          this.source = null;
-        } else {
-          if((t.isCard && t.parentNode.isStock) || (t.isPile && t.isStock)) {
-            Game.dealFromStock();
-          } else if(t.isCard && Game.canMoveCard(t)) {
-            this.source = t;
-            this.highlighter.highlight(t);
-          }
-        }
-      }
-    } else if(e.button==2) {
-      if(this.source) {
-        this.highlighter.unhighlight();
-        this.source = null;
-      }
-      if(t.isCard) Game.smartMove(t);
-    }
-  }
-};
 
 
 

@@ -29,7 +29,7 @@ var BaseCardGame = {
   waste: null,
   foundation: null, // if the game has just one foundation this will be it
   reserve: null,
-  dragDropTargets: null, // piles where cards can potentially be dropped.  consists of normal and foundation piles
+  dragDropTargets: null, // a list of piles on which cards can be dropped
 
 
 
@@ -145,7 +145,7 @@ var BaseCardGame = {
 
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
     // xxx kill this
-    this.dragDropTargets = this.piles.concat(this.foundations);
+    this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
   },
 

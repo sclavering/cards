@@ -25,6 +25,7 @@
 <script type="application/x-javascript" src="canfield.js"/>
 <script type="application/x-javascript" src="doublesol.js"/>
 <script type="application/x-javascript" src="fan.js"/>
+<script type="application/x-javascript" src="fortythieves.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
 <script type="application/x-javascript" src="golf.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
@@ -122,25 +123,29 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   <vbox id="canfield" hidden="true">
     <rowspacer/>
     <hbox>
-      <flex/>
-      <stock id="canfield-stock"/><flex/>
-      <waste id="canfield-waste"/><flex2/>
-      <foundation id="canfield-foundation-0"/><flex/>
-      <foundation id="canfield-foundation-1"/><flex/>
-      <foundation id="canfield-foundation-2"/><flex/>
-      <foundation id="canfield-foundation-3"/><flex2/>
-      <reserve id="canfield-reserve"/><flex/>
-    </hbox>
-    <rowspacer/>
-    <hbox>
-      <flex/>
-      <pilespacer/><flex/>
-      <pilespacer/><flex2/>
-      <pile class="fan-down" id="canfield-pile-0"/><flex/>
-      <pile class="fan-down" id="canfield-pile-1"/><flex/>
-      <pile class="fan-down" id="canfield-pile-2"/><flex/>
-      <pile class="fan-down" id="canfield-pile-3"/><flex2/>
-      <pilespacer/><flex/>
+      <flex2/>
+      <vbox>
+        <stock id="canfield-stock"/><rowspacer/>
+        <waste id="canfield-waste"/>
+      </vbox><flex2/>
+      <vbox>
+        <foundation id="canfield-foundation-0"/><rowspacer/>
+        <pile id="canfield-pile-0" class="fan-down"/>
+      </vbox><flex/>
+      <vbox>
+        <foundation id="canfield-foundation-1"/><rowspacer/>
+        <pile id="canfield-pile-1" class="fan-down"/>
+      </vbox><flex/>
+      <vbox>
+        <foundation id="canfield-foundation-2"/><rowspacer/>
+        <pile id="canfield-pile-2" class="fan-down"/>
+      </vbox><flex/>
+      <vbox>
+        <foundation id="canfield-foundation-3"/><rowspacer/>
+        <pile id="canfield-pile-3" class="fan-down"/>
+      </vbox>
+      <flex2/>
+      <reserve id="canfield-reserve" class="fan-down"/><flex2/>
     </hbox>
   </vbox>
 
@@ -213,6 +218,44 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       </vbox>
       </hbox>
       <colspacer/>
+    </hbox>
+  </vbox>
+
+  <!-- Forty Thieves -->
+  <vbox id="fortythieves" hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex2/>
+      <foundation id="fortythieves-foundation-0"/><flex/>
+      <foundation id="fortythieves-foundation-1"/><flex/>
+      <foundation id="fortythieves-foundation-2"/><flex/>
+      <foundation id="fortythieves-foundation-3"/><flex/>
+      <foundation id="fortythieves-foundation-4"/><flex/>
+      <foundation id="fortythieves-foundation-5"/><flex/>
+      <foundation id="fortythieves-foundation-6"/><flex/>
+      <foundation id="fortythieves-foundation-7"/><flex2/>
+    </hbox>
+    <rowspacer/>
+    <hbox>
+      <colspacer/><colspacer/>
+      <stock id="fortythieves-stock"/>
+      <colspacer/>
+      <waste id="fortythieves-waste" class="fan-right" flex="1"/>
+      <colspacer/><colspacer/>
+    </hbox>
+    <rowspacer/>
+    <hbox>
+      <flex2/>
+      <pile class="fan-down" id="fortythieves-pile-0"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-1"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-2"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-3"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-4"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-5"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-6"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-7"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-8"/><flex/>
+      <pile class="fan-down" id="fortythieves-pile-9"/><flex2/>
     </hbox>
   </vbox>
 

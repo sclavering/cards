@@ -9,8 +9,6 @@ var GypsyBase = {
 
   layout: "gypsy",
   dealFromStock: "to piles",
-  canMoveCard: "descending, alt colours",
-  canMoveToPile: "descending, alt colours",
   getLowestMovableCard: "descending, alt colours",
 
   init: function() {
@@ -24,6 +22,10 @@ var GypsyBase = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
+  mayTakeCardFromPile: "run down, alt colours",
+
+  mayAddCardToPile: "down, opposite colour",
+
   getHints: function() {
     for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
@@ -31,12 +33,12 @@ var GypsyBase = {
   getBestMoveForCard: "legal nonempty, or empty",
 
   sendToFoundations: function(card) {
-    if(!this.canMoveCard(card)) return false;
+    if(!card.parentNode.mayTakeCard(card)) return false;
     if(card.isAce) return this.sendAceToFoundations(card);
     const fs = this.foundations;
     for(var i = 0; i != fs.length; i++)
-      if(this.attemptMove(card, fs[i]))
-        return true;
+      if(fs[i].mayAddCard(card))
+        return this.moveTo(card, fs[i]);
     return false;
   },
   sendAceToFoundations: function(ace) {
@@ -57,9 +59,9 @@ var GypsyBase = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :  10,
-    "card-revealed"       :   5,
-    "move-from-foundation": -15
+    "->foundation": 10,
+    "card-revealed": 5,
+    "foundation->": -15
   }
 };
 

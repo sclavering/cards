@@ -4,8 +4,6 @@ AllGames.freecell = {
   __proto__: FreeCellGame,
 
   id: "freecell",
-  canMoveCard: "descending, alt colours",
-  canMoveToPile: "descending, alt colours",
   getLowestMovableCard: "descending, alt colours",
 
   init: function() {
@@ -32,17 +30,22 @@ AllGames.freecell = {
     for(i = 4; i != 8; i++) ps[i].dealTo(cards, 0, 6);
   },
 
-  // test if there are enough spaces/cells to perform a move, not just is it is legal.
-  movePossible: function(card, target) {
+  mayTakeCardFromPile: "run down, alt colours",
+
+  mayAddCardToPile: function(card) {
+    var last = this.lastChild;
+    if(last && (last.colour==card.colour || last.number!=card.upNumber)) return false
+
+    // check there are enough cells+spaces to perform the move
+
     if(!card.nextSibling) return true;
-    var spaces = this.countEmptyPiles(target);
-    var cells = this.numEmptyCells;
-    // the number we can move using the most complex algorithm
+
+    var spaces = Game.countEmptyPiles(this, card.parentNode.source);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
-    var numCanMove = (cells + 1) * (spaces + 1);
+    var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
     var numToMove = 0;
     for(var next = card; next; next = next.nextSibling) numToMove++;
-    return numToMove<=numCanMove;
+    return (numToMove <= canMove) ? true : 0;
   },
 
   getHints: function() {
@@ -50,21 +53,27 @@ AllGames.freecell = {
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
-  // this is very like Rules.getBestMoveForCard["legal nonempty, or empty"], but it has to call movePossible (and look at cells)
+  // similar to Rules.getBestMoveForCard["legal nonempty, or empty"], but must consider cells,
+  // and must check there are enough spaces before moving a card to a space
   getBestMoveForCard: function(card) {
+    /*
     var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; i++) {
       p = ps[i];
       if(p.hasChildNodes()) {
-        if(this.canMoveToPile(card, p) && this.movePossible(card, p)) return p;
+        if(p.mayAddCard(card)) return p;
       } else if(!empty) {
         empty = p;
       }
-    }
-    if(empty && this.movePossible(card, empty)) return empty;
+    }*/
+    var p = this.getBestMoveForCard2(card);
+    if(p && p.hasChildNodes()) return p;  // p was a nonempty pile
+    if(p && p.mayAddCard(card)) return p; // p was an empty pile
     return !card.nextSibling ? this.emptyCell : null;
   },
+
+  getBestMoveForCard2: Rules.getBestMoveForCard["legal nonempty, or empty"],
 
   autoplayMove: "commonish",
 

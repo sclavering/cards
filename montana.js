@@ -20,9 +20,7 @@ var Montana = {
     this.twos = [cs[0], cs[12], cs[24], cs[36]];
 
     var ps = this.piles;
-    // label the piles for use by canMoveTo
     for(var i = 0; i != 52; i++) ps[i].col = i % 13;
-    this.canMoveToPile = this.canMoveTo;
 
     var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
 
@@ -38,9 +36,9 @@ var Montana = {
     for(var i = 0; i != 52; i++) this.piles[i].dealTo(cards, 0, 1);
   },
 
-  canMoveTo: function(card, pile) {
-    var left = pile.leftp;
-    return !pile.hasChildNodes() && (left ? left.hasChildNodes() && left.lastChild.up==card : card.number==2);
+  mayAddCardToPile: function(card) {
+    var left = this.leftp;
+    return !this.hasChildNodes() && (left ? left.hasChildNodes() && left.lastChild.up==card : card.number==2);
   },
 
   getHints: function() {

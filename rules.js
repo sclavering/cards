@@ -2,34 +2,23 @@
 Standard forms for the various member functions that games need to provide.
 
 Set the member to one of the strings below and BaseCardGame.initialise() will replace it with the
-relevant function in this file.  e.g. set canMoveCard to "descending".
+relevant function in this file.
 
 
 Current choices:
 
-canMoveCard:
-  "descending"
-  "descending, not from foundation"
-  "descending, alt colours"
-  "descending, in suit"
-  "descending, in suit, not from foundation"
-  "not from foundation"
-  "last on pile"
+mayTakeCard:
+(used for mayTakeCardFromWaste, mayTakeCardFromFoundation etc.)
+  "yes" - may always take any card from this pile
+  "no"  - nay never take any card from this pile
+  "single card" - may take the topmost card and no other
+  "face up" - may take any card in the pile which is face up
+  "run down"
+  "run down, alt colours"
+  "run down, same suit"
 
-canMoveToPile:
-  "onto up, any in spaces"
-  "onto 'up', kings in spaces"
-  "descending"
-  "descending, alt colours, kings in spaces"
-  "descending, in suit, kings in spaces"
-  "descending, alt colours"
-  "descending, in suit"
-  "isempty"
-
-canMoveToFoundation:
-  "king->ace flush"
-  "13 cards"  (any set of 13 card. canMoveCard will ensure they're a running flush, or whatever)
-  "13 cards, if empty" (... and only if the foundation is empty)
+mayAddCard:
+(used for mayAddCardToFoundation etc.)
 
 dealFromStock:
   "to waste"
@@ -39,7 +28,6 @@ dealFromStock:
   "to piles, if none empty"
   "to nonempty piles"
 
-xxx these (c|sh)ould just use the canMoveCard value
 getLowestMovableCard:
   "descending, in suit"
   "descending, alt colours"
@@ -54,11 +42,25 @@ getBestMoveForCard
 
 autoplayMove
   "commonish"
+  "commonish 2deck"
 */
 
 var Rules = {
-  canMoveCard: {
-    "descending":
+  mayTakeCard: {
+    "yes":
+    function(card) { return true; },
+
+    "no":
+    function(card) { return false; },
+
+    // faceUp check may be unnecessary
+    "single card":
+    function(card) { return !card.nextSibling && card.faceUp; },
+
+    "face up":
+    function(card) { return card.faceUp; },
+
+    "run down":
     function(card) {
       if(card.faceDown) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
@@ -66,122 +68,85 @@ var Rules = {
       return true;
     },
 
-    "descending, not from foundation":
-    function(card) {
-      if(card.faceDown || card.parentNode.isFoundation) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.number!=next.upNumber) return false;
-      return true;
-    },
-
-    "descending, alt colours":
+    "run down, alt colours":
     function(card) {
       if(card.faceDown) return false;
-      // ensure we have a run in alternating colours
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.colour==next.colour || card.number!=next.upNumber) return false;
       return true;
     },
 
-    "descending, in suit":
+    "run down, same suit":
     function(card) {
       if(card.faceDown) return false;
-      // ensure we have a running flush from top card on pile to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.suit!=next.suit || card.number!=next.upNumber) return false;
       return true;
-    },
-
-    "descending, in suit, not from foundation":
-    function(card) {
-      if(card.faceDown || card.parentNode.isFoundation) return false;
-      // ensure we have a running flush from top card on pile to |card|
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.suit!=next.suit || card.number!=next.upNumber) return false;
-      return true;
-    },
-
-    "not from foundation":
-    function(card) {
-      return (card.faceUp && !card.parentNode.isFoundation);
-    },
-
-    "last on pile":
-    function(card, target) {
-      return (card.faceUp && !card.nextSibling);
     }
   },
 
 
-  canMoveToPile: {
-    "onto up, any in spaces":
-    function(card, pile) {
-      return !pile.hasChildNodes() || pile.lastChild==card.up;
+  mayAddCard: {
+    "yes": function(card) { return true; },
+
+    "no": function(card) { return false; },
+
+    "if empty":
+    function(card) {
+      return !card.nextSdibling && !this.hasChildNodes();
     },
 
-    "onto 'up', kings in spaces":
-    function(card, pile) {
-      return pile.hasChildNodes ? pile.lastChild==card.up : card.isKing;
+    // for ordinary piles
+
+    "onto .up":
+    function(card) {
+      return !this.hasChildNodes() || this.lastChild==card.up;
     },
 
-    "descending":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return !last || (last.faceUp && last.number==card.upNumber);
+    "onto .up, kings in spaces":
+    function(card) {
+      return this.hasChildNodes ? this.lastChild==card.up : card.isKing;
     },
 
-    "descending, alt colours, kings in spaces":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return last ? last.faceUp && last.number==card.upNumber && last.colour!=card.colour : card.isKing;
+    "down":
+    function(card) {
+      return !this.hasChildNodes() || this.lastChild.number==card.upNumber;
     },
 
-    "descending, in suit, kings in spaces":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return last ? last.faceUp && last.number==card.upNumber && last.suit==card.suit : card.isKing;
+    "down, opposite colour":
+    function(card) {
+      var last = this.lastChild;
+      return !last || (last.number==card.upNumber && last.colour!=card.colour);
     },
 
-    "descending, alt colours":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return !last || (last.faceUp && last.number==card.upNumber && last.colour!=card.colour);
+    "down and different colour, king in space":
+    function(card) {
+      var last = this.lastChild;
+      return last ? last.number==card.upNumber && last.colour!=card.colour : card.isKing;
     },
 
-    "descending, in suit":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return !last || (last.faceUp && last.number==card.upNumber && last.suit==card.suit);
+    // for foundations
+
+    "single card, up in suit or ace in space":
+    function(card) {
+      const last = this.lastChild;
+      return !card.nextSibling && (this.hasChildNodes() ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
     },
 
-    "isempty":
-    function(card, pile) {
-      return !pile.hasChildNodes();
-    }
-  },
+    "13 cards":
+    function(card) {
+      if(this.hasChildNodes()) return false;
+      var i = card.parentNode.childNodes.length - 13;
+      return (i >= 0 && card.parentNode.childNodes[i]==card);
+    },
 
-
-  canMoveToFoundation: {
     "king->ace flush":
-    function(card, pile) {
-      if(pile && pile.hasChildNodes()) return false; // pile==null for Black Widow
+    function(card) {
+      if(this.hasChildNodes()) return false;
       if(!card.isKing || !card.parentNode.lastChild.isAce) return false;
       var next = card.nextSibling;
       while(next && card.suit==next.suit && card.number==next.upNumber) card = next, next = next.nextSibling;
       return !next; // all cards should be part of the run
-    },
-
-    "13 cards":
-    function(card, pile) {
-      var i = card.parentNode.childNodes.length - 13;
-      return (i >= 0 && card.parentNode.childNodes[i]==card);
-    },
-
-    "13 cards, if empty":
-    function(card, pile) {
-      if(pile.hasChildNodes()) return false;
-      var i = card.parentNode.childNodes.length - 13;
-      return (i >= 0 && card.parentNode.childNodes[i]==card);
     }
   },
 
@@ -276,7 +241,7 @@ var Rules = {
           if(!empty) empty = p;
           continue;
         }
-        if(!this.canMoveToPile(card, p)) continue;
+        if(!p.mayAddCard(card)) continue;
         if(card.suit==p.lastChild.suit) return p;
         if(!maybe) maybe = p;
       }
@@ -290,7 +255,7 @@ var Rules = {
       for(var i = 0; i != num; i++) {
         p = ps[i];
         if(p.hasChildNodes()) {
-          if(this.canMoveToPile(card, p)) return p;
+          if(p.mayAddCard(card)) return p;
         } else if(!empty) {
           empty = p;
         }
@@ -304,7 +269,7 @@ var Rules = {
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];
-        if(this.canMoveToPile(card, p)) return p;
+        if(p.mayAddCard(card)) return p;
       }
       return null;
     }
@@ -316,6 +281,7 @@ var Rules = {
     // in foundationBases[], and continuing with the unique |up| member of each card.
     // Cards' mayAutoplay field can be overridden with a getter function if needed.
     // xxx the .faceUp checks are redundant with the !.nextSibling ones at present
+    // Note: moveTo can fail (and return false) in FreeCell (and similar games)
     "commonish":
     function() {
       var triedToFillEmpty = false;
@@ -330,6 +296,34 @@ var Rules = {
           for(var j = 0; j != 4; j++) {
             var b = bs[j];
             if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling) return this.moveTo(b, f);
+          }
+        }
+      }
+      return false;
+    },
+
+    // like above, but for 2 decks
+    "commonish 2deck":
+    function() {
+      const fs = this.foundations, as = this.foundationBases;
+      var lookedForAces = false;
+      for(var i = 0; i != 8; i++) {
+        var f = fs[i], last = f.lastChild;
+        if(last) {
+          if(last.isKing) continue;
+          var c = last.up, cp = c.parentNode;
+          if((cp.isNormalPile || cp.isWaste) && !c.nextSibling) {
+            if(c.mayAutoplay) return this.moveTo(c, f);
+            continue; // mayAutoplay will also be false for the twin
+          } else {
+            c = c.twin, cp = c.parentNode;
+            if((cp.isNormalPile || cp.isWaste) && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+          }
+        } else if(!lookedForAces) {
+          lookedForAces = true;
+          for(var j = 0; j != 8; j++) {
+            var a = as[j], ap = a.parentNode;
+            if((ap.isNormalPile || ap.isWaste) && !a.nextSibling) return this.moveTo(a, f);
           }
         }
       }

@@ -5,7 +5,6 @@ AllGames.klondike = {
 
   id: "klondike",
   dealFromStock: "to waste, can turn stock over",
-  canMoveToPile: "descending, alt colours, kings in spaces",
   getLowestMovableCard: "face up",
 
   init: function() {
@@ -33,6 +32,8 @@ AllGames.klondike = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
+  mayAddCardToPile: "down and different colour, king in space",
+
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
     for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -59,10 +60,10 @@ AllGames.klondike = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :   10,
-    "move-from-waste"     :    5,
-    "card-revealed"       :    5,
-    "move-from-foundation":  -15,
-    "stock-turned-over"   : -100
+    "->foundation": 10,
+    "waste->pile": 5,
+    "card-revealed": 5,
+    "foundation->": -15,
+    "stock-turned-over": -100
   }
 };

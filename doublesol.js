@@ -10,7 +10,6 @@ AllGames.doublesol = {
 
   id: "doublesol",
   dealFromStock: "to waste, can turn stock over",
-  canMoveToPile: "descending, alt colours, kings in spaces",
   getLowestMovableCard: "face up",
 
   init: function() {
@@ -43,13 +42,15 @@ AllGames.doublesol = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  canMoveToFoundation: function(card, pile) {
+  mayAddCardToFoundation: function(card) {
     if(card.nextSibling) return false;
     // foundations are built A,A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
-    if(!pile.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
-    var last = pile.lastChild, prv = last.previousSibling;
+    if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
+    var last = this.lastChild, prv = last.previousSibling;
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
   },
+
+  mayAddCardToPile: "down and different colour, king in space",
 
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
@@ -104,10 +105,10 @@ AllGames.doublesol = {
   },
 
   scores: {
-    "move-to-foundation"  :   10,
-    "move-from-waste"     :    5,
-    "card-revealed"       :    5,
-    "move-from-foundation":  -15,
-    "stock-turned-over"   : -100
+    "->foundation": 10,
+    "waste->pile": 5,
+    "card-revealed": 5,
+    "foundation->": -15,
+    "stock-turned-over": -100
   }
 }

@@ -5,11 +5,13 @@ AllGames.acesup = {
 
   id: "acesup",
   dealFromStock: "to piles",
-  canMoveToPile: "isempty",
 
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high
     for(var i = 0; i != 4; i++) this.piles[i].num = i;
+    const ps = this.piles;
+    ps[0].prev = ps[3];
+    ps[3].next = ps[0];
   },
 
   deal: function(cards) {
@@ -17,30 +19,30 @@ AllGames.acesup = {
     this.stock.dealTo(cards, 48, 0);
   },
 
-  canMoveCard: function(card) {
-    var p = card.parentNode;
-    return (!card.nextSibling && !p.isFoundation && !p.isStock);
-  },
+  mayTakeCardFromFoundation: "no",
 
-  canMoveToFoundation: function(card, foundation) {
+  mayTakeCardFromPile: "single card",
+
+  mayAddCardToFoundation: function(card) {
+    const ps = Game.piles;
     for(var i = 0; i != 4; i++) {
-      var top = this.piles[i].lastChild;
+      var top = ps[i].lastChild;
       if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
       if(top && card.suit==top.suit && card.number<top.number) return true;
     }
     return false;
   },
 
+  mayAddCardToPile: "if empty",
+
   // no hints for this game
 
   getBestMoveForCard: function(card) {
-    if(this.canMoveToFoundation(card)) return this.foundation;
-    // find the next empty pile
-    var num = card.parentNode.num;
-    for(var i = 1; i != 4; i++) {
-      var next = this.piles[(i+num) % 4];
-      if(!next.hasChildNodes()) return next;
-    }
+    const f = this.foundation;
+    if(f.mayAddCard(card)) return f;
+    // return next empty pile
+    for(var p = card.parentNode, p2 = p.next; p2 != p; p2 = p2.next)
+      if(!p2.hasChildNodes()) return p2;
     return null;
   },
 

@@ -43,11 +43,11 @@ DealFromStockToPileAction.prototype = {
 
   perform: function() {
     Game.dealCardTo(this.to);
-    if(Game.stock.counter) Game.stock.counter.add(-1);
+    Game.stock.counter--;
   },
   undo: function() {
     Game.undealCardFrom(this.to);
-    if(Game.stock.counter) Game.stock.counter.add(1);
+    Game.stock.counter++;
   }
 }
 
@@ -59,11 +59,11 @@ TurnStockOverAction.prototype = {
 
   perform: function() {
     while(Game.waste.hasChildNodes()) Game.undealCardFrom(Game.waste);
-    if(Game.stock.counter) Game.stock.counter.set(Game.stock.childNodes.length);
+    Game.stock.counter = Game.stock.childNodes.length;
   },
   undo: function() {
     while(Game.stock.hasChildNodes()) Game.dealCardTo(Game.waste);
-    if(Game.stock.counter) Game.stock.counter.set(0)
+    Game.stock.counter = 0;
   }
 }
 
@@ -79,12 +79,12 @@ DealToPilesAction.prototype = {
     var piles = Game.piles;
     for(var i = 0; i != piles.length && Game.stock.hasChildNodes(); i++) Game.dealCardTo(piles[i]);
     this.dealt = i;
-    if(Game.stock.counter) Game.stock.counter.add(-1);
+    Game.stock.counter--;
   },
   undo: function() {
     var piles = Game.piles;
     for(var i = this.dealt; i != 0; i--) Game.undealCardFrom(piles[i-1]);
-    if(Game.stock.counter) Game.stock.counter.add(1);
+    Game.stock.counter++;
   }
 }
 
@@ -106,13 +106,13 @@ DealToNonEmptyPilesAction.prototype = {
       }
     }
     this.num = num;
-    if(Game.stock.counter) Game.stock.counter.add(-num);
+    Game.stock.counter -= num;
   },
   undo: function() {
     var piles = Game.piles;
     for(var i = this.last; i != -1; i--)
       if(piles[i].hasChildNodes()) Game.undealCardFrom(piles[i]);
-    if(Game.stock.counter) Game.stock.counter.add(this.num);
+    Game.stock.counter += this.num;
   }
 }
 
@@ -123,10 +123,9 @@ function MoveAction(card, source, destination) {
   this.source = source;
   this.destination = destination;
   this.action =
-      (destination.isFoundation && !source.isFoundation) ? "move-to-foundation" :
-      (source.isFoundation && !destination.isFoundation) ? "move-from-foundation" :
-      (source.isWaste) ? "move-from-waste" :
-      "move-between-piles";
+      destination.isFoundation
+      ? (source.isFoundation ? "foundation->foundation" : "->foundation")
+      : (source.isFoundation ? "foundation->" : (source.localName+"->"+destination.localName));
 }
 MoveAction.prototype = {
   synchronous: false,

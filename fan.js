@@ -27,9 +27,9 @@ AllGames.fan = {
     return false;
   },
 
-  canMoveCard: "last on pile",
+  mayTakeCardFromPile: "single card",
 
-  canMoveToPile: "onto 'up', kings in spaces",
+  mayAddCardToPile: "onto .up, kings in spaces",
 
   getHints: function() {
     for(var i = 0; i != this.piles.length; i++) {

@@ -4,10 +4,10 @@ All handling of mouse events is in this file.
 Games choose what kind of mouse handling they want by setting their "mouseHandling" field
 to one of:
   "drag+drop":
-    Player can drag any card for which Game.canMoveCard(..) returns true, when they drop
-    the card each member of Game.dragDropTargets[] is examined to see if the card overlaps
+    Player may drag any card for which card.parentNode.mayTakeCard(card) returns true; when they
+    drop the card each member of Game.dragDropTargets[] is examined to see if the card overlaps
     it, and if it can be legally dropped there.
-    Middle-click is used for smartMove.
+    Right-click is used for "intelligent" moving of cards.
     Double-left-click is calls Game.sendToFoundations(..)
 
 BaseCardGame.initialise() then sets the "mouseHandler" field of the game to the appropriate
@@ -62,7 +62,7 @@ MouseHandlers["drag+drop"] = {
 
   mouseDown: function(e) {
     var t = e.target;
-    if(t.isCard && Game.canMoveCard(t)) this.nextCard = t;
+    if(t.isCard && t.parentNode.mayTakeCard(t)) this.nextCard = t;
   },
 
   mouseMove: function(e) {
@@ -114,14 +114,14 @@ MouseHandlers["drag+drop"] = {
     source.addCards(card);
   },
 
-  // middle click calls smartMove(), left clicks reveal(), dealFromStock(),
+  // middle click calls doBestMoveForCard(), left clicks reveal(), dealFromStock(),
   // or turnStockOver(). double left click calls sendToFoundations()
   mouseClick: function(e) {
     if(this.dragInProgress) return;
 
     var t = e.target;
     if(e.button==2) {
-      if(t.isCard) Game.smartMove(t);
+      if(t.isCard) Game.doBestMoveForCard(t);
     } else if(e.button===0) {
       if(t.isCard) {
         if(t.parentNode.isStock) Game.dealFromStock();

@@ -12,7 +12,10 @@ var SpiderBase = {
   __proto__: BaseCardGame,
 
   dealFromStock: "to piles, if none empty",
-  canMoveToPile: "descending",
+
+  mayTakeCardFromFoundation: "no",
+
+  mayAddCardToPile: "down",
 
   getBestMoveForCard: "down and same suit, or down, or empty",
 
@@ -28,8 +31,8 @@ var SpiderBase = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation": 100,
-    "move-between-piles":  -1
+    "->foundation": 100,
+    "pile->pile": -1
   }
 };
 
@@ -39,6 +42,8 @@ var SpiderLayoutBase = {
   __proto__: SpiderBase,
   layout: "spider",
 
+  // Special version which if target is a foundation uses the first empty foundation instead.
+  // Necessary because of the compact layout of foundations in Spider.
   moveTo: function(card, target) {
     if(target.isFoundation) target = this.firstEmptyFoundation;
     BaseCardGame.moveTo.call(this,card,target);
@@ -46,10 +51,9 @@ var SpiderLayoutBase = {
   },
 
   sendToFoundations: function(card) {
-    // don't try to use attemptMove here because it will break for Black Widow
-    // (because we need |null| to be passed to canMoveToFoundation)
-    return this.canMoveCard(card) && this.canMoveToFoundation(card, null)
-        && this.moveTo(card, this.foundations[0]);
+    // the last foundation is empty unless the game has been won, so use its mayAddCard
+    var fs = this.foundations, f = fs[fs.length - 1];
+    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
   }
 };
 
@@ -57,8 +61,6 @@ var SpiderLayoutBase = {
 var Spider = {
   __proto__: SpiderLayoutBase,
 
-  canMoveCard: "descending, in suit, not from foundation",
-  canMoveToFoundation: "13 cards",
   getLowestMovableCard: "descending, in suit",
 
   kings: null,
@@ -74,6 +76,10 @@ var Spider = {
     this.stock.dealTo(cards, 50, 0);
   },
 
+  mayTakeCardFromPile: "run down, same suit",
+
+  mayAddCardToFoundation: "13 cards",
+
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
@@ -83,7 +89,7 @@ var Spider = {
       var k = this.kings[i], p = k.parentNode;
       if(!p.isNormalPile) continue;
       var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && this.canMoveCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
+      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
     }
     return false;
   }
@@ -116,14 +122,16 @@ AllGames.blackwidow = {
 
   id: "blackwidow",
   cards: 2,
-  canMoveCard: "descending, not from foundation",
-  canMoveToFoundation: "king->ace flush",
 
   deal: function(cards) {
     for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
     for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
     this.stock.dealTo(cards, 50, 0);
   },
+
+  mayAddCardToFoundation: "king->ace flush",
+
+  mayTakeCardFromPile: "run down",
 
   getHints: function() {
     for(var i = 0; i != 10; i++) {
@@ -153,7 +161,6 @@ AllGames.divorce = {
   get stockCounterStart() { return this.stock.childNodes.length; },
 
   dealFromStock: "to nonempty piles",
-  canMoveToFoundation: "13 cards",
 
   init: function() {
     this.cards = makeDecksMod13(2);
@@ -164,9 +171,11 @@ AllGames.divorce = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  canMoveCard: "descending, in suit, not from foundation",
+  mayTakeCardFromPile: "run down, same suit",
 
-  canMoveToPile: "descending",
+  mayAddCardToFoundation: "13 cards",
+
+  mayAddCardToPile: "down",
 
   getLowestMovableCard: "descending, in suit",
 
@@ -181,8 +190,6 @@ AllGames.wasp = {
 
   id: "wasp",
   dealFromStock: "to piles",
-  canMoveCard: "not from foundation",
-  canMoveToFoundation: "king->ace flush",
 
   deal: function(cards) {
     for(var i = 0; i != 3; i++) this.piles[i].dealTo(cards, 3, 4);
@@ -190,7 +197,9 @@ AllGames.wasp = {
     this.stock.dealTo(cards, 3, 0);
   },
 
-  canMoveToPile: "onto up, any in spaces",
+  mayAddCardToFoundation: "king->ace flush",
+
+  mayAddCardToPile: "onto .up",
 
   getBestMoveForCard: "to up or nearest space",
 

@@ -1,5 +1,5 @@
 
-// base class for FreeCell and Seahaven Towers
+// base class for FreeCell, Seahaven Towers and Forty Thieves
 var FreeCellGame = {
   __proto__: BaseCardGame,
 
@@ -9,43 +9,23 @@ var FreeCellGame = {
     return ths.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
   },
 
-  // unlike in other games where this function returns a boolean, here we sometimes return an int.
-  // false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
-  // (using 0 means the overall behaviour will match other games, but callers which do want to
-  // know about an insufficent spaces result can test if the result ===0)
-  canMoveTo: function(card, target) {
-    if(target.isCell) return this.canMoveToCell(card, target);
-    if(target.isFoundation) return this.canMoveToFoundation(card, target);
-    if(this.canMoveToPile(card, target))
-      return (this.movePossible(card,target) ? true : 0);
-    return false;
-  },
-
-  // this should work for most games which have cells
-  canMoveToCell: function(card, target) {
-    return (!target.hasChildNodes() && !card.nextSibling);
-  },
-
-  // dontShowStepsOfMove is freecell/towers specific
-  moveTo: function(card, target, dontShowStepsOfMove) {
+  // dontShowSteps is freecell/towers specific
+  moveTo: function(card, target, dontShowSteps) {
     var source = card.parentNode.source;
-    if(!dontShowStepsOfMove && target.isNormalPile && card.nextSibling) {
+    if(!dontShowSteps && target.isNormalPile && card.nextSibling) {
       this.doAction(new FreeCellMoveAction(card, source, target, this.emptyCells, this.getEmptyPiles(target)));
     } else {
       var action = new MoveAction(card,source,target);
-      action.action = target.isCell ? "card-moved-to-cell" : "cards-moved-to-foundation";
       this.doAction(action);
     }
     return true;
   },
 
-  // must override global version to deal with oddities of canMoveTo in Freecell-like games
-  // (it returns 0, not false, if the move is legal but there aren't enough spaces for it)
-  // xxx in passing true for moveTo's dontShowStepsOfMove we're relying on this function only being called by the drag+drop handler
-  attemptMove: function(source, target) {
-    var can = this.canMoveTo(source, target);
-    if(can) return this.moveTo(source, target, true);
-    if(can===0) showMessage("notEnoughSpaces");
+  // note: the return value of 0 from mayAddCard is used to indicate the move is legal, but needs more cells/spaces
+  attemptMove: function(card, destination) {
+    var may = destination.mayAddCard(card);
+    if(may) return this.moveTo(card, destination, true);
+    if(may===0) showMessage("notEnoughSpaces")
     return false;
   },
 
@@ -81,12 +61,14 @@ var FreeCellGame = {
     return spaces;
   },
 
-  countEmptyPiles: function(pileToIgnore) {
+  // args. are piles which should not be counted even if empty
+  // (typically the source and destination of a card being moved)
+  countEmptyPiles: function(ignore1, ignore2) {
     var empty = 0;
     const ps = this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p!=pileToIgnore && !p.hasChildNodes()) empty++
+      if(p!=ignore1 && p!=ignore2 && !p.hasChildNodes()) empty++
     }
     return empty;
   },
@@ -110,7 +92,7 @@ function FreeCellMoveAction(card, source, destination, cells, spaces) {
   this.spaces = spaces;
 }
 FreeCellMoveAction.prototype = {
-  action: "move-between-piles",
+  action: "pile->pile",
   synchronous: false,
 
   perform: function() {

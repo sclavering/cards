@@ -8,8 +8,6 @@ var SimonBase = {
   __proto__: BaseCardGame,
 
   layout: "simon",
-  canMoveCard: "descending, in suit, not from foundation",
-  canMoveToPile: "descending",
   getLowestMovableCard: "descending, in suit",
 
   deal: function(cards) {
@@ -24,7 +22,13 @@ var SimonBase = {
     for(var i = 2; i != 10; i++) ps[i].dealTo(cards, 0, 10-i);
   },
 
-  canMoveToFoundation: "13 cards, if empty",
+  mayTakeCardFromPile: "run down, same suit",
+
+  mayTakeCardFromFoundation: "no",
+
+  mayAddCardToFoundation: "13 cards",
+
+  mayAddCardToPile: "down",
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -37,7 +41,7 @@ var SimonBase = {
       var k = this.kings[i], p = k.parentNode;
       if(!p.isNormalPile) continue;
       var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && this.canMoveCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
+      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
     }
     return false;
   },
@@ -45,8 +49,8 @@ var SimonBase = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation": 100,
-    "move-between-piles":  -1
+    "->foundation": 100,
+    "pile->pile": -1
   }
 };
 

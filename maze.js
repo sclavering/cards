@@ -13,7 +13,6 @@ AllGames.maze = {
     var ps = this.piles;
     ps[53].next = ps[0]; ps[0].prev = ps[53]; // prev/next are not usually circular
 
-    this.canMoveToPile = this.canMoveTo;
     this.aces = [cs[0], cs[12], cs[24], cs[36]];
     this.queens = [cs[11], cs[23], cs[35], cs[47]];
   },
@@ -23,10 +22,10 @@ AllGames.maze = {
     for(var i = 0; i != num; i++) ps[i].dealTo(cards, 0, 1);
   },
 
-  canMoveTo: function(card, pile) {
-    if(pile.hasChildNodes()) return false;
+  mayAddCardToPile: function(card) {
+    if(this.hasChildNodes()) return false;
 
-    var prev = pile.prev.lastChild, next = pile.next.lastChild;
+    var prev = this.prev.lastChild, next = this.next.lastChild;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
         || (prev && prev==card.down)

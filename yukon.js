@@ -4,13 +4,14 @@ Games.yukon = Games.sanibel = true;
 var YukonBase = {
   __proto__: BaseCardGame,
 
-  canMoveToPile: "descending, alt colours",
+  mayAddCardToPile: "down, opposite colour",
 
   // take a card a find another card on a different pile of opposite colour and one less in rank
   getHintsForCard: function(card) {
     if(!card) return;
-    for(var i = 0; i != this.piles.length; i++) {
-      var pile = this.piles[i];
+    const ps = this.piles, len = ps.length;
+    for(var i = 0; i != len; i++) {
+      var pile = ps[i];
       if(pile==card.parentNode) continue;
       var current = pile.lastChild;
       while(current && current.faceUp) {
@@ -31,9 +32,9 @@ var YukonBase = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :  10,
-    "card-revealed"       :   5,
-    "move-from-foundation": -15
+    "->foundation": 10,
+    "card-revealed": 5,
+    "foundation->": -15
   }
 };
 
@@ -97,7 +98,7 @@ AllGames.sanibel = {
       }
     }
 
-    this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
+    this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
 
   deal: function(cards) {
@@ -107,38 +108,15 @@ AllGames.sanibel = {
   },
 
   getHints: function() {
-    var i;
+    const ps = this.piles;
     var card = this.waste.lastChild;
     if(card) {
-      for(i = 0; i != 10; i++)
-        if(this.canMoveTo(card, this.piles[i])) this.addHint(card, this.piles[i]);
+      // xxx would getHintsForCard work?
+      for(var i = 0; i != 10; i++)
+        if(ps[i].mayAddCard(card)) this.addHint(card, ps[i]);
     }
-    for(i = 0; i != 10; i++) this.getHintsForCard(this.piles[i].lastChild);
+    for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastChild);
   },
 
-  autoplayMove: function() {
-    const fs = this.foundations, as = this.aces;
-    var lookedForAces = false;
-    for(var i = 0; i != 8; i++) {
-      var f = fs[i], last = f.lastChild;
-      if(last) {
-        if(last.isKing) continue;
-        var c = last.up, cp = c.parentNode;
-        if((cp.isNormalPile || cp.isWaste) && !c.nextSibling) {
-          if(c.mayAutoplay) return this.moveTo(c, f);
-          continue; // mayAutoplay will also be false for the twin
-        } else {
-          c = c.twin, cp = c.parentNode;
-          if((cp.isNormalPile || cp.isWaste) && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
-        }
-      } else if(!lookedForAces) {
-        lookedForAces = true;
-        for(var j = 0; j != 8; j++) {
-          var a = as[j], ap = a.parentNode;
-          if((ap.isNormalPile || ap.isWaste) && !a.nextSibling) return this.moveTo(a, f);
-        }
-      }
-    }
-    return false;
-  }
+  autoplayMove: "commonish 2deck"
 };

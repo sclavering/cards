@@ -30,7 +30,7 @@ AllGames.canfield = {
   },
 
   deal: function(cards) {
-    this.reserve.dealTo(cards, 12, 1);
+    this.reserve.dealTo(cards, 0, 13);
     this.foundations[0].dealTo(cards, 0, 1);
     for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
@@ -40,12 +40,12 @@ AllGames.canfield = {
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 
-  canMoveToFoundation: function(card, pile) {
+  mayAddCardToFoundation: function(card) {
     if(card.nextSibling) return false;
-    return pile.hasChildNodes() ? pile.lastChild.up==card : card.number==this.foundationStartNumber;
+    return this.hasChildNodes() ? this.lastChild.up==card : card.number==Game.foundationStartNumber;
   },
 
-  canMoveToPile: "descending, alt colours",
+  mayAddCardToPile: "down, opposite colour",
 
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);
@@ -60,9 +60,9 @@ AllGames.canfield = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :  10,
-    "move-from-waste"     :   5,
-    "card-revealed"       :   5,
-    "move-from-foundation": -15
+    "->foundation": 10,
+    "waste->pile": 5,
+    "card-revealed": 5,
+    "foundation->": -15
   }
 }

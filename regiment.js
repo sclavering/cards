@@ -5,7 +5,6 @@ AllGames.regiment = {
 
   id: "regiment",
   cards: 2,
-  canMoveCard: "last on pile",
 
   init: function() {
     var cs = this.cards = makeDecks(2);
@@ -34,9 +33,11 @@ AllGames.regiment = {
     for(i = 0; i != 8; i++) this.reserves[i].dealTo(cards, 10, 1);
   },
 
-  canMoveToFoundation: function(card, pile) {
-    var last = pile.lastChild, twinp = card.twin.parentNode;
-    if(pile.isAceFoundation) {
+  mayTakeCardFromPile: "single card",
+
+  mayAddCardToFoundation: function(card) {
+    var last = this.lastChild, twinp = card.twin.parentNode;
+    if(this.isAceFoundation) {
       // can't start a second ace foundation for a suit
       if(card.isAce) return !last && !(twinp.isFoundation && twinp.isAceFoundation);
       return last && card.number==last.upNumber && card.suit==last.suit;
@@ -46,16 +47,16 @@ AllGames.regiment = {
     return last && last.number==card.upNumber && card.suit==last.suit;
   },
 
-  canMoveToPile: function(card, target) {
+  mayAddCardToPile: function(card) {
     // piles are built up or down (or both) within suit
-    var last = target.lastChild;
+    var last = this.lastChild;
     if(last) return card.suit==last.suit && card.differsByOneFrom(last);
 
     // empty piles must be filled from the closest reserve pile
     var source = card.parentNode.source;
     if(!source.isReserve) return false;
 
-    var reserve = target.reserve;
+    var reserve = this.reserve;
     if(reserve==source) return true;
 
     if(reserve.hasChildNodes()) return false;
@@ -66,7 +67,7 @@ AllGames.regiment = {
     while(next && !next.hasChildNodes() && next!=source) next = next.next, nextDist++;
 
     // if trying to move from a reserve to the right
-    if(source.col > target.col) return next==source && (!prev || prevDist>=nextDist);
+    if(source.col > this.col) return next==source && (!prev || prevDist>=nextDist);
     return prev==source && (!next || nextDist>=prevDist);
   },
 
@@ -80,7 +81,7 @@ AllGames.regiment = {
     const ps = parent.isNormalPile ? parent.following : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p.hasChildNodes() && this.canMoveToPile(card, p)) return p;
+      if(p.hasChildNodes() && p.mayAddCard(card)) return p;
     }
     // look for an empty pile to move the card to
     if(!parent.isReserve) return null;
@@ -92,7 +93,7 @@ AllGames.regiment = {
         else {
           p = !next.up.hasChildNodes() ? next.up : (!next.down.hasChildNodes() ? next.down : null);
           if(p) {
-            if(this.canMoveTo(card, p)) return p;
+            if(p.mayAddCard(card)) return p;
             else next = null; // another reserve is closer to p; it will be closer to any pile right of p too
           } else next = next.next;
         }
@@ -102,7 +103,7 @@ AllGames.regiment = {
         else {
           p = !prev.up.hasChildNodes() ? prev.up : (!prev.down.hasChildNodes() ? prev.down : null);
           if(p) {
-            if(this.canMoveTo(card, p)) return p;
+            if(p.mayAddCard(card)) return p;
             else prev = null;
           } else prev = prev.prev;
         }
@@ -139,8 +140,8 @@ AllGames.regiment = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :  10,
-    "card-revealed"       :   5,
-    "move-from-foundation": -15
+    "->foundation": 10,
+    "card-revealed": 5,
+    "foundation->": -15
   }
 };

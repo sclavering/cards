@@ -22,26 +22,27 @@ var GolfBase = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  canMoveCard: function(card) {
-    return (card.parentNode.isNormalPile && !card.nextSibling);
+  mayTakeCardFromFoundation: "no",
+
+  mayTakeCardFromPile: "single card",
+
+  mayAddCardToFoundation: function(card) {
+    return card.differsByOneFrom(this.lastChild);
   },
 
-  canMoveTo: function(card, pile) {
-    if(pile!=this.foundation) return false;
-    var last = pile.lastChild;
-    return card.differsByOneFrom(last);
-  },
+  mayAddCardToPile: "no",
 
   getHints: function() {
+    const f = this.foundation, ps = this.piles;
     for(var i = 0; i != 7; i++) {
-      var card = this.piles[i].lastChild;
-      if(card && this.canMoveTo(card, this.foundation))
-        this.addHint(card,this.foundation);
+      var card = ps[i].lastChild;
+      if(card && f.mayAddCard(card)) this.addHint(card, f);
     }
   },
 
-  smartMove: function(card) {
-    if(this.canMoveTo(card, this.foundation)) this.moveTo(card, this.foundation);
+  doBestMoveForCard: function(card) {
+    const f = this.foundation;
+    if(f.mayAddCard(card)) this.moveTo(card, f);
   },
 
   hasBeenWon: function() {
@@ -49,8 +50,8 @@ var GolfBase = {
   },
 
   scores: {
-    "move-to-foundation": -1,
-    "dealt-from-stock"  : -1
+    "->foundation": -1,
+    "dealt-from-stock": -1
   }
 };
 

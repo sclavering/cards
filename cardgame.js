@@ -54,16 +54,28 @@ var BaseCardGame = {
   initialise: function() {
     this.initialised = true;
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
+
+    // see rules.js
+    // if any of various members that should be functions are instead strings then substitute appropriate function
+    for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
+    // the mayTakeCardFromFoo and mayAddCardToFoo take values from Rules.mayTakeCard an Rules.mayAddCard respectively
+    const takes = ["mayTakeCardFromStock","mayTakeCardFromWaste","mayTakeCardFromReserve",
+                  "mayTakeCardFromCell","mayTakeCardFromFoundation","mayTakeCardFromPile"];
+    const adds = ["mayAddCardToStock","mayAddCardToWaste","mayAddCardToReserve",
+                  "mayAddCardToCell","mayAddCardToFoundation","mayAddCardToPile"];
+    for(var i = 0; i != takes.length; i++) {
+      r = takes[i];
+      if(typeof this[r] == "string") this[r] = Rules.mayTakeCard[this[r]];
+      r = adds[i];
+      if(typeof this[r] == "string") this[r] = Rules.mayAddCard[this[r]];
+    }
+
     this.initXulElement();
     this.init();
 
     // see comments above
     if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
     else if(!("isCard" in this.cards[0])) this.cards = makeCardSuits.apply(null, this.cards);
-
-    // see rules.js
-    // if any of various members that should be functions are instead strings then substitute appropriate function
-    for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
   },
 
   initXulElement: function() {
@@ -98,48 +110,54 @@ var BaseCardGame = {
   initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
     var allpiles = this.allpiles = [];
-    var id = this.id;
+    var id = this.id+"-";
 
-    function initPileOfType(type, property) {
-      var pile = initPileFromId(id+type);
-      if(!pile) return null;
-      pile[property] = true;
-      allpiles.push(pile);
-      return pile;
+    const items1 = ["stock", "waste", "reserve", "foundation"];
+    const props1 = ["isStock", "isWaste", "isReserve", "isFoundation"];
+    const takes1 = ["mayTakeCardFromStock", "mayTakeCardFromWaste", "mayTakeCardFromReserve", "mayTakeCardFromFoundation"];
+    const adds1 = ["mayAddCardToStock", "mayAddCardToWaste", "mayAddCardToReserve", "mayAddCardToFoundation"];
+
+    // init piles of which there are only one (stock, waste, and a reserve or foundation in some cases)
+    for(var i = 0; i != 4; i++) {
+      var item = items1[i];
+      var p = this[item] = initPileFromId(id+item, props1[i], this[takes1[i]], this[adds1[i]]);
+      if(p) allpiles.push(p);
     }
 
-    function initPilesOfType(type, property) {
-      type = id + type;
-      var ps = [];
-      for(var i = 0; true; i++) {
-        var node = initPileFromId(type+i);
-        if(!node) break;
-        node[property] = true;
-        ps.push(node);
-        allpiles.push(node);
+    const items2 = ["reserve", "cell", "foundation", "pile"];
+    const props2 = ["isReserve", "isCell", "isFoundation", "isNormalPile"];
+    const takes2 = ["mayTakeCardFromReserve", "mayTakeCardFromCell", "mayTakeCardFromFoundation", "mayTakeCardFromPile"];
+    const adds2 = ["mayAddCardToReserve", "mayAddCardToCell", "mayAddCardToFoundation", "mayAddCardToPile"];
+
+    // init the collections of piles of various types
+    for(i = 0; i != 4; i++) {
+      item = items2[i];
+      var type = id+item+"-", property = props2[i];
+      var mayTakeCard = this[takes2[i]], mayAddCard = this[adds2[i]];
+      var ps = this[item+"s"] = [];
+      for(var j = 0; true; j++) {
+        p = initPileFromId(type+j, property, mayTakeCard, mayAddCard);
+        if(!p) break;
+        ps.push(p);
+        allpiles.push(p);
       }
-      if(!i) return ps;
-      var max = i - 1;
-      for(i = 0; i != max; i++) ps[i].next = ps[i+1], ps[i+1].prev = ps[i];
-      return ps;
+      if(!j) continue;
+      // allow each collection to be used as a doubly-linked list
+      var max = j - 1;
+      for(j = 0; j != max; j++) ps[j].next = ps[j+1], ps[j+1].prev = ps[j];
     }
 
-    this.stock = initPileOfType("-stock", "isStock");
-    this.waste = initPileOfType("-waste", "isWaste");
-    this.foundation = initPileOfType("-foundation", "isFoundation");
-    this.reserve = initPileOfType("-reserve", "isReserve");
-
-    this.piles = initPilesOfType("-pile-", "isNormalPile");
-    this.foundations = initPilesOfType("-foundation-", "isFoundation");
-    this.reserves = initPilesOfType("-reserve-", "isReserve");
-    this.cells = initPilesOfType("-cell-", "isCell");
-
-    if(this.stock) {
+    const s = this.stock;
+    if(s) {
       // a <label/> for displaying the num. of deals left
-      var counter = this.stock.counter = document.getElementById(id+"-stock-counter");
+      var counter = document.getElementById(id+"stock-counter");
       if(counter) {
-        counter.set = function(val) { this.value = this._value = val; };
-        counter.add = function(val) { this.value = this._value += val; };
+        s._counter = counter;
+        s.__defineGetter__("counter", function() { return this._counter._value; });
+        s.__defineSetter__("counter", function(val) { var c = this._counter; return c.value = c._value = val; });
+      } else {
+        // useless number that dealFromStock can twiddle without causing problems
+        s.counter = 0;
       }
     }
 
@@ -175,7 +193,7 @@ var BaseCardGame = {
     this.cardsAsDealt = cards.copy;
     this.deal(cards);
 
-    if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
+    if(this.stock) this.stock.counter = this.stockCounterStart;
 
     if(this.canRedeal()) gCmdRedeal.removeAttribute("disabled");
     else gCmdRedeal.setAttribute("disabled", "true");
@@ -187,7 +205,7 @@ var BaseCardGame = {
     this.clearGame();
     this.redealsRemaining = this.redeals;
     this.deal(this.cardsAsDealt.copy);
-    if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
+    if(this.stock) this.stock.counter = this.stockCounterStart;
 
     var done = this.actionsDone;
     for(var i = 0; i != done.length; i++) {
@@ -245,11 +263,10 @@ var BaseCardGame = {
   // action is an Action object
   getScoreFor: function(action) {
     var actionstr = action.action;
-    if(actionstr in this.scores) return this.scores[actionstr];
-    return 0;
+    return (actionstr in this.scores) ? this.scores[actionstr] : 0;
   },
 
-  // a string->number mapping of scores
+  // a string->number map of scores
   scores: {},
 
 
@@ -288,13 +305,6 @@ var BaseCardGame = {
     if(!action.synchronous) return;
     disableUI();
     setTimeout(animatedActionFinished, 30);
-/*
-    if(action.synchronous && !this.autoplay()) {
-      if(this.actionsDone.length==1) gCmdUndo.removeAttribute("disabled");
-      if(hadRedos) gCmdRedo.setAttribute("disabled","true");
-      if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true"); // yuck.
-    }
-*/
   },
 
   // Action objects (see actions.js) each implement an undo() method.
@@ -328,56 +338,66 @@ var BaseCardGame = {
 
 
 
+  // === Testing if moves are allowed =====================
+
+  // These methods are copied onto all piles of the relevant type as their "mayTakeCard"
+  // method.  They should be functions taking a single arg. which is a card (which will be
+  // a childNode of that pile), and return a boolean indicating whether it may be moved.
+  // String values come from Rules.mayTakeCard.
+
+  mayTakeCardFromStock: "no",
+
+  mayTakeCardFromWaste: "single card",
+
+  mayTakeCardFromReserve: "single card",
+
+  mayTakeCardFromCell: "yes",
+
+  mayTakeCardFromFoundation: "single card",
+
+  mayTakeCardFromPile: "face up",
+
+
+  // These methods are copied onto piles of the relevant type as their "mayAddCard" method.
+  // They should be functions taking a single arg. which is a card to be added (along with
+  // all its nextSiblings) to the pile, and return a boolean indicating whether that is OK.
+  // String values come from Rules.mayAddCard.
+
+  mayAddCardToStock: "no",
+
+  mayAddCardToWaste: "no",
+
+  mayAddCardToReserve: "no",
+
+  mayAddCardToCell: "if empty",
+
+  mayAddCardToFoundation: "single card, up in suit or ace in space",
+
+  mayAddCardToPile: null, // to ensure JS console errors for any game which omits this
+
+
+
   // === Moving between piles =============================
 
-  // returns true/false for whether the card can be moved from its current position
-  // this version will be sufficient for some games, others will need to override (e.g. Spider)
-  canMoveCard: function(card) {
-    return card.faceUp;
-  },
-
-  // returns true/false for whether it is a legal move to take card to destination
-  // this function follows the pattern needed by all games seen so far, leaving
-  // them just to implement canMoveToPile and canMoveToFoundation
-  canMoveTo: function(card,target) {
-    if(target.isFoundation) return this.canMoveToFoundation(card,target);
-    if(target.isNormalPile) return this.canMoveToPile(card,target);
-    // should never move to reserves, stock, or waste piles. (for cells see FreeCellGame)
-    return false;
-  },
-
-  // this is the way foundations work in most games: built one card at a time, all the same suit, ascending
-  // games (e.g. Spider, SimpleSimon) where only a complete suit can move to foundation will need to override
-  canMoveToFoundation: function(card,target) {
-    // can only move a single card.
-    if(card.nextSibling) return false;
-    // can move Ace to empty foundation, or other card if it is consecutive and same suit as top card there
-    var last = target.lastChild;
-    return last ? card.suit==last.suit && card.number==last.upNumber : card.isAce;
-  },
-
-  // xxx maybe this should die now?  it was important before doAction existed
   moveTo: function(card, target) {
     this.doAction(new MoveAction(card, card.parentNode.source, target));
     return true;
   },
 
-  // convenience function
-  attemptMove: function(card, target) {
-    if(!this.canMoveTo(card,target)) return false;
-    // *don't* change to calling doAction directly, as some
-    // games might be overriding moveTo but not this function
-    this.moveTo(card,target);
+  // for use by mouse handler only,  FreeCell version is quite different
+  attemptMove: function(card, destination) {
+    if(!destination.mayAddCard(card)) return false;
+    this.moveTo(card, destination);
     return true;
   },
 
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
-    if(!this.canMoveCard(card)) return false;
-    for(var i = 0; i != this.foundations.length; i++)
-      if(this.attemptMove(card,this.foundations[i]))
-        return true;
+    if(!card.parentNode.mayTakeCard(card)) return false;
+    const fs = this.foundations, len = fs.length;
+    for(var i = 0; i != len; i++)
+      if(fs[i].mayAddCard(card)) return this.moveTo(card, fs[i])
     return false;
   },
 
@@ -483,8 +503,7 @@ var BaseCardGame = {
     const ps = this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      // xxx would use canMoveToPile() but that bypasses FreeCell/Towers's movePossible(...)
-      if(p.hasChildNodes() && this.canMoveTo(card, p)) ds.push(p);
+      if(p.hasChildNodes() && p.mayAddCard(card)) ds.push(p);
     }
     if(ds.length) this.addHints(card, ds);
     this.addFoundationHintsFor(card);
@@ -496,19 +515,16 @@ var BaseCardGame = {
     var ds = [];
     for(var i = 0; i != num; i++) {
       var f = fs[i];
-      if(this.canMoveToFoundation(card, f)) this.addHint(card, f);
+      if(f.mayAddCard(card)) this.addHint(card, f);
     }
   },
 
 
 
-  // === Smart move =======================================
-  // Smart move is called when the player right-clicks on a card.  It should
-  // perform the best possible move for that card.
-  // Games should implement getBestMoveForCard(card), or maybe override smartMove()
-  // itself.  See util.js for functions that are helpful in doing so.
-  smartMove: function(card) {
-    if(!this.canMoveCard(card)) return;
+  // === Right-click "intelligent" moving of cards ========
+  // Called when the player right-clicks on a card. Games should implement getBestMoveForCard(card)
+  doBestMoveForCard: function(card) {
+    if(!card.parentNode.mayTakeCard(card)) return;
     var target = this.getBestMoveForCard(card);
     if(target) this.moveTo(card,target);
   },

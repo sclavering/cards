@@ -286,10 +286,14 @@ var cardMethods = {
 
 
 
-function initPileFromId(id) {
+function initPileFromId(id, property, mayTakeCard, mayAddCard) {
   var elt = document.getElementById(id);
   if(!elt) return null;
-  return initPile(elt);
+  initPile(elt);
+  elt[property] = true;
+  elt.mayTakeCard = mayTakeCard;
+  elt.mayAddCard = mayAddCard;
+  return elt;
 }
 
 
@@ -329,6 +333,10 @@ var basicPileProperties = {
   // pixel offset from top-left corner of pile at which a card being added to the pile should be placed
   nextCardLeft: 0,
   nextCardTop: 0,
+
+  // these are replaced in BaseCardGame.initPiles, based on the game's mayTakeCardFrom* and mayAddCardTo* methods
+  mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
+  mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
 
   addCard: function(card) {
     this.appendChild(card);

@@ -16,7 +16,7 @@ AllGames.russiansol = {
     for(var i = 1; i != 7; i++) this.piles[i].dealTo(cards, i, 5);
   },
 
-  canMoveToPile: "onto up, any in spaces",
+  mayAddCardToPile: "onto .up",
 
   getHints: function() {
     for(var i = 0; i != 7; i++) {
@@ -36,8 +36,8 @@ AllGames.russiansol = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :  10,
-    "card-revealed"       :   5,
-    "move-from-foundation": -15
+    "->foundation": 10,
+    "card-revealed": 5,
+    "foundation->": -15
   }
 }

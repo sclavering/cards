@@ -6,7 +6,6 @@ AllGames.whitehead = {
   id: "whitehead",
   layout: "klondike",
   dealFromStock: "to waste",
-  canMoveCard: "descending, in suit",
   getLowestMovableCard: "descending, in suit",
 
   init: function() {
@@ -32,8 +31,10 @@ AllGames.whitehead = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  canMoveToPile: function(card, pile) {
-    var lst = pile.lastChild;
+  mayTakeCardFromPile: "run down, same suit",
+
+  mayAddCardToPile: function(card) {
+    var lst = this.lastChild;
     return !lst || lst==card.up || lst==card.on;
   },
 
@@ -60,9 +61,9 @@ AllGames.whitehead = {
   hasBeenWon: "13 cards on each foundation",
 
   scores: {
-    "move-to-foundation"  :   10,
-    "move-from-waste"     :    5,
-    "move-from-foundation":  -15,
-    "stock-turned-over"   : -100
+    "->foundation": 10,
+    "waste->pile": 5,
+    "foundation->": -15,
+    "stock-turned-over": -100
   }
 };

@@ -4,8 +4,6 @@ AllGames.towers = {
   __proto__: FreeCellGame,
 
   id: "towers",
-  canMoveCard: "descending, in suit",
-  canMoveToPile: "descending, in suit, kings in spaces",
   getLowestMovableCard: "descending, in suit",
 
   init: function() {
@@ -18,12 +16,15 @@ AllGames.towers = {
     for(i = 1; i != 3; i++) this.cells[i].dealTo(cards, 0, 1);
   },
 
-  // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
-  movePossible: function(card, target) {
-    if(!card.nextSibling) return true;
-    var numToMove = 0;
-    for(var next = card; next; next = next.nextSibling) numToMove++;
-    return numToMove <= 1 + this.numEmptyCells;
+  mayTakeCardFromPile: "run down, same suit",
+
+  mayAddCardToPile: function(card) {
+    var last = this.lastChild;
+    if(last ? last != card.up : !card.isKing) return false;
+    // check if there are enough cells to perform the move
+    var toMove = 0;
+    for(var next = card; next; next = next.nextSibling) toMove++;
+    return (toMove <= 1 + Game.numEmptyCells) ? true : 0;
   },
 
   getHints: function() {
@@ -35,10 +36,10 @@ AllGames.towers = {
     var up = card.up;
     if(up) {
       var upp = up.parentNode;
-      if(upp.isNormalPile && !up.nextSibling && this.movePossible(card, upp)) return upp;
+      if(upp.isNormalPile && !up.nextSibling && upp.mayAddCard(card)) return upp;
     } else {
       var p = card.parentNode, pile = p.isNormalPile ? findEmpty(p.surrounding) : this.firstEmptyPile;
-      if(pile) return pile;
+      if(pile && pile.mayAddCard(card)) return pile;
     }
     return card.nextSibling ? null : this.emptyCell;
   },

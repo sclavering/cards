@@ -10,8 +10,6 @@ AllGames.mod3 = {
   id: "mod3",
   cards: null,
   dealFromStock: "to piles",
-  canMoveCard: "last on pile",
-  canMoveToPile: "isempty",
 
   init: function() {
     var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
@@ -72,11 +70,15 @@ AllGames.mod3 = {
     return true;
   },
 
-  canMoveToFoundation: function(card, pile) {
-    if(card.parentNode == pile) return false;
-    var last = pile.lastChild;
-    return last ? last.inPlace && (card.down==last || card.twin.down==last) : !card.down && card.row==pile.row;
+  mayTakeCardFromPile: "single card",
+
+  mayAddCardToFoundation: function(card) {
+    if(card.parentNode == this) return false;
+    var last = this.lastChild;
+    return last ? last.inPlace && (card.down==last || card.twin.down==last) : !card.down && card.row==this.row;
   },
+
+  mayAddCardToPile: "if empty",
 
   getHints: function() {
     for(var i = 0; i != this.allpiles.length; i++) {
@@ -87,7 +89,7 @@ AllGames.mod3 = {
       var row = this.rows[card.row];
       for(var j = 0; j != 8; j++) {
         var target = row[j];
-        if(!this.canMoveTo(card,target)) continue;
+        if(!target.mayAddCard(card)) continue;
         // hints are useful if:
         // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
         // - |target| is nonempty, and |card| is the only card in |source|
@@ -140,7 +142,11 @@ AllGames.mod3 = {
   },
 
   hasBeenWon: function() {
-    return (this.score==MOD3_MAX_SCORE);
+    if(this.stock.hasChildNodes()) return false;
+    const ps = this.piles;
+    for(var i = 0; i != 8; i++)
+      if(ps[i].hasChildNodes()) return false
+    return true;
   },
 
   getScoreFor: function(action) {
@@ -160,7 +166,7 @@ AllGames.mod3 = {
     var notInSource = card.parentNode!=source;
 
     if(source.isFoundation) {
-      if(notInSource ? this.canMoveTo(card,source) : source.baseCardInPlace) score -= MOD3_CARD_IN_PLACE;
+      if(notInSource ? source.mayAddCard(card) : source.baseCardInPlace) score -= MOD3_CARD_IN_PLACE;
     } else {
       if(notInSource ? !source.hasChildNodes() : !card.previousSibling) score += MOD3_EMPTY_PILE;
     }

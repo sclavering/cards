@@ -104,9 +104,9 @@ SimpleSimon.autoplayMove = function() {
     var length = stack.childNodes.length;
     if(length>=13) {
       var card = stack.childNodes[length-13];
-      for(var i = 0; i < 4; i++) {
-        if(this.canMoveCard(card) && this.canMoveToFoundation(card,this.foundations[i])) {
-          this.moveTo(card, this.foundations[i]);
+      for(var j = 0; j < 4; j++) {
+        if(this.canMoveCard(card) && this.canMoveToFoundation(card,this.foundations[j])) {
+          this.moveTo(card, this.foundations[j]);
           return true;
         }
       }

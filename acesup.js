@@ -51,20 +51,15 @@ Games["acesup"] = {
 
   ///////////////////////////////////////////////////////////
   //// smart move
-  smartMove: function(card) {
-    if(!this.canMoveCard(card)) return;
-    if(this.canMoveToFoundation(card)) {
-      this.moveTo(card,this.foundation);
-    } else {
-      var stack = this.getNextEmptyStack(card.parentNode);
-      if(stack) this.moveTo(card,stack);
-    }
+  getBestMoveForCard: function(card) {
+    if(this.canMoveToFoundation(card)) return this.foundation;
+    return this.getNextEmptyStack(card.parentNode);
   },
   getNextEmptyStack: function(stack) {
     var stacknum = parseInt(stack.id[stack.id.length-1]); // last char of id is the stack number
-    for(var i = 0; i < 4; i++) {
+    for(var i = 1; i < 4; i++) {
       var next = this.stacks[(i+stacknum) % 4];
-      if(next!=stack && !next.hasChildNodes()) return next;
+      if(!next.hasChildNodes()) return next;
     }
     return null;
   },

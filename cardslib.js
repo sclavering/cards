@@ -560,10 +560,6 @@ function disableDifficultyMenu() {
   gDifficultyLevelMenu.setAttribute("disabled","true");
 }
 
-function displayScore(score) {
-  gScoreDisplay.value = score;
-}
-
 // called from BaseCardGame.autoplay(), which is a function called after all significant
 // moves, so handles checking whether the game has been won and taking appropriate action.
 function showGameWon() {

@@ -42,11 +42,12 @@ Games["mod3"] = {
     for(i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 0, 1);
     dealToPile(cards, this.stock, cards.length, 0);
 
-    // set the initial score
+    var score = 0;
     for(i = 0; i != 24; i++) {
       var f = this.foundations[i];
-      if(f.firstChild.number==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
+      if(f.firstChild.number==f.baseNumber) score += MOD3_CARD_IN_PLACE;
     }
+    this.setScoreTo(score);
   },
 
   // games that start with no cards in the correct place on the foundations are impossible

@@ -15,7 +15,7 @@ Games["golf"] = {
 
   deal: function(cards) {
     var cardsPerColumn = [,5,5,8][this.difficultyLevel];
-    this.score = [,51,51,103][this.difficultyLevel];
+    this.setScoreTo([,51,51,103][this.difficultyLevel]);
     for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, cardsPerColumn);
     dealToPile(cards, this.foundation, 0, 1);
     dealToPile(cards, this.stock, cards.length, 0);

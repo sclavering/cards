@@ -207,7 +207,7 @@ var BaseCardGame = {
 
   newGame: function() {
     this.mouseHandler.reset();
-    this.score = 0;
+    this.setScoreTo(0);
     this.actionsDone = [];
     this.actionsUndone = [];
     this.clearGame();
@@ -232,8 +232,6 @@ var BaseCardGame = {
       if(!this.waste) dealsLeft = Math.ceil(dealsLeft / this.stockDealTargets.length);
       this.stock.counter.value = dealsLeft;
     }
-
-    displayScore(this.score); // must do after deal(), because not all games start the score at 0
 
     gCmdUndo.setAttribute("disabled","true");
     gCmdRedo.setAttribute("disabled","true");
@@ -276,10 +274,15 @@ var BaseCardGame = {
   // games should override either |getScoreFor|, or |scores|
   score: 0,
 
+  setScoreTo: function(value) {
+    this.score = value;
+    gScoreDisplay.value = value;
+  },
+
   adjustScoreBy: function(delta) {
     if(!delta) return;
     this.score += delta;
-    displayScore(this.score);
+    gScoreDisplay.value = this.score;
   },
 
   // action is an Action object

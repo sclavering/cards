@@ -448,7 +448,7 @@ function createHighlighter() {
     const cardbox = card.boxObject;
     this.left = cardbox.x - gGameStackLeft;
     this.top = cardbox.y - gGameStackTop;
-    this.width = card.boxObject.width;
+    this.width = cardbox.width;
     const lastbox = card.parentNode.lastChild.boxObject;
     if(card.isCard) this.height = lastbox.y + lastbox.height - cardbox.y;
     else this.height = cardbox.height;
@@ -522,8 +522,10 @@ var CardMover = {
   cards: null, // a <stack/> to hold the cards being moved
   target: null, // where its going to
   interval: null, // ref to the window.setInterval triggering the animation
-  targetTop: 0, // coords where the card should end up (incl offset into pile)
-  targetLeft: 0,
+  tx: 0, // x coord to move to, including any offset into pile
+  ty: 0,
+  stepX: 0, // amount to change the position by on each step
+  stepY: 0,
   stepNum: 0,
 
   init: function() {
@@ -531,25 +533,35 @@ var CardMover = {
     this.cards = createFloatingPile("fan-down");
     this.cards.id = "card-move-pile";
   },
+
   move: function(firstCard, target) {
     Cards.disableUI();
-    // move firstCard and all cards on top of it to the move stack
+
+    var sx = firstCard.boxObject.x - gGameStackLeft;
+    var sy = firstCard.boxObject.y - gGameStackTop;
+    var tx = this.tx = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
+    var ty = this.ty = target.boxObject.y - gGameStackTop + target.getNextCardTop();
+    var dx = tx - sx;
+    var dy = ty - sy;
+
+    // otherwise we'll end up doing an inifinite step move
+    if(!dx && !dy) {
+      firstCard.transferTo(target);
+      if(!Game.autoplay()) Cards.enableUI();
+      return;
+    }
+
+    // put cards in the temp pile. _top and _left properties remain as numbers, unlike top and left
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
-    // _top/_left remain as numbers, whereas top/left get converted to strings
-    this.cards.left = this.cards._left = firstCard.boxObject.x - gGameStackLeft;
-    this.cards.top = this.cards._top = firstCard.boxObject.y - gGameStackTop
+    this.cards.left = this.cards._left = sx;
+    this.cards.top = this.cards._top = sy;
     firstCard.transferTo(this.cards);
-    // set up conditions for animation stuff
     this.target = target;
-    this.targetLeft = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
-    this.targetTop = target.boxObject.y - gGameStackTop + target.getNextCardTop();
-    //
-    var xdistance = this.targetLeft - this.cards._left;
-    var ydistance = this.targetTop - this.cards._top;
-    var angle = Math.atan2(ydistance,xdistance);
-    this.xchange = Math.cos(angle) * 55;
-    this.ychange = Math.sin(angle) * 55;
-    this.stepNum = xdistance ? Math.floor(xdistance / this.xchange) : Math.floor(ydistance / this.ychange);
+
+    var angle = Math.atan2(dy, dx);
+    this.stepX = Math.cos(angle) * 55;
+    this.stepY = Math.sin(angle) * 55;
+    this.stepNum = Math.floor(dx ? dx/this.stepX : dy/this.stepY);
 
     this.interval = setInterval(function(){CardMover.step();}, 30);
     this.step();
@@ -557,14 +569,14 @@ var CardMover = {
 
   step: function() {
     if(this.stepNum==0) return this.moveComplete();
-    this.cards.left = this.cards._left += this.xchange;
-    this.cards.top = this.cards._top += this.ychange;
+    this.cards.left = this.cards._left += this.stepX;
+    this.cards.top = this.cards._top += this.stepY;
     this.stepNum--;
   },
 
   moveComplete: function() {
-    this.cards.left = this.targetLeft;
-    this.cards.top = this.targetTop;
+    this.cards.left = this.tx;
+    this.cards.top = this.ty;
     clearInterval(this.interval);
     // Using a timer forces moz to paint the cards at their destination (but still as children
     // of this.cards) before transferring them, which is good because the transfer takes a while.

@@ -28,6 +28,12 @@ AllGames.freecell = {
     const ps = this.piles;
     for(var i = 0; i != 4; i++) ps[i].dealTo(cards, 0, 7);
     for(i = 4; i != 8; i++) ps[i].dealTo(cards, 0, 6);
+    /* a predictable (and illegal) deal for debugging FreeCellMover
+    cards = this.cardsAsDealt = this.cards.slice(0);
+    const is = [12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14];
+    for(var i = 0; i != is.length; i++) ps[0].addCard(cards[is[i]].setFaceUp());
+    for(i = 0; i != 4; i++) this.cells[i].appendChild(cards[51-i]);
+    */
   },
 
   mayTakeCardFromPile: "run down, alt colours",

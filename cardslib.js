@@ -622,7 +622,7 @@ function newGame(cards) {
 function restartGame() {
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
-  if(Game.canUndo) newGame(Game.cardsAsDealt.copy);
+  if(Game.canUndo) newGame(Game.cardsAsDealt.slice(0));
 }
 
 

@@ -46,10 +46,7 @@ var FreeCellGame = {
   // insufficient spaces)
   attemptMove: function(source, target) {
     var can = Game.canMoveTo(source,target)
-    if(can) {
-      Game.moveTo(source,target);
-      return true;
-    }
+    if(can) return Game.moveTo(source,target);
     // insufficient spaces
     if(can===0) {
       // XXX: use prompt service, or thing of some completely different way

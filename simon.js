@@ -48,12 +48,8 @@ Games["simon"] = {
       if(length < 13) continue;
       var card = stack.childNodes[length-13];
       if(!this.canMoveCard(card)) continue;
-      for(var j = 0; j < 4; j++) {
-        if(this.canMoveTo(card, this.foundations[j])) {
-          this.moveTo(card, this.foundations[j]);
-          return true;
-        }
-      }
+      for(var j = 0; j < 4; j++)
+        if(this.attemptMove(card, this.foundations[j])) return true;
     }
     return false;
   },

@@ -6,7 +6,7 @@ Games["mod3"] = {
   __proto__: BaseCardGame,
 
   id: "mod3",
-  rule_dealFromStock: "to-stacks",
+  rule_dealFromStock: "to-piles",
   rule_canMoveCard: "last-on-pile",
   rule_canMoveToPile: "isempty",
 
@@ -20,7 +20,7 @@ Games["mod3"] = {
       for(var k = 0; k != 8; k++) this.rows[j][k].baseNumber = j + 2;
     }
   },
-  
+
   deal: function() {
     var i;
 
@@ -58,7 +58,7 @@ Games["mod3"] = {
     var last = stack.lastChild;
     return (card.isSameSuit(last) && card.number()==last.number()+3 && stack.baseCardInPlace());
   },
-  
+
   getHints: function() {
     for(var i = 0; i < this.allstacks.length; i++) {
       var source = this.allstacks[i];
@@ -119,10 +119,7 @@ Games["mod3"] = {
         }
       }
 
-      if(ok && target) {
-        this.moveTo(card, target);
-        return true;
-      }
+      if(ok && target) return this.moveTo(card, target);
     }
     return false;
   },
@@ -141,7 +138,7 @@ Games["mod3"] = {
         if(this.stacks[j].childNodes.length==1) score -= MOD3_EMPTY_TABLEAU;
       return score;
     }
-    
+
     // it's a MoveAction
     var card = actionObj.card, source = actionObj.source;
     switch(action) {
@@ -157,7 +154,7 @@ Games["mod3"] = {
         // was the card already in a good place?
         return this.canMoveTo(card,source) ? 0 : MOD3_CARD_IN_PLACE;
     }
-    
+
     // just in case
     return 0;
   }

@@ -886,6 +886,32 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox>
   </vbox>
 
+  <!-- Wasp -->
+  <vbox id="wasp" hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <stock id="wasp-stock"/><flex/>
+      <pilespacer/><flex/>
+      <pilespacer/><flex/>
+      <foundation id="wasp-foundation-0"/><flex/>
+      <foundation id="wasp-foundation-1"/><flex/>
+      <foundation id="wasp-foundation-2"/><flex/>
+      <foundation id="wasp-foundation-3"/><flex/>
+    </hbox>
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <pile class="fan-down" id="wasp-pile-0"/><flex/>
+      <pile class="fan-down" id="wasp-pile-1"/><flex/>
+      <pile class="fan-down" id="wasp-pile-2"/><flex/>
+      <pile class="fan-down" id="wasp-pile-3"/><flex/>
+      <pile class="fan-down" id="wasp-pile-4"/><flex/>
+      <pile class="fan-down" id="wasp-pile-5"/><flex/>
+      <pile class="fan-down" id="wasp-pile-6"/><flex/>
+    </hbox>
+  </vbox>
+
   <!-- Yukon, Russian Solitaire (formerly known as Grandfather) -->
   <vbox id="yukon" hidden="true">
     <rowspacer/>

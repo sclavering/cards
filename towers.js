@@ -2,7 +2,7 @@ Games["towers"] = {
   __proto__: FreeCellGame,
 
   id: "towers",
-  rule_canMoveCard: "descending,in-suit",
+  rule_canMoveCard: "descending, in suit",
   rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
 
   deal: function() {

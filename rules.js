@@ -8,24 +8,32 @@ Current choices:
 rule_canMoveCard:
   "descending"
   "descending,alt-colours"
-  "descending,in-suit"
+  "descending, in suit"
+  "descending mod13, in suit"
   "descending,in-suit,not-from-foundation"
   "last-on-pile"
 
 rule_canMoveToPile:
   "descending"
+  "descending mod13"
   "descending,alt-colours,kings-in-spaces"
   "descending,in-suit,kings-in-spaces"
   "descending,alt-colours"
-  "descending,in-suit"
+  "descending, in suit"
   "isempty"
+
+rule_canMoveToFoundation:
+  (these are for spider-like games, and ignore the specific foundation being moved to)
+  "king->ace flush"
+  "king->ace flush, quick" (only checks the first and last card of the run)
 
 rule_dealFromStock:
   "to-waste"
   "to-waste,can-turn-stock-over"
   "to-foundation"
-  "to-stacks"
-  "to-stacks,if-none-empty"
+  "to-piles"
+  "to-piles,if-none-empty"
+  "to-nonempty-piles"
 
 */
 
@@ -34,9 +42,8 @@ var Rules = {
     "descending":
     function(card) {
       if(card.faceDown()) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notConsecutiveTo(next)) return false;
-      }
       return true;
     },
 
@@ -44,19 +51,25 @@ var Rules = {
     function(card) {
       if(card.faceDown()) return false;
       // ensure we have a run in alternating colours
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.isSameColour(next) || card.notConsecutiveTo(next)) return false;
-      }
       return true;
     },
 
-    "descending,in-suit":
+    "descending, in suit":
     function(card) {
       if(card.faceDown()) return false;
       // ensure we have a running flush from top card on stack to |card|
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notSameSuit(next) || card.notConsecutiveTo(next)) return false;
-      }
+      return true;
+    },
+
+    "descending mod13, in suit":
+    function(card) {
+      if(card.faceDown()) return false;
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
+        if(card.notSameSuit(next) || !card.isConsecutiveMod13To(next)) return false;
       return true;
     },
 
@@ -65,9 +78,8 @@ var Rules = {
       if(card.faceDown()) return false;
       if(card.parentNode.isFoundation) return false;
       // ensure we have a running flush from top card on stack to |card|
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notSameSuit(next) || card.notConsecutiveTo(next)) return false;
-      }
       return true;
     },
 
@@ -82,7 +94,13 @@ var Rules = {
     "descending":
     function(card, pile) {
       var last = pile.lastChild;
-      return (!last || last.isConsecutiveTo(card));
+      return (!last || (last.faceUp() && last.isConsecutiveTo(card)));
+    },
+
+    "descending mod13":
+    function(card, pile) {
+      var last = pile.lastChild;
+      return (!last || (last.faceUp() && last.isConsecutiveMod13To(card)));
     },
 
     "descending,alt-colours,kings-in-spaces":
@@ -103,7 +121,7 @@ var Rules = {
       return (!last || (last.faceUp() && last.isConsecutiveTo(card) && last.notSameColour(card)));
     },
 
-    "descending,in-suit":
+    "descending, in suit":
     function(card, pile) {
       var last = pile.lastChild;
       return (!last || (last.faceUp() && last.isConsecutiveTo(card) && last.isSameSuit(card)));
@@ -112,6 +130,22 @@ var Rules = {
     "isempty":
     function(card, pile) {
       return !pile.hasChildNodes();
+    }
+  },
+
+
+  canMoveToFoundation: {
+    "king->ace flush":
+    function(card, pile) {
+      if(!(card.isKing() && card.parentNode.lastChild.isAce())) return false;
+      var next = card.nextSibling;
+      while(next && card.isSameSuit(next) && card.isConsecutiveTo(next)) card = next, next = next.nextSibling;
+      return !next; // all cards should be part of the run
+    },
+
+    "king->ace flush, quick":
+    function(card, pile) {
+      return(card.isKing() && card.parentNode.lastChild.isAce());
     }
   },
 
@@ -130,15 +164,19 @@ var Rules = {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.foundation));
     },
 
-    "to-stacks": function() {
+    "to-piles": function() {
       if(!this.stock.hasChildNodes()) return;
-      this.doAction(new DealFromStockToStacksAction(this.stacks));
+      this.doAction(new DealToPilesAction(this.stacks));
     },
 
-    "to-stacks,if-none-empty": function() {
+    "to-piles,if-none-empty": function() {
       if(!this.stock.hasChildNodes()) return;
       for(var i = 0; i < Game.stacks.length; i++) if(!Game.stacks[i].hasChildNodes()) return;
-      this.doAction(new DealFromStockToStacksAction(this.stacks));
+      this.doAction(new DealToPilesAction(this.stacks));
+    },
+
+    "to-nonempty-piles": function() {
+      this.doAction(new DealToNonEmptyPilesAction());
     }
   }
 }

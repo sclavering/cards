@@ -3,7 +3,7 @@ Games["acesup"] = {
 
   id: "acesup",
   acesHigh: true,
-  rule_dealFromStock: "to-stacks",
+  rule_dealFromStock: "to-piles",
   rule_canMoveToPile: "isempty",
 
   init: function() {

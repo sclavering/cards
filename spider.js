@@ -1,17 +1,15 @@
-// both Spider and BlackWidow (a spider variant)
+// Spider, BlackWidow, Wasp, and Grounds for Divorce
 
 var BaseSpiderGame = {
   __proto__: BaseCardGame,
 
-  layout: "spider",
-
-  rule_dealFromStock: "to-stacks,if-none-empty",
+  rule_dealFromStock: "to-piles,if-none-empty",
   rule_canMoveToPile: "descending",
 
   moveTo: function(card, target) {
     if(target.isFoundation) target = this.getFirstEmptyFoundation();
     BaseCardGame.moveTo.call(this,card,target);
-    return true; // xxx unnecessary?
+    return true;
   },
   getFirstEmptyFoundation: function() {
     for(var i = 0; i < this.foundations.length; i++)
@@ -28,15 +26,14 @@ var BaseSpiderGame = {
 
   autoplayMove: function() {
     // remove completed suits
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i != this.stacks.length; i++) {
       var stack = this.stacks[i];
       var length = stack.childNodes.length;
       if(length>=13) {
         var card = stack.childNodes[length-13];
         // note that it's irrelevant which foundation we try to move to, moveTo will pick the right one
         if(card.isKing() && this.canMoveCard(card) && this.canMoveToFoundation(card,null)) {
-          this.moveTo(card,this.foundations[0]);
-          return true;
+          return this.moveTo(card,this.foundations[0]);
         }
       }
     }
@@ -44,7 +41,7 @@ var BaseSpiderGame = {
   },
 
   hasBeenWon: function() {
-    for(var i = 0; i < 8; i++)
+    for(var i = 0; i < this.foundations.length; i++)
       if(this.foundations[i].childNodes.length!=13) return false;
     return true;
   },
@@ -62,7 +59,8 @@ Games["spider"] = {
 
   id: "spider",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
-  rule_canMoveCard: "descending,in-suit",
+  rule_canMoveCard: "descending, in suit",
+  rule_canMoveToFoundation: "king->ace flush, quick",
 
   deal: function() {
     var cards;
@@ -75,14 +73,6 @@ Games["spider"] = {
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
     this.dealToStack(cards,this.stock,50,0);
-  },
-
-  canMoveToFoundation: function(card, pile) {
-    // canMoveCard will ensure that this is a running flush, so we just nee this simple check.
-    // We shouldn't check the foundation is empty because in Spider the foundations overlap,
-    // so moveTo chooses which foundation to actually use, and there will always be a foundation
-    // that's empty unless the game has already been won.
-    return(card.isKing() && card.parentNode.lastChild.isAce());
   },
 
   getHints: function() {
@@ -104,7 +94,9 @@ Games["blackwidow"] = {
   __proto__: BaseSpiderGame,
 
   id: "blackwidow",
+  layout: "spider",
   rule_canMoveCard: "descending",
+  rule_canMoveToFoundation: "king->ace flush",
 
   deal: function() {
     var cards = this.shuffleDecks(2);
@@ -112,13 +104,6 @@ Games["blackwidow"] = {
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
     this.dealToStack(cards,this.stock,50,0);
-  },
-
-  canMoveToFoundation: function(card, pile) {
-    if(!(card.isKing() && card.parentNode.lastChild.isAce())) return false;
-    var next = card.nextSibling;
-    while(next && card.isSameSuit(next) && card.isConsecutiveTo(next)) card = next, next = next.nextSibling;
-    return !next; // all cards should be part of the run
   },
 
   getHints: function() {
@@ -131,5 +116,61 @@ Games["blackwidow"] = {
           this.addHint(card,stack);
       }
     }
+  }
+};
+
+
+
+Games["wasp"] = {
+  __proto__: BaseSpiderGame,
+
+  id: "wasp",
+  rule_dealFromStock: "to-piles",
+  rule_canMoveToPile: "descending, in suit",
+  rule_canMoveToFoundation: "king->ace flush",
+
+  deal: function() {
+    var cards = this.shuffleDecks(1);
+    for(var i = 0; i != 3; i++) this.dealToStack(cards, this.stacks[i], 3, 4);
+    for(i = 3; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, 7);
+    this.dealToStack(cards, this.stock, 3, 0);
+  },
+
+  getBestMoveForCard: function(card) {
+    var piles = getPilesRound(card.parentNode);
+    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
+        || searchPiles(piles, testPileIsEmpty);
+  },
+
+  getHints: function() {
+  }
+};
+
+
+
+Games["divorce"] = {
+  __proto__: BaseSpiderGame,
+
+  id: "divorce",
+  layout: "spider",
+  rule_dealFromStock: "to-nonempty-piles",
+  rule_canMoveCard: "descending mod13, in suit",
+  rule_canMoveToPile: "descending mod13",
+
+  deal: function() {
+    var cards = this.shuffleDecks(2);
+    for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
+    this.dealToStack(cards, this.stock, cards.length, 0);
+  },
+
+  canMoveToFoundation: function(card, pile) {
+    return card.parentNode.lastChild.isConsecutiveMod13To(card);
+  },
+
+//  getBestMoveForCard: function(card) {
+//    return null;
+//  },
+
+  getHints: function() {
   }
 };

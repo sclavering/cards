@@ -54,14 +54,14 @@ Games["regiment"] = {
 
     // piles are built up or down (or both) within suit
     if(last) return (card.isSameSuit(last) && card.differsByOneTo(last));
-    
+
     // can only move to an empty pile from the closest reserve pile(s)
     if(!source.isReserve) return false;
-    
+
     var tcol = target.col, scol = source.col;
     if(tcol==scol) return true;
     if(this.reserves[tcol].hasChildNodes()) return false;
-    
+
     var coldiff = Math.abs(tcol-scol);
     var piles = getPilesRound(this.reserves[tcol]);
     for(var i = 0; i!=piles.length && Math.abs(piles[i].col-tcol)!=coldiff; i++)
@@ -97,14 +97,10 @@ Games["regiment"] = {
     for(i = 0; i != 8; i++) {
       var last = this.reserves[i].lastChild;
       if(!last) continue;
-      if(!this.stacks[i].hasChildNodes()) {
-        this.moveTo(last, this.stacks[i]);
-        return true;
-      }
-      if(!this.stacks[i+8].hasChildNodes()) {
-        this.moveTo(last, this.stacks[i+8]);
-        return true;
-      }
+      if(!this.stacks[i].hasChildNodes())
+        return this.moveTo(last, this.stacks[i]);
+      if(!this.stacks[i+8].hasChildNodes())
+        return this.moveTo(last, this.stacks[i+8]);
     }
     return false;
   },
@@ -114,7 +110,7 @@ Games["regiment"] = {
     if(!af) return false;
     var kf = searchPiles(this.kingFoundations, test);
     if(!kf) return false;
-    
+
     var ac = af.lastChild, kc = kf.lastChild;
     if(card.isConsecutiveTo(ac) && card.number() > kc.number()) {
       this.moveTo(card, af);

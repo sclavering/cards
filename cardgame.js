@@ -18,6 +18,7 @@ var BaseCardGame = {
   // see rules.js for the possible values
   rule_canMoveCard: null,
   rule_canMoveToPile: null,
+  rule_canMoveToFoundation: null,
   rule_dealFromStock: null,
 
   // see mouse.js
@@ -77,8 +78,10 @@ var BaseCardGame = {
     // xxx still required for init'ing stock.counter, but not for anything else!
     if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
 
+    // xxx replace with a rules object, so a loop could be used?
     if(this.rule_canMoveCard) this.canMoveCard = Rules.canMoveCard[this.rule_canMoveCard];
     if(this.rule_canMoveToPile) this.canMoveToPile = Rules.canMoveToPile[this.rule_canMoveToPile];
+    if(this.rule_canMoveToFoundation) this.canMoveToFoundation = Rules.canMoveToFoundation[this.rule_canMoveToFoundation];
     if(this.rule_dealFromStock) this.dealFromStock = Rules.dealFromStock[this.rule_dealFromStock];
   },
 
@@ -381,7 +384,7 @@ var BaseCardGame = {
 
   // convenience function
   attemptMove: function(card, target) {
-    if(Game.canMoveTo(card,target)) {
+    if(this.canMoveTo(card,target)) {
       // *don't* change to calling doAction directly, as some
       // games might be overriding moveTo but not this function
       this.moveTo(card,target);

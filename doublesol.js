@@ -80,12 +80,7 @@ DoubleSol.getHintsForCard = function(card) {
 
 ///////////////////////////////////////////////////////////
 //// smart move
-DoubleSol.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var target = this.findBestMoveForCard(card);
-  if(target) this.moveTo(card,target);
-};
-DoubleSol.findBestMoveForCard = function(card) {
+DoubleSol.getBestMoveForCard = function(card) {
   if(card.parentNode==this.waste) {
     // hunt through tableau piles
     for(var i = 0; i < 10; i++)

@@ -63,13 +63,8 @@ Yukon.getHintsForCard = function(card) {
 
 ///////////////////////////////////////////////////////////
 //// smart move
-Yukon.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var target = this.getBestMoveFor(card);
-  if(target) this.moveTo(card,target);
-};
 // finds the first stack from the left where the card can be moved to
-Yukon.getBestMoveFor = function(card) {
+Yukon.getBestMoveForCard = function(card) {
   for(var i = 0; i < 7; i++) {
     var stack = this.stacks[i];
     if(stack!=card.parentNode && stack.hasChildNodes() && this.canMoveTo(card,stack)) return stack;

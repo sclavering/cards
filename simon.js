@@ -62,13 +62,8 @@ SimpleSimon.getHintsForCards = function(card) {
 
 
 ///////////////////////////////////////////////////////////
-//// smartmove (moves cards clicked with middle button to best possible destination
-SimpleSimon.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var destination = this.findBestMoveForCard(card);
-  if(destination) this.moveTo(card,destination);
-};
-SimpleSimon.findBestMoveForCard = function(card) {
+//// smartmove
+SimpleSimon.getBestMoveForCard = function(card) {
   // find move to next card up of same suit
   var dest = this.searchAround(card,this.lastIsConsecutiveAndSameSuit);
   if(dest) return dest;

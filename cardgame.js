@@ -437,13 +437,13 @@ CardGame.prototype = {
 
 
   // for games like FreeCell and Towers
-  getFreeCells: function() {
+  getEmptyCells: function() {
     var freecells = [];
     for(var i = 0; i < this.cells.length; i++)
       if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
     return freecells;
   },
-  countFreeCells: function() {
+  countEmptyCells: function() {
     var cells = 0;
     for(var i = 0; i < this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
     return cells;
@@ -607,8 +607,16 @@ CardGame.prototype = {
   // === Smart move =======================================
   // smart move is called when the player middle clicks on a card.  it should find the best
   // possible move for that card (which will be game dependent) and perform it.
+  // Games can either implement getBestMoveForCard(card), or they can override smartMove itself
   smartMove: function(card) {
+    if(!this.canMoveCard(card)) return;
+    var target = this.getBestMoveForCard(card);
+    if(target) this.moveTo(card,target);
   },
+  getBestMoveForCard: function(card) {
+    return null;
+  },
+  
 
   // smartMove is more intuitive if it looks alternately left and right of the source
   // of the card for moves. This function starts from stack.parentNode and does that,

@@ -1,8 +1,8 @@
-var FreeCell = new CardGame(NO_DRAG_DROP);
+var Towers = new CardGame(NO_DRAG_DROP);
 
-FreeCell.init = function() {
-  this.shortname = "freecell";
-  this.initStacks(8,4,0,false,false,0,0,4);
+Towers.init = function() {
+  this.shortname = "towers";
+  this.initStacks(10,4,0,false,false,0,0,4);
   // insufficient spaces message
   this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
 };
@@ -11,53 +11,43 @@ FreeCell.init = function() {
 
 ///////////////////////////////////////////////////////////
 //// start game
-FreeCell.deal = function() {
+Towers.deal = function() {
   var cards = this.shuffleDecks(1);
-  for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
-  for(var i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
+  for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
+  for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// Moving
-FreeCell.canMoveCard = FreeCell.canMoveCard_DescendingAltColours;
+Towers.canMoveCard = Towers.canMoveCard_DescendingInSuit;
 
 
 // unlike in other games where this function returns a boolean, here we sometimes return an int.
 // false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
 // (using 0 means the overall behaviour will match other games, but callers which do want to 
 // know about an insufficent spaces result can test if the result ===0)
-FreeCell.canMoveTo = function(card, target) {
+Towers.canMoveTo = function(card, target) {
   if(target.isCell) return this.canMoveToCell(card,target);
   var last = target.lastChild;
-  if(target.isFoundation)
-    return this.canMoveToFoundation(card, target); // inherited method
-  if(!last || (last.isConsecutiveTo(card) && last.notSameColour(card))) {
+  if(target.isFoundation) return this.canMoveToFoundation(card, target); // inherited method
+  if((!last && card.isKing()) || (last.isConsecutiveTo(card) && last.isSameSuit(card))) {
     if(this.movePossible(card,target)) return true;
     return 0;
   }
   return false;
 };
 // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
-FreeCell.movePossible = function(card,target) {
-  // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
-  // count spaces, excluding the destination
-  var spaces = 0;
-  for(var i = 0; i < 8; i++)
-    if(!this.stacks[i].hasChildNodes() && this.stacks[i]!=target) spaces++;
-  var cells = this.countEmptyCells();
-  // this is the number we can move using the most complex algorithm
-  var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
-  // count number of cards to move
+Towers.movePossible = function(card,target) {
+  var numCanMove = 1 + this.countEmptyCells();
   var numToMove = 0;
   for(var next = card; next; next = next.nextSibling) numToMove++;
-  //
   return numToMove<=numCanMove;
 }
 
 // must override global version to deal with oddities of canMoveTo in Freecell
-FreeCell.attemptMove = function(source, target) {
+Towers.attemptMove = function(source, target) {
   var can = Game.canMoveTo(source,target)
   if(can) {
     Game.moveTo(source,target);
@@ -72,7 +62,7 @@ FreeCell.attemptMove = function(source, target) {
   return false;
 }
 
-FreeCell.moveTo = function(card, target) {
+Towers.moveTo = function(card, target) {
   var source = card.parentNode;
   var action;
   if(target.isPile) {
@@ -90,20 +80,21 @@ FreeCell.moveTo = function(card, target) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-FreeCell.getHints = function() {
+/*
+Towers.getHints = function() {
   var card, i;
   for(i = 0; i < 4; i++) {
     this.getHintsForCard(this.cells[i].firstChild);
   }
-  for(i = 0; i < 8; i++) {
+  for(i = 0; i < 10; i++) {
     card = this.getLowestMoveableCard_AltColours(this.stacks[i])
     this.getHintsForCard(card);
   }
 };
-FreeCell.getHintsForCard = function(card) {
+Towers.getHintsForCard = function(card) {
   if(!card) return;
   var stack, i;
-  for(i = 0; i < 8; i++) {
+  for(i = 0; i < 10; i++) {
     stack = this.stacks[i];
     if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
@@ -112,19 +103,21 @@ FreeCell.getHintsForCard = function(card) {
     if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
 };
+*/
 
 
 
 ///////////////////////////////////////////////////////////
 //// smartmove
-FreeCell.getBestMoveForCard = function(card) {
+/*
+Towers.getBestMoveForCard = function(card) {
   var i;
   // move to another stack which has cards on
-  for(i = 0; i < 8; i++)
+  for(i = 0; i < 10; i++)
     if(this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
       return this.stacks[i];
   // move to a space
-  for(i = 0; i < 8; i++)
+  for(i = 0; i < 10; i++)
     if(!this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
       return this.stacks[i];
   // save some needless calculation
@@ -141,38 +134,35 @@ FreeCell.getBestMoveForCard = function(card) {
   // failed
   return null;
 };
+*/
 
 
 
 ///////////////////////////////////////////////////////////
 //// Autoplay
-FreeCell.autoplayMove = function() {
+// cards are always allowed to be autoplayed in Towers
+Towers.autoplayMove = function() {
   var i, last;
+  for(i = 0; i < 10; i++) {
+    last = this.stacks[i].lastChild;
+    if(last && this.sendToFoundations(last)) return true;
+  }
   for(i = 0; i < 4; i++) {
     last = this.cells[i].firstChild;
-    if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
-  }
-  for(i = 0; i < 8; i++) {
-    last = this.stacks[i].lastChild;
-    if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
+    if(last && this.sendToFoundations(last)) return true;
   }
   return false;
-};
-// card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
-FreeCell.canAutoplayCard = function(card) {
-  if(card.isAce() || card.number()==2) return true;
-  return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// winning,
-FreeCell.hasBeenWon = function() {
+Towers.hasBeenWon = function() {
   for(var i = 0; i < 4; i++)
     if(this.foundations[i].childNodes.length!=13) return false;
   return true;
 };
 
 
-Games["FreeCell"] = FreeCell;
+Games["Towers"] = Towers;

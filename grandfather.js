@@ -58,12 +58,7 @@ Grandfather.getHintForCard = function(card) {
 
 ///////////////////////////////////////////////////////////
 //// smart move
-Grandfather.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var target = this.getBestMoveFor(card);
-  if(target) this.moveTo(card,target);
-};
-Grandfather.getBestMoveFor = function(card) {
+Grandfather.getBestMoveForCard = function(card) {
   var i, stack;
   // find card of same suit and one greater in number on top of stacks
   for(i = 0; i < 7; i++) {

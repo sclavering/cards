@@ -70,13 +70,8 @@ Canfield.getHintsForCard = function(card) {
 
 ///////////////////////////////////////////////////////////
 //// smart move
-Canfield.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var target = this.findBestMoveForCard(card);
-  if(target) this.moveTo(card,target);
-};
 // picks the first stack from the left the card could go to, or failing that, the first suit-stack
-Canfield.findBestMoveForCard = function(card) {
+Canfield.getBestMoveForCard = function(card) {
   var i, stack;
   // find moves to non empty stacks
   for(i = 0; i < 4; i++) {

@@ -8,6 +8,7 @@ Golf.init = function() {
 };
 
 
+
 ///////////////////////////////////////////////////////////
 //// start game
 Golf.deal = function() {
@@ -33,20 +34,14 @@ Golf.deal = function() {
 ///////////////////////////////////////////////////////////
 //// Moving
 Golf.canMoveCard = function(card) {
-  // cards on foundation cannot be moved
-  if(card.parentNode == this.foundation || !card.isLastOnPile()) 
-  	return false;
-	return true;
+  return (card.parentNode!=this.foundation && card.isLastOnPile());
 };
 
 Golf.canMoveTo = function(card, stack) {
-  if(stack != this.foundation) 
-    return false;
-  // cards on foundation cannot be moved
+  if(stack != this.foundation) return false;
   var diff = this.foundation.lastChild.number() - card.number();
-  return (diff ==  1 || //Can go one down
-          diff == -1 || //Can go one up
-         (this.difficultyLevel==1 && 
+  return (diff ==  1 || diff == -1 // can go up or one by down
+         (this.difficultyLevel==1 &&
           (diff == -12 || diff == 12)));  //Or King to Ace in easy mode
 };
 
@@ -75,34 +70,33 @@ Golf.smartMove = function(card) {
 ///////////////////////////////////////////////////////////
 //// Autoplay
 Golf.autoplayMove = function() {
-	var card = this.stock.lastChild;
+  var card = this.stock.lastChild;
 
-	if(card && card.faceUp()) {  // We must have just flipped it... see below...
-		card.moveTo(this.foundation);
-		this.trackMove("dealt-from-stock", null, null);
-		return true;
-	}
+  if(card && card.faceUp()) {  // We must have just flipped it... see below...
+    card.moveTo(this.foundation);
+    this.trackMove("dealt-from-stock", null, null);
+    return true;
+  }
 
-	var allEmpty = true;
-	// If there are no moveable cards move a card from the stock to the foundation
-	// (Any possible moves might be delayed as strategy otherwise...)
-	for(var i = 0; i<7; i++) {
-		card = this.stacks[i].lastChild;
-		if(card) {
-		  allEmpty = false;
-			if(this.canMoveTo(card, this.foundation))
-				return false;
-		}
-	}
-	
+  var allEmpty = true;
+  // If there are no moveable cards move a card from the stock to the foundation
+  // (Any possible moves might be delayed as strategy otherwise...)
+  for(var i = 0; i < 7; i++) {
+    card = this.stacks[i].lastChild;
+    if(card) {
+      allEmpty = false;
+      if(this.canMoveTo(card, this.foundation)) return false;
+    }
+  }
+  
   // dealFromStock doesn't animate, so it's easy to miss...  we can do it ourself
-	card = this.stock.lastChild;
+  card = this.stock.lastChild;
   // If we want to move a card, first we'll flip it, then next autoplay will move it.
-	if(card) { 
-		card.turnFaceUp();
-		return true;
-	}
-	return false;
+  if(card) { 
+    card.turnFaceUp();
+    return true;
+  }
+  return false;
 };
 
 
@@ -110,13 +104,11 @@ Golf.autoplayMove = function() {
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
 Golf.hasBeenWon = function() {
-	return (this.score == 0);
+  return (this.score == 0);
 };
 
 Golf.getScoreForAction = function(action) {
-  if(action=="move-to-foundation" || action=="dealt-from-stock") 
-  	return -1;
-  return 0;
+  return (action=="move-to-foundation" || action=="dealt-from-stock") ? -1 : 0;
 };
 
 

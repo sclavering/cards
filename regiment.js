@@ -102,13 +102,8 @@ Regiment.findHintsForCard = function(card) {
 
 
 ///////////////////////////////////////////////////////////
-//// smartmove (moves cards clicked with middle button to best possible destination
-Regiment.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var destination = this.findBestMoveForCard(card);
-  if(destination) this.moveTo(card,destination);
-};
-Regiment.findBestMoveForCard = function(card) {
+//// smartmove
+Regiment.getBestMoveForCard = function(card) {
   for(var i = 0; i < 2; i++) {
     for(var j = 0; j < 8; j++) {
       var stack = this.tableau[i][j];

@@ -61,13 +61,8 @@ Gypsy.getHintsForCard = function(card) {
 
 ///////////////////////////////////////////////////////////
 //// smart move
-Gypsy.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return;
-  var target = this.findBestMoveForCard(card);
-  if(target) this.moveTo(card,target);
-};
 // picks the first stack from the left the card could go to, or - failing that - the first suit-stack
-Gypsy.findBestMoveForCard = function(card) {
+Gypsy.getBestMoveForCard = function(card) {
   // find a move onto another nonempty stack
   var dest = this.searchAround(card,function(c,s) {
     return (s.hasChildNodes() && Gypsy.canMoveTo(c,s)); // stupid scoping thingy again!!

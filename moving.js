@@ -26,6 +26,8 @@ var CardMover1 = {
   move: function(firstCard, target) {
     disableUI();
 
+    var source = firstCard.parentNode.source;
+
     // initial coords
     var sx = firstCard.boxObject.x - gGameStackLeft;
     var sy = firstCard.boxObject.y - gGameStackTop;
@@ -65,7 +67,7 @@ var CardMover1 = {
     function done() {
       target.addCards(firstCard);
       cards.hide(); // must do this (even if it's about to be used for another move) to force repainting of area
-      animatedActionFinished();
+      animatedActionFinished(source);
     };
 
     function step() {
@@ -93,7 +95,8 @@ var CardMover1 = {
 var CardMover2 = {
   move: function(card, to) {
     disableUI();
+    var source = card.parentNode.source;
     to.addCards(card);
-    setTimeout(animatedActionFinished, 30);
+    setTimeout(animatedActionFinished, 30, source);
   }
 };

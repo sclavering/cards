@@ -75,12 +75,11 @@ var FreeCellGame = {
     return spaces;
   },
 
-  // calls FreeCellMover.step(), and doesn't call autoReveal, since neither
-  // FreeCell nor Seahaven Towers needs it.
+  // calls FreeCellMover.step()
   autoplay: function() {
-    if(FreeCellMover.step() || this.autoplayMove()) {
+    if(FreeCellMover.step() || this.autoplayMove())
       return true;
-    } else if(Game.hasBeenWon()) {
+    if(Game.hasBeenWon()) {
       showGameWon();
       return true;
     }

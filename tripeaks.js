@@ -78,7 +78,7 @@ AllGames.tripeaks = {
   },
 
   // This game has no autoplay, but does need special auto-revealing:
-  autoReveal: function() {
+  autoplayMove: function() {
     for(var i = 27; i >= 0; i--) {
       var p = this.piles[i];
       if(!p.hasChildNodes() || p.lastChild.faceUp || !p.free()) continue;

@@ -59,11 +59,11 @@ TurnStockOverAction.prototype = {
 
   perform: function() {
     while(Game.waste.hasChildNodes()) Game.undealCardFrom(Game.waste);
-    if(Game.stock.counter) Game.stock.counter.value = Game.stock.childNodes.length;
+    if(Game.stock.counter) Game.stock.counter.set(Game.stock.childNodes.length);
   },
   undo: function() {
     while(Game.stock.hasChildNodes()) Game.dealCardTo(Game.waste);
-    if(Game.stock.counter) Game.stock.counter.value = 0;
+    if(Game.stock.counter) Game.stock.counter.set(0)
   }
 }
 
@@ -94,22 +94,25 @@ DealToNonEmptyPilesAction.prototype = {
   action: "dealt-from-stock",
   synchronous: true,
   last: 0, // the pile index we reached on the final deal before running out of cards
+  num: 0, // num piles dealt to
 
   perform: function() {
-    var piles = Game.piles;
+    var piles = Game.piles, num = 0;
     for(var i = 0; i != piles.length && Game.stock.hasChildNodes(); i++) {
       if(piles[i].hasChildNodes()) {
         Game.dealCardTo(piles[i]);
         this.last = i;
+        num++;
       }
     }
-    if(Game.stock.counter) Game.stock.counter.add(-1);
+    this.num = num;
+    if(Game.stock.counter) Game.stock.counter.add(-num);
   },
   undo: function() {
     var piles = Game.piles;
     for(var i = this.last; i != -1; i--)
       if(piles[i].hasChildNodes()) Game.undealCardFrom(piles[i]);
-    if(Game.stock.counter) Game.stock.counter.add(1);
+    if(Game.stock.counter) Game.stock.counter.add(this.num);
   }
 }
 

@@ -473,8 +473,8 @@ function createHighlighter() {
 
 
 // we don't want to enable the UI between an animated move and any autoplay it triggers
-function animatedActionFinished() {
-  if(!Game.autoplay()) enableUI();
+function animatedActionFinished(pileWhichHasHadCardsRemoved) {
+  if(!Game.autoplay(pileWhichHasHadCardsRemoved)) enableUI();
 }
 
 function playGame(game) {

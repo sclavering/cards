@@ -139,6 +139,9 @@ AllGames.divorce = {
 
   id: "divorce",
   cards: 2,
+
+  get stockCounterStart() { return this.stock.childNodes.length; },
+
   dealFromStock: "to nonempty piles",
   canMoveCard: "descending mod13, in suit, not from foundation",
   canMoveToPile: "descending mod13",

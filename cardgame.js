@@ -13,6 +13,13 @@ var BaseCardGame = {
   // boolean flags that games might want to override
   acesHigh: false,
 
+  // works for most games
+  get stockCounterStart() {
+    var cards = this.stock.childNodes.length;
+    if(this.waste) return cards;
+    return Math.ceil(cards / this.piles.length);
+  },
+
   // see mouse.js
   mouseHandling: "drag+drop",
   mouseHandler: null,
@@ -27,7 +34,6 @@ var BaseCardGame = {
   waste: null,
   foundation: null, // if the game has just one foundation this will be it
   reserve: null,
-  thingsToReveal: null, // piles to automatically turn the top card of up.  consists of normal and reserve piles
   dragDropTargets: null, // piles where cards can potentially be dropped.  consists of normal and foundation piles
 
 
@@ -66,10 +72,6 @@ var BaseCardGame = {
     // see comments above
     if(typeof this.cards == "number") this.cards = getDecks(this.cards);
     else if(typeof this.cards[0] == "number") this.cards = getSuits(this.cards);
-
-    // if the game doesn't specify something
-    // xxx still required for init'ing stock.counter, but not for anything else!
-    if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.piles;
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function
@@ -146,10 +148,6 @@ var BaseCardGame = {
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
     this.dragDropTargets = this.piles.concat(this.foundations);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
-    // which piles should we automatically reveal the top card of?
-    // (some games have no use for this, but checking all these piles doesn't take very long so...)
-    this.thingsToReveal = this.piles.concat(this.reserves);
-    if(this.reserve) this.thingsToReveal.push(this.reserve);
   },
 
 
@@ -175,12 +173,7 @@ var BaseCardGame = {
     this.cardsAsDealt = cards;
     this.deal(cards);
 
-    // xxx this should probably happen elsewhere
-    if(this.stock && this.stock.counter) {
-      var dealsLeft = this.stock.childNodes.length;
-      if(!this.waste) dealsLeft = Math.ceil(dealsLeft / this.stockDealTargets.length);
-      this.stock.counter.value = dealsLeft;
-    }
+    if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
 
     gCmdUndo.setAttribute("disabled","true");
     gCmdRedo.setAttribute("disabled","true");
@@ -486,30 +479,25 @@ var BaseCardGame = {
   // === Autoplay =========================================
   // autoplay() is called whenever an animation completes, and should be called
   // after any move/action that doesn't use animation (e.g. dealing from the stock).
-  // Games can override thingsToReveal[] to control auto revealing.
   // Games should override autoplayMove()
 
-  // A bool is returned so CardMover.move() can decide whether to reenable the UI.
+  // A bool is returned so animatedActionFinished() can decide whether to reenable the UI.
   // (We want to keep it disabled throughout seq's of consecutive animated moves.)
-  autoplay: function() {
-    if(this.autoReveal() || this.autoplayMove()) {
-      return true;
-    } else if(Game.hasBeenWon()) {
-      showGameWon();
-      return true;
-    }
-    return false;
-  },
-
-  autoReveal: function() {
-    var piles = this.thingsToReveal;
-    if(!piles) return false;
-    for(var i = 0; i != piles.length; i++) {
-      var last = piles[i].lastChild;
-      if(last && last.faceDown) {
-        this.revealCard(last);
+  autoplay: function(pileWhichHasHadCardsRemoved) {
+    // automatically reveal cards
+    if(pileWhichHasHadCardsRemoved) {
+      var card = pileWhichHasHadCardsRemoved.lastChild;
+      if(card && card.faceDown) {
+        this.revealCard(card);
         return true;
       }
+    }
+
+    if(this.autoplayMove()) return true;
+
+    if(this.hasBeenWon()) {
+      showGameWon();
+      return true;
     }
     return false;
   },

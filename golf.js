@@ -7,6 +7,8 @@ Games.golf = {
 var GolfBase = {
   __proto__: BaseCardGame,
 
+  get stockCounterStart() { return this.stock.childNodes.length; },
+
   layout: "golf",
   dealFromStock: "to foundation",
 

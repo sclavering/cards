@@ -1,6 +1,8 @@
 Games.canfield = true;
+Games.demon = true;
 
-AllGames.canfield = {
+
+var CanfieldBase = {
   __proto__: BaseCardGame,
 
   id: "canfield",
@@ -29,17 +31,6 @@ AllGames.canfield = {
     }
   },
 
-  deal: function(cards) {
-    this.reserve.dealTo(cards, 0, 13);
-    this.foundations[0].dealTo(cards, 0, 1);
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
-
-    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
-    const cs = this.cards;
-    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
-  },
-
   mayAddCardToFoundation: "canfield/penguin",
 
   mayAddCardToPile: "down, opposite colour",
@@ -61,5 +52,50 @@ AllGames.canfield = {
     "waste->pile": 5,
     "card-revealed": 5,
     "foundation->": -15
+  }
+};
+
+
+AllGames.canfield = {
+  __proto__: CanfieldBase,
+
+  id: "canfield",
+
+  deal: function(cards) {
+    this.reserve.dealTo(cards, 12, 1);
+    this.foundations[0].dealTo(cards, 0, 1);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
+
+    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
+    const cs = this.cards;
+    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
+  }
+};
+
+
+AllGames.demon = {
+  __proto__: CanfieldBase,
+
+  id: "demon",
+  layout: "canfield",
+
+  init: function() {
+    this.__proto__.init.call(this);
+    this.reserve.className = "fan-down";
+    initPile(this.reserve);
+    this.reserve.mayTakeCard = this.mayTakeCardFromReserve;
+    this.reserve.mayAddCard = this.mayAddCardToReserve;
+  },
+
+  deal: function(cards) {
+    this.reserve.dealTo(cards, 0, 13);
+    this.foundations[0].dealTo(cards, 0, 1);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
+
+    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
+    const cs = this.cards;
+    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   }
 }

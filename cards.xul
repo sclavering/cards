@@ -146,7 +146,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <pile id="canfield-pile-3" class="fan-down"/>
       </vbox>
       <flex2/>
-      <reserve id="canfield-reserve" class="fan-down"/><flex2/>
+      <reserve id="canfield-reserve"/><flex2/>
     </hbox>
   </vbox>
 

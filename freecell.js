@@ -56,7 +56,6 @@ FreeCell.movePossible = function(card,target) {
 }
 
 
-// unlike in Cards, moveTo is not always successful.  All the work is done in move() below
 FreeCell.moveTo = function(card, target) {
   var source = card.parentNode;
   var action;
@@ -77,16 +76,45 @@ FreeCell.getFreeCells = function() {
 };
 FreeCell.getSpaces = function() {
   var spaces = new Array();
-  for(var i = 0; i < 8; i++) if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
+  for(var i = 0; i < 8; i++)
+    if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
   return spaces;
 };
-
 
 
 
 ///////////////////////////////////////////////////////////
 //// hint
 FreeCell.getHint = function() {
+  var card, hint, i;
+  for(i = 0; i < 4; i++) {
+    card = this.cells[i].firstChild;
+    if(!card) continue;
+    hint = this.getHintForCard(card);
+    if(hint) return hint;
+  }
+  for(i = 0; i < 8; i++) {
+    card = this.getLowestMoveableCard_AltColours(this.stacks[i])
+    if(!card) continue;
+    hint = this.getHintForCard(card);
+    if(hint) return hint;
+  }
+  return null;
+};
+FreeCell.getHintForCard = function(card) {
+  if(!this.canMoveCard(card)) return null;
+  var targets = new Array();
+  for(var i = 0; i < 8; i++) {
+    var stack = this.stacks[i];
+    if(this.canMoveTo(card,stack)) targets.push(stack.lastChild);
+  }
+  for(var i = 0; i < 4; i++) {
+    var stack = this.foundations[i];
+    if(this.canMoveTo(card,stack)) targets.push(stack);
+  }
+  if(targets.length > 0)
+    return {source: card, destinations: targets};
+  return null;
 };
 
 
@@ -96,29 +124,21 @@ FreeCell.getHint = function() {
 FreeCell.smartMove = function(card) {
   // canMoveCard only returns true for last card on a stack.
   if(!this.canMoveCard(card)) return false;
-  var destination = this.findMove1(card);
+  var destination = this.findMove(card);
   if(destination) this.moveTo(card,destination);
-  //
-  else {
-    if(!this.canMoveCard(card)) return false;
-    var destination = this.findMove2(card);
-    if(destination) this.moveTo(card,destination);
-  }
 };
-// this will be expanded to moving to empty spaces or other tableay piles in the future
-// it may also be modified to prefer moving to a cell than a foundation
-FreeCell.findMove1 = function(card) {
+FreeCell.findMove = function(card) {
   // move to another stack which has cards on
   for(var i = 0; i < 8; i++)
     if(this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
       return this.stacks[i];
-  // move to another stack which has cards on
+  // move to a space
   for(var i = 0; i < 8; i++)
     if(!this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
       return this.stacks[i];
-  return null;
-};
-FreeCell.findMove2 = function(card) {
+  // save some needless calculation
+  if(card!=card.parentNode.lastChild)
+    return null;
   // move to cell
   for(var i = 0; i < 4; i++)
     if(this.canMoveTo(card,this.cells[i]))
@@ -148,7 +168,7 @@ FreeCell.autoplayMove = function() {
 // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
 FreeCell.canAutoplayCard = function(card) {
   if(card.number()<=2) return true; // Aces and twos can always be autoplayed
-  var altcolour = (card.colour()=="red") ? "black" : "red";
+  var altcolour = (card.colour()==RED) ? BLACK : RED;
   if(this.cardsOnFoundations(altcolour,card.number()-1)) return true;
   return false;
 };

@@ -1,5 +1,8 @@
 Games["Fan"] = {
   shortname: "fan",
+  
+  numPiles: 18,
+  numFoundations: 4,
 
   // stuff the CardGame() constructor would initialise if we were using it
   stockCanTurnOver: false,
@@ -7,7 +10,7 @@ Games["Fan"] = {
   usesMouseHandler2: false,
 
   init: function() {
-    this.initStacks(18,4,0,false,false);
+    this.initStacks();
     this.dragDropTargets = this.stacks.concat(this.foundations);
   },
 

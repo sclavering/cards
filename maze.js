@@ -1,5 +1,7 @@
 var Maze = {
   shortname: "maze",
+  
+  numPiles: 54,
 
   // stuff the CardGame() constructor would initialise if we were using it
   stockCanTurnOver: false,
@@ -7,7 +9,7 @@ var Maze = {
   usesMouseHandler2: false,
 
   init: function() {
-    this.initStacks(54,0,0,false,false);
+    this.initStacks();
     this.dragDropTargets = this.stacks;
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;

@@ -31,6 +31,14 @@ CardGame.prototype = {
   waste: null,
   stacks: null,
   thingsToReveal: null,
+  
+  // games should override these as appropriate
+  numPiles: 0,
+  numFoundations: 0,
+  numCells: 0,
+  numReserves: 0,
+  hasStock: false,
+  hasWaste: false,
 
   dragDropTargets: null, // list of elements which the DragDrop system should test if cards are being dropped on
   allstacks: null, // list of all <stack>s for cards, so that they can be cleared when a game is started
@@ -49,6 +57,14 @@ CardGame.prototype = {
   // (also creates .allstacks[] which is used when clearing the game layout for a new game)
   // To use this function the game must init game.shortname first
   initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, numCells) {
+    // older games pass these as args, newer ones have them as params
+    numStacks = numStacks || this.numPiles;
+    numFoundations = numFoundations || this.numFoundations;
+    numCells = numCells || this.numCells;
+    numReserves = numReserves || this.numReserves;
+    hasStock = hasStock || this.hasStock;
+    hasWaste = hasWaste || this.hasWaste;
+    
     var i, j;
     this.allstacks = [];
     var name = this.shortname; // e.g. "klondike", "simon" etc
@@ -94,7 +110,6 @@ CardGame.prototype = {
       this.waste.isWaste = true;
       this.allstacks.push(this.waste);
     }
-    // cells
     if(numCells) {
       this.cells = new Array(numCells);
       for(i = 0; i < numCells; i++) {

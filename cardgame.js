@@ -118,31 +118,27 @@ var BaseCardGame = {
     var allpiles = this.allpiles = [];
     var id = this.id+"-";
 
+    const uppercase = {stock:"Stock",waste:"Waste",reserve:"Reserve",foundation:"Foundation",cell:"Cell",pile:"Pile"};
+
     const items1 = ["stock", "waste", "reserve", "foundation"];
-    const props1 = ["isStock", "isWaste", "isReserve", "isFoundation"];
-    const takes1 = ["mayTakeCardFromStock", "mayTakeCardFromWaste", "mayTakeCardFromReserve", "mayTakeCardFromFoundation"];
-    const adds1 = ["mayAddCardToStock", "mayAddCardToWaste", "mayAddCardToReserve", "mayAddCardToFoundation"];
 
     // init piles of which there are only one (stock, waste, and a reserve or foundation in some cases)
     for(var i = 0; i != 4; i++) {
-      var item = items1[i];
-      var p = this[item] = initPileFromId(id+item, props1[i], this[takes1[i]], this[adds1[i]]);
+      var item = items1[i], upper = uppercase[item];
+      var p = this[item] = initPileFromId(id+item, item, this["mayTakeCardFrom"+upper], this["mayAddCardTo"+upper]);
       if(p) allpiles.push(p);
     }
 
     const items2 = ["reserve", "cell", "foundation", "pile"];
-    const props2 = ["isReserve", "isCell", "isFoundation", "isPile"];
-    const takes2 = ["mayTakeCardFromReserve", "mayTakeCardFromCell", "mayTakeCardFromFoundation", "mayTakeCardFromPile"];
-    const adds2 = ["mayAddCardToReserve", "mayAddCardToCell", "mayAddCardToFoundation", "mayAddCardToPile"];
 
     // init the collections of piles of various types
     for(i = 0; i != 4; i++) {
-      item = items2[i];
-      var type = id+item+"-", property = props2[i];
-      var mayTakeCard = this[takes2[i]], mayAddCard = this[adds2[i]];
+      item = items2[i], upper = uppercase[item];;
+      var type = id+item+"-";
+      var mayTakeCard = this["mayTakeCardFrom"+upper], mayAddCard = this["mayAddCardTo"+upper];
       var ps = this[item+"s"] = [];
       for(var j = 0; true; j++) {
-        p = initPileFromId(type+j, property, mayTakeCard, mayAddCard);
+        p = initPileFromId(type+j, item, mayTakeCard, mayAddCard);
         if(!p) break;
         ps.push(p);
         allpiles.push(p);

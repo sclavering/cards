@@ -4,11 +4,15 @@ var gHFanOffset = 12; // num pixels between left edges of two cards in a horizon
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 
 
-function initPileFromId(id, property, mayTakeCard, mayAddCard) {
+// properties to identify the type of a pile
+const pileIdentifiers =
+  {stock:"isStock", waste:"isWaste", reserve:"isReserve", cell:"isCell", foundation:"isFoundation", pile:"isPile"};
+
+function initPileFromId(id, type, mayTakeCard, mayAddCard) {
   var elt = document.getElementById(id);
   if(!elt) return null;
   initPile(elt);
-  elt[property] = true;
+  elt[pileIdentifiers[type]] = true;
   elt.mayTakeCard = mayTakeCard;
   elt.mayAddCard = mayAddCard;
   return elt;

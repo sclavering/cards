@@ -11,6 +11,8 @@ Games.spider = {
 var SpiderBase = {
   __proto__: BaseCardGame,
 
+  layout: "spider",
+
   dealFromStock: "to piles, if none empty",
 
   mayTakeCardFromFoundation: "no",
@@ -28,7 +30,14 @@ var SpiderBase = {
     return false;
   },
 
-  hasBeenWon: "13 cards on each foundation",
+  sendToFoundations: function(card) {
+    const f = this.foundation;
+    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
+  },
+
+  hasBeenWon: function() {
+    return this.foundation.childNodes.length==104;
+  },
 
   scores: {
     "->foundation": 100,
@@ -37,24 +46,8 @@ var SpiderBase = {
 };
 
 
-// for games which use Spider's layout, where the foundations are compacted
-var SpiderLayoutBase = {
-  __proto__: SpiderBase,
-  layout: "spider",
-
-  sendToFoundations: function(card) {
-    const f = this.foundation;
-    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
-  },
-
-  hasBeenWon: function() {
-    return this.foundation.childNodes.length==104;
-  }
-};
-
-
 var Spider = {
-  __proto__: SpiderLayoutBase,
+  __proto__: SpiderBase,
 
   getLowestMovableCard: "descending, in suit",
 
@@ -114,7 +107,7 @@ AllGames.spider = {
 
 
 AllGames.blackwidow = {
-  __proto__: SpiderLayoutBase,
+  __proto__: SpiderBase,
 
   id: "blackwidow",
   cards: 2,
@@ -150,7 +143,7 @@ AllGames.blackwidow = {
 
 
 AllGames.divorce = {
-  __proto__: SpiderLayoutBase,
+  __proto__: SpiderBase,
 
   id: "divorce",
 
@@ -185,13 +178,15 @@ AllGames.wasp = {
   __proto__: SpiderBase,
 
   id: "wasp",
-  dealFromStock: "to piles",
+  layout: "wasp",
 
   deal: function(cards) {
     for(var i = 0; i != 3; i++) this.piles[i].dealTo(cards, 3, 4);
     for(i = 3; i != 7; i++) this.piles[i].dealTo(cards, 0, 7);
     this.stock.dealTo(cards, 3, 0);
   },
+
+  dealFromStock: "to piles",
 
   mayAddCardToFoundation: "king->ace flush",
 
@@ -208,5 +203,7 @@ AllGames.wasp = {
       var downp = down.parentNode;
       if(downp!=pile && downp.isNormalPile) this.addHint(down, pile);
     }
-  }
+  },
+
+  hasBeenWon: "52 cards on foundation"
 };

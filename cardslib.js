@@ -438,7 +438,8 @@ var pileProperties = {
     }
   },
 
-  "spider-foundation": {
+  // and "foundation8".  Used for Spider, Simon, and Wasp's foundations
+  "foundation4": {
     __proto__: basicPileProperties,
 
     addCards: function(card) {
@@ -454,6 +455,8 @@ var pileProperties = {
     }
   }
 };
+
+pileProperties.foundation8 = pileProperties.foundation4;
 
 
 var basicPileGetters = {

@@ -142,14 +142,13 @@ var Rules = {
 
     "13 cards":
     function(card) {
-      if(this.hasChildNodes()) return false;
-      var i = card.parentNode.childNodes.length - 13;
-      return (i >= 0 && card.parentNode.childNodes[i]==card);
+      const sibs = card.parentNode.childNodes;
+      var i = sibs.length - 13;
+      return i >= 0 && sibs[i]==card;
     },
 
     "king->ace flush":
     function(card) {
-      if(this.hasChildNodes()) return false;
       if(!card.isKing || !card.parentNode.lastChild.isAce) return false;
       var next = card.nextSibling;
       while(next && card.suit==next.suit && card.number==next.upNumber) card = next, next = next.nextSibling;
@@ -226,6 +225,11 @@ var Rules = {
       var fs = this.foundations;
       for(var i = 0; i != fs.length; i++) if(fs[i].childNodes.length!=13) return false;
       return true;
+    },
+
+    "52 cards on foundation":
+    function() {
+      return this.foundation.childNodes.length==52;
     }
   },
 

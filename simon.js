@@ -12,7 +12,7 @@ var SimonBase = {
 
   deal: function(cards) {
     if(!("kings" in this)) {
-      var cs = this.cards;
+      const cs = this.cards;
       this.kings = [cs[12], cs[25], cs[38], cs[51]];
     }
 
@@ -37,16 +37,17 @@ var SimonBase = {
   getBestMoveForCard: "down and same suit, or down, or empty",
 
   autoplayMove: function() {
+    const ks = this.kings;
     for(var i = 0; i != 4; i++) {
-      var k = this.kings[i], p = k.parentNode;
+      var k = ks[i], p = k.parentNode;
       if(!p.isNormalPile) continue;
       var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
+      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.foundation);
     }
     return false;
   },
 
-  hasBeenWon: "13 cards on each foundation",
+  hasBeenWon: "52 cards on foundation",
 
   scores: {
     "->foundation": 100,

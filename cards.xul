@@ -801,7 +801,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   <vbox id="simon" hidden="true">
     <rowspacer/>
     <hbox>
-      <flex/>
+      <flex2/>
       <pile class="fan-down" id="simon-pile-0"/><flex/>
       <pile class="fan-down" id="simon-pile-1"/><flex/>
       <pile class="fan-down" id="simon-pile-2"/><flex/>
@@ -811,14 +811,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="simon-pile-6"/><flex/>
       <pile class="fan-down" id="simon-pile-7"/><flex/>
       <pile class="fan-down" id="simon-pile-8"/><flex/>
-      <pile class="fan-down" id="simon-pile-9"/><flex/>
-      <vbox>
-        <foundation id="simon-foundation-0"/><rowspacer/>
-        <foundation id="simon-foundation-1"/><rowspacer/>
-        <foundation id="simon-foundation-2"/><rowspacer/>
-        <foundation id="simon-foundation-3"/>
-      </vbox>
-      <flex/>
+      <pile class="fan-down" id="simon-pile-9"/><flex2/>
+      <foundation id="simon-foundation" class="foundation4"/><flex2/>
     </hbox>
   </vbox>
 
@@ -826,7 +820,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   <vbox id="spider" hidden="true">
     <rowspacer/>
     <hbox>
-      <flex/>
+      <flex2/>
       <pile class="fan-down" id="spider-pile-0"/><flex/>
       <pile class="fan-down" id="spider-pile-1"/><flex/>
       <pile class="fan-down" id="spider-pile-2"/><flex/>
@@ -836,9 +830,9 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="spider-pile-6"/><flex/>
       <pile class="fan-down" id="spider-pile-7"/><flex/>
       <pile class="fan-down" id="spider-pile-8"/><flex/>
-      <pile class="fan-down" id="spider-pile-9"/><flex/>
+      <pile class="fan-down" id="spider-pile-9"/><flex2/>
       <vbox id="spider-side-panel">
-        <foundation id="spider-foundation" class="spider-foundation"/>
+        <foundation id="spider-foundation" class="foundation8"/>
         <rowspacer/>
         <hbox>
           <label value="&deals-left;"/>
@@ -847,7 +841,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <stock id="spider-stock"/>
         <flex/>
       </vbox>
-      <flex/>
+      <flex2/>
     </hbox>
   </vbox>
 
@@ -963,25 +957,19 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   <vbox id="wasp" hidden="true">
     <rowspacer/>
     <hbox>
-      <flex/>
-      <stock id="wasp-stock"/><flex/>
-      <pilespacer/><flex/>
-      <pilespacer/><flex/>
-      <foundation id="wasp-foundation-0"/><flex/>
-      <foundation id="wasp-foundation-1"/><flex/>
-      <foundation id="wasp-foundation-2"/><flex/>
-      <foundation id="wasp-foundation-3"/><flex/>
-    </hbox>
-    <rowspacer/>
-    <hbox>
-      <flex/>
+      <flex2/>
       <pile class="fan-down" id="wasp-pile-0"/><flex/>
       <pile class="fan-down" id="wasp-pile-1"/><flex/>
       <pile class="fan-down" id="wasp-pile-2"/><flex/>
       <pile class="fan-down" id="wasp-pile-3"/><flex/>
       <pile class="fan-down" id="wasp-pile-4"/><flex/>
       <pile class="fan-down" id="wasp-pile-5"/><flex/>
-      <pile class="fan-down" id="wasp-pile-6"/><flex/>
+      <pile class="fan-down" id="wasp-pile-6"/><flex2/>
+      <vbox>
+        <foundation id="wasp-foundation" class="foundation4"/>
+        <rowspacer/>
+        <stock id="wasp-stock"/>
+      </vbox><flex2/>
     </hbox>
   </vbox>
 

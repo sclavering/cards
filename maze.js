@@ -52,7 +52,25 @@ Games["maze"] = {
   },
 
   getBestMoveForCard: function(card) {
-  	return searchPiles(this.stacks, testCanMoveToPile(card));
+  	return (card.isQueen() && searchPiles(this.stacks, this.queenTest(card)))
+  	    || (card.isAce() && searchPiles(this.stacks, this.aceTest(card)))
+  	    || searchPiles(this.stacks, testCanMoveToPile(card));
+  },
+  aceTest: function(card) {
+    return function(pile) {
+      if(pile.hasChildNodes()) return false;
+      var r = pile.pileNumber+1;
+      r = Game.stacks[r==54 ? 0 : r].lastChild;
+      return r && r.isSameSuit(card) && r.number()==2;
+    };
+  },
+  queenTest: function(card) {
+    return function(pile) {
+      if(pile.hasChildNodes()) return false;
+      var l = pile.pileNumber-1;
+      l = Game.stacks[l==-1 ? 53 : l].lastChild;
+      return l && l.isSameSuit(card) && l.number()==11;
+    };
   },
 
   // Autoplay not used

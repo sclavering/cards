@@ -4,10 +4,12 @@
   * so they can inherit lots (and lots and lots) of stuff
   *
   * individual game .js files should go:
-  *   var Klondike = new CardGame();
-  *   // override functions as necessary
-  *   Klondike.funcName = blah blah;
-  *   ...
+  *   var Klondike = {
+  *     __proto__: BaseCardGame,
+  *     
+  *     ...
+  *   };
+  *
   *   Games["Klondike"] = Klondike;
   */
 

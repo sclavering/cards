@@ -494,32 +494,29 @@ var MouseHandler1 = {
   },
 
   mouseUp: function(e) {
-    if(this.dragInProgress) {
-      this.dropCards();
-      this.cards.hide();
-      this.dragInProgress = false;
-    }
     this.nextCard = null;
-  },
-  dropCards: function() {
-    var card = this.cards.firstChild, source = card.parentNode.source;
-    // for each target, check if the cards were dropped on it (if cards overlaps it)
+    if(!this.dragInProgress) return;
+    this.dragInProgress = false;
+
+    var l = getLeft(this.cards), r = getRight(this.cards), t = getTop(this.cards), b = getBottom(this.cards);
+
+    var card = this.cards.firstChild;
+    var source = card.parentNode.source;
+    // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
-    for(var i = 0; i < targets.length; i++) {
-      if(targets[i]==source) continue; // don't try moving card to where it came from
-      if(this.overlaps(this.cards,targets[i]))
-        if(Game.attemptMove(card,targets[i])) return true;
+    var success = false;
+    for(var i = 0; !success && i<targets.length; i++) {
+      var target = targets[i];
+      if(target==source) continue;
+
+      var l2 = getLeft(target), r2 = getRight(target), t2 = getTop(target), b2 = getBottom(target);
+      var overlaps = (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
+      if(overlaps && Game.attemptMove(card,target)) success = true;
     }
     // move cards back
-    card.transferTo(source);
-    Game.autoplay();
-    return false;
-  },
-  // item is the thing overlapping, object the thing overlapped, l=left etc, l2=left of the overlapped item
-  overlaps: function(item, object) {
-    var l = getLeft(item), r = getRight(item), t = getTop(item), b = getBottom(item);
-    var l2 = getLeft(object), r2 = getRight(object), t2 = getTop(object), b2 = getBottom(object);
-    return (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
+    if(!success) card.transferTo(source);
+
+    this.cards.hide();
   },
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),

@@ -22,9 +22,14 @@
 
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="cardgame.js"/>
+<script type="application/x-javascript" src="freecellmover.js"/>
+
 
 <script type="application/x-javascript" src="acesup.js"/>
 <script type="application/x-javascript" src="canfield.js"/>
+
+<script type="application/x-javascript" src="freecell.js"/>
+
 <script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
@@ -57,6 +62,7 @@
     <menupopup id="menupopup-gametypes" oncommand="Cards.playGame(event.target.value);">
       <menuitem label="&acesup-name;"      accesskey="&mi-acesup:accesskey;"      value="AcesUp"     />
       <menuitem label="&canfield-name;"    accesskey="&mi-canfield:accesskey;"    value="Canfield"   />
+      <menuitem label="&freecell-name;"    accesskey="&mi-freecell:accesskey;"    value="FreeCell"   />
       <menuitem label="&grandfather-name;" accesskey="&mi-grandfather:accesskey;" value="Grandfather"/>
       <menuitem label="&gypsy-name;"       accesskey="&mi-gypsy:accesskey;"       value="Gypsy"      />
       <menuitem label="&klondike-name;"    accesskey="&mi-klondike:accesskey;"    value="Klondike"   />
@@ -97,7 +103,7 @@ when starting to move a card, which looks abysmal
 margin on the <stack/> lets you drag cards out of the edge of the window without
 forcing the stack to expand, which pulls the whole content of the game right, or
 causes slowdowns (dragging off bottom). padding stops the content from actually
-using those 100px :)
+using those 100px :)  thanks Neil.
 -->
 
 <stack id="current-game-display" style="margin: 0 -100px -1000px 0; padding: 0 100px 0 0;">
@@ -138,6 +144,34 @@ using those 100px :)
       <stack id="canfield-stack-2" class="card-fan-down"/><spacer flex="1"/>
       <stack id="canfield-stack-3" class="card-fan-down"/><spacer flex="2"/>
       <spacer class="card-pile-spacer"/><spacer flex="1"/>
+    </hbox>
+  </vbox>
+
+  <!-- FreeCell -->
+  <vbox id="FreeCell" style="display:none" name="&freecell-name;">
+    <spacer class="row-spacer"/>
+    <hbox>
+      <spacer flex="1"/>
+      <stack id="cell-0" class="card-pile"/><spacer flex="1"/>
+      <stack id="cell-1" class="card-pile"/><spacer flex="1"/>
+      <stack id="cell-2" class="card-pile"/><spacer flex="1"/>
+      <stack id="cell-3" class="card-pile"/><spacer flex="3"/>
+      <stack id="foundation-0" class="card-pile"/><spacer flex="1"/>
+      <stack id="foundation-1" class="card-pile"/><spacer flex="1"/>
+      <stack id="foundation-2" class="card-pile"/><spacer flex="1"/>
+      <stack id="foundation-3" class="card-pile"/><spacer flex="1"/>
+    </hbox>
+    <spacer class="row-spacer"/>
+    <hbox>
+      <spacer flex="2"/>
+      <stack id="pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="pile-7" class="card-fan-down"/><spacer flex="2"/>
     </hbox>
   </vbox>
 

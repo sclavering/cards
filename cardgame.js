@@ -17,13 +17,15 @@ const ACES_HIGH = 1,
                                  // the stock, the entire waste pile is (can be) moved back to the stock
       HAS_DIFFICULTY_LEVELS = 4;
 
-function CardGame(params) {
+function CardGame(params, usesMouseHandler2) {
   // checked in the common event handler, if true must implement dealFromStock()
   this.stockCanTurnOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
   // used when determining the result for card.number() calls (makes Aces 14's)
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
   // used in CardGame.start(); to show/hide the DifficultyLevel menu
   this.hasDifficultyLevels = (params&HAS_DIFFICULTY_LEVELS)==HAS_DIFFICULTY_LEVELS;
+  // for freecell.
+  this.usesMouseHandler2 = usesMouseHandler2;
 };
 
 CardGame.prototype = {
@@ -117,7 +119,8 @@ CardGame.prototype = {
     // conditionally show Difficulty Level menu
     if(this.hasDifficultyLevels) Cards.enableDifficultyMenu();
     else Cards.disableDifficultyMenu();
-    MouseHandler.start();
+    if(this.usesMouseHandler2) MouseHandler2.start();
+    else MouseHandler.start();
     // init stack arrays and stuff
     if(!this.initialised) {
       this.init();

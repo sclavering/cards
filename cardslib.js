@@ -357,6 +357,103 @@ var MouseHandler = {
 
 
 
+// === BEGIN FREECELL ADDITIONS ===
+
+
+
+/** MouseHandler2
+  *
+  * This performs the same job as MouseHandler, except that it makes the procedure for moving
+  * a card:
+  *   click to select source,
+  *   click on destination,
+  * rather than drag+drop
+  *
+  * uses the new Highlighter class to highlight selected cards.
+  */
+var MouseHandler2 = {
+  source: null,
+  dragLayer: null,
+
+  init: function(stack) { this.dragLayer = stack; },
+  start: function() { this.enable(); }, // hangover from Cards version.  retaining for almagamation
+  enable: function() { this.dragLayer.addEventListener("click",this.mouseClickedWrapper,false); },
+  disable: function() { this.dragLayer.removeEventListener("click",this.mouseClickedWrapper,false); },
+
+  mouseClickedWrapper: function(e) { MouseHandler2.mouseClicked(e); },
+
+  mouseClicked: function(e) {
+    var t = e.target;
+    if(e.button==0) {
+      if(e.detail==2) { // && Game.foundations) {  // don't need for FreeCell, but might do in future
+        this.clearHighlight();
+        // in a double click the first click will have highlighted the card, so the
+        // second click's target is the highlight box
+        if(t.className=="card-highlight") Game.sendToFoundations(this.source);
+        this.source = null;
+      } else {
+        if(this.source) {
+          this.clearHighlight();
+          // we move to a pile, not to the card the user clicks on :)
+          if(t.isCard) t = t.parentNode;
+          // must check if target is a cell or foundation, to avoid trying
+          // to move card into the highlight box or main display stack :(
+          if(t.isPile || t.isCell || t.isFoundation)
+            if(t != this.source.parentNode)
+              Game.attemptMove(this.source,t);
+          this.source = null;
+        } else {
+          if(t.isCard && Game.canMoveCard(t)) {
+            this.source = t;//.parentNode.lastChild;
+            this.highlight();
+          }
+        }
+      }
+    } else if(e.button==1) {
+      if(this.source) {
+        this.clearHighlight();
+        this.source = null;
+      }
+      if(t.isCard) Game.smartMove(t);
+    }
+  },
+
+  highlight: function() { Highlighter.highlight(this.source); },
+  clearHighlight: function() { Highlighter.clearHighlight(); }
+}
+
+var Highlighter = {
+  positioningLayer: null, // stack where box is to be created
+  highlightBoxes: null, // a bunch of boxes that get positioned round cards to highlight them
+  destinations: null, // where the hint should show the card moving to
+
+  init: function(stack) {
+    this.positioningLayer = stack;
+    this.highlightBox = document.createElement("box");
+    this.highlightBox.className = "card-highlight";
+  },
+
+  highlight: function(card) {
+    // card may be a stack if hint suggests moving to an empty stack
+    this.highlightBox.left = getLeft(card) - getLeft(this.positioningLayer);
+    this.highlightBox.top  = getTop(card)  - getTop(this.positioningLayer);
+    this.highlightBox.width = getWidth(card);
+    var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
+    this.highlightBox.height = height;
+    this.positioningLayer.appendChild(this.highlightBox);
+  },
+  clearHighlight: function() {
+    this.positioningLayer.removeChild(this.highlightBox);
+  }
+}
+// === END FREECELL ADDITIONS ===
+
+
+
+
+
+
+
 
 
 /** CardMover
@@ -432,7 +529,10 @@ var CardMover = {
     this.transfer(this.cards.firstChild, this.target);
     this.cards.setAttribute("style","display:none");
     // don't enable the UI till we're finished autoplaying
-    if(!Game.autoplay()) Cards.enableUI();
+//    if(!Game.autoplay()) Cards.enableUI();
+    // FREECELL ified
+    if(!FreeCellMover.step() && !Game.autoplay())
+      Cards.enableUI();
   },
 
   transfer: function(firstCard, target) {
@@ -633,6 +733,9 @@ var Cards = {
     MouseHandler.init(this.gameDisplayStack);    // handles drag-drop and mouse clicks
     CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
     HintHighlighter.init(this.gameDisplayStack); // shows hints by drawing boxes round source/destination
+    // FREECELL additions
+    MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
+    Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
     // retrieve current game, stored in prefCurrentGame attribute on <window> element
     var currentGamePref =
       (this.preferences.getPrefType("current-game") != 0)

@@ -161,7 +161,6 @@ var BaseCardGame = {
       }
     }
 
-    // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
     // xxx kill this
     this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
@@ -569,7 +568,7 @@ var BaseCardGame = {
   get firstEmptyFoundation() {
     var fs = this.foundations, len = fs.length;
     for(var i = 0; i != len; i++) if(!fs[i].hasChildNodes()) return fs[i];
-    return null; // xxx throw an exception instead?
+    return null;
   },
 
   get firstEmptyPile() {

@@ -106,7 +106,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
 <stack id="games" flex="1">
   <!-- Aces Up -->
   <vbox id="acesup" hidden="true" class="game">
-    <hbox flex="1">
+    <hbox>
       <flex/>
       <stock id="acesup-stock"/><flex2/>
       <pile class="fan-down" id="acesup-pile-0"/><flex/>
@@ -376,7 +376,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
 
   <!-- Maze -->
   <vbox id="maze" hidden="true" class="game">
-    <hbox id="maze-row1">
+    <hbox>
       <flex/>
       <pile id="maze-pile-0"/><flex/>
       <pile id="maze-pile-1"/><flex/>
@@ -388,7 +388,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile id="maze-pile-7"/><flex/>
       <pile id="maze-pile-8"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="maze-row2">
+    <hbox>
       <flex/>
       <pile id="maze-pile-9"/><flex/>
       <pile id="maze-pile-10"/><flex/>
@@ -400,7 +400,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile id="maze-pile-16"/><flex/>
       <pile id="maze-pile-17"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="maze-row3">
+    <hbox>
       <flex/>
       <pile id="maze-pile-18"/><flex/>
       <pile id="maze-pile-19"/><flex/>
@@ -412,7 +412,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile id="maze-pile-25"/><flex/>
       <pile id="maze-pile-26"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="maze-row4">
+    <hbox>
       <flex/>
       <pile id="maze-pile-27"/><flex/>
       <pile id="maze-pile-28"/><flex/>
@@ -424,7 +424,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile id="maze-pile-34"/><flex/>
       <pile id="maze-pile-35"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="maze-row5">
+    <hbox>
       <flex/>
       <pile id="maze-pile-36"/><flex/>
       <pile id="maze-pile-37"/><flex/>
@@ -436,7 +436,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile id="maze-pile-43"/><flex/>
       <pile id="maze-pile-44"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="maze-row6">
+    <hbox>
       <flex/>
       <pile id="maze-pile-45"/><flex/>
       <pile id="maze-pile-46"/><flex/>
@@ -452,7 +452,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
 
   <!-- Mod 3 -->
   <vbox id="mod3" hidden="true" class="game">
-    <hbox id="mod3-row1">
+    <hbox>
       <flex/>
       <pile class="slide" id="mod3-foundation-0"/><flex/>
       <pile class="slide" id="mod3-foundation-1"/><flex/>
@@ -464,7 +464,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile class="slide" id="mod3-foundation-7"/><flex/>
       <pilespacer/><flex/>
     </hbox><rowspacer/>
-    <hbox id="mod3-row2">
+    <hbox>
       <flex/>
       <pile class="slide" id="mod3-foundation-8"/><flex/>
       <pile class="slide" id="mod3-foundation-9"/><flex/>
@@ -476,7 +476,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile class="slide" id="mod3-foundation-15"/><flex/>
       <pilespacer/><flex/>
     </hbox><rowspacer/>
-    <hbox id="mod3-row3">
+    <hbox>
       <flex/>
       <pile class="slide" id="mod3-foundation-16"/><flex/>
       <pile class="slide" id="mod3-foundation-17"/><flex/>
@@ -488,7 +488,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <pile class="slide" id="mod3-foundation-23"/><flex/>
       <pilespacer/><flex/>
     </hbox><rowspacer/>
-    <hbox id="mod3-row4">
+    <hbox>
       <flex/>
       <pile class="fan-down" id="mod3-pile-0"/><colspacer/><flex/>
       <pile class="fan-down" id="mod3-pile-1"/><colspacer/><flex/>
@@ -620,7 +620,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
 
   <!-- Pyramid -->
   <vbox id="pyramid" hidden="true" class="game">
-    <hbox flex="1">
+    <hbox>
       <flex/>
       <vbox>
         <stock id="pyramid-stock"/>

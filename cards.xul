@@ -40,6 +40,7 @@
 <script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
+<script type="application/x-javascript" src="maze.js"/>
 <script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="simon.js"/>
@@ -317,6 +318,84 @@ used when building the game types menu
       <stack id="klondike-pile-4" class="card-fan-down"/><spacer flex="1"/>
       <stack id="klondike-pile-5" class="card-fan-down"/><spacer flex="1"/>
       <stack id="klondike-pile-6" class="card-fan-down"/><spacer flex="1"/>
+    </hbox>
+  </vbox>
+
+  <!-- Maze -->
+  <vbox id="Maze" name="&maze.name;" menukey="&maze.menukey;"
+      hidden="true">
+    <rowspacer/>
+    <hbox id="maze-row1">
+      <spacer flex="1"/>
+      <pile id="maze-pile-0"/><spacer flex="1"/>
+      <pile id="maze-pile-1"/><spacer flex="1"/>
+      <pile id="maze-pile-2"/><spacer flex="1"/>
+      <pile id="maze-pile-3"/><spacer flex="1"/>
+      <pile id="maze-pile-4"/><spacer flex="1"/>
+      <pile id="maze-pile-5"/><spacer flex="1"/>
+      <pile id="maze-pile-6"/><spacer flex="1"/>
+      <pile id="maze-pile-7"/><spacer flex="1"/>
+      <pile id="maze-pile-8"/><spacer flex="1"/>
+    </hbox><rowspacer/>
+    <hbox id="maze-row2">
+      <spacer flex="1"/>
+      <pile id="maze-pile-9"/><spacer flex="1"/>
+      <pile id="maze-pile-10"/><spacer flex="1"/>
+      <pile id="maze-pile-11"/><spacer flex="1"/>
+      <pile id="maze-pile-12"/><spacer flex="1"/>
+      <pile id="maze-pile-13"/><spacer flex="1"/>
+      <pile id="maze-pile-14"/><spacer flex="1"/>
+      <pile id="maze-pile-15"/><spacer flex="1"/>
+      <pile id="maze-pile-16"/><spacer flex="1"/>
+      <pile id="maze-pile-17"/><spacer flex="1"/>
+    </hbox><rowspacer/>
+    <hbox id="maze-row3">
+      <spacer flex="1"/>
+      <pile id="maze-pile-18"/><spacer flex="1"/>
+      <pile id="maze-pile-19"/><spacer flex="1"/>
+      <pile id="maze-pile-20"/><spacer flex="1"/>
+      <pile id="maze-pile-21"/><spacer flex="1"/>
+      <pile id="maze-pile-22"/><spacer flex="1"/>
+      <pile id="maze-pile-23"/><spacer flex="1"/>
+      <pile id="maze-pile-24"/><spacer flex="1"/>
+      <pile id="maze-pile-25"/><spacer flex="1"/>
+      <pile id="maze-pile-26"/><spacer flex="1"/>
+    </hbox><rowspacer/>
+    <hbox id="maze-row4">
+      <spacer flex="1"/>
+      <pile id="maze-pile-27"/><spacer flex="1"/>
+      <pile id="maze-pile-28"/><spacer flex="1"/>
+      <pile id="maze-pile-29"/><spacer flex="1"/>
+      <pile id="maze-pile-30"/><spacer flex="1"/>
+      <pile id="maze-pile-31"/><spacer flex="1"/>
+      <pile id="maze-pile-32"/><spacer flex="1"/>
+      <pile id="maze-pile-33"/><spacer flex="1"/>
+      <pile id="maze-pile-34"/><spacer flex="1"/>
+      <pile id="maze-pile-35"/><spacer flex="1"/>
+    </hbox><rowspacer/>
+    <hbox id="maze-row5">
+      <spacer flex="1"/>
+      <pile id="maze-pile-36"/><spacer flex="1"/>
+      <pile id="maze-pile-37"/><spacer flex="1"/>
+      <pile id="maze-pile-38"/><spacer flex="1"/>
+      <pile id="maze-pile-39"/><spacer flex="1"/>
+      <pile id="maze-pile-40"/><spacer flex="1"/>
+      <pile id="maze-pile-41"/><spacer flex="1"/>
+      <pile id="maze-pile-42"/><spacer flex="1"/>
+      <pile id="maze-pile-43"/><spacer flex="1"/>
+      <pile id="maze-pile-44"/><spacer flex="1"/>
+    </hbox><rowspacer/>
+    <hbox id="maze-row6">
+      <spacer flex="1"/>
+      <pile id="maze-pile-45"/><spacer flex="1"/>
+      <pile id="maze-pile-46"/><spacer flex="1"/>
+      <pile id="maze-pile-47"/><spacer flex="1"/>
+      <pile id="maze-pile-48"/><spacer flex="1"/>
+      <pile id="maze-pile-49"/><spacer flex="1"/>
+      <pile id="maze-pile-50"/><spacer flex="1"/>
+      <pile id="maze-pile-51"/><spacer flex="1"/>
+      <pile id="maze-pile-52"/><spacer flex="1"/>
+      <pile id="maze-pile-53"/><spacer flex="1"/>
     </hbox>
   </vbox>
 

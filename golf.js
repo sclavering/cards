@@ -2,7 +2,7 @@ Games["golf"] = {
   __proto__: BaseCardGame,
 
   id: "golf",
-
+  difficultyLevels: ["easy-golf","medium-1deck","hard-2decks"],
 
   init: function() {
     this.stockDealTargets = [this.foundation];

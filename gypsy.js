@@ -2,6 +2,7 @@ Games["gypsy"] = {
   __proto__: BaseCardGame,
 
   id: "gypsy",
+  difficultyLevels: ["easy-2suits","hard-4suits"],
 
 
   ///////////////////////////////////////////////////////////

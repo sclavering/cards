@@ -4,10 +4,61 @@ var gGameStack = null;  // the <stack id="games"/>
 var gGameStackTop = 0;  // ... and its coords
 var gGameStackLeft = 0;
 
+var gStrings = []; // the contents of the stringbundle
+
 var Game = null;  // the current games
 var Games = [];   // all the games, indexed by id
 
 var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
+
+
+
+function init() {
+  // init the pref branch
+  var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefService);
+  gPrefs = prefService.getBranch("games.cards.");
+
+  // load stringbundle
+  var svc = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                      .getService(Components.interfaces.nsIStringBundleService);
+  var bundle = svc.createBundle("chrome://cards/locale/cards.properties");
+  bundle = bundle.getSimpleEnumeration();
+  while(bundle.hasMoreElements()) {
+    var property = bundle.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
+    gStrings[property.key] = property.value;
+  }
+
+  // restore choice of cardset
+  var cardset = "normal";
+  try {
+    cardset = gPrefs.getCharPref("cardset");
+  } catch(e) {}
+  useCardSet(cardset);
+  document.getElementById("cardset-"+cardset).setAttribute("checked","true");
+
+  gGameStack = document.getElementById("games");
+  gGameStackTop = gGameStack.boxObject.y;
+  gGameStackLeft = gGameStack.boxObject.x;
+
+  // init other stuff
+  initMouseHandlers();
+  CardMover.init();
+  HintHighlighter.init();
+
+  // build the games menu
+  var menu = document.getElementById("menupopup-gametypes");
+  for(var game in Games) {
+    var mi = document.createElement("menuitem");
+    mi.setAttribute("label",gStrings[game+".name"]);
+    mi.setAttribute("accesskey",gStrings[game+".menukey"]);
+    mi.value = game;
+    menu.appendChild(mi);
+  }
+
+  Cards.init();
+}
+window.addEventListener("load", init, false);
 
 
 
@@ -639,26 +690,6 @@ var Cards = {
     this.gameSelector = document.getElementById("game-type-menu");
     this.gameWonMsg = document.getElementById("game-won-msg-box");
 
-    gGameStack = document.getElementById("games");
-    gGameStackTop = gGameStack.boxObject.y;
-    gGameStackLeft = gGameStack.boxObject.x;
-
-    // init other stuff
-    initMouseHandlers();
-    CardMover.init();
-    HintHighlighter.init();
-
-    // build the games menu
-    var menu = document.getElementById("menupopup-gametypes");
-    for(var game in Games) {
-      var el = document.getElementById(game);
-      var mi = document.createElement("menuitem");
-      mi.setAttribute("label",el.getAttribute("name"));
-      mi.setAttribute("accesskey",el.getAttribute("menukey"));
-      mi.value = game;
-      menu.appendChild(mi);
-    }
-
     // switch to last played game
     game = "Klondike";
     try {
@@ -668,8 +699,7 @@ var Cards = {
     Game = Games[game];
     Game.start();
     // set window title. (setting window.title does not work as the app. is starting)
-    var title = document.getElementById(game).getAttribute("name");
-    document.documentElement.setAttribute("title",title);
+    document.documentElement.setAttribute("title",gStrings[game+".name"]);
   },
 
   // switches which game is currently being played
@@ -681,7 +711,7 @@ var Cards = {
     Game = Games[game];
     Game.start();
     // set the window title
-    window.title = document.getElementById(game).getAttribute("name");
+    window.title = gStrings[game+".name"];
   },
 
   // enable/disable the UI elements. this is done whenever any animation
@@ -778,25 +808,3 @@ function useCardSet(set) {
   // save pref
   gPrefs.setCharPref("cardset",set);
 }
-
-
-
-function init() {
-  // init the pref branch
-  var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefService);
-  gPrefs = prefService.getBranch("games.cards.");
-
-  // restore choice of cardset
-  var cardset = "normal";
-  try {
-    cardset = gPrefs.getCharPref("cardset");
-  } catch(e) {}
-  useCardSet(cardset);
-  document.getElementById("cardset-"+cardset).setAttribute("checked","true");
-
-  Cards.init();
-}
-
-
-window.addEventListener("load", init, false);

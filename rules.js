@@ -6,6 +6,7 @@ for other functions.
 Current choices:
 
 rule_canMoveCard:
+  "descending"
   "descending,alt-colours"
   "descending,in-suit"
   "descending,in-suit,not-from-foundation"
@@ -23,6 +24,15 @@ rule_canMoveToPile:
 
 var Rules = {
   canMoveCard: {
+    "descending":
+    function(card) {
+      if(card.faceDown()) return false;
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
+        if(card.notConsecutiveTo(next)) return false;
+      }
+      return true;
+    },
+
     "descending,alt-colours":
     function(card) {
       if(card.faceDown()) return false;

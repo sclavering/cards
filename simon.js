@@ -2,6 +2,7 @@ Games["simon"] = {
   __proto__: BaseCardGame,
 
   id: "simon",
+  difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
 
 
   ///////////////////////////////////////////////////////////
@@ -25,7 +26,7 @@ Games["simon"] = {
   canMoveToFoundation: function(card, stack) {
     // only a K->A run can be put on a foundation, and the foundation must be empty
     // canMoveCard() will ensure we have a run, so only need to check the ends
-    return (card.isKing() && card.parentNode.lastChild.isAce() && !stack.hasChildNodes());
+    return (!stack.hasChildNodes() && card.isKing() && card.parentNode.lastChild.isAce());
   },
 
 

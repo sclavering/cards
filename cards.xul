@@ -7,8 +7,6 @@
 <!DOCTYPE window [
 <!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
 %cardsDTD;
-
-<!ENTITY difficulty.standard-levels "&difficulty.easy-1suit;|&difficulty.medium-2suits;|&difficulty.hard-4suits;">
 ]>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -33,7 +31,6 @@
 <script type="application/x-javascript" src="fan.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
 <script type="application/x-javascript" src="golf.js"/>
-<script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
 <script type="application/x-javascript" src="maze.js"/>
@@ -41,6 +38,8 @@
 <script type="application/x-javascript" src="montana.js"/>
 <script type="application/x-javascript" src="pyramid.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
+<script type="application/x-javascript" src="russiansol.js"/>
+<script type="application/x-javascript" src="sanibel.js"/>
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>
@@ -100,10 +99,6 @@ rather than CSS, because margins and padding are not included in the result of
 boxEl.boxObject.top/left etc, so there is a jump (of the num of px of padding)
 when starting to move a card, which looks abysmal
 
-Games must all have a name and menukey attribute on their main element, and the id
-must be the key used for that game in the Games hashtable.  the two attributes are
-used when building the game types menu
-
 pile, stock, waste, cell, reserve and foundation elements are all essenitally <stack/>s
 
 <flex/> is equivalent to <spacer flex="1"/>
@@ -111,8 +106,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
 <stack id="games" flex="1">
   <!-- Aces Up -->
-  <vbox id="acesup" name="&acesup.name;" menukey="&acesup.menukey;"
-      hidden="true">
+  <vbox id="acesup" hidden="true">
     <rowspacer/>
     <hbox flex="1">
       <flex/>
@@ -126,8 +120,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Canfield -->
-  <vbox id="canfield" name="&canfield.name;" menukey="&canfield.menukey;"
-      hidden="true">
+  <vbox id="canfield" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -153,8 +146,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Double Solitaire -->
-  <vbox id="doublesol" name="&doublesol.name;" menukey="&doublesol.menukey;"
-      hidden="true">
+  <vbox id="doublesol" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -183,8 +175,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Fan -->
-  <vbox id="fan" name="&fan.name;" menukey="&fan.menukey;"
-      hidden="true">
+  <vbox id="fan" hidden="true">
     <rowspacer/>
     <hbox>
       <flex3/>
@@ -228,8 +219,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- FreeCell -->
-  <vbox id="freecell" name="&freecell.name;" menukey="&freecell.menukey;"
-      hidden="true">
+  <vbox id="freecell" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -258,9 +248,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Golf -->
   <!-- flex allows bottom alignment of golf-stock-row -->
-  <vbox id="golf" name="&golf.name;" menukey="&golf.menukey;"
-      hidden="true" flex="1"
-      difficultyLevels="&difficulty.easy-golf;|&difficulty.medium-1deck;|&difficulty.hard-2decks;">
+  <vbox id="golf" hidden="true" flex="1">
     <rowspacer/>
     <hbox id="golf-tableau-row">
       <flex/>
@@ -288,33 +276,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     <rowspacer/>
   </vbox>
 
-  <!-- Grandfather -->
-  <vbox id="grandfather" name="&grandfather.name;" menukey="&grandfather.menukey;"
-      hidden="true">
-    <rowspacer/>
-    <hbox>
-      <flex/>
-      <pile class="fan-down" id="grandfather-pile-0"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-1"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-2"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-3"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-4"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-5"/><flex/>
-      <pile class="fan-down" id="grandfather-pile-6"/><flex/>
-      <vbox>
-        <foundation id="grandfather-foundation-0"/><rowspacer/>
-        <foundation id="grandfather-foundation-1"/><rowspacer/>
-        <foundation id="grandfather-foundation-2"/><rowspacer/>
-        <foundation id="grandfather-foundation-3"/><flex/>
-      </vbox>
-      <flex/>
-    </hbox>
-  </vbox>
-
   <!-- Gypsy -->
-  <vbox id="gypsy" name="&gypsy.name;" menukey="&gypsy.menukey;"
-      hidden="true"
-      difficultyLevels="&difficulty.easy-2suits;|&difficulty.hard-4suits;">
+  <vbox id="gypsy" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -355,8 +318,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Klondike -->
-  <vbox id="klondike" name="&klondike.name;" menukey="&klondike.menukey;"
-      hidden="true">
+  <vbox id="klondike" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -382,8 +344,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Maze -->
-  <vbox id="maze" name="&maze.name;" menukey="&maze.menukey;"
-      hidden="true">
+  <vbox id="maze" hidden="true">
     <rowspacer/>
     <hbox id="maze-row1">
       <flex/>
@@ -460,8 +421,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Mod 3 -->
-  <vbox id="mod3" name="&mod3.name;" menukey="&mod3.menukey;"
-      hidden="true">
+  <vbox id="mod3" hidden="true">
     <rowspacer/>
     <hbox id="mod3-row1">
       <flex/>
@@ -521,8 +481,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Montana -->
-  <vbox id="montana" name="&montana.name;" menukey="&montana.menukey;"
-      hidden="true">
+  <vbox id="montana" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -590,9 +549,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox><flex/>
   </vbox>
 
-  <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="pyramid" name="&pyramid.name;" menukey="&pyramid.menukey;"
-      hidden="true">
+  <!-- Pyramid -->
+  <vbox id="pyramid" hidden="true">
     <rowspacer/>
     <hbox flex="1">
       <flex/>
@@ -675,8 +633,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="regiment" name="&regiment.name;" menukey="&regiment.menukey;"
-      hidden="true">
+  <vbox id="regiment" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -725,9 +682,62 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox><flex/>
   </vbox>
 
+  <!-- Russian Solitaire (formerly known as Grandfather) -->
+  <vbox id="russiansol" hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <pile class="fan-down" id="russiansol-pile-0"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-1"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-2"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-3"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-4"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-5"/><flex/>
+      <pile class="fan-down" id="russiansol-pile-6"/><flex/>
+      <vbox>
+        <foundation id="russiansol-foundation-0"/><rowspacer/>
+        <foundation id="russiansol-foundation-1"/><rowspacer/>
+        <foundation id="russiansol-foundation-2"/><rowspacer/>
+        <foundation id="russiansol-foundation-3"/><flex/>
+      </vbox>
+      <flex/>
+    </hbox>
+  </vbox>
+
+  <!-- Sanibel -->
+  <vbox id="sanibel" hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <stock id="sanibel-stock"/><flex/>
+      <waste id="sanibel-waste"/><flex/>
+      <foundation id="sanibel-foundation-0"/><flex/>
+      <foundation id="sanibel-foundation-1"/><flex/>
+      <foundation id="sanibel-foundation-2"/><flex/>
+      <foundation id="sanibel-foundation-3"/><flex/>
+      <foundation id="sanibel-foundation-4"/><flex/>
+      <foundation id="sanibel-foundation-5"/><flex/>
+      <foundation id="sanibel-foundation-6"/><flex/>
+      <foundation id="sanibel-foundation-7"/><flex/>
+    </hbox>
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <pile class="fan-down" id="sanibel-pile-0"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-1"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-2"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-3"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-4"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-5"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-6"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-7"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-8"/><flex/>
+      <pile class="fan-down" id="sanibel-pile-9"/><flex/>
+    </hbox>
+  </vbox>
+
   <!-- Simple Simon -->
-  <vbox id="simon" name="&simon.name;" menukey="&simon.menukey;"
-      hidden="true" difficultyLevels="&difficulty.standard-levels;">
+  <vbox id="simon" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -752,8 +762,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Spider Solitaire -->
-  <vbox id="spider" name="&spider.name;" menukey="&spider.menukey;"
-      hidden="true" difficultyLevels="&difficulty.standard-levels;">
+  <vbox id="spider" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -791,8 +800,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Towers -->
-  <vbox id="towers" name="&towers.name;" menukey="&towers.menukey;"
-      hidden="true">
+  <vbox id="towers" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -822,8 +830,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Yukon -->
-  <vbox id="yukon" name="&yukon.name;" menukey="&yukon.menukey;"
-      hidden="true">
+  <vbox id="yukon" hidden="true">
     <rowspacer/>
     <hbox>
       <flex/>

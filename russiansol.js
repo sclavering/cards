@@ -1,7 +1,7 @@
-Games["grandfather"] = {
+Games["russiansol"] = {
   __proto__: BaseCardGame,
 
-  id: "grandfather",
+  id: "russiansol",
   redeals: 2,
 
 

@@ -2,6 +2,13 @@ var BaseCardGame = {
   // games must provide this, the id of the vbox/hbox that contains all the game's content
   id: null,
 
+  // An array of strings, each of which is prefixed with "difficulty." then looked up in
+  // gStrings to build the difficulty level menu when switching to the current card game.
+  // Each gets assigned a number, *counting from 1* (to avoid js's 0==false), and the
+  // selected difficulty level is stored in |Game.difficultyLevel|
+  difficultyLevels: null,
+  difficultyLevel: 0,
+
   // boolean flags that games might want to override
   canTurnStockOver: false,
   acesHigh: false,
@@ -49,7 +56,6 @@ var BaseCardGame = {
     if(!this.initialised) this.initialise();
     // show
     this.xulElement.hidden = false;
-    // creates the Difficulty level menu on the toolbar if necessary, and sets the Game.difficultyLevel param
     this.initDifficultyLevel();
     // init stack arrays and stuff
     this.newGame();
@@ -165,11 +171,9 @@ var BaseCardGame = {
     var menu = Cards.difficultyLevelPopup;
     while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
     // get levels.  if none then return (updateUI will ensure menu disabled)
-    var levels = this.xulElement.getAttribute("difficultyLevels");
-    if(!levels || levels=="") return;
-    //
+    var levels = this.difficultyLevels;
+    if(!levels) return;
     Cards.enableDifficultyMenu();
-    levels = levels.split('|');
     // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
     var currentLevel;
     try {
@@ -181,7 +185,7 @@ var BaseCardGame = {
     // add appropriate menu items
     for(var i = 0; i < levels.length; i++) {
       var mi = document.createElement("menuitem");
-      mi.setAttribute("label",levels[i]);
+      mi.setAttribute("label",gStrings["difficulty."+levels[i]]);
       mi.setAttribute("value",i+1); // number from 1, to avoid js 0==false thing
       mi.setAttribute("type","radio");
       if(i+1==currentLevel) mi.setAttribute("checked","true");

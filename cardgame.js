@@ -609,7 +609,7 @@ var BaseCardGame = {
         this.trackMove("dealt-from-stock", null, null);
         this.dealsLeft--;
       } else if(this.canTurnStockOver) {
-        while(this.waste.hasChildNodes()) this.undealCardFrom(this.stock);
+        while(this.waste.hasChildNodes()) this.undealCardFrom(this.waste);
         this.dealsLeft = this.stock.childNodes.length;
         this.trackMove("stock-turned-over", null, null);
       } else {
@@ -623,6 +623,7 @@ var BaseCardGame = {
       this.dealsLeft--;
     }
     if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+    this.autoplay();
   },
 
   dealCardTo: function(destination) {

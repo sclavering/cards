@@ -67,11 +67,11 @@ var BaseCardGame = {
       while(s.hasChildNodes()) s.removeChild(s.lastChild);
     }
 
+    this.init(); // game specific stuff
+
     // see comments above
     if(typeof this.cards == "number") this.cards = getDecks(this.cards);
     else if(typeof this.cards[0] == "number") this.cards = getSuits(this.cards);
-
-    this.init(); // game specific stuff
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function

@@ -25,6 +25,9 @@ var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 
+var gCardHeight = 0; // cards' heights in pixels (set in useCardSet)
+var gCardWidth = 0;
+
 // <command/> elements
 var gCmdSetDifficulty = "cmd:setdifficulty";
 var gCmdNewGame = "cmd:newgame";
@@ -559,14 +562,17 @@ function createHighlighter() {
   };
   box.highlight = function(card) {
     // card might be a pile really
-    const cardbox = card.boxObject;
-    this.top = this._top = cardbox.y - gGameStackTop;
-    this.left = this._left = cardbox.x - gGameStackLeft;
-    this.width = cardbox.width;
-    const lastbox = card.parentNode.lastChild.boxObject;
-    if(card.isCard) this.height = lastbox.y + lastbox.height - cardbox.y;
-    else this.height = cardbox.height;
-    // xxx should use a highlight box the size of a card for an empty pile
+    const box = card.boxObject;
+    this.top = this._top = box.y - gGameStackTop;
+    this.left = this._left = box.x - gGameStackLeft;
+    if(card.isCard) {
+      const box2 = card.parentNode.lastChild.boxObject;
+      this.height = box2.y + box2.height - box.y;
+      this.width = box.width;
+    } else {
+      this.height = gCardHeight;
+      this.width = gCardWidth;
+    }
   };
   box.unhighlight();
   return box;
@@ -711,18 +717,14 @@ function doneShowingMessage() {
 
 
 function useCardSet(set) {
-  // XXX: Ideally the disabling of stylesheets would be based on their titles, but
-  // when testing on Fb 20031209 win32 build the title of every sheet would be OK
-  // the first time Cards was loaded, but then be an empty string every subsequent
-  // load until Firebird was restarted.  Hence we use this hack based on the href
-  var anySetRE = /\/cardsets\/[^.]*\.css$/;
-  var thisSetRE = new RegExp(set+".css$");
   // switch stylesheets
-  var sheets = document.styleSheets;
-  for(var i = 0; i < sheets.length; i++) {
-//    if(sheets[i].title) sheets[i].disabled = (sheets[i].title!=set);
-    if(anySetRE.test(sheets[i].href)) sheets[i].disabled = !thisSetRE.test(sheets[i].href);
-  }
+  const sheets = document.styleSheets, num = sheets.length;
+  for(var i = 0; i != num; i++)
+    if(sheets[i].title) sheets[i].disabled = sheets[i].title!=set;
   // save pref
-  gPrefs.setCharPref("cardset",set);
+  gPrefs.setCharPref("cardset", set);
+  // xxx evilish hack
+  var isSmallSet = set=="small";
+  gCardHeight = isSmallSet ? 80 : 96;
+  gCardWidth = isSmallSet ? 59 : 71;
 }

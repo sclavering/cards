@@ -293,8 +293,8 @@ function _createCardPile(elt) {
       }
       var card;
       // figure out how many we can shift in space allotted
-      var maxYShifts = parseInt((window.innerHeight - getBottom(this.firstChild))/Cards.cardSlideOffset);
-      var maxXShifts = parseInt((window.innerWidth - getRight(this.firstChild))/Cards.cardSlideOffset);
+      var maxYShifts = Math.floor((window.innerHeight - getBottom(this.firstChild))/Cards.cardSlideOffset);
+      var maxXShifts = Math.floor((window.innerWidth - getRight(this.firstChild))/Cards.cardSlideOffset);
       var offX = 0;
       var offY = 0;
       if(maxYShifts > 5) maxYShifts = 5;

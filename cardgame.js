@@ -569,11 +569,10 @@ var BaseCardGame = {
 
 
 
-
-
-
 function makeGameConstructor(proto) {
-  var f = function() {};
+  // using the |function| keyword here sometimes results in the same function being returned
+  // for each call of makeGameConstructor, so all games become Sanibel (see bug 7976).
+  var f = new Function();
   f.prototype = proto;
   return f;
 }

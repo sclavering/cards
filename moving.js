@@ -50,35 +50,40 @@ var CardMover1 = {
     cards.top = cards._top = sy;
     firstCard.transferTo(cards);
 
+    // we'd like to move 55px diagonally per step, but have to settle for the closest distance that
+    // allows a *whole number* of steps, each of the same size
     var angle = Math.atan2(dy, dx);
-    var stepX = Math.cos(angle) * 55;
-    var stepY = Math.sin(angle) * 55;
-    var stepNum = Math.floor(dx ? dx/stepX : dy/stepY);
+    var steps = Math.round((dx ? dx/Math.cos(angle) : dy/Math.sin(angle)) / 55);
+    var stepX = dx / steps;
+    var stepY = dy / steps;
+    steps--; // so it's 0 when the move is complete
 
     var interval = null;
 
+    // We want the cards to be displayed over their destination while the transfer happens.  Without
+    // this function (called via a timer) that doesn't happen.
+    function done() {
+      cards.firstChild.transferTo(target);
+      if(Game.autoplay()) return;
+      cards.hide();
+      enableUI();
+    };
+
     function step() {
-      if(stepNum!=0) {
+      if(steps) {
         cards.left = cards._left += stepX;
         cards.top = cards._top += stepY;
-        stepNum--;
+        steps--;
       } else {
         // move is done
         cards.left = tx;
         cards.top = ty;
         clearInterval(interval);
-        // Using a timer forces moz to paint the cards at their destination (but still as children
-        // of |cards|) before transferring them, which is good because the transfer takes a while.
-        setTimeout(function() {
-          cards.firstChild.transferTo(target);
-          cards.hide();
-          animatedActionFinished();
-        }, 0);
+        setTimeout(done, 0);
       }
     };
 
     interval = setInterval(step, 30);
-    step();
   }
 };
 

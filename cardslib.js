@@ -592,12 +592,12 @@ var CardPositioner = {
 
   position: function(card) {
     if(card.previousSibling){
-      if(card.parentNode.className=="card-fan-down"){
+      if(card.parentNode.className=="card-fan-down") {
         card.top = card.previousSibling.top - 0 + (card.previousSibling.faceUp() ? (card.parentNode.offset || this.faceUpOffset) : this.faceDownOffset);
         card.left = card.previousSibling.left;
         return;
       }
-      if(card.parentNode.className=="card-slide"){
+      if(card.parentNode.className=="card-slide") {
         card.top = card.previousSibling.top;
         card.left = card.previousSibling.left;
 //        if(card.parentNode.childNodes.length < 6){
@@ -618,8 +618,8 @@ var CardPositioner = {
       return 0;
     if(stack.className=="card-fan-down") 
       return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? (stack.offset || this.faceUpOffset) : this.faceDownOffset);
-    if(stack.className=="card-slide"){ 
-      if(stack.childNodes.length < 6){
+    if(stack.className=="card-slide") { 
+      if(stack.childNodes.length < 6) {
         return stack.lastChild.top - 0 + this.slideOffset;
       }
       return stack.lastChild.top;
@@ -794,10 +794,9 @@ var Cards = {
     this.gameSelector = document.getElementById("game-type-menu");
     this.gameDisplayStack = document.getElementById("current-game-display");
     // init other objects in cardslib.js
-    MouseHandler1.init(this.gameDisplayStack);    // handles drag-drop and mouse clicks
+    MouseHandler1.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
     HintHighlighter.init(this.gameDisplayStack); // shows hints by drawing boxes round source/destination
-    // FREECELL additions
     MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
     // build the games menu
@@ -830,7 +829,7 @@ var Cards = {
     this.conditionalEnableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
-    MouseHandler.enable(); // handles drag-drop of cards and mouse clicks
+    MouseHandler.enable();
   },
   enablePartialUI: function() {
     this.cmdNewGame.removeAttribute("disabled");

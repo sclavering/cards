@@ -1,3 +1,7 @@
+var gPrefs = null; // nsIPrefBranch for "games.cards."
+
+
+
 /** A lot of stuff that individual card games need to call is accessed from the <image/> element that
   * represent cards.  These have the following methods:
   *   isCard - always returns true
@@ -124,11 +128,11 @@ var CardShuffler = {
     // simple card turning
     c.setFaceUp = function() {
       this._facedown = false;
-      this.className = "card-"+suitstr+"-"+number;
+      this.className = "card "+suitstr+"-"+number;
     };
     c.setFaceDown = function() {
       this._facedown = true;
-      this.className = "card-facedown";
+      this.className = "card facedown";
     };
     // hangover from when source was a property of the first card in the move/drag stacks
     // (rather than of the stacks themselves as is now the case)
@@ -164,7 +168,7 @@ function _createCardPile(elt) {
   elt.isReserve = false;
   elt.isStock = false;
   elt.isWaste = false;
-  
+
   elt.offset = 0;
 
   // for the animated move stack and the drag stack |source|
@@ -280,9 +284,9 @@ function _createCardPile(elt) {
       if(!last) return 0;
       return last.left - 0 + (last.faceUp() ? Cards.cardFaceUpHOffset : Cards.cardFaceDownHOffset);
     };
-    
+
     elt.getNextCardTop = function() { return 0; };
-    
+
     elt.positionCard = function(card) {
       var prev = card.previousSibling;
       if(prev)
@@ -789,7 +793,6 @@ var Cards = {
   cardFaceDownHOffset: 5, // num pixels between *left* edges of two face down cards
   cardFaceUpHOffset: 10, // num pixels between *left* edges of two face up cards
 
-  preferences : null,  // ref to xpcom object implementing nsIPrefBranch for the branch "games.cards"
   currentGame: null,   // string holding the name of the game currently being played
 
   // refs to various <command> elements so they can be disabled
@@ -807,10 +810,6 @@ var Cards = {
   scoreDisplay: null,     // ref to label on toolbar where score displayed
 
   init: function() {
-    // init the preferences thingy
-    var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                                .getService(Components.interfaces.nsIPrefService);
-    this.preferences = prefService.getBranch("games.cards.");
     // init chrome DOM refs
     this.cmdUndo = document.getElementById("cmd:undo");
     this.cmdNewGame = document.getElementById("cmd:newgame");
@@ -821,7 +820,7 @@ var Cards = {
     this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
     this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
     this.gameSelector = document.getElementById("game-type-menu");
-    this.gameDisplayStack = document.getElementById("current-game-display");
+    this.gameDisplayStack = document.getElementById("games");
     // init other objects in cardslib.js
     MouseHandler1.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
@@ -839,12 +838,10 @@ var Cards = {
       menu.appendChild(mi);
     }
     // retrieve current game
-    var currentGame;
+    var currentGame = "Klondike";
     try {
-      currentGame = this.preferences.getCharPref("current-game");
-    } catch(e) {
-      currentGame = "Klondike";
-    }
+      currentGame = gPrefs.getCharPref("current-game");
+    } catch(e) {}
     if(!Games[currentGame]) currentGame = "Klondike"; // just in case pref gets corrupted
     this.playGame(currentGame);
   },
@@ -924,36 +921,65 @@ var Cards = {
     this.currentGame = strGameName;
     document.getElementById(strGameName).hidden = false;
     // store current game pref and start the game
-    this.preferences.setCharPref("current-game",strGameName);
+    gPrefs.setCharPref("current-game",strGameName);
     Game = Games[strGameName];
     Game.start();
     // set the window title
     window.title = document.getElementById(strGameName).getAttribute("name");
-  },
-
-  // config dialogue, currently disabled because i didn't much like it
-  showOptionsDialog: function() {
-    var d = Game.difficultyLevel;
-    var num = d=="easy" ? 0 : d=="hard" ? 2 : 1;
-    window.openDialog("options.xul","options","chrome",function(){Cards.closeOptionsDialog();},num);
-  },
-  closeOptionsDialog: function() {
-    var level = window.dialogMessage;
-    if(level!=Game.difficultyLevel) Game.setDifficultyLevel(level);
   }
 }
+
+
 
 
 // Game var is always the object for the current game
 var Game = null;
 var Games = [];
-
 var MouseHandler;
 
 
-window.addEventListener("load", function() {
+
+
+function useCardSet(set) {
+  // XXX: Ideally the disabling of stylesheets would be based on their titles, but
+  // when testing on Fb 20031209 win32 build the title of every sheet would be OK
+  // the first time Cards was loaded, but then be an empty string every subsequent
+  // load until Firebird was restarted.  Hence we use this hack based on the href
+  var anySetRE = /\/cardsets\/[^.]*\.css$/;
+  var thisSetRE = new RegExp(set+".css$");
+  // switch stylesheets
+  var sheets = document.styleSheets;
+  for(var i = 0; i < sheets.length; i++) {
+//    if(sheets[i].title) sheets[i].disabled = (sheets[i].title!=set);
+    if(anySetRE.test(sheets[i].href)) sheets[i].disabled = !thisSetRE.test(sheets[i].href);
+  }
+  // save pref
+  gPrefs.setCharPref("cardset",set);
+}
+
+
+
+function init() {
+  // init the pref branch
+  var prefService = Components.classes["@mozilla.org/preferences-service;1"]
+                              .getService(Components.interfaces.nsIPrefService);
+  gPrefs = prefService.getBranch("games.cards.");
+
+  // restore choice of cardset
+  var cardset = "normal";
+  try {
+    cardset = gPrefs.getCharPref("cardset");
+  } catch(e) {}
+  useCardSet(cardset);
+  document.getElementById("cardset-"+cardset).setAttribute("checked","true");
+
+
   Cards.init();
+
   // fix window title. setting window.title at the end of Cards.playGame doesn't work the first time.
   var title = document.getElementById(Cards.currentGame).getAttribute("name");
   document.documentElement.setAttribute("title",title);
-}, false);
+}
+
+
+window.addEventListener("load", init, false);

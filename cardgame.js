@@ -167,7 +167,7 @@ var BaseCardGame = CardGame.prototype = {
     // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
     var currentLevel;
     try {
-      currentLevel = Cards.preferences.getIntPref(Cards.currentGame+".difficulty-level");
+      currentLevel = gPrefs.getIntPref(Cards.currentGame+".difficulty-level");
     } catch(e) {
       currentLevel = Math.ceil(levels.length / 2);
     }
@@ -186,7 +186,7 @@ var BaseCardGame = CardGame.prototype = {
   // games can retrieve a integer >0 for the current difficulty level via Game.difficultyLevel;
   setDifficultyLevel: function(level) {
     level = parseInt(level);
-    Cards.preferences.setIntPref(Cards.currentGame + ".difficulty-level", level);
+    gPrefs.setIntPref(Cards.currentGame + ".difficulty-level", level);
     this.difficultyLevel = level;
     this.newGame();
   },

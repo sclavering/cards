@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet href="chrome://cards/content/skin/cards.css" type="text/css"?>
+<?xml-stylesheet href="chrome://cards/content/cards.css" type="text/css"?>
+<?xml-stylesheet href="chrome://cards/content/cardsets/normal.css" type="text/css" title="normal"?>
+<?xml-stylesheet href="chrome://cards/content/cardsets/small.css" type="text/css" title="small"?>
 
 <!DOCTYPE window [
 <!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
 %cardsDTD;
 
-<!-- used for the difficultyLevels attribute on games' main element -->
-<!ENTITY difficulty:standard-levels "&difficulty:easy-1suit;|&difficulty:medium-2suits;|&difficulty:hard-4suits;">
-<!ENTITY difficulty:easy-and-hard   "&difficulty:easy-2suits;|&difficulty:hard-4suits;">
-<!ENTITY difficulty:golf "&difficulty:easy-golf;|&difficulty:medium-1deck;|&difficulty:hard-2decks;">
+<!ENTITY difficulty.standard-levels "&difficulty.easy-1suit;|&difficulty.medium-2suits;|&difficulty.hard-4suits;">
 ]>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -20,8 +19,8 @@
 
   insufficientSpacesMessage="&insufficientSpacesMessage;"
 
-  gameWonTitle="&game-won:title;"
-  gameWonMessage="&game-won:message;"
+  gameWonTitle="&game-won.title;"
+  gameWonMessage="&game-won.message;"
   >
   <!-- gameWon attrs read and passed to nsIPromptService call.  Should be a stringbundle really -->
 
@@ -51,15 +50,14 @@
   <command id="cmd:hint"    oncommand="Game.hint();"/>
   <command id="cmd:undo"    oncommand="Game.undo();"/>
   <command id="cmd:restart" oncommand="Game.restart();"/>
-  <command id="cmd:options" oncommand="Cards.showOptionsDialog();"/>
   <command id="cmd:setdifficulty" oncommand="Game.setDifficultyLevel(event.target.value);"/>
 </commandset>
 
 <keyset id="cards-keys">
-  <key id="key:newgame" key="&key:newgame;" modifiers="accel" observes="command:newgame"/>
-  <key id="key:restart" key="&key:restart;" modifiers="accel" observes="command:restart"/>
-  <key id="key:undo"    key="&key:undo;"    modifiers="accel" observes="command:undo"/>
-  <key id="key:hint"    key="&key:hint;"    modifiers="accel" observes="command:hint"/>
+  <key id="key:newgame" key="&key.newgame;" modifiers="accel" command="cmd:newgame"/>
+  <key id="key:restart" key="&key.restart;" modifiers="accel" command="cmd:restart"/>
+  <key id="key:undo"    key="&key.undo;"    modifiers="accel" command="cmd:undo"/>
+  <key id="key:hint"    key="&key.hint;"    modifiers="accel" command="cmd:hint"/>
 </keyset>
 
 
@@ -72,14 +70,19 @@
   </toolbarbutton>
   <!-- content of menu generated dynamically based on a game's difficultyLevels attribute -->
   <toolbarbutton id="game-difficulty-menu" type="menu" disabled="true" command="cmd:setdifficulty"
-      label="&m-game-difficulty:label;" tooltiptext="&m-game-difficulty:tooltip;">
+      label="&difficulty-menu.label;" tooltiptext="&difficulty-menu.tooltip;">
     <menupopup id="game-difficulty-popup"/>
   </toolbarbutton>
-  <!-- toolbarbutton command="command:options" label="&options:label;" tooltiptext="&options:tooltip;"/ -->
-  <toolbarbutton command="cmd:newgame" label="&newgame:label;" tooltiptext="&newgame:tooltip;"/>
-  <toolbarbutton command="cmd:restart" label="&restart:label;" tooltiptext="&restart:tooltip;"/>
-  <toolbarbutton command="cmd:undo"    label="&undo:label;"    tooltiptext="&undo:tooltip;"/>
-  <toolbarbutton command="cmd:hint"    label="&hint:label;"    tooltiptext="&hint:tooltip;"/>
+  <toolbarbutton command="cmd:newgame" label="&newgame.label;" tooltiptext="&newgame.tooltip;"/>
+  <toolbarbutton command="cmd:restart" label="&restart.label;" tooltiptext="&restart.tooltip;"/>
+  <toolbarbutton command="cmd:undo"    label="&undo.label;"    tooltiptext="&undo.tooltip;"/>
+  <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
+  <toolbarbutton id="options-menu" type="menu" label="&options.label;">
+    <menupopup id="options-popup" oncommand="useCardSet(event.originalTarget.value);">
+      <menuitem type="radio" label="&cardset.small;" value="small" id="cardset-small"/>
+      <menuitem type="radio" label="&cardset.normal;" value="normal" id="cardset-normal"/>
+    </menupopup>
+  </toolbarbutton>
   <flex/>
   <hbox id="score-panel">
     <description value="&statusbar-score-label;"/>
@@ -103,7 +106,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 <flex/> is equivalent to <spacer flex="1"/>
 -->
 
-<stack id="current-game-display" flex="1">
+<stack id="games" flex="1">
   <!-- Aces Up -->
   <vbox id="AcesUp" name="&acesup.name;" menukey="&acesup.menukey;"
       hidden="true">
@@ -256,7 +259,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   <!-- Golf -->
   <!-- flex allows bottom alignment of golf-stock-row -->
   <vbox id="Golf" name="&golf.name;" menukey="&golf.menukey;"
-      hidden="true" flex="1" difficultyLevels="&difficulty:golf;">
+      hidden="true" flex="1"
+      difficultyLevels="&difficulty.easy-golf;|&difficulty.medium-1deck;|&difficulty.hard-2decks;">
     <rowspacer/>
     <hbox id="golf-tableau-row">
       <flex/>
@@ -302,7 +306,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Gypsy -->
   <vbox id="Gypsy" name="&gypsy.name;" menukey="&gypsy.menukey;"
-      hidden="true" difficultyLevels="&difficulty:easy-and-hard;">
+      hidden="true"
+      difficultyLevels="&difficulty.easy-2suits;|&difficulty.hard-4suits;">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -550,7 +555,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Simple Simon -->
   <vbox id="SimpleSimon" name="&simon.name;" menukey="&simon.menukey;"
-      hidden="true" difficultyLevels="&difficulty:standard-levels;">
+      hidden="true" difficultyLevels="&difficulty.standard-levels;">
     <rowspacer/>
     <hbox>
       <flex/>
@@ -576,7 +581,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Spider Solitaire -->
   <vbox id="Spider" name="&spider.name;" menukey="&spider.menukey;"
-      hidden="true" difficultyLevels="&difficulty:standard-levels;">
+      hidden="true" difficultyLevels="&difficulty.standard-levels;">
     <rowspacer/>
     <hbox>
       <flex/>

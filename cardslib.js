@@ -201,8 +201,7 @@ function _createCardPile(elt) {
       // card will still hold a pointer to the last face down card, or null.
       card = card ? card.nextSibling : this.firstChild
       var space = window.innerHeight - getBottom(card);
-      var offset = parseInt(space / numFaceUp);
-      if(offset > Cards.cardFaceUpOffset) offset = Cards.cardFaceUpOffset;
+      var offset = Math.min(Math.floor(space / numFaceUp), Cards.cardFaceUpOffset);
       var old = this.offset || Cards.cardFaceUpOffset;
       this.offset = offset;
       if(offset == old) return;
@@ -354,8 +353,8 @@ var CardTurner = {
   },
   turnFaceUpStep: function() {
     this.angle += Math.PI/6;
-    var newHalfWidth = Math.abs(parseInt(Math.cos(this.angle) * this.oldWidth / 2));
-    this.card.width = 2*newHalfWidth;
+    var newHalfWidth = Math.floor(Math.abs(Math.cos(this.angle) * this.oldWidth / 2));
+    this.card.width = 2 * newHalfWidth;
     this.card.left = this.oldLeft + (this.oldWidth / 2) - newHalfWidth;
     // if the turn has passed the 90° mark, turn it over
     if(this.card.faceDown() && this.angle>=Math.PI/2) this.card.setFaceUp();

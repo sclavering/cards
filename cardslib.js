@@ -12,6 +12,14 @@ var Games = [];   // all the games, indexed by id
 var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
 
 
+// xxx these need to become cardset dependent
+var gYOffsetFromFaceDownCard = 5; // num pixels between top edges of two face down cards
+var gYOffsetFromFaceUpCard = 22;  // num pixels between top edges of two face up cards
+var gXOffsetFromFaceDownCard = 5; // num pixels between left edges of two face down cards
+var gXOffsetFromFaceUpCard = 12;  // num pixels between left edges of two face up cards
+var gOffsetForCardSlide = 2; // num picels between top+left edges of two cards in a slide
+
+
 
 function init() {
   // init the pref branch
@@ -61,32 +69,6 @@ function init() {
 window.addEventListener("load", init, false);
 
 
-
-/** A lot of stuff that individual card games need to call is accessed from the <image/> element that
-  * represent cards.  These have the following methods:
-  *   isCard - always returns true
-  *   isAce() - boolean, avoids confusion over whether aces are 1 or 14 (low or high)
-  *   isKing()
-  *   number() - returns the number of the card, should be in range 1 to 13 (1==Ace, 11==Jack etc)
-  *            - if current Game has acesHigh==true, then A=14 (so > and < work as expected)
-  *   suit() - returns one of SPADE or HEART or DIAMOND or CLUB
-  *   colour() - returns the colour, should be RED or BLACK
-  *   faceDown() - boolean indicating whether the card is facedown
-  *   faceUp() - boolean
-  *   setFaceUp() - change the card so that it is face up instantly
-  *   setFaceDown() - change the card so that it is face down instantly
-  *   turnFaceUp() - animates the turning over (up) of the card
-  *   position() - correctly positions a card in the stack it is in (adjusts its top and left attributes)
-  *   moveTo(target) - moves the card and all its nextSibling's to the specified target (a stack).  this is animated
-  *   transferTo(target) - as moveTo() but not animated
-  *
-  * the class attribute is set in setFaceUp() and setFaceDown() to give the correct appearance
-  *
-  *
-  * Most other stuff is defined on the CardGame object in cardgame.js, from which individual games should
-  * inherit.  That provides wrappers for most other things in this file, so that games won't need updating
-  * if this file changes.
-  */
 
 
 // box is an element descended from XUL <box>, so it will have a boxObject property
@@ -264,13 +246,14 @@ function _createCardPile(elt) {
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || Cards.cardFaceUpOffset) : Cards.cardFaceDownOffset);
+      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
     };
 
-    elt.positionCard = function(card) {
+    elt.addCard = function(card) {
+      this.appendChild(card);
       var prev = card.previousSibling;
       if(prev)
-        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || Cards.cardFaceUpOffset) : Cards.cardFaceDownOffset);
+        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
       else
         card.top = 0;
       card.left = 0;
@@ -291,11 +274,11 @@ function _createCardPile(elt) {
       // card will still hold a pointer to the last face down card, or null.
       card = card ? card.nextSibling : this.firstChild
       var space = window.innerHeight - getBottom(card);
-      var offset = Math.min(Math.floor(space / numFaceUp), Cards.cardFaceUpOffset);
-      var old = this.offset || Cards.cardFaceUpOffset;
+      var offset = Math.min(Math.floor(space / numFaceUp), gYOffsetFromFaceUpCard);
+      var old = this.offset || gYOffsetFromFaceUpCard;
       this.offset = offset;
       if(offset == old) return;
-      var top = (this.childNodes.length - numFaceUp) * Cards.cardFaceDownOffset;
+      var top = (this.childNodes.length - numFaceUp) * gYOffsetFromFaceDownCard;
       while(card) {
         if(card.top != top) card.top = top;
         top += offset;
@@ -306,17 +289,18 @@ function _createCardPile(elt) {
   } else if(elt.className=="slide") {
     elt.getNextCardLeft = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? Cards.cardSlideOffset : 0);
+      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? gOffsetForCardSlide : 0);
     };
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
       if(this.childNodes.length < 6)
-        return this.lastChild.top - 0 + Cards.cardSlideOffset;
+        return this.lastChild.top - 0 + gOffsetForCardSlide;
       return this.lastChild.top;
     };
 
-    elt.positionCard =  function(card) {
+    elt.addCard = function(card) {
+      this.appendChild(card);
       var prev = card.previousSibling;
       if(!prev) {
         card.top = 0;
@@ -326,8 +310,8 @@ function _createCardPile(elt) {
       card.top = prev.top;
       card.left = prev.left;
       if(this.childNodes.length < 6) {
-        card.top = card.top - 0 + Cards.cardSlideOffset;
-        card.left = card.left - 0 + Cards.cardSlideOffset;
+        card.top = card.top - 0 + gOffsetForCardSlide;
+        card.left = card.left - 0 + gOffsetForCardSlide;
       }
     };
 
@@ -344,8 +328,8 @@ function _createCardPile(elt) {
       }
       var card;
       // figure out how many we can shift in space allotted
-      var maxYShifts = Math.floor((window.innerHeight - getBottom(this.firstChild))/Cards.cardSlideOffset);
-      var maxXShifts = Math.floor((window.innerWidth - getRight(this.firstChild))/Cards.cardSlideOffset);
+      var maxYShifts = Math.floor((window.innerHeight - getBottom(this.firstChild))/gOffsetForCardSlide);
+      var maxXShifts = Math.floor((window.innerWidth - getRight(this.firstChild))/gOffsetForCardSlide);
       var offX = 0;
       var offY = 0;
       if(maxYShifts > 5) maxYShifts = 5;
@@ -355,8 +339,8 @@ function _createCardPile(elt) {
       while(card) {
         card.top = offY;
         card.left = offX;
-        if(count <= maxYShifts) offY += Cards.cardSlideOffset;
-        if(count <= maxXShifts) offX += Cards.cardSlideOffset;
+        if(count <= maxYShifts) offY += gOffsetForCardSlide;
+        if(count <= maxXShifts) offX += gOffsetForCardSlide;
         card = card.nextSibling;
         count--;
       }
@@ -366,15 +350,16 @@ function _createCardPile(elt) {
     elt.getNextCardLeft = function() {
       var last = this.lastChild;
       if(!last) return 0;
-      return last.left - 0 + (last.faceUp() ? Cards.cardFaceUpHOffset : Cards.cardFaceDownHOffset);
+      return last.left - 0 + (last.faceUp() ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
     };
 
     elt.getNextCardTop = function() { return 0; };
 
-    elt.positionCard = function(card) {
+    elt.addCard = function(card) {
+      this.appendChild(card);
       var prev = card.previousSibling;
       if(prev)
-        card.left = prev.left - 0 + (prev.faceUp() ? Cards.cardFaceUpHOffset : Cards.cardFaceDownHOffset);
+        card.left = prev.left - 0 + (prev.faceUp() ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
       else
         card.left = 0;
       card.top = 0;
@@ -385,7 +370,8 @@ function _createCardPile(elt) {
   } else {
     elt.getNextCardLeft = function() { return 0; };
     elt.getNextCardTop = function() { return 0; };
-    elt.positionCard = function(card) {
+    elt.addCard = function(card) {
+      this.appendChild(card);
       card.top = 0;
       card.left = 0;
     };
@@ -394,11 +380,6 @@ function _createCardPile(elt) {
       this.offset = 0;
     };
   }
-
-  elt.addCard = function(card) {
-    this.appendChild(card);
-    this.positionCard(card);
-  };
 
   // transfers the card and all those that follow it
   // xxx: not in use yet
@@ -655,12 +636,6 @@ var HintHighlighter = {
   * this mainly handles the behaviour of the chrome, especially switching between different card games
   */
 var Cards = {
-  cardFaceDownOffset: 5, // num of pixels between tops of two facedown cards
-  cardFaceUpOffset: 22, // num of pixels between tops of two faceup cards
-  cardSlideOffset: 2, // num of pixels between edges of two slid cards
-  cardFaceDownHOffset: 5, // num pixels between *left* edges of two face down cards
-  cardFaceUpHOffset: 10, // num pixels between *left* edges of two face up cards
-
   // refs to various <command> elements so they can be disabled
   cmdUndo: null,
   cmdHint: null,

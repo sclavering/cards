@@ -39,7 +39,6 @@
 <script type="application/x-javascript" src="pyramid.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="russiansol.js"/>
-<script type="application/x-javascript" src="sanibel.js"/>
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>
@@ -682,28 +681,6 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox><flex/>
   </vbox>
 
-  <!-- Russian Solitaire (formerly known as Grandfather) -->
-  <vbox id="russiansol" hidden="true">
-    <rowspacer/>
-    <hbox>
-      <flex/>
-      <pile class="fan-down" id="russiansol-pile-0"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-1"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-2"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-3"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-4"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-5"/><flex/>
-      <pile class="fan-down" id="russiansol-pile-6"/><flex/>
-      <vbox>
-        <foundation id="russiansol-foundation-0"/><rowspacer/>
-        <foundation id="russiansol-foundation-1"/><rowspacer/>
-        <foundation id="russiansol-foundation-2"/><rowspacer/>
-        <foundation id="russiansol-foundation-3"/><flex/>
-      </vbox>
-      <flex/>
-    </hbox>
-  </vbox>
-
   <!-- Sanibel -->
   <vbox id="sanibel" hidden="true">
     <rowspacer/>
@@ -829,7 +806,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox>
   </vbox>
 
-  <!-- Yukon -->
+  <!-- Yukon, Russian Solitaire (formerly known as Grandfather) -->
   <vbox id="yukon" hidden="true">
     <rowspacer/>
     <hbox>

@@ -1,8 +1,7 @@
 Games["russiansol"] = {
   __proto__: BaseCardGame,
 
-  id: "russiansol",
-  redeals: 2,
+  id: "yukon", // shares layout
 
 
   ///////////////////////////////////////////////////////////
@@ -39,7 +38,7 @@ Games["russiansol"] = {
           this.addHint(current,card.parentNode);
           return; // only ever get one hint per card, so may as well stop
         }
-        current = current.previousSibling;
+       current = current.previousSibling;
       }
     }
   },
@@ -71,23 +70,7 @@ Games["russiansol"] = {
     // automove cards to suit stacks
     for(var i = 0; i < this.stacks.length; i++) {
       var last = this.stacks[i].lastChild;
-      if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
-    }
-    return false;
-  },
-
-  // *any* card can be automoved to the suit stacks
-  canAutoplayCard: function(card) {
-    if(card.isAce()) return true;
-    return this.cardOnFoundations(card.suit(),card.number()-1);
-  },
-  cardOnFoundations: function(suit, number) {
-    for(var i = 0; i < 4; i++) {
-      var stack = this.foundations[i];
-      if(stack.hasChildNodes()) {
-        var lc = stack.lastChild; // lc = last card
-        if(lc.suit()==suit && lc.number()>=number) return true;
-      }
+      if(last && this.sendToFoundations(last)) return true;
     }
     return false;
   },

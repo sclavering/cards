@@ -9,7 +9,7 @@
 <!-- used for the difficultyLevels attribute on games' main element -->
 <!ENTITY difficulty:standard-levels "&difficulty:easy-1suit;|&difficulty:medium-2suits;|&difficulty:hard-4suits;">
 <!ENTITY difficulty:easy-and-hard   "&difficulty:easy-2suits;|&difficulty:hard-4suits;">
-<!ENTITY difficulty:golf "&difficulty:easy-1deck;|&difficulty:hard-2decks;">
+<!ENTITY difficulty:golf "&difficulty:easy-golf;|&difficulty:medium-1deck;|&difficulty:hard-2decks;">
 ]>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -218,9 +218,9 @@ when starting to move a card, which looks abysmal
     <spacer flex="1"/>
     <hbox id="golf-stock-row">
       <spacer flex="1"/>
-      <stack id="golf-stock" class="card-pile"/>
+      <stack id="golf-stock" class="card-slide"/>
       <spacer flex="2"/>
-      <stack id="golf-foundation" class="card-pile"/>
+      <stack id="golf-foundation"  class="card-pile"/>
       <spacer flex="1"/>
     </hbox>
     <spacer class="row-spacer"/>
@@ -317,53 +317,53 @@ when starting to move a card, which looks abysmal
 
   <!-- Mod 3 -->
   <vbox id="Mod3" hidden="true" name="&mod3-name;">
-    <spacer class="row-spacer"/>
+     <spacer class="row-spacer"/>
     <hbox id="mod3-row1">
       <spacer flex="1"/>
-      <stack id="mod3-tableau-0-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-7" class="card-pile"/><spacer flex="1"/>
+      <stack id="mod3-foundation-0" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-1" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-2" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-3" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-4" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-5" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-6" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-7" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
     </hbox><spacer class="row-spacer"/>
-    <hbox id="mod3-row1">
+    <hbox id="mod3-row2">
       <spacer flex="1"/>
-      <stack id="mod3-tableau-1-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-1-7" class="card-pile"/><spacer flex="1"/>
+      <stack id="mod3-foundation-8" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-9" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-10" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-11" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-12" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-13" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-14" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-15" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
     </hbox><spacer class="row-spacer"/>
-    <hbox id="mod3-row1">
+    <hbox id="mod3-row3">
       <spacer flex="1"/>
-      <stack id="mod3-tableau-2-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="mod3-tableau-2-7" class="card-pile"/><spacer flex="1"/>
+      <stack id="mod3-foundation-16" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-17" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-18" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-19" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-20" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-21" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-22" class="card-slide"/><spacer flex="1"/>
+      <stack id="mod3-foundation-23" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
     </hbox><spacer class="row-spacer"/>
-    <hbox id="mod3-row1">
+    <hbox id="mod3-row4">
       <spacer flex="1"/>
-      <stack id="mod3-tableau-3-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="mod3-tableau-3-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-0" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-1" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-2" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-3" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-4" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-5" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-6" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
+      <stack id="mod3-tableau-0-7" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
       <stack id="mod3-stock"  class="card-pile"/><spacer flex="1"/>
     </hbox>
   </vbox>

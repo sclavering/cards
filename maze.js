@@ -7,11 +7,19 @@ AllGames.maze = {
 
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces
-    var cards = this.cards = getDecks(1);
-    cards[12] = cards[25] = cards[38] = cards[51] = cards[52] = cards[53] = null;
-    // label the piles for use by canMoveTo
-    for(var i = 0; i != 54; i++) this.piles[i].pileNumber = i;
+    var cs = this.cards = getDecks(1);
+    for(var i = 0; i != 51; i++) cs[i].up = cs[i+1], cs[i+1].down = cs[i];
+    cs[12] = cs[25] = cs[38] = cs[51] = cs[52] = cs[53] = null;
+    cs[0].down = cs[13].down = cs[26].down = cs[39].down = null;
+    cs[11].up = cs[24].up = cs[37].up = cs[50].up = null;
+
+    var ps = this.piles;
+    for(i = 0; i != 53; i++) ps[i].next = ps[i+1], ps[i+1].prev = ps[i];
+    ps[53].next = ps[0]; ps[0].prev = ps[53];
+
     this.canMoveToPile = this.canMoveTo;
+    this.aces = [cs[0], cs[13], cs[26], cs[39]];
+    this.queens = [cs[11], cs[24], cs[37], cs[50]];
   },
 
   deal: function(cards) {
@@ -21,23 +29,11 @@ AllGames.maze = {
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
 
-    var i = pile.pileNumber;
-    // if pile to right contains consecutive card of same suit
-    // or if card to right is any ace if this is a queen (note: this is a relaxation of the PySol rules)
-    var right = this.piles[(i+1) % 54].firstChild;
-    if(right) {
-      if(right.isSameSuit(card) && right.isConsecutiveTo(card)) return true;
-      if(card.isQueen && right.isAce) return true;
-    }
-    // if card is consecutive and same suit as card to the left
-    // or if this is an ace and the card to the left any queen
-    var left = (i==0) ? 53 : i-1; // -1%n==-1 in javascript
-    left = this.piles[left].firstChild;
-    if(left) {
-      if(card.isSameSuit(left) && card.isConsecutiveTo(left)) return true;
-      if(card.isAce && left.isQueen) return true;
-    }
-    return false;
+    var prev = pile.prev.lastChild, next = pile.next.lastChild;
+    return (card.isQueen && next && next.isAce)
+        || (card.isAce && prev && prev.isQueen)
+        || (prev && prev==card.down)
+        || (next && next==card.up);
   },
 
   getHints: function() {
@@ -51,45 +47,41 @@ AllGames.maze = {
   },
 
   getBestMoveForCard: function(card) {
-    return (card.isQueen && searchPiles(this.piles, this.queenTest(card)))
-        || (card.isAce && searchPiles(this.piles, this.aceTest(card)))
-        || searchPiles(this.piles, testCanMoveToPile(card));
-  },
-  aceTest: function(card) {
-    return function(pile) {
-      if(pile.hasChildNodes()) return false;
-      var r = pile.pileNumber+1;
-      r = Game.piles[r==54 ? 0 : r].lastChild;
-      return r && r.isSameSuit(card) && r.number==2;
-    };
-  },
-  queenTest: function(card) {
-    return function(pile) {
-      if(pile.hasChildNodes()) return false;
-      var l = pile.pileNumber-1;
-      l = Game.piles[l==-1 ? 53 : l].lastChild;
-      return l && l.isSameSuit(card) && l.number==11;
-    };
+    if(card.isAce) {
+      dump("getBestMoveFor an Ace : "+card+"\n");
+      var start = card.parentNode, pile = start.next;
+      while(pile!=start && (pile.hasChildNodes() || !(pile.next.lastChild==card.up
+          || (pile.prev.hasChildNodes() && pile.prev.lastChild.isQueen)))) pile = pile.next;
+      dump("reached pile "+pile.id+" holding card "+pile.lastChild+"\n");
+      return !pile.hasChildNodes() ? pile : null;
+    }
+    if(card.isQueen) {
+      dump("getBestMoveFor a Queen : "+card+"\n");
+      start = card.parentNode, pile = start.next;
+      while(pile!=start && (pile.hasChildNodes() || !(pile.prev.lastChild==card.down
+          || (pile.next.hasChildNodes() && pile.next.lastChild.isAce)))) pile = pile.next;
+      dump("reached pile "+pile.id+" holding card "+pile.lastChild+"\n");
+      return !pile.hasChildNodes() ? pile : null;
+    }
+    var down = card.down.parentNode.next, up = card.up.parentNode.prev;
+    return (!down.hasChildNodes() && down) || (!up.hasChildNodes() && up);
   },
 
   // Autoplay not used
 
   hasBeenWon: function() {
-    for(var i = 0; i != 54; i++) {
-      var left = this.piles[i].firstChild;
-      var right = this.piles[(i+1) % 54].firstChild;
-      // the pair must be consecutive and same suit except for queens and aces,
-      // which can sit next to empty spaces, or next to one another ignoring suit
-      if(right) {
-        if(right.isAce) {
-          if(left && !left.isQueen) return false
-        } else {
-          if(!(left && right.isSameSuit(left) && right.isConsecutiveTo(left))) return false;
-        }
+    var pile = this.piles[0], first = pile;
+    do {
+      var next = pile.next, c1 = pile.lastChild, c2 = next.lastChild;
+      if(!c1) {
+        if(c2 && !c2.isAce) return false;
+      } else if(!c2) {
+        if(!c1.isQueen) return false;
       } else {
-        if(left && !left.isQueen) return false;
+        if(!(c1.up==c2 || (c1.isQueen && c2.isAce))) return false;
       }
-    }
+      pile = next;
+    } while(pile!=first);
     return true;
   }
 }

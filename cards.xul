@@ -29,6 +29,7 @@
 <script type="application/x-javascript" src="canfield.js"/>
 <script type="application/x-javascript" src="doublesol.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
+<script type="application/x-javascript" src="golf.js"/>
 <script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
@@ -64,6 +65,7 @@
       <menuitem label="&doublesol-name;"   accesskey="&mi-doublesol:accesskey;"   value="DoubleSol"  />
       <menuitem label="&freecell-name;"    accesskey="&mi-freecell:accesskey;"    value="FreeCell"   />
       <menuitem label="&grandfather-name;" accesskey="&mi-grandfather:accesskey;" value="Grandfather"/>
+      <menuitem label="&golf-name;"        accesskey="&mi-golf:accesskey;"        value="Golf"       />
       <menuitem label="&gypsy-name;"       accesskey="&mi-gypsy:accesskey;"       value="Gypsy"      />
       <menuitem label="&klondike-name;"    accesskey="&mi-klondike:accesskey;"    value="Klondike"   />
       <menuitem label="&mod3-name;"        accesskey="&mi-mod3:accesskey;"        value="Mod3"       />
@@ -106,7 +108,7 @@ causes slowdowns (dragging off bottom). padding stops the content from actually
 using those 100px :)  thanks Neil.
 -->
 
-<stack id="current-game-display" style="margin: 0 -100px -1000px 0; padding: 0 100px 0 0;">
+<stack id="current-game-display" style="margin: 0 -100px -1000px 0; padding: 0 100px 1000px 0;" flex="1">
   <!-- Aces Up -->
   <vbox id="AcesUp" hidden="true" name="&acesup-name;">
     <spacer class="row-spacer"/>
@@ -202,6 +204,31 @@ using those 100px :)  thanks Neil.
       <stack id="freecell-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <stack id="freecell-pile-7" class="card-fan-down"/><spacer flex="2"/>
     </hbox>
+  </vbox>
+
+  <!-- Golf -->
+  <!-- flex allow bottom alignment of golf-stack-row -->
+  <vbox id="Golf" hidden="true" name="&golf-name;" flex="1">
+    <spacer class="row-spacer"/>
+    <hbox id="golf-tableau-row">
+      <spacer flex="1"/>
+      <stack id="golf-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="golf-pile-6" class="card-fan-down"/><spacer flex="1"/>
+    </hbox>
+    <spacer flex="1"/>
+    <hbox id="golf-stock-row">
+      <spacer flex="1"/>
+      <stack id="golf-stock" class="card-pile"/>
+      <spacer flex="2"/>
+      <stack id="golf-foundation" class="card-pile"/>
+      <spacer flex="1"/>
+    </hbox>
+    <spacer class="row-spacer"/>
   </vbox>
 
   <!-- Grandfather Solitaire -->

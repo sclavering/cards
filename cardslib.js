@@ -795,6 +795,16 @@ var Cards = {
     // FREECELL additions
     MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
+    // build the games menu
+    var menu = document.getElementById("menupopup-gametypes");
+    for(var game in Games) {
+      var el = document.getElementById(game);
+      var mi = document.createElement("menuitem");
+      mi.setAttribute("label",el.getAttribute("name"));
+      mi.setAttribute("accesskey",el.getAttribute("menukey"));
+      mi.value = game;
+      menu.appendChild(mi);
+    }
     // retrieve current game
     var currentGame;
     try {

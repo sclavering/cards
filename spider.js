@@ -46,7 +46,7 @@ var SpiderLayoutBase = {
   },
 
   sendToFoundations: function(card) {
-    // don't try and use attemptMove here, because it will break for Black Widow
+    // don't try to use attemptMove here because it will break for Black Widow
     // (because we need |null| to be passed to canMoveToFoundation)
     return this.canMoveCard(card) && this.canMoveToFoundation(card, null)
         && this.moveTo(card, this.foundations[0]);

@@ -51,7 +51,7 @@ CardGame.prototype = {
   // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
   // to use this game must init game.shortname first
   initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols, numCells) {
-    this.allstacks = new Array();
+    this.allstacks = [];
     var name = this.shortname; // e.g. "klondike", "simon" etc
     if(numStacks) {
       this.stacks = new Array(numStacks);
@@ -159,7 +159,7 @@ CardGame.prototype = {
   // === Start Game =======================================
   newGame: function() {
     this.score = 0;
-    this.undoHistory = new Array();
+    this.undoHistory = [];
     Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
     this.updateScoreDisplay();
     this.clearGame();
@@ -510,11 +510,12 @@ CardGame.prototype = {
   hintNum: 0,
 
   hint: function() {
-    if(this.hints.length==0)
-      this.hints = Game.getHints();
+    //XXX use a bool flag, hince player might hit Hint repeatedly when none are available
+    if(this.hints.length==0) this.getHints();
     this.showHint();
   },
 
+  // XXX kludged, clean up once games are all using addHint
   showHint: function() {
     if(this.hints.length==0) return;
     var hint = this.hints[this.hintNum];
@@ -523,12 +524,15 @@ CardGame.prototype = {
     this.hintNum %= this.hints.length;
   },
 
-  // return an array of hint objects, of the form {source: ?, destinations: [?]} , or null
-  // XXX revise to only show one target at a time ??
+  // should repeatedly call addHint
   getHints: function() {
-    // temporary measure while games are converted to have getHints()
-    if(this.getHint) return [this.getHint()];
-    return [];
+  },
+
+  // takes the card to suggest moving, and the destination to suggest moving to (generally a stack)
+  addHint: function(source,dest) {
+    //XXX switch this over
+    //this.hints.push({source:source,destination:dest});
+    this.hints.push({source:source,destinations:[dest]});
   },
 
   clearHints: function() {

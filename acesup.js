@@ -88,11 +88,10 @@ AcesUp.getNextEmptyStack = function(stack) {
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
 AcesUp.hasBeenWon = function() {
-  // game won if foundation has all cards except aces, which are on the stacks (and are high, hence ==14)
-  if(this.foundation.childNodes.length!=48) return false;
+  if(this.stock.childNodes.length!=0) return false;
   for(var i = 0; i < 4; i++) {
     var s = this.stacks[i];
-    if(a.childNodes.length!=1 || !s.lastChild.isAce()) return false;
+    if(s.childNodes.length!=1 || !s.lastChild.isAce()) return false;
   }
   return true;
 };

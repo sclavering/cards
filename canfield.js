@@ -43,30 +43,26 @@ Canfield.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-Canfield.getHint = function() {
-  for(var i = 0; i < 6; i++) {
-    var card = this.sourceStacks[i].lastChild;
-    if(card) {// && this.canMoveCard(card)) {
-      var hint = this.getHintForCard(card);
-      if(hint && hint.destinations.length>0) return hint;
-    }
+Canfield.getHints = function() {
+  this.getHintsForCard(this.reserve.lastChild);
+  this.getHintsForCard(this.waste.lastChild);
+  for(var i = 0; i < 4; i++) {
+    this.getHintsForCard(this.getLowestMoveableCard_AltColours(this.stacks[i]));
   }
-  return null;
 };
-Canfield.getHintForCard = function(card) {
-  if(!this.canMoveCard(card)) return null;
-  var targets = new Array();
+Canfield.getHintsForCard = function(card) {
+  if(!card) return;
   for(var i = 0; i < 4; i++) {
     var stack = this.stacks[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack.lastChild);
+    if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
   for(var i = 0; i < 4; i++) {
     var stack = this.foundations[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack);
+    if(this.canMoveTo(card,stack)) {
+      this.addHint(card,stack);
+      return; // don't hint more than one move to a foundation
+    }
   }
-  if(targets.length > 0)
-    return {source: card, destinations: targets};
-  return null;
 };
 
 

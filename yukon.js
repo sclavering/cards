@@ -32,32 +32,32 @@ Yukon.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// Hints
-Yukon.getHint = function() {
+Yukon.getHints = function() {
   // hints in Yukon are weird.  we look at the last card on each stack for targets, then go and find
   // cards which could be moved there. (this is because any faceUp card can be moved in Yukon)
   for(var i = 0; i < 7; i++) {
-    var card = this.stacks[i].lastChild;
-    if(card) {
-      var source = this.findCardToPutOn(card);
-      if(source) return {source:source, destinations:[card]};
-    }
+    this.getHintsForCard(this.stacks[i].lastChild);
   }
-  return null;
 };
 // take a card a find another card on a differnt stack of opposite colour and one less in rank
-Yukon.findCardToPutOn = function(target) {
+Yukon.getHintsForCard = function(card) {
+  if(!card) return;
   for(var i = 0; i < 7; i++) {
     var stack = this.stacks[i];
-    if(stack!=target.parentNode && stack.hasChildNodes()) {
-      var card = stack.lastChild;
-      while(card && card.faceUp()) {
-        if(target.isConsecutiveTo(card) && target.notSameColour(card)) return card;
-        card = card.previousSibling;
+    if(stack==card.parentNode) continue;
+    var current = stack.lastChild;
+    while(current && current.faceUp()) {
+      if(card.isConsecutiveTo(current) && card.notSameColour(current)) {
+        // |current| could be moved onto |card|.  test if it's not already
+        // on a card consecutive and of opposite colour
+        var prev = current.previousSibling;
+        if(!prev || !prev.isConsecutiveTo(current) || !prev.notSameColour(current))
+          this.addHint(current,card.parentNode);
       }
+      current = current.previousSibling;
     }
   }
-  return null;
-}
+};
 
 
 
@@ -70,6 +70,10 @@ Yukon.smartMove = function(card) {
 };
 // finds the first stack from the left where the card can be moved to
 Yukon.getBestMoveFor = function(card) {
+  for(var i = 0; i < 7; i++) {
+    var stack = this.stacks[i];
+    if(stack!=card.parentNode && stack.hasChildNodes() && this.canMoveTo(card,stack)) return stack;
+  }
   for(var i = 0; i < 7; i++) {
     var stack = this.stacks[i];
     if(stack!=card.parentNode && this.canMoveTo(card,stack)) return stack;

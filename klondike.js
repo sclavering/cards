@@ -34,35 +34,25 @@ Klondike.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-Klondike.getHint = function() {
-  var card = this.waste.lastChild;
-  if(card) {
-    var hint = this.getHintForCard(card);
-    if(hint && hint.destinations.length>0) return hint;
-  }
+Klondike.getHints = function() {
+  this.getHintsForCard(this.waste.lastChild);
   for(var i = 0; i < 7; i++) {
-    card = this.getLowestMoveableCard_AltColours(this.stacks[i])
-    if(card) {
-      var hint = this.getHintForCard(card);
-      if(hint && hint.destinations.length>0) return hint;
-    }
+    this.getHintsForCard(this.getLowestMoveableCard_AltColours(this.stacks[i]));
   }
-  return null;
 };
-Klondike.getHintForCard = function(card) {
-  if(!this.canMoveCard(card)) return null;
-  var targets = new Array();
+Klondike.getHintsForCard = function(card) {
+  if(!card) return;
   for(var i = 0; i < 7; i++) {
     var stack = this.stacks[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack.lastChild);
+    if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
   for(var i = 0; i < 4; i++) {
     var stack = this.foundations[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack);
+    if(this.canMoveTo(card,stack)) {
+      this.addHint(card,stack);
+      return; // don't hint more than one move to a foundation
+    }
   }
-  if(targets.length > 0)
-    return {source: card, destinations: targets};
-  return null;
 };
 
 

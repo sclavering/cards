@@ -21,7 +21,6 @@ Grandfather.deal = function() {
 
 ///////////////////////////////////////////////////////////
 //// Moving
-
 Grandfather.canMoveToPile = function(card, stack) {
   // stack must be empty (in kde version the card has to be a king, but that makes the game too hard)
   // or last card in stack same suit and consecutive to card,
@@ -33,26 +32,26 @@ Grandfather.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// Hints
-Grandfather.getHint = function() {
+Grandfather.getHints = function() {
   for(var i = 0; i < 7; i++) {
-    var topcard = this.stacks[i].lastChild;
-    if(topcard==null) continue;
-    var cardToMove = this.findCard(topcard.suit(), topcard.number()-1);
-    if(cardToMove==null || cardToMove.parentNode==this.stacks[i]) continue;
-    return {source: cardToMove, destinations: [topcard]};
+    this.getHintForCard(this.stacks[i].lastChild);
   }
-  return null;
 };
-Grandfather.findCard = function(suit, number) {
+// find card one greater in number and of the same suit
+Grandfather.getHintForCard = function(card) {
+  if(!card) return;
   for(var i = 0; i < 7; i++) {
     var stack = this.stacks[i];
-    if(stack.hasChildNodes()) {
-      for(var card = stack.lastChild; card && card.faceUp(); card = card.previousSibling) {
-        if(card.suit()==suit && card.number()==number) return card;
+    if(stack==card.parentNode) continue;
+    var current = stack.lastChild;
+    while(current && current.faceUp()) {
+      if(card.isConsecutiveTo(current) && card.isSameSuit(current)) {
+        this.addHint(current,card.parentNode);
+        return; // only ever get one hint per card, so may as well stop
       }
+      current = current.previousSibling;
     }
   }
-  return null;
 };
 
 

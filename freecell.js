@@ -70,12 +70,12 @@ FreeCell.moveTo = function(card, target) {
   return true;
 };
 FreeCell.getFreeCells = function() {
-  var freecells = new Array();
+  var freecells = [];
   for(var i = 0; i < 4; i++) if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
   return freecells;
 };
 FreeCell.getSpaces = function() {
-  var spaces = new Array();
+  var spaces = [];
   for(var i = 0; i < 8; i++)
     if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
   return spaces;
@@ -85,36 +85,27 @@ FreeCell.getSpaces = function() {
 
 ///////////////////////////////////////////////////////////
 //// hint
-FreeCell.getHint = function() {
-  var card, hint, i;
+FreeCell.getHints = function() {
+  var card, i;
   for(i = 0; i < 4; i++) {
-    card = this.cells[i].firstChild;
-    if(!card) continue;
-    hint = this.getHintForCard(card);
-    if(hint) return hint;
+    this.getHintsForCard(this.cells[i].firstChild);
   }
   for(i = 0; i < 8; i++) {
     card = this.getLowestMoveableCard_AltColours(this.stacks[i])
-    if(!card) continue;
-    hint = this.getHintForCard(card);
-    if(hint) return hint;
+    this.getHintsForCard(card);
   }
-  return null;
 };
-FreeCell.getHintForCard = function(card) {
-  if(!this.canMoveCard(card)) return null;
-  var targets = new Array();
-  for(var i = 0; i < 8; i++) {
-    var stack = this.stacks[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack.lastChild);
+FreeCell.getHintsForCard = function(card) {
+  if(!card) return;
+  var stack, i;
+  for(i = 0; i < 8; i++) {
+    stack = this.stacks[i];
+    if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
-  for(var i = 0; i < 4; i++) {
-    var stack = this.foundations[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack);
+  for(i = 0; i < 4; i++) {
+    stack = this.foundations[i];
+    if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
-  if(targets.length > 0)
-    return {source: card, destinations: targets};
-  return null;
 };
 
 

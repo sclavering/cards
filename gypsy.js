@@ -33,29 +33,27 @@ Gypsy.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-Gypsy.getHint = function() {
+// XXX should arrange for moves to empty stacks to *all* be listed after *all* other hints
+// currently moves to an empty space are listed for each card straight after interesting moves for it
+Gypsy.getHints = function() {
   for(var i = 0; i < 8; i++) {
     var card = this.getLowestMoveableCard_AltColours(this.stacks[i]);
-    if(card) {
-      var hint = this.getHintForCard(card);
-      if(hint && hint.destinations.length>0) return hint;
-    }
+    this.getHintsForCard(card);
   }
-  return null;
 };
-Gypsy.getHintForCard = function(card) {
-  var targets = new Array();
-  for(var i = 0; i < 8; i++) {
-    var stack = this.stacks[i];
-    if(stack.hasChildNodes() && this.canMoveTo(card,stack)) targets.push(stack.lastChild);
+Gypsy.getHintsForCard = function(card) {
+  if(!card) return;
+  var i, stack;
+  for(i = 0; i < 8; i++) {
+    stack = this.stacks[i];
+    if(stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
-  for(var i = 0; i < 8; i++) {
-    var stack = this.foundations[i];
-    if(this.canMoveTo(card,stack)) targets.push(stack);
+  /*
+  for(i = 0; i < 8; i++) {
+    stack = this.foundations[i];
+    if(!stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
-  if(targets.length > 0)
-    return {source: card, destinations: targets};
-  return null;
+  */
 };
 
 

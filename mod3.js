@@ -1,12 +1,11 @@
 var Mod3 = new CardGame();
 
-
 Mod3.init = function() {
   this.shortname = "mod3";
   this.initStacks(0,0,0,true,false,4,8);
   this.stockDealTargets = this.tableau[3]; // this is for the dealFromStock() functions in CardGame.js
   //
-  var stacks = new Array();
+  var stacks = [];
   for(var i = 0; i < 4; i++)
     stacks = stacks.concat(this.tableau[i]);
   this.dragDropTargets = stacks;
@@ -55,22 +54,59 @@ Mod3.canMoveTo = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-Mod3.getHint = function() {
+Mod3.getHints = function() {
   for(var i = 0; i < 4; i++) {
     for(var j = 0; j < 8; j++) {
-      var lastcard = this.tableau[i][j].lastChild;
-      if(lastcard) {
-        var targets = this.findTargets(lastcard);
-        if(targets) return {source: lastcard, destinations: targets}
+      this.getHintsForCard(this.tableau[i][j].lastChild);
+    }
+  }
+};
+// searches the appropriate row for a place to put the current card being examined for getHint
+Mod3.getHintsForCard = function(card) {
+  if(!card) return;
+  var row = (card.number() - 2) % 3;
+  for(var j = 0; j < 8; j++) {
+    var stack = this.tableau[row][j];
+    if(this.canMoveTo(card,stack)) {
+      // cases where the hint is useful are:
+      //  - the target is an empty stack, but not on the same row the card is already on
+      //    (this applies for 2,3,4's, prevents us from suggesting moving the card along the row)
+      //  - the card is in rows 0-2 and is not on top of another card
+      //    (this is so we don't suggest moving a 5H from one 2H to another)
+      //  - the card is in row 3
+      if(card.parentNode.row==3
+          || (stack.hasChildNodes() && card.previousSibling==null)
+          || (!stack.hasChildNodes() && card.parentNode.row!=row))
+        this.addHint(card,stack);
+    }
+  }
+};
+
+
+
+///////////////////////////////////////////////////////////
+//// smart move
+Mod3.smartMove = function(card) {
+  if(!this.canMoveCard(card)) return false;
+  var targets = this.findTargets(card);
+  if(targets.length) {
+    this.moveTo(card,targets[0]);
+    return true;
+  } else {
+    // try and move to an empty space in the 4th row
+    for(var j = 0; j < 8; j++) {
+      if(!this.tableau[3][j].hasChildNodes()) {
+        this.moveTo(card,this.tableau[3][j]);
+        return true;
       }
     }
   }
-  return null;
+  return false;
 };
-// searches the appropriate row for a place to put the current card being examined for getHint
+//XXX no longer used in hints, so might be able to clean up
 Mod3.findTargets = function(card) {
+  var targets = [];
   var row = (card.number() - 2) % 3;
-  var targets = new Array();
   for(var j = 0; j < 8; j++) {
     var stack = this.tableau[row][j];
     if(this.canMoveTo(card,stack)) {
@@ -86,29 +122,7 @@ Mod3.findTargets = function(card) {
         targets.push(stack);
     }
   }
-  return (targets.length==0 ? null : targets);
-};
-
-
-
-///////////////////////////////////////////////////////////
-//// smart move
-Mod3.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
-  var targets = this.findTargets(card);
-  if(targets) {
-    this.moveTo(card,targets[0]);
-    return true;
-  } else {
-    // try and move to an empty space in the 4th row
-    for(var j = 0; j < 8; j++) {
-      if(!this.tableau[3][j].hasChildNodes()) {
-        this.moveTo(card,this.tableau[3][j]);
-        return true;
-      }
-    }
-  }
-  return false;
+  return targets;
 };
 
 

@@ -82,7 +82,7 @@ Spider.canMoveTo = function(card, target) {
     // canMove() ensures we have a continuous sequence
     return (card.isKing()&&card.parentNode.lastChild.isAce());
   } else {
-    // can move of stack is empty, or if the last card is face up and consecutive
+    // can move if stack is empty, or if the last card is face up and consecutive
     var last = target.lastChild;
     return (!last || (last.faceUp() && last.isConsecutiveTo(card)));
   }
@@ -100,10 +100,10 @@ Spider.moveTo = function(card, target) {
   }
 };
 Spider.removeCompleteSuit = function(card) {
-  var targetStack = this.foundations[this.completedSuits];
+  var target = this.foundations[this.completedSuits];
   this.completedSuits++;
   this.trackMove("suit-completed", card, card.getSource());
-  card.moveTo(targetStack);
+  card.moveTo(target);
   return true;
 };
 Spider.unremoveCompleteSuit = function(card, source) {
@@ -115,42 +115,16 @@ Spider.unremoveCompleteSuit = function(card, source) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-// getHint never suggests moving a card to an empty space (because it is pointless to do so, and keeps
-// the code slightly simpler)
+// the array of hints does not include moves to empty spaces, because the player is expected to notice those
 Spider.getHints = function() {
-  var hints = []
   for(var i = 0; i < 10; i++) {
-    var hint = this.getHintForStack(this.stacks[i]);
-    if(hint) hints.push(hint);
+    var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
+    for(var j = 0; j < 10; j++) {
+      var stack = this.stacks[j];
+      if(stack.hasChildNodes() && this.canMoveTo(card,stack))
+        this.addHint(card,stack);
+    }
   }
-  return hints;
-};
-Spider.getHintForStack = function(stack) {
-  if(!stack.hasChildNodes()) return null;
-  var card = this.getLowestMoveableCard_Suit(stack);
-  if(!card || !this.canMoveCard(card)) return null;
-  var targets = this.findMovesForCard(card);
-  if(targets.length>0)
-    return {source: card, destinations: targets};
-  return null;
-};
-Spider.getLowestMoveableCard = function(stack) {
-  if(!stack.hasChildNodes()) return null;
-  var card = stack.lastChild;
-  var prv = card.previousSibling;
-  while(prv && !prv.faceDown() && prv.isSameSuit(card) && prv.isConsecutiveTo(card)) {
-    card = prv;
-    prv = card.previousSibling;
-  }
-  return card;
-};
-Spider.findMovesForCard = function(card) {
-  var targets = new Array();
-  for(var i = 0; i < 10; i++) {
-    var stack = this.stacks[i];
-    if(this.canMoveTo(card,stack) && stack.hasChildNodes()) targets.push(stack.lastChild);
-  }
-  return targets;
 };
 
 

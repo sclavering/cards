@@ -45,31 +45,18 @@ SimpleSimon.canMoveToPile = function(card, stack) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-// getHint never suggests moving a card to an empty space (because it is pointless to do so, and keeps
-// the code slightly simpler)
-SimpleSimon.getHint = function() {
+// code never suggests moving a card to an empty space
+SimpleSimon.getHints = function() {
   for(var i = 0; i < 10; i++) {
-    var hint = this.getHintForStack(this.stacks[i]);
-    if(hint) return hint;
+    this.getHintsForCards(this.getLowestMoveableCard_Suit(this.stacks[i]));
   }
-  return null;
 };
-SimpleSimon.getHintForStack = function(stack) {
-  if(!stack.hasChildNodes()) return null;
-  var card = this.getLowestMoveableCard_Suit(stack);
-  if(card==null || !this.canMoveCard(card)) return null;
-  var targets = this.findMovesForCard(card);
-  if(targets.length>0)
-    return {source: card, destinations: targets};
-  return null;
-};
-SimpleSimon.findMovesForCard = function(card) {
-  var targets = new Array();
+SimpleSimon.getHintsForCards = function(card) {
+  if(!card) return null;
   for(var i = 0; i < 10; i++) {
     var stack = this.stacks[i];
-    if(this.canMoveTo(card,stack) && stack.hasChildNodes()) targets.push(stack.lastChild);
+    if(this.canMoveTo(card,stack) && stack.hasChildNodes()) this.addHint(card,stack);
   }
-  return targets;
 };
 
 

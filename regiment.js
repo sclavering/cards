@@ -84,24 +84,19 @@ Regiment.canMoveToPile = function(card, target) {
 ///////////////////////////////////////////////////////////
 //// Hints
 Regiment.getHint = function() {
-  // look at each reserve card
   for(var i = 0; i < 8; i++) {
-    var top = this.reserves[i].lastChild;
-    if(top) {
-      var targets = this.findTargets(top);
-      if(targets) return {source: top, destinations: targets};
+    this.findHintsForCard(this.reserves[i].lastChild);
+  }
+};
+Regiment.findHintsForCard = function(card) {
+  if(!card) return;
+  // look through the tableau for somewhere to put it
+  for(var j = 0; j < 8; j++) {
+    for(var k = 0; k < 2; k++) {
+      var stack = this.tableau[k][j];
+      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
     }
   }
-  return null;
-};
-Regiment.findTargets = function(card) {
-  var targets = [];
-  // look through the tableau for somewhere to put it
-  for(var j = 0; j < 8; j++)
-    for(var k = 0; k < 2; k++)
-      if(this.canMoveTo(card,this.tableau[k][j]))
-        targets.push(this.tableau[k][j]);
-  return (targets.length!=0 ? targets : null);
 };
 
 

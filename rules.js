@@ -261,9 +261,9 @@ var Rules = {
   getBestMoveForCard: {
     "to up or nearest space":
     function(card) {
-      var up = card.up;
-      if(up && up.faceUp && up.parentNode.isNormalPile && !up.nextSibling) return up.parentNode;
-      return findEmpty(card.parentNode.surrounding);
+      var up = card.up, upp = up && up.parentNode, p = card.parentNode;
+      if(up && up.faceUp && upp.isNormalPile && upp!=p && !up.nextSibling) return up.parentNode;
+      return findEmpty(p.surrounding);
     },
 
     "down and same suit, or down, or empty":

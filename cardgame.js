@@ -1,6 +1,7 @@
 var BaseCardGame = {
-  // games must provide this, the id of the vbox/hbox that contains all the game's layout
-  id: null,
+  id: null, // needs to be unique.  used in pref. names.
+
+  layout: null, // id of a xul element.  if left null this.id will be used instead
   xulElement: null, // the container vbox/hbox for the game (set automatically)
 
   // An array of strings, each of which is prefixed with "difficulty." then looked up in
@@ -69,7 +70,7 @@ var BaseCardGame = {
     this.initialised = true;
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
     this.initStacks();
-    this.xulElement = document.getElementById(this.id);
+    this.xulElement = document.getElementById(this.layout || this.id);
     this.init(); // game specific stuff
 
     // if the game doesn't specify something
@@ -93,7 +94,7 @@ var BaseCardGame = {
     this.foundations = [];
     this.allstacks = [];
 
-    var id = this.id;
+    var id = this.layout || this.id;
     this.stock = createCardPile(id+"-stock");
     if(this.stock) {
       this.stock.isStock = true;

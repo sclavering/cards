@@ -3,8 +3,8 @@
 var BaseSpiderGame = {
   __proto__: BaseCardGame,
 
-  id: "spider",
-  
+  layout: "spider",
+
   rule_dealFromStock: "to-stacks,if-none-empty",
   rule_canMoveToPile: "descending",
 
@@ -57,11 +57,10 @@ var BaseSpiderGame = {
 
 
 
-
-
 Games["spider"] = {
   __proto__: BaseSpiderGame,
 
+  id: "spider",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
   rule_canMoveCard: "descending,in-suit",
 
@@ -101,11 +100,10 @@ Games["spider"] = {
 
 
 
-
-
 Games["blackwidow"] = {
   __proto__: BaseSpiderGame,
 
+  id: "blackwidow",
   rule_canMoveCard: "descending",
 
   deal: function() {

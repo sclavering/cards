@@ -1,7 +1,8 @@
 Games["russiansol"] = {
   __proto__: BaseCardGame,
 
-  id: "yukon", // shares layout
+  id: "russiansol",
+  layout: "yukon",
   rule_canMoveToPile: "descending,in-suit",
 
   deal: function() {
@@ -23,11 +24,9 @@ Games["russiansol"] = {
       if(stack==card.parentNode) continue;
       var current = stack.lastChild;
       while(current && current.faceUp()) {
-        if(card.isConsecutiveTo(current) && card.isSameSuit(current)) {
-          this.addHint(current,card.parentNode);
-          return; // only ever get one hint per card, so may as well stop
-        }
-       current = current.previousSibling;
+        if(card.isConsecutiveTo(current) && card.isSameSuit(current))
+          return this.addHint(current,card.parentNode);
+        current = current.previousSibling;
       }
     }
   },

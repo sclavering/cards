@@ -69,9 +69,9 @@ var Spider = {
       this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
     }
 
-    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
-    for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
-    dealToPile(cards, this.stock, 50, 0);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
+    for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
+    this.stock.dealTo(cards, 50, 0);
   },
 
   getHints: function() {
@@ -120,9 +120,9 @@ AllGames.blackwidow = {
   canMoveToFoundation: "king->ace flush",
 
   deal: function(cards) {
-    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
-    for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
-    dealToPile(cards, this.stock, 50, 0);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
+    for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
+    this.stock.dealTo(cards, 50, 0);
   },
 
   getHints: function() {
@@ -160,8 +160,8 @@ AllGames.divorce = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 5);
+    this.stock.dealTo(cards, cards.length, 0);
   },
 
   canMoveCard: "descending, in suit, not from foundation",
@@ -185,9 +185,9 @@ AllGames.wasp = {
   canMoveToFoundation: "king->ace flush",
 
   deal: function(cards) {
-    for(var i = 0; i != 3; i++) dealToPile(cards, this.piles[i], 3, 4);
-    for(i = 3; i != 7; i++) dealToPile(cards, this.piles[i], 0, 7);
-    dealToPile(cards, this.stock, 3, 0);
+    for(var i = 0; i != 3; i++) this.piles[i].dealTo(cards, 3, 4);
+    for(i = 3; i != 7; i++) this.piles[i].dealTo(cards, 0, 7);
+    this.stock.dealTo(cards, 3, 0);
   },
 
   canMoveToPile: "onto up, any in spaces",

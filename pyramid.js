@@ -38,8 +38,8 @@ AllGames.pyramid = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 28; i++) dealToPile(cards, this.piles[i], 0, 1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 28; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
   },
 
   canRemoveCard: function(card) {

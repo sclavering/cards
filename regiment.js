@@ -16,7 +16,8 @@ AllGames.regiment = {
       rs[i].up = ps[i]; rs[i].down = ps[i+8]; rs[i].col = i;
     }
     for(i = 0; i != 16; i++) {
-      ps[i].col = i % 8;
+      var col = ps[i].col = i % 8;
+      ps[i].reserve = rs[col];
       ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
     }
     this.aceFoundations = fs.slice(0,4);
@@ -29,8 +30,8 @@ AllGames.regiment = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 16; i++) dealToPile(cards,this.piles[i],0,1);
-    for(i = 0; i != 8; i++) dealToPile(cards,this.reserves[i],10,1);
+    for(var i = 0; i != 16; i++) this.piles[i].dealTo(cards, 0, 1);
+    for(i = 0; i != 8; i++) this.reserves[i].dealTo(cards, 10, 1);
   },
 
   canMoveToFoundation: function(card, pile) {
@@ -54,15 +55,19 @@ AllGames.regiment = {
     var source = card.parentNode.source;
     if(!source.isReserve) return false;
 
-    var tcol = target.col, scol = source.col;
-    if(tcol==scol) return true;
-    if(this.reserves[tcol].hasChildNodes()) return false;
+    var reserve = target.reserve;
+    if(reserve==source) return true;
 
-    var coldiff = Math.abs(tcol-scol);
-    var piles = getPilesRound(this.reserves[tcol]);
-    for(var i = 0; i!=piles.length && Math.abs(piles[i].col-tcol)!=coldiff; i++)
-      if(piles[i].hasChildNodes()) return false;
-    return true;
+    if(reserve.hasChildNodes()) return false;
+
+    var prev = reserve.prev, prevDist = 1;
+    while(prev && !prev.hasChildNodes() && prev!=source) prev = prev.prev, prevDist++;
+    var next = reserve.next, nextDist = 1;
+    while(next && !next.hasChildNodes() && next!=source) next = next.next, nextDist++;
+
+    // if trying to move from a reserve to the right
+    if(source.col > target.col) return next==source && (!prev || prevDist>=nextDist);
+    return prev==source && (!next || nextDist>=prevDist);
   },
 
   getHints: function() {
@@ -77,8 +82,32 @@ AllGames.regiment = {
       var p = ps[i];
       if(p.hasChildNodes() && this.canMoveToPile(card, p)) return p;
     }
-    // xxx
-    if(parent.isReserve) return searchPiles(this.piles, testCanMoveToEmptyPile(card));
+    // look for an empty pile to move the card to
+    if(!parent.isReserve) return null;
+    var prev = parent.prev, next = parent.next;
+
+    while(prev || next) {
+      if(next) {
+        if(next.hasChildNodes()) next = null;
+        else {
+          p = !next.up.hasChildNodes() ? next.up : (!next.down.hasChildNodes() ? next.down : null);
+          if(p) {
+            if(this.canMoveTo(card, p)) return p;
+            else next = null; // another reserve is closer to p; it will be closer to any pile right of p too
+          } else next = next.next;
+        }
+      }
+      if(prev) {
+        if(prev.hasChildNodes()) prev = null;
+        else {
+          p = !prev.up.hasChildNodes() ? prev.up : (!prev.down.hasChildNodes() ? prev.down : null);
+          if(p) {
+            if(this.canMoveTo(card, p)) return p;
+            else prev = null;
+          } else prev = prev.prev;
+        }
+      }
+    }
     return null;
   },
 

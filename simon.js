@@ -18,9 +18,10 @@ var SimonBase = {
       this.kings = [cs[12], cs[25], cs[38], cs[51]];
     }
 
-    dealToPile(cards, this.piles[0], 0, 8);
-    dealToPile(cards, this.piles[1], 0, 8);
-    for(var i = 2; i != 10; i++) dealToPile(cards, this.piles[i], 0, 10-i);
+    const ps = this.piles;
+    ps[0].dealTo(cards, 0, 8);
+    ps[1].dealTo(cards, 0, 8);
+    for(var i = 2; i != 10; i++) ps[i].dealTo(cards, 0, 10-i);
   },
 
   canMoveToFoundation: "13 cards, if empty",

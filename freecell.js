@@ -27,8 +27,9 @@ AllGames.freecell = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 7);
-    for(i = 4; i != 8; i++) dealToPile(cards, this.piles[i], 0, 6);
+    const ps = this.piles;
+    for(var i = 0; i != 4; i++) ps[i].dealTo(cards, 0, 7);
+    for(i = 4; i != 8; i++) ps[i].dealTo(cards, 0, 6);
   },
 
   // test if there are enough spaces/cells to perform a move, not just is it is legal.

@@ -304,6 +304,9 @@ function initPile(elt) {
   // copy methods for specific pile type
   var ms = elt.className in pileProperties ? pileProperties[elt.className] : basicPileProperties;
   for(var m in ms) elt[m] = ms[m];
+  // add getter functions
+  ms = elt.className in pileGetters ? pileGetters[elt.className] : basicPileGetters;
+  for(m in ms) elt.__defineGetter__(m, ms[m]);
 
   return elt;
 }
@@ -326,9 +329,9 @@ var basicPileProperties = {
   prev: null,
   next: null,
 
-  getNextCardLeft: function() { return 0; },
-
-  getNextCardTop: function() { return 0; },
+  // pixel offset from top-left corner of pile at which a card being added to the pile should be placed
+  nextCardLeft: 0,
+  nextCardTop: 0,
 
   addCard: function(card) {
     this.appendChild(card);
@@ -351,6 +354,16 @@ var basicPileProperties = {
       this.fixLayout();
       if(source.id) source.fixLayout();
     }
+  },
+
+  dealTo: function(cards, down, up) {
+    const num = down + up;
+    for(var i = 0; i != num; i++) {
+      var card = cards.pop();
+      if(!card) continue;
+      this.addCard(card);
+      if(i>=down) card.setFaceUp();
+    }
   }
 };
 
@@ -358,11 +371,6 @@ var basicPileProperties = {
 var pileProperties = {
   "fan-down": {
     __proto__: basicPileProperties,
-
-    getNextCardTop: function() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._top + (this.offset || gVFanOffset);
-    },
 
     addCard: function(card) {
       this.appendChild(card);
@@ -393,18 +401,19 @@ var pileProperties = {
     }
   },
 
-  "slide": {
+  "fan-right": {
     __proto__: basicPileProperties,
 
-    getNextCardLeft: function() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
-    },
+    addCard: function(card) {
+      this.appendChild(card);
+      var prev = card.previousSibling;
+      card.left = card._left = prev ? prev._left + gHFanOffset : 0;
+      card.top = card._top = 0;
+    }
+  },
 
-    getNextCardTop: function() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
-    },
+  "slide": {
+    __proto__: basicPileProperties,
 
     addCard: function(card) {
       this.appendChild(card);
@@ -417,20 +426,54 @@ var pileProperties = {
       card.top = card._top = prev._top + offset
       card.left = card._left = prev._left + offset;
     }
+  }
+};
+
+
+var basicPileGetters = {
+  // the sourrounding piles
+  surrounding: function() {
+    delete this.surrounding; // so we can replace the getter with an ordinary property
+    var ps = this.surrounding = [];
+    var prev = this.prev, next = this.next;
+    while(prev && next) {
+      ps.push(next); ps.push(prev);
+      next = next.next; prev = prev.prev;
+    }
+    while(next) { ps.push(next); next = next.next; }
+    while(prev) { ps.push(prev); prev = prev.prev; }
+    return ps;
+  }
+};
+
+
+var pileGetters = {
+  "fan-down": {
+    __proto__: basicPileGetters,
+
+    nextCardTop: function() {
+      if(!this.hasChildNodes()) return 0;
+      return this.lastChild._top + (this.offset || gVFanOffset);
+    }
   },
 
-  "fan-right": {
-    __proto__: basicPileProperties,
+  "fan-left": {
+    __proto__: basicPileGetters,
 
-    getNextCardLeft: function() {
+    nextCardLeft: function() {
       return this.hasChildNodes() ? this.lastChild._left + gHFanOffset : 0;
+    }
+  },
+
+  "slide": {
+    nextCardLeft: function() {
+      if(!this.hasChildNodes()) return 0;
+      return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
     },
 
-    addCard: function(card) {
-      this.appendChild(card);
-      var prev = card.previousSibling;
-      card.left = card._left = prev ? prev._left + gHFanOffset : 0;
-      card.top = card._top = 0;
+    nextCardTop: function() {
+      if(!this.hasChildNodes()) return 0;
+      return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
     }
   }
 };

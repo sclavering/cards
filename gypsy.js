@@ -20,8 +20,8 @@ var GypsyBase = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 2, 1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 8; i++) this.piles[i].dealTo(cards, 2, 1);
+    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

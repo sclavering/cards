@@ -17,9 +17,9 @@ var GolfBase = {
 
   deal: function(cards) {
     this.setScoreTo(this.initialScore);
-    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, this.cardsPerColumn);
-    dealToPile(cards, this.foundation, 0, 1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, this.cardsPerColumn);
+    this.foundation.dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
   },
 
   canMoveCard: function(card) {
@@ -80,4 +80,3 @@ AllGames["golf-hard"] = {
   cardsPerColumn: 8,
   initialScore: 103
 };
-  

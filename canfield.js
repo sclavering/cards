@@ -30,13 +30,13 @@ AllGames.canfield = {
   },
 
   deal: function(cards) {
-    dealToPile(cards, this.reserve, 12, 1);
-    dealToPile(cards, this.foundations[0], 0, 1);
-    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    this.reserve.dealTo(cards, 12, 1);
+    this.foundations[0].dealTo(cards, 0, 1);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
 
     var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
-    var cs = this.cards;
+    const cs = this.cards;
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 

@@ -11,8 +11,9 @@ AllGames.fan = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 17; i++) dealToPile(cards, this.piles[i], 0, 3);
-    dealToPile(cards, this.piles[17], 0, 1);
+    const ps = this.piles;
+    for(var i = 0; i != 17; i++) ps[i].dealTo(cards, 0, 3);
+    ps[17].dealTo(cards, 0, 1);
   },
 
   shuffleImpossible: function(cards) {
@@ -46,7 +47,7 @@ AllGames.fan = {
 
   getBestMoveForCard: function(card) {
     var up = card.up;
-    return up ? (up.nextSibling ? null : up.parentNode) : this.firstEmptyPile;
+    return up ? (up.nextSibling ? null : up.parentNode) : findEmpty(card.parentNode.surrounding);
   },
 
   autoplayMove: "commonish",

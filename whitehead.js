@@ -28,8 +28,8 @@ AllGames.whitehead = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, i+1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, i+1);
+    this.stock.dealTo(cards, cards.length, 0);
   },
 
   canMoveToPile: function(card, pile) {

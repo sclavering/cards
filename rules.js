@@ -263,12 +263,12 @@ var Rules = {
     function(card) {
       var up = card.up;
       if(up && up.faceUp && up.parentNode.isNormalPile && !up.nextSibling) return up.parentNode;
-      return findEmpty(getPilesRound(card.parentNode));
+      return findEmpty(card.parentNode.surrounding);
     },
 
     "down and same suit, or down, or empty":
     function(card) {
-      const ps = getPilesRound(card.parentNode), num = ps.length;
+      const ps = card.parentNode.surrounding, num = ps.length;
       var maybe = null, empty = null;
       for(var i = 0; i != num; i++) {
         var p = ps[i], last = p.lastChild;
@@ -285,10 +285,10 @@ var Rules = {
 
     "legal nonempty, or empty":
     function(card) {
-      var ps = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles, num = ps.length;
+      var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
-      for(var i = 0; i != ps.length; i++) {
-        var p = ps[i];
+      for(var i = 0; i != num; i++) {
+        p = ps[i];
         if(p.hasChildNodes()) {
           if(this.canMoveToPile(card, p)) return p;
         } else if(!empty) {
@@ -300,10 +300,10 @@ var Rules = {
 
     "legal":
     function(card) {
-      var ps = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles, num = ps.length;
+      var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
-      for(var i = 0; i != ps.length; i++) {
-        var p = ps[i];
+      for(var i = 0; i != num; i++) {
+        p = ps[i];
         if(this.canMoveToPile(card, p)) return p;
       }
       return null;
@@ -336,4 +336,28 @@ var Rules = {
       return false;
     }
   }
+}
+
+
+
+// Other useful functions for individual games to use
+
+function findEmpty(piles) {
+  const num = piles.length;
+  for(var i = 0; i != num; i++) {
+    var p = piles[i];
+    if(!p.hasChildNodes()) return p;
+  }
+  return null;
+}
+
+// these are to be used as mayAutoplay getter functions on cards
+function mayAutoplayAfterTwoOthers() {
+  return this.autoplayAfterA.parentNode.isFoundation && this.autoplayAfterB.parentNode.isFoundation;
+}
+
+function mayAutoplayAfterFourOthers() {
+  var a = this.autoplayAfterA, b = this.autoplayAfterB;
+  return a.parentNode.isFoundation && a.twin.parentNode.isFoundation
+      && b.parentNode.isFoundation && b.twin.parentNode.isFoundation;
 }

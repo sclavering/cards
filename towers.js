@@ -14,8 +14,8 @@ AllGames.towers = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
-    for(i = 1; i != 3; i++) dealToPile(cards, this.cells[i], 0, 1);
+    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 5);
+    for(i = 1; i != 3; i++) this.cells[i].dealTo(cards, 0, 1);
   },
 
   // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
@@ -37,7 +37,7 @@ AllGames.towers = {
       var upp = up.parentNode;
       if(upp.isNormalPile && !up.nextSibling && this.movePossible(card, upp)) return upp;
     } else {
-      var pile = this.firstEmptyPile;
+      var p = card.parentNode, pile = p.isNormalPile ? findEmpty(p.surrounding) : this.firstEmptyPile;
       if(pile) return pile;
     }
     return card.nextSibling ? null : this.emptyCell;

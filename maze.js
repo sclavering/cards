@@ -19,7 +19,8 @@ AllGames.maze = {
   },
 
   deal: function(cards) {
-    for(var i in this.piles) dealToPile(cards, this.piles[i], 0, 1);
+    const ps = this.piles, num = ps.length;
+    for(var i = 0; i != num; i++) ps[i].dealTo(cards, 0, 1);
   },
 
   canMoveTo: function(card, pile) {

@@ -23,8 +23,8 @@ function moveCards1(firstCard, target) {
     var sx = firstCard.boxObject.x - gGameStackLeft;
     var sy = firstCard.boxObject.y - gGameStackTop;
     // final coords
-    var tx = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
-    var ty = target.boxObject.y - gGameStackTop + target.getNextCardTop();
+    var tx = target.boxObject.x - gGameStackLeft + target.nextCardLeft;
+    var ty = target.boxObject.y - gGameStackTop + target.nextCardTop;
     // change in coords
     var dx = tx - sx;
     var dy = ty - sy;

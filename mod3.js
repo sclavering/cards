@@ -49,15 +49,15 @@ AllGames.mod3 = {
         rs[i][j].row = i;
     this.stock.row = 4; // just so long as it's not 0, 1, or 2
 
-    for(j = 0; j != 3; j++)
-      for(k = 0; k != 8; k++)
-        this.rows[j][k].baseNumber = j + 2;
+    for(i = 0; i != i; i++)
+      for(j = 0; j != 8; j++)
+        this.rows[i][j].baseNumber = i + 2;
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 24; i++) dealToPile(cards, this.foundations[i], 0, 1);
-    for(i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 0, 1);
-    dealToPile(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 24; i++) this.foundations[i].dealTo(cards, 0, 1);
+    for(i = 0; i != 8; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
 
     var score = 0, fs = this.foundations;
     for(i = 0; i != 24; i++) if(fs[i].lastChild.inPlace) score += MOD3_CARD_IN_PLACE;
@@ -106,8 +106,8 @@ AllGames.mod3 = {
       var p = findEmpty(this.rows[card.row]);
       if(p) return p;
     }
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return findEmpty(piles);
+    var parent = card.parentNode;
+    return findEmpty(parent.isNormalPile ? parent.surrounding : this.piles);
   },
 
   autoplayMove: function() {

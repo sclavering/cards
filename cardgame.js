@@ -57,9 +57,10 @@ var BaseCardGame = {
     this.initXulElement();
     this.initPiles();
     // if layout from another game has been cloned we need to throw away any cards in it
-    for(var i in this.allpiles) {
-      var s = this.allpiles[i];
-      while(s.hasChildNodes()) s.removeChild(s.lastChild);
+    var ps = this.allpiles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      while(p.hasChildNodes()) p.removeChild(p.lastChild);
     }
 
     this.init(); // game specific stuff
@@ -195,13 +196,13 @@ var BaseCardGame = {
   },
 
   clearGame: function() {
-    // remove all cards and set them all face down
-    var s = this.allpiles;
-    for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
-    // reset offset used when stacking cards.
-    if(this.piles)
-      for(i = 0; i != this.piles.length; i++)
-        this.piles[i].fixLayout();
+    // Remove all cards and set them all face down.  Reset piles' stacking offset.
+    var ps = this.allpiles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      while(p.hasChildNodes()) p.removeChild(p.lastChild).setFaceDown();
+      p.fixLayout();
+    }
   },
 
   // should deal out the provided shuffled cards for a new game.  piles will already be empty

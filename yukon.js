@@ -60,8 +60,8 @@ AllGames.yukon = {
   },
 
   deal: function(cards) {
-    dealToPile(cards, this.piles[0], 0, 1);
-    for(var i = 1; i != 7; i++) dealToPile(cards, this.piles[i], i, 5);
+    this.piles[0].dealTo(cards, 0, 1);
+    for(var i = 1; i != 7; i++) this.piles[i].dealTo(cards, i, 5);
   },
 
   getHints: function() {
@@ -101,9 +101,9 @@ AllGames.sanibel = {
   },
 
   deal: function(cards) {
-    dealToPile(cards, this.stock, 3, 0);
-    dealToPile(cards, this.waste, 0, 1);
-    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 3, 7);
+    this.stock.dealTo(cards, 3, 0);
+    this.waste.dealTo(cards, 0, 1);
+    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 3, 7);
   },
 
   getHints: function() {

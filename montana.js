@@ -35,7 +35,7 @@ var Montana = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 52; i++) dealToPile(cards, this.piles[i], 0, 1);
+    for(var i = 0; i != 52; i++) this.piles[i].dealTo(cards, 0, 1);
   },
 
   canMoveTo: function(card, pile) {
@@ -116,7 +116,7 @@ MontanaRedealAction.prototype = {
     var rows = Game.rows;
 
     // remove cards
-    for(var r in rows) {
+    for(var r = 0; r != 4; r++) {
       var row = rows[r];
       var c = 0, pile = row[0], prv = null;
       while(this.isPileComplete(pile, prv)) c++, prv = pile, pile = row[c];
@@ -136,9 +136,9 @@ MontanaRedealAction.prototype = {
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = hardGame ? 0 : 1;
-    for(r in rows)
+    for(r = 0; r != 4; r++)
       for(c = 13 - map[r].length + easy; c != 13; c++)
-        dealToPile(cards, rows[r][c], 0, 1);
+        rows[r][c].dealTo(cards, 0, 1);
   },
 
   isPileComplete: function(pile, prv) {
@@ -153,12 +153,11 @@ MontanaRedealAction.prototype = {
     var map = this.map, rows = Game.rows;
     Game.redealsRemaining++;
 
-    // the DOM spec. says that appendChild will remove the new child from its current parent if necessary,
-    // so we needn't bother clearing the current layout before starting to restore the old.
-    for(var r in rows) {
-      var co = 13 - map[r].length; // map[r][0..n] maps to row[r][(13-n)..13]
-      for(var c = 0; c != map[r].length; c++)
-        if(map[r][c]) rows[r][c+co].addCard(map[r][c]);
+    // appendChild(node) will remove node first (per DOM spec), so we needn't bother clearing the layout
+    // map[r][0..n] maps to row[r][(13-n)..13]
+    for(var r = 0; r != 4; r++) {
+      var len = map[r].length, co = 13 - len;
+      for(var c = 0; c != len; c++) if(map[r][c]) rows[r][c+co].addCard(map[r][c]);
     }
   },
 
@@ -166,10 +165,10 @@ MontanaRedealAction.prototype = {
     Game.redealsRemaining--;
     var map = this.map, cards = this.shuffled.copy, rows = Game.rows;
 
-    // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
+    // in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = this.isHardGame ? 0 : 1;
-    for(var r in rows)
+    for(var r = 0; r != 4; r++)
       for(var c = 13 - map[r].length + easy; c != 13; c++)
-        dealToPile(cards, rows[r][c], 0, 1);
+        rows[r][c].dealTo(cards, 0, 1);
   }
 }

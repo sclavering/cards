@@ -5,6 +5,11 @@
 <!DOCTYPE window [
 <!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
 %cardsDTD;
+
+<!-- used for the difficultyLevels attribute on games' main element -->
+<!ENTITY difficulty:standard-levels "&difficulty:easy-1suit;|&difficulty:medium-2suits;|&difficulty:hard-4suits;">
+<!ENTITY difficulty:easy-and-hard   "&difficulty:easy-2suits;|&difficulty:hard-4suits;">
+<!ENTITY difficulty:golf "&difficulty:easy-1deck;|&difficulty:hard-2decks;">
 ]>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -78,10 +83,12 @@
   <!-- difficulty level menu is show/hidden by removing/adding hidden="true" -->
   <toolbarbutton id="game-difficulty-menu" type="menu" label="&m-game-difficulty:label;"
     tooltiptext="&m-game-difficulty:tooltip;" command="cmd:setdifficulty">
-    <menupopup>
+    <menupopup id="game-difficulty-popup">
+    <!--
       <menuitem label="&difficulty-easy:label;"   value="easy"/>
       <menuitem label="&difficulty-medium:label;" value="medium"/>
       <menuitem label="&difficulty-hard:label;"   value="hard"/>
+      -->
     </menupopup>
   </toolbarbutton>
   <!-- toolbarbutton command="command:options" label="&options:label;" tooltiptext="&options:tooltip;"/ -->
@@ -208,7 +215,7 @@ using those 100px :)  thanks Neil.
 
   <!-- Golf -->
   <!-- flex allow bottom alignment of golf-stack-row -->
-  <vbox id="Golf" hidden="true" name="&golf-name;" flex="1">
+  <vbox id="Golf" hidden="true" name="&golf-name;" flex="1" difficultyLevels="&difficulty:golf;">
     <spacer class="row-spacer"/>
     <hbox id="golf-tableau-row">
       <spacer flex="1"/>
@@ -254,7 +261,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Gypsy -->
-  <vbox id="Gypsy" hidden="true" name="&gypsy-name;">
+  <vbox id="Gypsy" hidden="true" name="&gypsy-name;" difficultyLevels="&difficulty:easy-and-hard;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -420,7 +427,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Simple Simon -->
-  <vbox id="SimpleSimon" hidden="true" name="&simon-name;">
+  <vbox id="SimpleSimon" hidden="true" name="&simon-name;" difficultyLevels="&difficulty:standard-levels;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -446,7 +453,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Spider Solitaire -->
-  <vbox id="Spider" hidden="true" name="&spider-name;">
+  <vbox id="Spider" hidden="true" name="&spider-name;" difficultyLevels="&difficulty:standard-levels;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>

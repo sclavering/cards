@@ -708,6 +708,7 @@ var Cards = {
   cmdSetDifficulty: null,
   // refs to toolbar elements so they can be disabled
   difficultyLevelMenu: null,
+  difficultyLevelPopup: null, // the <menupopup> for difficultyLevelMenu
   gameSelector: null,
 
   gameDisplayStack: null, // ref to <stack> used for moving content around in and holding current game
@@ -726,6 +727,7 @@ var Cards = {
     this.cmdSetDifficulty = document.getElementById("cmd:setdifficulty");
     this.scoreDisplay = document.getElementById("score-display");
     this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
+    this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
     this.gameSelector = document.getElementById("game-type-menu");
     this.gameDisplayStack = document.getElementById("current-game-display");
     // init other objects in cardslib.js
@@ -749,7 +751,7 @@ var Cards = {
     this.cmdHint.removeAttribute("disabled");
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
-    if(Game.hasDifficultyLevels) this.difficultyLevelMenu.removeAttribute("disabled");
+    this.conditionalEnableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
     MouseHandler.enable(); // handles drag-drop of cards and mouse clicks
@@ -757,7 +759,7 @@ var Cards = {
   enablePartialUI: function() {
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
-    if(Game.hasDifficultyLevels) this.difficultyLevelMenu.removeAttribute("disabled");
+    this.conditionalEnableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
   },
   disableUI: function() {
@@ -780,9 +782,18 @@ var Cards = {
   },
 
   // need to be able to show/hide the difficulty level menu when a new game type is started
-  // because not all gmes have multiple difficulty levels.
-  enableDifficultyMenu: function() { this.difficultyLevelMenu.removeAttribute("disabled"); },
-  disableDifficultyMenu: function() { this.difficultyLevelMenu.setAttribute("disabled","true"); },
+  // because not all games have multiple difficulty levels.
+  conditionalEnableDifficultyMenu: function() {
+    // the popup for the menu is built when the game is started
+    // and will be empty if difficulty levels are not supported
+    if(this.difficultyLevelPopup.hasChildNodes()) this.enableDifficultyMenu();
+  },
+  enableDifficultyMenu: function() { 
+    this.difficultyLevelMenu.removeAttribute("disabled");
+  },
+  disableDifficultyMenu: function() { 
+    this.difficultyLevelMenu.setAttribute("disabled","true"); 
+  },
 
   // called by CardGame.trackMove() I think.
   displayScore: function(score) { this.scoreDisplay.value = score; },

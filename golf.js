@@ -1,4 +1,4 @@
-var Golf = new CardGame(HAS_DIFFICULTY_LEVELS);
+var Golf = new CardGame();
 
 Golf.init = function() {
   this.shortname = "golf";
@@ -14,7 +14,7 @@ Golf.init = function() {
 Golf.deal = function() {
   var cards;
   var cardsPerColumn;
-  if(this.difficultyLevel=="hard") { 
+  if(this.difficultyLevel==2) { 
 	  cards = this.shuffleDecks(2);
     cardsPerColumn = 8;
   	this.score = 103;

@@ -1,4 +1,4 @@
-var Gypsy = new CardGame(HAS_DIFFICULTY_LEVELS);
+var Gypsy = new CardGame();
 
 Gypsy.init = function() {
   this.shortname = "gypsy";
@@ -12,7 +12,8 @@ Gypsy.init = function() {
 ///////////////////////////////////////////////////////////
 //// start game
 Gypsy.deal = function() {
-  var cards = this.difficultyLevel=="hard" ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
+  // 1==easy, 2==hard
+  var cards = this.difficultyLevel==2 ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
   for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],2,1);
   this.dealToStack(cards,this.stock,cards.length,0);
 };

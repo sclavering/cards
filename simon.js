@@ -1,4 +1,4 @@
-var SimpleSimon = new CardGame(HAS_DIFFICULTY_LEVELS);
+var SimpleSimon = new CardGame();
 
 SimpleSimon.init = function() {
   this.shortname = "simon";
@@ -11,8 +11,8 @@ SimpleSimon.init = function() {
 //// start game
 SimpleSimon.deal = function() {
   var cards =
-    this.difficultyLevel=="easy"   ? this.shuffleSuits(4,0,0,0) :
-    this.difficultyLevel=="medium" ? this.shuffleSuits(2,2,0,0) :
+    this.difficultyLevel==1 ? this.shuffleSuits(4,0,0,0) :
+    this.difficultyLevel==2 ? this.shuffleSuits(2,2,0,0) :
     this.shuffleDecks(1);
   this.dealToStack(cards,this.stacks[0],0,8);
   this.dealToStack(cards,this.stacks[1],0,8);

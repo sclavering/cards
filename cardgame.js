@@ -12,17 +12,15 @@
   */
 
 // flags to indicate some of the rules of a card game.  usage:  FooSolitaire = new CardGame(FLAG_1 | FLAG_2 | ...);
-const ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, HAS_DIFFICULTY_LEVELS = 4, NO_DRAG_DROP = 8;
+const ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, NO_DRAG_DROP = 4;
 
-function CardGame(params, usesMouseHandler2) {
+function CardGame(params) {
   // for Klondike, Canfield and others, where when reaching the bottom of
   // the stock, the entire waste pile is (can be) moved back to the stock
   // checked in the common event handler, if true must implement dealFromStock()
   this.stockCanTurnOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
   // used when determining the result for card.number() calls (makes Aces 14's)
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
-  // used in CardGame.start(); to show/hide the DifficultyLevel menu
-  this.hasDifficultyLevels = (params&HAS_DIFFICULTY_LEVELS)==HAS_DIFFICULTY_LEVELS;
   // enables FreeCell style "click on card, then on destination" moving, rather than d+d
   this.usesMouseHandler2 = (params&NO_DRAG_DROP)==NO_DRAG_DROP;
 };
@@ -122,21 +120,14 @@ CardGame.prototype = {
     }
   },
 
-
   start: function() {
-    // conditionally enable Difficulty Level menu
-    if(this.hasDifficultyLevels) Cards.enableDifficultyMenu();
-    else Cards.disableDifficultyMenu();
+    // creates the Difficulty level menu on tht toolbar if necessary, and sets the Game.difficultyLevel param
+    this.initDifficultyLevel();
     MouseHandler = (this.usesMouseHandler2) ? MouseHandler2 : MouseHandler1;
     MouseHandler.start();
     // init stack arrays and stuff
     if(!this.initialised) {
       this.init();
-      if(this.hasDifficultyLevels) {
-        var pref = Cards.currentGame+".game-difficulty";
-        var value = Cards.preferences.getPrefType(pref)!=0 ? Cards.preferences.getCharPref(pref) : "medium";
-        this.difficultyLevel = value;
-      }
       this.initialised = true;
     }
     this.newGame();
@@ -147,9 +138,45 @@ CardGame.prototype = {
     this.clearGame();
   },
 
-  // games can retrieve a string for the current difficulty level via Game.difficultyLevel;
+
+
+  // === Difficulty Levels =======================================
+
+  // checks if the current game has difficulty levels and inits the menu if so.
+  initDifficultyLevel: function() {
+    // clear the 'Difficulty' menu on the toolbar
+    // (menu being empty is used to indicate game does not have multiple difficulty levels)
+    var menu = Cards.difficultyLevelPopup;
+    while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
+    // get levels.  if none then return (updateUI will ensure menu disabled)
+    var levels = document.getElementById(Cards.currentGame).getAttribute("difficultyLevels");
+    if(!levels || levels=="") return;
+    //
+    Cards.enableDifficultyMenu();
+    levels = levels.split('|');
+    // read current level from prefs.  default to numLevls/2, which should generally end up being Medium 
+    var currentLevel;
+    try {
+      currentLevel = Cards.preferences.getIntPref(Cards.currentGame+".difficulty-level");
+    } catch(e) {
+      currentLevel = Math.ceil(levels.length / 2);
+    }
+    this.difficultyLevel = currentLevel;
+    // add appropriate menu items
+    for(var i = 0; i < levels.length; i++) {
+      var mi = document.createElement("menuitem");
+      mi.setAttribute("label",levels[i]);
+      mi.setAttribute("value",i+1); // number from 1, to avoid js 0==false thing
+      mi.setAttribute("type","radio");
+      if(i+1==currentLevel) mi.setAttribute("checked","true");
+      menu.appendChild(mi);
+    }
+  },
+
+  // games can retrieve a integer >0 for the current difficulty level via Game.difficultyLevel;
   setDifficultyLevel: function(level) {
-    Cards.preferences.setCharPref(Cards.currentGame+".game-difficulty", level);
+    level = parseInt(level);
+    Cards.preferences.setIntPref(Cards.currentGame + ".difficulty-level", level);
     this.difficultyLevel = level;
     this.newGame();
   },

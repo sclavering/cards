@@ -1,4 +1,4 @@
-var Spider = new CardGame(HAS_DIFFICULTY_LEVELS);
+var Spider = new CardGame();
 
 Spider.foundationsBox = null; // <vbox> containing <stack>s
 Spider.dealsLeftDisplay = null;
@@ -32,9 +32,9 @@ Spider.deal = function() {
   this.updateDealsLeftDisplay();
   var cards;
   switch(this.difficultyLevel) {
-    case "easy":   cards = this.shuffleSuits(8,0,0,0); break;
-    case "medium": cards = this.shuffleSuits(4,4,0,0); break;
-    case "hard":   cards = this.shuffleSuits(2,2,2,2); break;
+    case 1: cards = this.shuffleSuits(8,0,0,0); break;
+    case 2: cards = this.shuffleSuits(4,4,0,0); break;
+    default: cards = this.shuffleSuits(2,2,2,2);
   }
   for(var i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
   for(var i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);

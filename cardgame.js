@@ -12,20 +12,19 @@
   */
 
 // flags to indicate some of the rules of a card game.  usage:  FooSolitaire = new CardGame(FLAG_1 | FLAG_2 | ...);
-const ACES_HIGH = 1,
-      CAN_TURN_STOCK_OVER = 2,   // for Klondike, Canfield and others, where when reaching the bottom of
-                                 // the stock, the entire waste pile is (can be) moved back to the stock
-      HAS_DIFFICULTY_LEVELS = 4;
+const ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, HAS_DIFFICULTY_LEVELS = 4, NO_DRAG_DROP = 8;
 
 function CardGame(params, usesMouseHandler2) {
+  // for Klondike, Canfield and others, where when reaching the bottom of
+  // the stock, the entire waste pile is (can be) moved back to the stock
   // checked in the common event handler, if true must implement dealFromStock()
   this.stockCanTurnOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
   // used when determining the result for card.number() calls (makes Aces 14's)
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
   // used in CardGame.start(); to show/hide the DifficultyLevel menu
   this.hasDifficultyLevels = (params&HAS_DIFFICULTY_LEVELS)==HAS_DIFFICULTY_LEVELS;
-  // for freecell.
-  this.usesMouseHandler2 = usesMouseHandler2;
+  // enables FreeCell style "click on card, then on destination" moving, rather than d+d
+  this.usesMouseHandler2 = (params&NO_DRAG_DROP)==NO_DRAG_DROP;
 };
 
 CardGame.prototype = {
@@ -51,13 +50,13 @@ CardGame.prototype = {
   // (also creates .allstacks[] which is used when clearing the game layout for a new game)
   // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
   // to use this game must init game.shortname first
-  initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols) {
+  initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols, numCells) {
     this.allstacks = new Array();
     var name = this.shortname; // e.g. "klondike", "simon" etc
     if(numStacks) {
       this.stacks = new Array(numStacks);
       for(var i = 0; i < numStacks; i++) {
-        this.stacks[i] = document.getElementById(name+"-stack-"+i);
+        this.stacks[i] = document.getElementById(name+"-pile-"+i);
         this.stacks[i].isPile = true;
         this.allstacks.push(this.stacks[i]);
       }
@@ -110,6 +109,15 @@ CardGame.prototype = {
           this.stacks[i][j] = s;
           this.allstacks.push(s);
         }
+      }
+    }
+    // cells
+    if(numCells) {
+      this.cells = new Array(numCells);
+      for(var i = 0; i < numCells; i++) {
+        this.cells[i] = document.getElementById(name+"-cell-"+i);
+        this.cells[i].isCell = true;
+        this.allstacks.push(this.cells[i]);
       }
     }
   },

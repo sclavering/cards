@@ -113,10 +113,10 @@ using those 100px :)  thanks Neil.
     <hbox>
       <spacer flex="1"/>
       <stack id="acesup-stock" class="card-pile"/><spacer flex="2"/>
-      <stack id="acesup-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-stack-3" class="card-fan-down"/><spacer flex="2"/>
+      <stack id="acesup-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="acesup-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="acesup-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="acesup-pile-3" class="card-fan-down"/><spacer flex="2"/>
       <stack id="acesup-foundation" class="card-pile"/><spacer flex="1"/>
     </hbox>
   </vbox>
@@ -139,10 +139,10 @@ using those 100px :)  thanks Neil.
       <spacer flex="1"/>
       <spacer class="card-pile-spacer"/><spacer flex="1"/>
       <spacer class="card-pile-spacer"/><spacer flex="2"/>
-      <stack id="canfield-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-stack-3" class="card-fan-down"/><spacer flex="2"/>
+      <stack id="canfield-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="canfield-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="canfield-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="canfield-pile-3" class="card-fan-down"/><spacer flex="2"/>
       <spacer class="card-pile-spacer"/><spacer flex="1"/>
     </hbox>
   </vbox>
@@ -163,16 +163,16 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="doublesol-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-stack-9" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-8" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-pile-9" class="card-fan-down"/><spacer flex="1"/>
     </hbox>
   </vbox>
 
@@ -181,26 +181,26 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="cell-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="cell-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="cell-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="cell-3" class="card-pile"/><spacer flex="3"/>
-      <stack id="foundation-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="foundation-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="foundation-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="foundation-3" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-cell-0" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-cell-1" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-cell-2" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-cell-3" class="card-pile"/><spacer flex="3"/>
+      <stack id="freecell-foundation-0" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-foundation-1" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-foundation-2" class="card-pile"/><spacer flex="1"/>
+      <stack id="freecell-foundation-3" class="card-pile"/><spacer flex="1"/>
     </hbox>
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="2"/>
-      <stack id="pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="pile-7" class="card-fan-down"/><spacer flex="2"/>
+      <stack id="freecell-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="freecell-pile-7" class="card-fan-down"/><spacer flex="2"/>
     </hbox>
   </vbox>
 
@@ -209,13 +209,13 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="grandfather-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-stack-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="grandfather-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <vbox>
         <stack id="grandfather-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
         <stack id="grandfather-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
@@ -231,14 +231,14 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="gypsy-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-stack-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="gypsy-pile-7" class="card-fan-down"/><spacer flex="1"/>
       <vbox>
         <hbox>
           <stack id="gypsy-foundation-0" class="card-pile"/><spacer class="col-spacer"/>
@@ -283,13 +283,13 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="klondike-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-stack-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="klondike-pile-6" class="card-fan-down"/><spacer flex="1"/>
     </hbox>
   </vbox>
 
@@ -397,16 +397,16 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="simon-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-stack-9" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-8" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="simon-pile-9" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="simon-foundation">
         <stack id="simon-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
         <stack id="simon-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
@@ -423,16 +423,16 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="spider-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-stack-9" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-8" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="spider-pile-9" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="spider-side-panel">
         <vbox id="spider-foundations" class="stack-of-card-stacks">
           <stack id="spider-foundation-0" class="card-pile"/>
@@ -461,13 +461,13 @@ using those 100px :)  thanks Neil.
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="yukon-stack-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-stack-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="yukon-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="yukon-foundation">
         <stack id="yukon-foundation-0" class="card-pile"/>
         <stack id="yukon-foundation-1" class="card-pile"/>

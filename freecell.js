@@ -1,26 +1,8 @@
-// true param enables MouseHandler2
-// need to use a better switch for that
-var FreeCell = new CardGame(0,true);
+var FreeCell = new CardGame(NO_DRAG_DROP);
 
 FreeCell.init = function() {
-  //XXX kill all this garbage and use initStacks() instead
-  this.stacks = new Array(8);
-  for(var i = 0; i < 8; i++) {
-    this.stacks[i] = document.getElementById("pile-"+i);
-    this.stacks[i].isPile = true;
-  }
-  this.foundations = new Array(4);
-  for(var i = 0; i < 4; i++) {
-    this.foundations[i] = document.getElementById("foundation-"+i);
-    this.foundations[i].isFoundation = true;
-  }
-  this.cells = new Array(4);
-  for(var i = 0; i < 4; i++) {
-    this.cells[i] = document.getElementById("cell-"+i);
-    this.cells[i].isCell = true;
-  }
-  //
-  this.allstacks = this.stacks.concat(this.cells,this.foundations);
+  this.shortname = "freecell";
+  this.initStacks(8,4,0,false,false,0,0,4);
 };
 
 
@@ -56,9 +38,11 @@ FreeCell.canMoveTo = function(card, target) {
 };
 // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
 FreeCell.movePossible = function(card,target) {
-  // count spaces
+  // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
+  // count spaces, excluding the destination
   var spaces = 0;
-  for(var i = 0; i < 8; i++) if(!this.stacks[i].hasChildNodes()) spaces++;
+  for(var i = 0; i < 8; i++)
+    if(!this.stacks[i].hasChildNodes() && this.stacks[i]!=target) spaces++;
   // count free cells
   var cells = 0;
   for(var i = 0; i < 4; i++) if(!this.cells[i].hasChildNodes()) cells++;

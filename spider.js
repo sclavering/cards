@@ -69,9 +69,9 @@ Games["spider"] = {
 
   init: function() {
     var cards = this.cards = [];
-    cards[1] = getCardSuits(4, 0, 0, 0); // for easy games
-    cards[2] = getCardSuits(2, 2, 0, 0); // medium games
-    cards[3] = getDecks(1);              // hard games
+    cards[1] = getCardSuits(8, 0, 0, 0); // for easy games
+    cards[2] = getCardSuits(4, 4, 0, 0); // medium games
+    cards[3] = getDecks(2);              // hard games
   },
 
   deal: function() {

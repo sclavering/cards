@@ -569,6 +569,8 @@ var CardMover = {
   * card-pile:  cards are just piled up one on top of the other (like the foundations and stock in Klondike)
   * card-fan-down:  cards are spread vertically with an offset between the top of consecutive cards
   *                 offset is smaller between faceDown cards.   (e.g. tableau piles in Klondike)
+  * card-slide: cards are spread such that you have an idea how many are in the pile while only one
+  *                 card on top is visible
   *
   * position(card) - positions the card by looking at all its previousSibling's,
   *       call after moving a card to a new stack, but get via card.position()
@@ -580,28 +582,84 @@ var CardMover = {
 var CardPositioner = {
   faceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
   faceUpOffset: SkinPrefs.offsetBetweenFaceUpCards, // num of pixels between tops of two faceup cards
+  slideOffset: SkinPrefs.offsetBetweenSlidCards, // num of pixels between edges of two slid cards
 
   position: function(card) {
+    if(card.previousSibling){
+      if(card.parentNode.className=="card-fan-down"){
+        card.top = card.previousSibling.top - 0 + (card.previousSibling.faceUp() ? (card.parentNode.offset || this.faceUpOffset) : this.faceDownOffset);
+        card.left = card.previousSibling.left;
+        return;
+      }
+      if(card.parentNode.className=="card-slide"){
+        card.top = card.previousSibling.top;
+        card.left = card.previousSibling.left;
+//        if(card.parentNode.childNodes.length < 6){
+          card.top += this.slideOffset;
+          card.left += this.slideOffset;
+//         }
+      }
+      card.top = card.previousSibling.top;
+      card.left = card.previousSibling.left;
+      return;
+    }
+    card.top = 0;
     card.left = 0;
-    if(card.parentNode.className=="card-fan-down" && card.previousSibling)
-      card.top = card.previousSibling.top - 0 + (card.previousSibling.faceUp() ? (card.parentNode.offset || this.faceUpOffset) : this.faceDownOffset);
-    else
-      card.top = 0;
   },
 
   getNextCardTop: function(stack) {
-    if(stack.className!="card-fan-down") return 0;
-    if(!stack.hasChildNodes()) return 0;
-    return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? (stack.offset || this.faceUpOffset) : this.faceDownOffset);
+    if(!stack.hasChildNodes()) 
+      return 0;
+    if(stack.className=="card-fan-down") 
+      return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? (stack.offset || this.faceUpOffset) : this.faceDownOffset);
+    if(stack.className=="card-slide"){ 
+      if(stack.childNodes.length < 6){
+        return stack.lastChild.top - 0 + this.slideOffset;
+      }
+      return stack.lastChild.top;
+    }
+    return 0;
+  },
+
+  getNextCardLeft: function(stack) {
+    if(!stack.hasChildNodes() || stack.className!="card-slide") 
+      return 0;
+    return stack.lastChild.left - 0 + (stack.childNodes.length < 6)? this.slideOffset:0;
   },
 
   fixStack: function(stack) {
-    var card; // for loops
-    if(stack.className!="card-fan-down") return;
-    if(!stack.hasChildNodes()) {
+    if(!stack.hasChildNodes() ) {
       stack.offset = 0;
       return;
     }
+    if(stack.childNodes.length==1 ) {
+      stack.offset = 0;
+      stack.firstChild.top = 0;
+      stack.firstChild.left = 0;
+      return;
+    }
+    var card;
+    if(stack.className=="card-slide") {/* figure out how many we can shift in space allotted */
+      var maxYShifts = parseInt((window.innerHeight - getBottom(stack.firstChild))/this.slideOffset);
+      var maxXShifts = parseInt((window.innerWidth - getRight(stack.firstChild))/this.slideOffset);
+      var offX = 0;
+      var offY = 0;
+      if(maxYShifts > 5) maxYShifts = 5;
+      if(maxXShifts > 5) maxXShifts = 5;
+      var count = stack.childNodes.length;
+      card = stack.firstChild;
+      while(card) {
+        card.top = offY;
+        card.left = offX;
+        if(count <= maxYShifts) offY += this.slideOffset;
+        if(count <= maxXShifts) offX += this.slideOffset;
+        card = card.nextSibling;
+        count--;
+      }
+      return;
+    }
+    if(stack.className!="card-fan-down") 
+      return;
     var numFaceUp = 0;
     for(card = stack.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
     if(numFaceUp <= 1) {
@@ -620,7 +678,7 @@ var CardPositioner = {
     while(card) {
       if(card.top != top) card.top = top;
       top += offset;
-      card = card.nextSibling
+      card = card.nextSibling;
     }
   }
 }

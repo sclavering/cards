@@ -14,7 +14,7 @@ Golf.init = function() {
 Golf.deal = function() {
   var cards;
   var cardsPerColumn;
-  if(this.difficultyLevel==2) { 
+  if(this.difficultyLevel==3) { 
 	  cards = this.shuffleDecks(2);
     cardsPerColumn = 8;
   	this.score = 103;
@@ -47,7 +47,7 @@ Golf.canMoveTo = function(card, stack) {
   var diff = this.foundation.lastChild.number() - card.number();
   return (diff ==  1 || //Can go one down
           diff == -1 || //Can go one up
-         (this.difficultyLevel=="easy" && 
+         (this.difficultyLevel==1 && 
           (diff == -12 || diff == 12)));  //Or King to Ace in easy mode
 };
 

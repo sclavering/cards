@@ -300,7 +300,7 @@ CardGame.prototype = {
   // called by moveTo(), revealCard() and dealFromStock()
   // updates th undo list and score
   trackMove: function(action, card, source) {
-    var scorechange = this.getScoreForAction(action);
+    var scorechange = this.getScoreForAction(action, card, source);
     var move = {action: action, card: card, source: source, score: scorechange};
     this.undoHistory.push(move);
     this.score += scorechange;
@@ -397,7 +397,7 @@ CardGame.prototype = {
     var sourceIsFoundation = source.isFoundation || source.id.indexOf("foundation")!=-1;
     var action =
       (targetIsFoundation && !sourceIsFoundation) ? "move-to-foundation" :
-      (!sourceIsFoundation && targetIsFoundation) ? "move-from-foundation" :
+      (sourceIsFoundation && !targetIsFoundation) ? "move-from-foundation" :
       (source==this.waste) ? "move-from-waste" :
       "move-between-piles";
     card.moveTo(target);

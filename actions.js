@@ -20,7 +20,7 @@ RevealCardAction.prototype = {
   undoNext: true,
 
   perform: function() {
-    this.card.turnFaceUp();
+    turnCardUp(this.card);
     // evil-ish hack to get this move redone when the preceding one is redone
     var d = Game.actionsDone;
     d[d.length-2].redoNext = true;

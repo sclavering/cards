@@ -1,7 +1,8 @@
-var moveCards = null; // holds a function
+var moveCards = null, turnCardUp = null; // function pointers
 
 function enableAnimation(enable) {
   moveCards = enable ? moveCards1 : moveCards2;
+  turnCardUp = enable ? turnCardUpAnimated : turnCardUpNonAnimated;
 }
 
 function toggleAnimation(menuitem) {
@@ -9,8 +10,6 @@ function toggleAnimation(menuitem) {
   enableAnimation(enable);
   gPrefs.setBoolPref("use-animation",enable);
 }
-
-
 
 
 
@@ -80,11 +79,44 @@ function moveCards1(firstCard, target) {
 
 
 
-
-
 function moveCards2(card, to) {
     disableUI();
     var source = card.parentNode.source;
     to.addCards(card);
     setTimeout(animatedActionFinished, 30, source);
+}
+
+
+
+// precompute cosines
+var turnCardUpAnimatedCosines = new Array(7);
+for(var i = 0; i != 7; i++) turnCardUpAnimatedCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
+
+function turnCardUpAnimated(card) {
+  disableUI();
+  var oldLeft = card._left;
+  var oldHalfWidth = card.boxObject.width / 2;
+  var stepNum = 7;
+  var interval = setInterval(function() {
+    stepNum--;
+    if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
+      clearInterval(interval);
+      card.left = oldLeft;
+      card.removeAttribute("width"); // the width needs to be CSS controlled so that switching cardsets works properly
+      animatedActionFinished();
+      return;
+    }
+    var newHalfWidth = turnCardUpAnimatedCosines[stepNum] * oldHalfWidth;
+    card.width = 2 * newHalfWidth;
+    card.left = oldLeft + oldHalfWidth - newHalfWidth;
+    if(stepNum==3) card.setFaceUp();  // gone past pi/2
+  }, 45);
+}
+
+
+
+function turnCardUpNonAnimated(card) {
+  disableUI();
+  card.setFaceUp();
+  setTimeout(animatedActionFinished, 30);
 }

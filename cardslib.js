@@ -250,7 +250,6 @@ var cardMethods = {
 
   moveTo: function(targetPile) { moveCards(this, targetPile); },
 
-  // card turning
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;
@@ -261,28 +260,6 @@ var cardMethods = {
     this.faceUp = false;
     this.faceDown = true;
     this.className = "card facedown";
-  },
-
-  turnFaceUp: function() {
-    var card = this;
-    disableUI();
-    var oldLeft = card._left;
-    var oldHalfWidth = card.boxObject.width / 2;
-    var stepNum = 7;
-    var interval = setInterval(function() {
-      stepNum--;
-      if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
-        clearInterval(interval);
-        card.left = oldLeft;
-        card.removeAttribute("width"); // the width needs to be CSS controlled so that switching cardsets works properly
-        animatedActionFinished();
-        return;
-      }
-      var newHalfWidth = cardTurnFaceUpCosines[stepNum] * oldHalfWidth;
-      card.width = 2 * newHalfWidth;
-      card.left = oldLeft + oldHalfWidth - newHalfWidth;
-      if(stepNum==3) card.setFaceUp();  // gone past pi/2
-    }, 45);
   }
 };
 

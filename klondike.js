@@ -149,6 +149,6 @@ KlondikeDeal3Action.prototype = {
     // unpack the cards that were there before, if necessary
     //dump("kD undo: i="+i+"\n");
     for(var card = w.lastChild; i > 0; --i, card = card.previousSibling)
-      card.left = card._left = i * gVFanOffset;
+      card.left = card._left = i * gHFanOffset;
   }
 };

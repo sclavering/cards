@@ -219,7 +219,7 @@ var CardShuffler = {
       this.className = "card facedown";
     };
     // other methods
-    c.turnFaceUp = function() { CardTurner.turnFaceUp(this); };
+    c.turnFaceUp = function() { turnCardFaceUp(this); };
     c.moveTo     = function(targetStack) { CardMover.move(this,targetStack); };
     c.transferTo = function(targetPile) { targetPile.addCards(this); };
     // initialise properties
@@ -469,48 +469,30 @@ function createHighlighter() {
 
 
 
+var turnCardFaceUpCosines = new Array(7);
+for(var i = 0; i != 7; i++) turnCardFaceUpCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
 
-
-/** CardTurner
-  *
-  * Handles the animated turning-face-up of cards.
-  * Do not call directly, just use somecard.turnFaceUp() instead
-  */
-var CardTurner = {
-  angle: null,    // the angle the card has reached in being turned
-  oldWidth: null, // the original width of the card
-  oldLeft:  null, // the initial integer value of the left attribute
-  interval: null, // Interval triggering the animation of turniong the card over
-  card: null, // ref to the card being turned
-
-  turnFaceUp: function(card) {
-    this.card = card;
-    this.angle = 0;
-    this.oldLeft = parseInt(card.left);
-    this.oldWidth = card.boxObject.width;
-    this.interval = setInterval(function(){CardTurner.turnFaceUpStep();}, 50);
-    Cards.disableUI();
-  },
-  turnFaceUpStep: function() {
-    this.angle += Math.PI/6;
-    var newHalfWidth = Math.floor(Math.abs(Math.cos(this.angle) * this.oldWidth / 2));
-    this.card.width = 2 * newHalfWidth;
-    this.card.left = this.oldLeft + (this.oldWidth / 2) - newHalfWidth;
-    // if the turn has passed the 90° mark, turn it over
-    if(this.card.faceDown() && this.angle>=Math.PI/2) this.card.setFaceUp();
-    // if it has turned all the way over
-    if(this.angle>=Math.PI) this.turnFaceUpFinished();
-  },
-  turnFaceUpFinished: function() {
-    clearInterval(this.interval);
-    this.card.left = this.oldLeft;
-    this.card.width = this.oldWidth;
-    // don't enable the UI till were done autoplaying
-    if(!Game.autoplay()) Cards.enableUI();
-  }
+function turnCardFaceUp(card) {
+  Cards.disableUI();
+  var oldLeft = parseInt(card.left);
+  var oldWidth = card.boxObject.width;
+  var oldHalfWidth = oldWidth / 2;
+  var stepNum = 7;
+  var interval = setInterval(function() {
+    stepNum--;
+    if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
+      clearInterval(interval);
+      card.left = oldLeft;
+      card.width = oldWidth;
+      if(!Game.autoplay()) Cards.enableUI();
+      return;
+    }
+    var newHalfWidth = turnCardFaceUpCosines[stepNum] * oldHalfWidth;
+    card.width = 2 * newHalfWidth;
+    card.left = oldLeft + oldHalfWidth - newHalfWidth;
+    if(stepNum==3) card.setFaceUp();  // gone past pi/2
+  }, 45);
 }
-
-
 
 
 

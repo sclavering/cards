@@ -1,3 +1,19 @@
+
+// base class for FreeCell and Seahaven Towers
+var FreeCellGame = {
+  __proto__: BaseCardGame,
+  
+  useDragDrop: false,
+  
+  init: function() {
+    // insufficient spaces message
+    this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
+  }
+}
+
+
+
+
 /** FreeCellMover
   *
   * handles the complex series of moves required to move a run of cards in games
@@ -133,6 +149,4 @@ var FreeCellMover = {
     }
   }
 }
-
-
 

@@ -1,11 +1,8 @@
-var Towers = new CardGame(NO_DRAG_DROP);
-
-Towers.shortname = "towers";
-
-Towers.init = function() {
-  // insufficient spaces message
-  this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
-};
+var Towers = {
+  __proto__: FreeCellGame,
+  
+  shortname: "towers"
+}
 
 
 

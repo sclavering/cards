@@ -12,7 +12,7 @@
   */
 
 // flags to indicate some of the rules of a card game.  usage:  FooSolitaire = new CardGame(FLAG_1 | FLAG_2 | ...);
-var ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, NO_DRAG_DROP = 4;
+var ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2;
 
 function CardGame(params) {
   // for Klondike, Canfield and others, where when reaching the bottom of
@@ -21,15 +21,13 @@ function CardGame(params) {
   this.stockCanTurnOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
   // used when determining the result for card.number() calls (makes Aces 14's)
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
-  // enables FreeCell style "click on card, then on destination" moving, rather than d+d
-  this.usesMouseHandler2 = (params&NO_DRAG_DROP)==NO_DRAG_DROP;
 };
 
 var BaseCardGame = CardGame.prototype = {  
   // older games get these set by the CardGame() constructor.  newer games may want to override
   stockCanTurnOver: false,
   acesHigh: false,
-  usesMouseHandler2: false,
+  useDragDrop: true, // if false we use "click to select, then click on target"
 
   // these are all automatically set up by initStacks()
   allstacks: [],   // array of piles of all times.  used for clearing the game
@@ -134,7 +132,7 @@ var BaseCardGame = CardGame.prototype = {
   start: function() {
     // creates the Difficulty level menu on tht toolbar if necessary, and sets the Game.difficultyLevel param
     this.initDifficultyLevel();
-    MouseHandler = (this.usesMouseHandler2) ? MouseHandler2 : MouseHandler1;
+    MouseHandler = this.useDragDrop ? MouseHandler1 : MouseHandler2;
     MouseHandler.start();
     // init stack arrays and stuff
     if(!this.initialised) {

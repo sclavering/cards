@@ -1,11 +1,8 @@
-var FreeCell = new CardGame(NO_DRAG_DROP);
-
-FreeCell.shortname = "freecell";
-
-FreeCell.init = function() {
-  // insufficient spaces message
-  this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
-};
+var FreeCell = {
+  __proto__: FreeCellGame,
+  
+  shortname: "freecell"
+}
 
 
 

@@ -44,6 +44,7 @@
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>
+<script type="application/x-javascript" src="tripeaks.js"/>
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">
@@ -775,6 +776,84 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       </vbox>
       <flex/>
     </hbox>
+  </vbox>
+
+  <!-- TriPeaks -->
+  <vbox id="tripeaks" hidden="true">
+    <rowspacer/>
+    <vbox class="pyramid-rows">
+      <hbox class="pyramid-row">
+        <flex4/>
+        <halfpilespacer/><pilespacer/>
+        <pile id="tripeaks-pile-0"/><flex/>
+        <pilespacer/><flex/>
+        <pilespacer/><flex/>
+        <pile id="tripeaks-pile-1"/><flex/>
+        <pilespacer/><flex/>
+        <pilespacer/><flex/>
+        <pile id="tripeaks-pile-2"/><flex/>
+        <pilespacer/><halfpilespacer/>
+        <flex4/>
+      </hbox>
+      <hbox class="pyramid-row">
+        <flex3/>
+        <pilespacer/>
+        <pile id="tripeaks-pile-3"/><flex/>
+        <pile id="tripeaks-pile-4"/><flex/>
+        <pilespacer/><flex/>
+        <pile id="tripeaks-pile-5"/><flex/>
+        <pile id="tripeaks-pile-6"/><flex/>
+        <pilespacer/><flex/>
+        <pile id="tripeaks-pile-7"/><flex/>
+        <pile id="tripeaks-pile-8"/>
+        <pilespacer/>
+        <flex3/>
+      </hbox>
+      <hbox class="pyramid-row">
+        <flex3/>
+        <halfpilespacer/>
+        <pile id="tripeaks-pile-9"/><flex/>
+        <pile id="tripeaks-pile-10"/><flex/>
+        <pile id="tripeaks-pile-11"/><flex/>
+        <pile id="tripeaks-pile-12"/><flex/>
+        <pile id="tripeaks-pile-13"/><flex/>
+        <pile id="tripeaks-pile-14"/><flex/>
+        <pile id="tripeaks-pile-15"/><flex/>
+        <pile id="tripeaks-pile-16"/><flex/>
+        <pile id="tripeaks-pile-17"/>
+        <halfpilespacer/>
+        <flex3/>
+      </hbox>
+      <hbox class="pyramid-row">
+        <flex2/>
+        <pile id="tripeaks-pile-18"/><flex/>
+        <pile id="tripeaks-pile-19"/><flex/>
+        <pile id="tripeaks-pile-20"/><flex/>
+        <pile id="tripeaks-pile-21"/><flex/>
+        <pile id="tripeaks-pile-22"/><flex/>
+        <pile id="tripeaks-pile-23"/><flex/>
+        <pile id="tripeaks-pile-24"/><flex/>
+        <pile id="tripeaks-pile-25"/><flex/>
+        <pile id="tripeaks-pile-26"/><flex/>
+        <pile id="tripeaks-pile-27"/>
+        <flex2/>
+      </hbox>
+    </vbox>
+    <flex3/>
+    <hbox>
+      <flex3/>
+      <vbox>
+        <stock id="tripeaks-stock"/>
+        <hbox>
+          <label value="&deals-left;"/>
+          <label id="tripeaks-stock-counter"/>
+        </hbox>
+      </vbox>
+      <flex2/>
+      <waste id="tripeaks-waste"/>
+      <flex3/>
+    </hbox>
+    <flex2/>
   </vbox>
 
   <!-- Towers -->

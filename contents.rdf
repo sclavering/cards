@@ -10,7 +10,7 @@
 
   <!-- package information -->
   <RDF:Description about="urn:mozilla:package:cards"
-        chrome:displayName="Cards 0.10.0"
+        chrome:displayName="Cards 0.10.1"
         chrome:author="Stephen Clavering"
         chrome:name="cards"
         chrome:description="Cards is a set of patience/solitaire card games."

@@ -17,6 +17,7 @@ Games["mod3"] = {
     cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
     cards.splice(13,1); cards.splice(0, 1);
 
+    var i, j, k, n;
     // add useful properties to the cards
     for(i = 0; i != 96; i++) {
       // the row this card should end up in
@@ -26,15 +27,25 @@ Games["mod3"] = {
       cards[i].rowNum = Math.floor((cards[i].number-2) / 3);
     }
 
+    // make belongsOn for each 4 of spades be an array of the two 3s of spades and so on.
+    // left undefined for 2s 3s and 4s
+    for(i = 0, n = 0; i != 4; i++, n+=24)
+      for(j = 3; j != 12; j++)
+        cards[n+j].belongsOn = cards[n+j+12].belongsOn = [cards[n+j-3], cards[n+j+9]];
+
     // other useful things
-    var f = this.foundations;
-    for(var i = 0; i != 24; i++) f[i].baseCardInPlace = function() {
+    var fs = this.foundations, ps = this.piles;
+    for(i = 0; i != 24; i++) fs[i].baseCardInPlace = function() {
       return (this.hasChildNodes() && this.firstChild.number==this.baseNumber);
     };
-    this.rows = [f.slice(0,8),f.slice(8,16),f.slice(16,24)];
-    for(var j = 0; j != 3; j++) {
-      for(var k = 0; k != 8; k++) this.rows[j][k].baseNumber = j + 2;
-    }
+
+    for(i = 0; i != 8; i++) ps[i].baseCardInPlace = function() { return false; };
+    this.stock.baseCardInPlace = function() { return false; }
+
+    this.rows = [fs.slice(0,8),fs.slice(8,16),fs.slice(16,24)];
+    for(j = 0; j != 3; j++)
+      for(k = 0; k != 8; k++)
+        this.rows[j][k].baseNumber = j + 2;
   },
 
   deal: function(cards) {
@@ -88,8 +99,13 @@ Games["mod3"] = {
 
   getBestMoveForCard: function(card) {
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return searchPiles(this.rows[card.row], testCanMoveToFoundation(card))
-        || searchPiles(piles, testPileIsEmpty);
+
+    if(!card.rowNum) return searchPiles(this.rows[card.row].concat(piles), testPileIsEmpty);
+
+    var b0 = card.belongsOn[0], b1 = card.belongsOn[1], p0 = b0.parentNode, p1 = b1.parentNode;
+    if(!b0.nextSibling && p0.baseCardInPlace()) return p0;
+    if(!b1.nextSibling && p1.baseCardInPlace()) return p1;
+    return searchPiles(piles, testPileIsEmpty);
   },
 
   autoplayMove: function() {
@@ -110,17 +126,11 @@ Games["mod3"] = {
           else if(!target) target = f;
         }
       } else {
-        // find where to move |card| to, and check that the other foundation on the row for the
-        // same suit has reached at least the same height
         ok = false;
-        for(c = 0; !target && c != 8; c++) {
-          if(this.canMoveTo(card, row[c])) target = row[c];
-        }
-        for(c = 0; !ok && c != 8; c++) {
-          f = row[c];
-          var last = f.lastChild;
-          if(f!=target && f.baseCardInPlace() && last.isSameSuit(card)
-              && last.rowNum>=card.rowNum-1) ok = true;
+        var b0 = card.belongsOn[0], b1 = card.belongsOn[1];
+        if(b0.parentNode.baseCardInPlace() && b1.parentNode.baseCardInPlace()) {
+          ok = true;
+          target = (b0.nextSibling ? b1 : b0).parentNode;
         }
       }
 

@@ -495,6 +495,8 @@ var pileGetters = {
   },
 
   "slide": {
+    __proto__: basicPileGetters,
+
     nextCardLeft: function() {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
@@ -504,10 +506,18 @@ var pileGetters = {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
     }
+  },
+
+  "foundation4": {
+    __proto__: basicPileGetters,
+
+    nextCardTop: function() {
+      return this.hasChildNodes() ? this.lastChild._top + gVFanOffset : 0;
+    }
   }
 };
 
-
+pileGetters.foundation8 = pileGetters.foundation4;
 
 
 

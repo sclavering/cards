@@ -565,8 +565,7 @@ var CardMover = {
     this.transfer(this.cards.firstChild, this.target);
     this.cards.hide();
     // don't enable the UI till we're finished autoplaying
-    // xxx FreeCellMover should not be mentioned here
-    if(!FreeCellMover.step() && !Game.autoplay()) Cards.enableUI();
+    if(!Game.autoplay()) Cards.enableUI();
   },
 
   transfer: function(firstCard, target) {

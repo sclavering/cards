@@ -76,6 +76,19 @@ var FreeCellGame = {
     for(var i = 0; i < this.stacks.length; i++)
       if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
     return spaces;
+  },
+  
+  // calls FreeCellMover.step(), and doesn't call autoReveal, since neither
+  // FreeCell nor Seahaven Towers needs it.
+  autoplay: function() {
+    if(FreeCellMover.step() || this.autoplayMove()) {
+      return true;
+    } else if(Game.hasBeenWon()) {
+      this.endGame();
+      Cards.showGameWon();
+      return true;
+    }
+    return false;
   }
 }
 

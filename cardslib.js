@@ -1,6 +1,6 @@
-// these are defined as getters so they're not enumerable (so for(... in ...) loops ignore them)
-Array.prototype.__defineGetter__("flattenedOnce", function() { return this.concat.apply([], this); });
-Array.prototype.__defineGetter__("copy", function() { return this.slice(0); });
+// function for use on Arrays.  this used to be a getter function to hide it from for..in loops, but that does not work anymore in gecko 1.8x
+function flattenOnce(a) { return a.concat.apply([], a); }
+
 
 // constants for colours and suits
 const RED = 1, BLACK = 2;
@@ -119,7 +119,7 @@ function init() {
     var mi = document.createElement("menuitem");
     mi.setAttribute("type", "radio");
     mi.setAttribute("label", names[i]);
-    mi.value = game;
+    mi.gameId = game;
     menu.appendChild(mi);
   }
 
@@ -142,7 +142,7 @@ function init() {
 
   // tick/check the menuitem for current game
   mi = menu.firstChild;
-  while(mi.value != game) mi = mi.nextSibling;
+  while(mi.gameId != game) mi = mi.nextSibling;
   mi.setAttribute("checked", "true");
 
   GameController = Games[game];
@@ -157,7 +157,7 @@ window.addEventListener("load", init, false);
 
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
-  cards = cards.copy;
+  cards = cards.slice(0); // copy
 
   // shuffle several times, because Math.random() appears to be rather bad.
   for(var i = 0; i != 5; i++) {
@@ -230,7 +230,7 @@ function makeCards(numbers, suits, repeat) {
       for(i = 0; i != numNums; i++) set[i].twin = twins[i];
     }
   }
-  return cards.flattenedOnce;
+  return flattenOnce(cards);
 }
 
 

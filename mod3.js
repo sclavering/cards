@@ -34,7 +34,7 @@ AllGames.mod3 = {
       for(j = 0; j != 8; j++) bs[j].__defineGetter__("inPlace", inPlace2);
     }
 
-    this.cards = css.flattenedOnce;
+    this.cards = flattenOnce(css);
 
     var fs = this.foundations, ps = this.piles;
     for(i = 0; i != 24; i++) fs[i].__defineGetter__("baseCardInPlace", baseInPlace);

@@ -66,7 +66,7 @@
 <toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="&gamesMenu.label;">
-    <menupopup id="menupopup-gametypes" oncommand="playGame(event.target.value);"/>
+    <menupopup id="menupopup-gametypes" oncommand="playGame(event.target.gameId);"/>
   </toolbarbutton>
   <toolbarbutton id="game-difficulty-menu" type="menu" disabled="true" command="cmd:setdifficulty"
       label="&difficulty-menu.label;" tooltiptext="&difficulty-menu.tooltip;">

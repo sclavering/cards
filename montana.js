@@ -130,7 +130,7 @@ MontanaRedealAction.prototype = {
 
     // shuffle
     cards = shuffle(cards);
-    this.shuffled = cards.copy; // for redo()
+    this.shuffled = cards.slice(0); // copy for redo()
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = hardGame ? 0 : 1;
@@ -161,7 +161,7 @@ MontanaRedealAction.prototype = {
 
   redo: function() {
     Game.redealsRemaining--;
-    var map = this.map, cards = this.shuffled.copy, rows = Game.rows;
+    var map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
 
     // in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = this.isHardGame ? 0 : 1;

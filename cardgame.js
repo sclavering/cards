@@ -190,7 +190,7 @@ var BaseCardGame = {
       do cards = shuffle(cards);
       while(this.shuffleImpossible(cards));
     }
-    this.cardsAsDealt = cards.copy;
+    this.cardsAsDealt = cards.slice(0); // copy of array
     this.deal(cards);
 
     if(this.stock) this.stock.counter = this.stockCounterStart;
@@ -204,7 +204,7 @@ var BaseCardGame = {
     this.setScoreTo(0);
     this.clearGame();
     this.redealsRemaining = this.redeals;
-    this.deal(this.cardsAsDealt.copy);
+    this.deal(this.cardsAsDealt.slice(0)); // deal a copy (since deal empties the array)
     if(this.stock) this.stock.counter = this.stockCounterStart;
 
     var done = this.actionsDone;

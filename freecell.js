@@ -29,7 +29,7 @@ FreeCell.canMoveCard = FreeCell.canMoveCard_DescendingAltColours;
 // (using 0 means the overall behaviour will match other games, but callers which do want to 
 // know about an insufficent spaces result can test if the result ===0)
 FreeCell.canMoveTo = function(card, target) {
-  if(target.isCell) return (!target.hasChildNodes() && !card.nextSibling);
+  if(target.isCell) return this.canMoveToCell(card,target);
   var last = target.lastChild;
   if(target.isFoundation)
     return this.canMoveToFoundation(card, target); // inherited method

@@ -1,8 +1,8 @@
 Games["Fan"] = {
   __proto__: BaseCardGame,
-  
+
   shortname: "fan",
-  
+
 
   ///////////////////////////////////////////////////////////
   //// start game
@@ -18,16 +18,16 @@ Games["Fan"] = {
   canMoveCard: function(card) {
     return card.isLastOnPile();
   },
-  
+
   canMoveToPile: function(card, pile) {
     var last = pile.lastChild;
     return (last ? last.isConsecutiveTo(card) && last.isSameSuit(card) : card.isKing());
   },
-  
+
   canMoveToFoundation: function(card, pile) {
     var last = pile.lastChild;
     return (last ? card.isConsecutiveTo(last) && card.isSameSuit(last) : card.isAce());
-  }, 
+  },
 
 
   ///////////////////////////////////////////////////////////
@@ -36,9 +36,12 @@ Games["Fan"] = {
     for(var i = 0; i < this.stacks.length; i++) {
       var card = this.stacks[i].lastChild;
       if(!card) continue;
-      for(var j = 0; j < this.stacks.length; j++)
+      for(var j = 0; j < this.stacks.length; j++) {
+        // don't suggest moving a king unless it's on top of something else
+        if(card.isKing() && !card.previousSibling) continue;
         if(this.canMoveTo(card, this.stacks[j]))
           this.addHint(card, this.stacks[j]);
+      }
     }
   },
 

@@ -18,14 +18,14 @@ function CardGame(params) {
   // for Klondike, Canfield and others, where when reaching the bottom of
   // the stock, the entire waste pile is (can be) moved back to the stock
   // checked in the common event handler, if true must implement dealFromStock()
-  this.stockCanTurnOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
+  this.canTurnStockOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
   // used when determining the result for card.number() calls (makes Aces 14's)
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
 };
 
 var BaseCardGame = CardGame.prototype = {
   // older games get these set by the CardGame() constructor.  newer games may want to override
-  stockCanTurnOver: false,
+  canTurnStockOver: false,
   acesHigh: false,
   useDragDrop: true, // if false we use "click to select, then click on target"
 
@@ -96,6 +96,7 @@ var BaseCardGame = CardGame.prototype = {
     for(i = 0; true; i++) {
       node = createCardPile(name+"-pile-"+i);
       if(!node) break;
+      node.isNormalPile = true;
       this.stacks.push(node);
       this.allstacks.push(node);
     }
@@ -606,7 +607,7 @@ var BaseCardGame = CardGame.prototype = {
       Game.autoplay();
     } else {
       // in Klondike and Canfield you can go through the stock multiple times
-      if(this.stockCanTurnOver) {
+      if(this.canTurnStockOver) {
         while(this.waste.hasChildNodes()) this.undealFromStock();
         this.trackMove("stock-turned-over", null, null);
       }

@@ -143,6 +143,7 @@ var CardShuffler = {
     c.transferTo = function(targetStack) { CardMover.transfer(this,targetStack); };
     // initialise properties
     c.isCard = true;
+    c.isPile = false;
     c._number = number; // needed for isConsecMod13, but no longer used in number()
     c._suit = suit; // used in the more complex queries.  may delete in future.
     c._colour = colour;
@@ -168,6 +169,7 @@ function _createCardPile(elt) {
   elt.isReserve = false;
   elt.isStock = false;
   elt.isWaste = false;
+  elt.isNormalPile = false;
 
   elt.offset = 0;
 
@@ -573,7 +575,9 @@ var MouseHandler2 = {
               Game.attemptMove(this.source,t);
           this.source = null;
         } else {
-          if(t.isCard && Game.canMoveCard(t)) {
+          if((t.isCard && t.parentNode.isStock) || (t.isPile && t.isStock)) {
+            Game.dealFromStock();
+          } else if(t.isCard && Game.canMoveCard(t)) {
             this.source = t;//.parentNode.lastChild;
             this.highlight();
           }

@@ -40,6 +40,7 @@
 <script type="application/x-javascript" src="maze.js"/>
 <script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="montana.js"/>
+<script type="application/x-javascript" src="pyramid.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
@@ -573,6 +574,90 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile id="montana-pile-50"/><flex/>
       <pile id="montana-pile-51"/><flex/>
     </hbox><flex/>
+  </vbox>
+
+  <!-- Regiment (also known as Heads or Tails) -->
+  <vbox id="Pyramid" name="&pyramid.name;" menukey="&pyramid.menukey;"
+      hidden="true">
+    <rowspacer/>
+    <hbox flex="1">
+      <flex/>
+      <vbox>
+        <stock id="pyramid-stock"/>
+        <rowspacer/>
+        <waste id="pyramid-waste"/>
+      </vbox>
+      <flex/>
+      <vbox class="pyramid-rows" flex="5">
+        <hbox class="pyramid-row">
+          <flex/>
+          <pile id="pyramid-pile-0"/><flex/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex4/>
+          <halfpilespacer/><pilespacer/><pilespacer/>
+          <pile id="pyramid-pile-1"/><flex/>
+          <pile id="pyramid-pile-2"/>
+          <pilespacer/><pilespacer/><halfpilespacer/>
+          <flex4/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex3/>
+          <pilespacer/><pilespacer/>
+          <pile id="pyramid-pile-3"/><flex/>
+          <pile id="pyramid-pile-4"/><flex/>
+          <pile id="pyramid-pile-5"/>
+          <pilespacer/><pilespacer/>
+          <flex3/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex3/>
+          <halfpilespacer/><pilespacer/>
+          <pile id="pyramid-pile-6"/><flex/>
+          <pile id="pyramid-pile-7"/><flex/>
+          <pile id="pyramid-pile-8"/><flex/>
+          <pile id="pyramid-pile-9"/>
+          <pilespacer/><halfpilespacer/>
+          <flex3/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex2/>
+          <pilespacer/>
+          <pile id="pyramid-pile-10"/><flex/>
+          <pile id="pyramid-pile-11"/><flex/>
+          <pile id="pyramid-pile-12"/><flex/>
+          <pile id="pyramid-pile-13"/><flex/>
+          <pile id="pyramid-pile-14"/>
+          <pilespacer/>
+          <flex2/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex2/>
+          <halfpilespacer/>
+          <pile id="pyramid-pile-15"/><flex/>
+          <pile id="pyramid-pile-16"/><flex/>
+          <pile id="pyramid-pile-17"/><flex/>
+          <pile id="pyramid-pile-18"/><flex/>
+          <pile id="pyramid-pile-19"/><flex/>
+          <pile id="pyramid-pile-20"/>
+          <halfpilespacer/>
+          <flex2/>
+        </hbox>
+        <hbox class="pyramid-row">
+          <flex/>
+          <pile id="pyramid-pile-21"/><flex/>
+          <pile id="pyramid-pile-22"/><flex/>
+          <pile id="pyramid-pile-23"/><flex/>
+          <pile id="pyramid-pile-24"/><flex/>
+          <pile id="pyramid-pile-25"/><flex/>
+          <pile id="pyramid-pile-26"/><flex/>
+          <pile id="pyramid-pile-27"/><flex/>
+        </hbox>
+      </vbox>
+      <flex/>
+      <foundation id="pyramid-foundation"/>
+      <flex/>
+    </hbox>
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->

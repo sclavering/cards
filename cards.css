@@ -5,13 +5,15 @@ foundation, cell, reserve, stock, waste, pile { display: -moz-stack; }
 flex { -moz-box-flex: 1; }
 flex2 { -moz-box-flex: 2; }
 flex3 { -moz-box-flex: 3; }
+flex4 { -moz-box-flex: 4; }
+flex5 { -moz-box-flex: 5; }
 
 
 toolbargrippy { display:none; } /* die grippies, die! */
 
 /*
 negative margin on the <stack/> lets you drag cards out of the edge of the window without
-forcing the stack to expand, which pulls the whole content of the game right, or causes 
+forcing the stack to expand, which pulls the whole content of the game right, or causes
 slowdowns (dragging off bottom). then we apply a margin to each game to stop it using the
 space
 */
@@ -30,3 +32,7 @@ colspacer { width: 10px; }
 
 
 .card-highlight { background: black; -moz-opacity: 0.25; }
+
+.pyramid-row > pile {
+  background-image: none;
+}

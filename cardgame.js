@@ -363,9 +363,8 @@ CardGame.prototype = {
   // them just to implement canMoveToPile and canMoveToFoundation
   canMoveTo: function(card,target) {
     // can never move TO a reserve pile
-    if(target.isReserve || target.id.indexOf("reserve")!=-1) return false;
-    if(target.isFoundation || target.id.indexOf("foundation")!=-1)
-      return this.canMoveToFoundation(card,target);
+    if(target.isReserve) return false;
+    if(target.isFoundation) return this.canMoveToFoundation(card,target);
     return this.canMoveToPile(card,target);
   },
   
@@ -398,8 +397,8 @@ CardGame.prototype = {
   // was written in a very unusual way :)
   moveTo: function(card, target) {
     var source = card.getSource();
-    var targetIsFoundation = target.isFoundation || target.id.indexOf("foundation")!=-1;
-    var sourceIsFoundation = source.isFoundation || source.id.indexOf("foundation")!=-1;
+    var targetIsFoundation = target.isFoundation;
+    var sourceIsFoundation = source.isFoundation;
     var action =
       (targetIsFoundation && !sourceIsFoundation) ? "move-to-foundation" :
       (sourceIsFoundation && !targetIsFoundation) ? "move-from-foundation" :

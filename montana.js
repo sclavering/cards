@@ -61,7 +61,11 @@ Games["montana"] = {
     for(var i = 0; i < 52; i++) {
       var stack = this.stacks[i];
       var card = stack.firstChild;
-      if((card && stack.col==12) || (!card && stack.col!=12)) return false;
+      if(stack.col==12) {
+        if(card) return false;
+        continue;
+      }
+      if(!card) return false;
       if(stack.col==0) {
         suit = card.suit;
         if(card.number()!=2) return false;

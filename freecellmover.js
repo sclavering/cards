@@ -25,7 +25,7 @@ var FreeCellGame = {
 
   // this should work for most games which have cells
   canMoveToCell: function(card, target) {
-    return (!target.hasChildNodes() && card.isLastOnPile());
+    return (!target.hasChildNodes() && !card.nextSibling);
   },
 
   moveTo: function(card, target) {
@@ -77,7 +77,7 @@ var FreeCellGame = {
       if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
     return spaces;
   },
-  
+
   // calls FreeCellMover.step(), and doesn't call autoReveal, since neither
   // FreeCell nor Seahaven Towers needs it.
   autoplay: function() {
@@ -103,7 +103,7 @@ function FreeCellMoveAction(card, source, destination, cells, spaces) {
 }
 FreeCellMoveAction.prototype = {
   action: "move-between-piles",
-  
+
   perform: function() {
     FreeCellMover.move(this.card, this.destination, this.cells, this.spaces);
   },

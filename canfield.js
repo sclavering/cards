@@ -20,7 +20,7 @@ Games["canfield"] = {
 
   canMoveToFoundation: function(card, stack) {
     // only the top card on a stack can be moved to foundations
-    if(!card.isLastOnPile()) return false;
+    if(card.nextSibling) return false;
     // either the stack is empty and the card is whatever base number we are building foundations from,
     // or it is consecutive (wrapping round at 13) and of the same suit
     var last = stack.lastChild;

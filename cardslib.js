@@ -59,7 +59,7 @@ function init() {
   // init other stuff
   initMouseHandlers();
   CardMover.init();
-  
+
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
     to = to.lastChild || to; // |to| could be a stack
@@ -163,7 +163,6 @@ var CardShuffler = {
     c.isAce  = function() { return number==1;  };
     c.isQueen = function() { return number==12;};
     c.isKing = function() { return number==13; };
-    c.isLastOnPile = function() { return !this.nextSibling; };
     // more queries (consecutive ones use number() to get 14 for Aces)
     c.isConsecutiveTo = function(card) { return (this.number()==card.number()+1); };
     c.notConsecutiveTo = function(card) { return (this.number()!=card.number()+1); };
@@ -550,7 +549,7 @@ var CardMover = {
     // calculate how far the card has to move
     var xdistance = this.targetLeft - this.cards._left;
     var ydistance = this.targetTop  - this.cards._top;
-    // 
+    //
     var xchange = absMin(this.xchange,xdistance);
     var ychange = absMin(this.ychange,ydistance);
     this.cards.left = this.cards._left = this.cards._left + xchange;

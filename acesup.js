@@ -5,7 +5,7 @@ Games["acesup"] = {
   acesHigh: true,
   rule_dealFromStock: "to-stacks",
   rule_canMoveToPile: "isempty",
-  
+
   init: function() {
     for(var i = 0; i < 4; i++) this.stacks[i].num = i;
   },
@@ -29,7 +29,7 @@ Games["acesup"] = {
 
   canMoveCard: function(card) {
     var p = card.parentNode;
-    return (card.isLastOnPile() && !p.isFoundation && !p.isStock);
+    return (!card.nextSibling && !p.isFoundation && !p.isStock);
   },
 
   canMoveToFoundation: function(card, foundation) {

@@ -216,14 +216,14 @@ var BaseCardGame = {
         this.stacks[i].fixLayout();
     //
     this.deal();
-    
+
     // xxx this should probably happen elsewhere
     if(this.stock && this.stock.counter) {
       var dealsLeft = this.stock.childNodes.length;
       if(!this.waste) dealsLeft = Math.ceil(dealsLeft / this.stockDealTargets.length);
       this.stock.counter.value = dealsLeft;
     }
-    
+
     this.updateScoreDisplay(); // must do after deal(), because not all games start the score at 0
     Cards.disableUndo();
     Cards.disableRedeal();
@@ -366,7 +366,7 @@ var BaseCardGame = {
   // games (e.g. Spider, SimpleSimon) where only a complete suit can move to foundation will need to override
   canMoveToFoundation: function(card,target) {
     // can only move a single card.
-    if(!card.isLastOnPile()) return false;
+    if(card.nextSibling) return false;
     // can move Ace to empty foundation, or other card if it is consecutive and same suit as top card there
     var last = target.lastChild;
     return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
@@ -415,7 +415,7 @@ var BaseCardGame = {
 
   // === Revealing Cards ==================================
   revealCard: function(card) {
-    if(card.faceDown() && card.isLastOnPile())
+    if(card.faceDown() && !card.nextSibling)
       this.doAction(new RevealCardAction(card));
   },
 
@@ -501,7 +501,7 @@ var BaseCardGame = {
   // after any move/action that doesn't use animation (e.g. dealing from the stock).
   // Games can override thingsToReveal[] to control auto revealing.
   // Games should override autoplayMove()
-  
+
   // A bool is returned so CardMover.move() can decide whether to reenable the UI.
   // (We want to keep it disabled throughout seq's of consecutive animated moves.)
   autoplay: function() {

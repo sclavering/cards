@@ -73,7 +73,7 @@ var Rules = {
 
     "last-on-pile":
     function(card, target) {
-      return (card.faceUp() && card.isLastOnPile());
+      return (card.faceUp() && !card.nextSibling);
     }
   },
 
@@ -115,12 +115,12 @@ var Rules = {
     }
   },
 
- 
+
   dealFromStock: {
     "to-waste": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
     },
-    
+
     "to-waste,can-turn-stock-over": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
       else this.doAction(new TurnStockOverAction());
@@ -129,12 +129,12 @@ var Rules = {
     "to-foundation": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.foundation));
     },
-    
+
     "to-stacks": function() {
       if(!this.stock.hasChildNodes()) return;
       this.doAction(new DealFromStockToStacksAction(this.stacks));
     },
-    
+
     "to-stacks,if-none-empty": function() {
       if(!this.stock.hasChildNodes()) return;
       for(var i = 0; i < Game.stacks.length; i++) if(!Game.stacks[i].hasChildNodes()) return;

@@ -27,7 +27,7 @@ Games["golf"] = {
   },
 
   canMoveCard: function(card) {
-    return (card.parentNode.isNormalPile && card.isLastOnPile());
+    return (card.parentNode.isNormalPile && !card.nextSibling);
   },
 
   canMoveTo: function(card, stack) {

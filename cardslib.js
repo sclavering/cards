@@ -359,6 +359,25 @@ function _createCardPile(elt) {
 }
 
 
+// for the CardMover, MouseHandler1, etc
+function createFloatingPile(className) {
+  var pile = document.createElement("stack");
+  pile.className = className;
+  _createCardPile(pile);
+  // putting the pile where it's not visible is faster than setting it's |hidden| property
+  pile.hide = function() {
+    this.top = -1000;
+    this.left = -1000;
+  };
+  gGameStack.appendChild(pile);
+  pile.hide();
+  return pile;
+}
+
+
+
+
+
 
 
 
@@ -438,13 +457,8 @@ var MouseHandler1 = {
   mouseMoved: false,
 
   init: function() {
-    this.cards = document.createElement("stack");
-    this.cards.className = "fan-down"; // doesn't need to be flexible for the moment
-    this.cards.hidden = true;
-    gGameStack.appendChild(this.cards);
-    this.cards = _createCardPile(this.cards);
-    // have to position the <stack/> or it fills its parent, blocking all mouse clicks!
-    this.cards.top = 0; this.cards.left = 0;
+    // class doesn't need to be flexible for the moment
+    this.cards = createFloatingPile("fan-down");
   },
 
   start: function() {
@@ -464,8 +478,6 @@ var MouseHandler1 = {
       this.cards.top = e.pageY - this.ty;
     } else if(this.nextCard) {
       var card = this.nextCard;
-      // move the cards to the drag box (this.cards)
-      this.cards.hidden = false;
 //      this.cards.className = card.parentNode.className;
       this.cards.left = getLeft(card) - gGameStackLeft;
       this.cards.top = getTop(card) - gGameStackTop;
@@ -484,7 +496,7 @@ var MouseHandler1 = {
   mouseUp: function(e) {
     if(this.dragInProgress) {
       this.dropCards();
-      this.cards.hidden = true;
+      this.cards.hide();
       this.dragInProgress = false;
     }
     this.nextCard = null;
@@ -645,23 +657,17 @@ var CardMover = {
   moveStack: null, // a <stack/> element that holds cards during moves. used to be created+destroyed as needed
 
   init: function() {
-    this.cards = document.createElement("stack");
-    this.cards.top = 0; this.cards.left = 0; // so it doesn't fill parent and block clicks
-    this.cards.hidden = true;
+    // class doesn't need to be flexible yet
+    this.cards = createFloatingPile("fan-down");
     this.cards.id = "card-move-pile";
-    // doesn't need to be flexible yet
-    this.cards.className = "fan-down";
-    gGameStack.appendChild(this.cards);
-    this.cards = _createCardPile(this.cards);
   },
   move: function(firstCard, target) {
     Cards.disableUI();
     // move firstCard and all card on top of it to the move stack
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
     this.cards.left = getLeft(firstCard) - gGameStackLeft;
-    this.cards.top  = getTop(firstCard) - gGameStackTop
+    this.cards.top = getTop(firstCard) - gGameStackTop
     firstCard.transferTo(this.cards);
-    this.cards.hidden = false;
     // set up conditions for animation stuff
     this.target = target;
     this.targetLeft = getLeft(this.target) - gGameStackLeft + this.target.getNextCardLeft();
@@ -693,7 +699,7 @@ var CardMover = {
   moveComplete: function() {
     clearInterval(this.interval);
     this.transfer(this.cards.firstChild, this.target);
-    this.cards.hidden = true;
+    this.cards.hide();
     // don't enable the UI till we're finished autoplaying
     if(!FreeCellMover.step() && !Game.autoplay())
       Cards.enableUI();

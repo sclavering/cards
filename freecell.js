@@ -50,7 +50,7 @@ FreeCell.movePossible = function(card,target) {
   var cells = 0;
   for(var i = 0; i < 4; i++) if(!this.cells[i].hasChildNodes()) cells++;
   // this is the number we can move using the most complex algorithm
-  var numCanMove = (cells+1) * (1 + parseInt(spaces * (spaces + 1) / 2));
+  var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
   // count number of cards to move
   var numToMove = 0;
   for(var next = card; next; next = next.nextSibling) numToMove++;

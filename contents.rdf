@@ -15,6 +15,5 @@
         chrome:name="cards"
         chrome:description="A set of patience/solitaire card games."
         chrome:extension="true"
-        >
-  </RDF:Description>
+        />
 </RDF:RDF>

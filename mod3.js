@@ -38,7 +38,7 @@ Mod3.deal = function() {
   this.clearGame();
   var possible = false;
   while( !possible ){ // Deal until we get came with at least a sporting chance
-    var cardindex = 0;
+    var cardindex = cards.length - 1;
     cards = this.shuffle(cards);
     this.score = 0;
     var inplace = new Array(3); // three target rows
@@ -49,7 +49,7 @@ Mod3.deal = function() {
     }
     for(var row = 0; row <3; row++){
       for(var i = 0; i < 8; i++){
-        var currCard = cards[cardindex++];
+        var currCard = cards[cardindex--];
         if( currCard.number() == row+2 ){
           inplace[row][currCard.suit()-SPADE] = true;
           this.score += CARD_IN_PLACE;
@@ -227,23 +227,29 @@ Mod3.getScoreForAction = function (action, card, source) {
   var score = 0;
   if ( action=="move-from-foundation" ){
     // Moving out of position
-    if ( this.canMoveTo(card, source) ) return (0 - CARD_IN_PLACE - EMPTY_TABLEAU);
+    if ( this.canMoveTo(card, source) ){ 
+      return (0 - CARD_IN_PLACE - EMPTY_TABLEAU);
+    }
     // Just taking up a slot
     return (0 - EMPTY_TABLEAU);
   }
   if ( action=="move-to-foundation" ){
-    if ( !source.firstChild ) return CARD_IN_PLACE + EMPTY_TABLEAU; // Emptied a slot
+    if ( !source.firstChild ){
+      return CARD_IN_PLACE + EMPTY_TABLEAU; // Emptied a slot
+    }
     return CARD_IN_PLACE; // Only put a card in position
   }
   if ( action=="move-between-piles" ){
     if ( source.isFoundation ){
-      if ( !this.canMoveTo(card, source) ) // Move from dealt postion to valid one
+      if ( !this.canMoveTo(card, source) ){ // Move from dealt postion to valid one
         return CARD_IN_PLACE;
+      }
       return 0;  // Moving from valid to valid foundation
     }
-    if ( !source.firstChild )
-      return 0; // Moving from one empty tableau to another
-    return (0 - EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
+    if ( source.firstChild ){
+      return (0 - EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
+    }
+    return 0; // Moving from one empty tableau to another
   }
   if ( action=="dealt-from-stock" ){
     // This gets called after the deal - figure out how many piles were covered

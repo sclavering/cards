@@ -15,36 +15,30 @@ Games["golf"] = {
 
   deal: function() {
     var cards = shuffle(this.cards[this.difficultyLevel]);
-    var cardsPerColumn;
-    if(this.difficultyLevel==3) {
-      cardsPerColumn = 8;
-      this.score = 103;
-    } else {
-      cardsPerColumn = 5;
-      this.score = 51;
-    }
-    for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],0,cardsPerColumn);
-    this.dealToStack(cards,this.foundation,0,1);
-    this.dealToStack(cards,this.stock,cards.length,0);
+    var cardsPerColumn = [,5,5,8][this.difficultyLevel];
+    this.score = [,51,51,103][this.difficultyLevel];
+    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, cardsPerColumn);
+    dealToPile(cards, this.foundation, 0, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
   canMoveCard: function(card) {
     return (card.parentNode.isNormalPile && !card.nextSibling);
   },
 
-  canMoveTo: function(card, stack) {
-    if(stack!=this.foundation) return false;
-    var last = stack.lastChild;
+  canMoveTo: function(card, pile) {
+    if(pile!=this.foundation) return false;
+    var last = pile.lastChild;
     // K->A or A->K allowed in Easy mode
     if(this.difficultyLevel==1) return card.differsByOneMod13From(last);
     return card.differsByOneFrom(last);
   },
 
   getHints: function() {
-    for(var i = 0; i < 7; i++) {
-      var card = this.stacks[i].lastChild;
+    for(var i = 0; i != 7; i++) {
+      var card = this.piles[i].lastChild;
       if(card && this.canMoveTo(card, this.foundation))
-      	this.addHint(card,this.foundation);
+        this.addHint(card,this.foundation);
     }
   },
 
@@ -53,7 +47,7 @@ Games["golf"] = {
   },
 
   hasBeenWon: function() {
-    return (this.score == 0);
+    return this.score==0;
   },
 
   scores: {

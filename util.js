@@ -1,4 +1,14 @@
-// some useful functions for implementing smartMove/getBestMoveForCard and getHints
+// useful functions for individual games to use
+
+// generally used in games' deal() method
+function dealToPile(cards, pile, numDown, numUp) {
+  for(var i = 0; i != numDown+numUp; i++) {
+    var card = cards.pop();
+    if(!card) continue;
+    pile.addCard(card);
+    if(i>=numDown) card.setFaceUp();
+  }
+}
 
 function searchPiles(piles, test) {
   for(var i = 0; i != piles.length; i++) if(test(piles[i])) return piles[i];
@@ -27,15 +37,15 @@ function getPilesRound(pile) {
   pile.surroundingPiles = piles;
   return piles;
 }
-function nextPileLeft(stack) {
-  if(!stack) return null;
-  for(var n = stack.previousSibling; n; n = n.previousSibling)
+function nextPileLeft(pile) {
+  if(!pile) return null;
+  for(var n = pile.previousSibling; n; n = n.previousSibling)
     if(("isPile" in n) && n.isPile) return n;
   return null;
 }
-function nextPileRight(stack) {
-  if(!stack) return null;
-  for(var n = stack.nextSibling; n; n = n.nextSibling)
+function nextPileRight(pile) {
+  if(!pile) return null;
+  for(var n = pile.nextSibling; n; n = n.nextSibling)
     if(("isPile" in n) && n.isPile) return n;
   return null;
 }

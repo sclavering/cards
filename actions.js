@@ -60,15 +60,15 @@ DealToPilesAction.prototype = {
   dealt: 0,
 
   perform: function() {
-    var stacks = Game.stacks;
-    for(var i = 0; i != stacks.length && Game.stock.hasChildNodes(); i++) Game.dealCardTo(stacks[i]);
+    var piles = Game.piles;
+    for(var i = 0; i != piles.length && Game.stock.hasChildNodes(); i++) Game.dealCardTo(piles[i]);
     this.dealt = i;
     if(Game.stock.counter) Game.stock.counter.add(-1);
     Game.autoplay();
   },
   undo: function() {
-    var stacks = Game.stacks;
-    for(var i = this.dealt; i != 0; i--) Game.undealCardFrom(stacks[i-1]);
+    var piles = Game.piles;
+    for(var i = this.dealt; i != 0; i--) Game.undealCardFrom(piles[i-1]);
     if(Game.stock.counter) Game.stock.counter.add(1);
   }
 }
@@ -80,7 +80,7 @@ DealToNonEmptyPilesAction.prototype = {
   last: 0, // the pile index we reached on the final deal before running out of cards
 
   perform: function() {
-    var piles = Game.stacks;
+    var piles = Game.piles;
     for(var i = 0; i != piles.length && Game.stock.hasChildNodes(); i++) {
       if(piles[i].hasChildNodes()) {
         Game.dealCardTo(piles[i]);
@@ -91,7 +91,7 @@ DealToNonEmptyPilesAction.prototype = {
     Game.autoplay();
   },
   undo: function() {
-    var piles = Game.stacks;
+    var piles = Game.piles;
     for(var i = this.last; i != -1; i--)
       if(piles[i].hasChildNodes()) Game.undealCardFrom(piles[i]);
     if(Game.stock.counter) Game.stock.counter.add(1);
@@ -99,8 +99,7 @@ DealToNonEmptyPilesAction.prototype = {
 }
 
 
-// source is where the card was originally from, not the temp. stack it was
-// probably dragged around in.
+// source is where the card was originally from, not the temp. pile it was probably dragged around in
 function MoveAction(card, source, destination) {
   this.card = card;
   this.source = source;

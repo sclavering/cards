@@ -20,14 +20,14 @@ Games["doublesol"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],i,1);
-    this.dealToStack(cards,this.stock,cards.length,0);
+    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], i, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
-  canMoveToFoundation: function(card, stack) {
+  canMoveToFoundation: function(card, pile) {
     if(card.nextSibling) return false;
     // foundations are built A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
-    var last = stack.lastChild;
+    var last = pile.lastChild;
     if(!last) return card.isAce;
     if(!card.isSameSuit(last)) return false;
     if(card.number==last.number) return true;
@@ -38,14 +38,14 @@ Games["doublesol"] = {
 
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
   getHintsFor: function(card) {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
       if(card.previousSibling || card.parentNode.isWaste) {
-        var pile = searchPiles(this.stacks, testPileIsEmpty);
+        var pile = searchPiles(this.piles, testPileIsEmpty);
         if(pile) this.addHint(card, pile);
       }
       // to foundation
@@ -58,7 +58,7 @@ Games["doublesol"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToPile(card))
         || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
@@ -70,14 +70,14 @@ Games["doublesol"] = {
     }
     return false;
   },
+
   canAutoplayCard: function(card) {
-    if(card.isAce || card.number==2) return true;
-    return (countCardsOnFoundations(card.altcolour,card.number-1) == 2);
+    return card.isAce || card.number==2 || countCardsOnFoundations(card.altcolour,card.number-1)==2;
   },
 
   hasBeenWon: function() {
     // game won if all 4 Foundations have 25==13*2-1 cards
-    for(var i = 0; i < 4; i++)
+    for(var i = 0; i != 4; i++)
       if(this.foundations[i].childNodes.length!=25)
         return false;
     return true;

@@ -7,37 +7,37 @@ Games["canfield"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    this.dealToStack(cards,this.reserve,12,1);
-    this.dealToStack(cards,this.foundations[0],0,1);
+    dealToPile(cards, this.reserve, 12, 1);
+    dealToPile(cards, this.foundations[0], 0, 1);
+    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
     this.foundationStartNumber = this.foundations[0].firstChild.number;
-    for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,1);
-    this.dealToStack(cards,this.stock,cards.length,0);
   },
 
-  canMoveToFoundation: function(card, stack) {
-    // only the top card on a stack can be moved to foundations
+  canMoveToFoundation: function(card, pile) {
+    // only the top card on a pile can be moved to foundations
     if(card.nextSibling) return false;
-    // either the stack is empty and the card is whatever base number we are building foundations from,
+    // either the foundation is empty and the card is whatever base number we are building from,
     // or it is consecutive (wrapping round at 13) and of the same suit
-    var last = stack.lastChild;
+    var last = pile.lastChild;
     return (last ? (card.isSameSuit(last) && card.isConsecutiveMod13To(last))
                  : (card.number==this.foundationStartNumber));
   },
 
-  canMoveToPile: function(card, stack) {
+  canMoveToPile: function(card, pile) {
     // either the pile must be empty, or the top card must be consecutive (wrapping at king) and opposite colour
-    var last = stack.lastChild;
+    var last = pile.lastChild;
     return (!last || (!last.isSameColour(card) && last.isConsecutiveMod13To(card)));
   },
 
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);
     this.addHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testPileIsEmpty)
         || searchPiles(this.foundations, testCanMoveToFoundation(card));
@@ -55,7 +55,7 @@ Games["canfield"] = {
     if(card.number==this.foundationStartNumber) return true;
     // can move any other card there as long as the two one less in number and of the same colour are already there
     var found = 0;
-    for(var i = 0; i < 4; i++) {
+    for(var i = 0; i != 4; i++) {
       var top = this.foundations[i].lastChild;
       if(top && top.colour!=card.colour) {
         var num = card.number-1;
@@ -66,13 +66,7 @@ Games["canfield"] = {
     return (found==2);
   },
 
-  hasBeenWon: function() {
-    // game won if all 4 Foundations have 13 cards
-    for(var i = 0; i < 4; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation"  :  10,

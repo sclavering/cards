@@ -15,19 +15,15 @@ var SpiderBase = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i != this.stacks.length; i++) {
-      var pile = this.stacks[i];
+    for(var i = 0; i != this.piles.length; i++) {
+      var pile = this.piles[i];
       var n = pile.childNodes.length - 13;
       if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
     }
     return false;
   },
 
-  hasBeenWon: function() {
-    for(var i = 0; i < this.foundations.length; i++)
-      if(this.foundations[i].childNodes.length!=13) return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation": 100,
@@ -76,14 +72,13 @@ Games["spider"] = {
 
   deal: function() {
     var cards = shuffle(this.cards[this.difficultyLevel]);
-    var i;
-    for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
-    for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
-    this.dealToStack(cards,this.stock,50,0);
+    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
+    for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
+    dealToPile(cards, this.stock, 50, 0);
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   }
 };
 
@@ -99,15 +94,14 @@ Games["blackwidow"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    var i;
-    for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
-    for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
-    this.dealToStack(cards,this.stock,50,0);
+    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
+    for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
+    dealToPile(cards, this.stock, 50, 0);
   },
 
   getHints: function() {
-    for(var i = 0; i < 10; i++) {
-      var card = this.stacks[i].lastChild;
+    for(var i = 0; i != 10; i++) {
+      var card = this.piles[i].lastChild;
       while(card && card.faceUp) {
         var prv = card.previousSibling;
         if(!prv || !prv.faceUp) {
@@ -139,12 +133,12 @@ Games["divorce"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
-    this.dealToStack(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   }
 };
 
@@ -161,9 +155,9 @@ Games["wasp"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i != 3; i++) this.dealToStack(cards, this.stacks[i], 3, 4);
-    for(i = 3; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, 7);
-    this.dealToStack(cards, this.stock, 3, 0);
+    for(var i = 0; i != 3; i++) dealToPile(cards, this.piles[i], 3, 4);
+    for(i = 3; i != 7; i++) dealToPile(cards, this.piles[i], 0, 7);
+    dealToPile(cards, this.stock, 3, 0);
   },
 
   getBestMoveForCard: function(card) {
@@ -173,14 +167,14 @@ Games["wasp"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i < 7; i++) {
-      var pile = this.stacks[i];
+    for(var i = 0; i != 7; i++) {
+      var pile = this.piles[i];
       if(pile.hasChildNodes()) this.getHintForPile(pile);
     }
   },
   getHintForPile: function(pile) {
-    for(var i = 0; i < 7; i++) {
-      var p = this.stacks[i];
+    for(var i = 0; i != 7; i++) {
+      var p = this.piles[i];
       if(p==pile) continue;
       for(var card = p.lastChild; card && card.faceUp; card = card.previousSibling) {
         if(!this.canMoveTo(card, pile)) continue;

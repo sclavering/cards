@@ -30,6 +30,7 @@ canMoveToPile:
 canMoveToFoundation:
   "king->ace flush"
   "13 cards"  (any set of 13 card. canMoveCard will ensure they're a running flush, or whatever)
+  "13 cards, if empty" (... and only if the foundation is empty)
 
 dealFromStock:
   "to waste"
@@ -45,6 +46,9 @@ getLowestMovableCard:
   "descending mod13, in suit"
   "descending, alt colours"
   "face up":
+
+hasBeenWon:
+  "13 cards on each foundation":
 
 */
 
@@ -78,7 +82,7 @@ var Rules = {
     "descending, in suit":
     function(card) {
       if(card.faceDown) return false;
-      // ensure we have a running flush from top card on stack to |card|
+      // ensure we have a running flush from top card on pile to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(!card.isSameSuit(next) || !card.isConsecutiveTo(next)) return false;
       return true;
@@ -95,7 +99,7 @@ var Rules = {
     "descending, in suit, not from foundation":
     function(card) {
       if(card.faceDown || card.parentNode.isFoundation) return false;
-      // ensure we have a running flush from top card on stack to |card|
+      // ensure we have a running flush from top card on pile to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(!card.isSameSuit(next) || !card.isConsecutiveTo(next)) return false;
       return true;
@@ -177,6 +181,13 @@ var Rules = {
     function(card, pile) {
       var i = card.parentNode.childNodes.length - 13;
       return (i >= 0 && card.parentNode.childNodes[i]==card);
+    },
+
+    "13 cards, if empty":
+    function(card, pile) {
+      if(pile.hasChildNodes()) return false;
+      var i = card.parentNode.childNodes.length - 13;
+      return (i >= 0 && card.parentNode.childNodes[i]==card);
     }
   },
 
@@ -197,13 +208,13 @@ var Rules = {
 
     "to piles": function() {
       if(!this.stock.hasChildNodes()) return;
-      this.doAction(new DealToPilesAction(this.stacks));
+      this.doAction(new DealToPilesAction(this.piles));
     },
 
     "to piles, if none empty": function() {
       if(!this.stock.hasChildNodes()) return;
-      for(var i = 0; i < Game.stacks.length; i++) if(!Game.stacks[i].hasChildNodes()) return;
-      this.doAction(new DealToPilesAction(this.stacks));
+      for(var i = 0; i != Game.piles.length; i++) if(!Game.piles[i].hasChildNodes()) return;
+      this.doAction(new DealToPilesAction(this.piles));
     },
 
     "to nonempty piles": function() {
@@ -249,6 +260,16 @@ var Rules = {
       var card = pile.lastChild, prv = card.previousSibling;
       while(prv && prv.faceUp) card = prv, prv = card.previousSibling;
       return card;
+    }
+  },
+
+
+  hasBeenWon: {
+    "13 cards on each foundation":
+    function() {
+      var fs = this.foundations;
+      for(var i = 0; i != fs.length; i++) if(fs[i].childNodes.length!=13) return false;
+      return true;
     }
   }
 }

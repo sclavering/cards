@@ -9,8 +9,8 @@ Games["pyramid"] = {
     var i, row, col;
     // All piles must have .leftParent and .rightParent fields for the mouse
     // handler, and we need them to have .leftChild and .rightChild
-    for(i = 0; i < this.stacks.length; i++) {
-      var s = this.stacks[i];
+    for(i = 0; i != this.piles.length; i++) {
+      var s = this.piles[i];
       s.leftParent = null; s.rightParent = null;
       s.leftChild = null; s.rightChild = null;
       s.leftFree = function() { return !(this.leftChild && this.leftChild.hasChildNodes()); };
@@ -19,10 +19,10 @@ Games["pyramid"] = {
     }
     // now set the non-null values where applicable
     for(i = 0, row = 1, col = 1; i <= 20; i++) {
-      this.stacks[i].leftChild = this.stacks[i+row];
-      this.stacks[i+row].rightParent = this.stacks[i];
-      this.stacks[i].rightChild = this.stacks[i+row+1];
-      this.stacks[i+row+1].leftParent = this.stacks[i];
+      this.piles[i].leftChild = this.piles[i+row];
+      this.piles[i+row].rightParent = this.piles[i];
+      this.piles[i].rightChild = this.piles[i+row+1];
+      this.piles[i+row+1].leftParent = this.piles[i];
       if(col==row) {
         col = 1;
         row++;
@@ -37,8 +37,8 @@ Games["pyramid"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i < 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
-    this.dealToStack(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 28; i++) dealToPile(cards, this.piles[i], 0, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
   canRemoveCard: function(card) {
@@ -82,7 +82,7 @@ Games["pyramid"] = {
 
   hasBeenWon: function() {
     // won when the tip of the pyramid has been removed
-    return !this.stacks[0].hasChildNodes();
+    return !this.piles[0].hasChildNodes();
   }
 }
 

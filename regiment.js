@@ -6,22 +6,21 @@ Games["regiment"] = {
   canMoveCard: "last on pile",
 
   init: function() {
-    for(var i = 0; i < 8; i++) {
+    for(var i = 0; i != 8; i++) {
       this.foundations[i].isAceFoundation = (i < 4);
       this.reserves[i].col = i;
-      this.stacks[i].col = i;
-      this.stacks[i+8].col = i;
+      this.piles[i].col = i;
+      this.piles[i+8].col = i;
     }
-    this.autoplayFrom = this.stacks.concat(this.reserves);
+    this.autoplayFrom = this.piles.concat(this.reserves);
     this.aceFoundations = this.foundations.slice(0,4);
     this.kingFoundations = this.foundations.slice(4,8);
   },
 
   deal: function() {
     var cards = shuffle(this.cards);
-    var i;
-    for(i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
-    for(i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
+    for(var i = 0; i != 16; i++) dealToPile(cards,this.piles[i],0,1);
+    for(i = 0; i != 8; i++) dealToPile(cards,this.reserves[i],10,1);
   },
 
   // this is likely to be the standard format for games with a set of both Ace and King foundations
@@ -71,12 +70,12 @@ Games["regiment"] = {
 
   getHints: function() {
     for(var i = 0; i != 8; i++) this.addHintsFor(this.reserves[i].lastChild);
-    for(i = 0; i != 16; i++) this.addHintsFor(this.stacks[i].lastChild);
+    for(i = 0; i != 16; i++) this.addHintsFor(this.piles[i].lastChild);
   },
 
   getBestMoveForCard: function(card) {
-    return searchPiles(this.stacks, testCanMoveToNonEmptyPile(card))
-        || searchPiles(this.stacks, testCanMoveToEmptyPile(card));
+    return searchPiles(this.piles, testCanMoveToNonEmptyPile(card))
+        || searchPiles(this.piles, testCanMoveToEmptyPile(card));
   },
 
   autoplayMove: function() {
@@ -89,10 +88,10 @@ Games["regiment"] = {
     for(i = 0; i != 8; i++) {
       var last = this.reserves[i].lastChild;
       if(!last) continue;
-      if(!this.stacks[i].hasChildNodes())
-        return this.moveTo(last, this.stacks[i]);
-      if(!this.stacks[i+8].hasChildNodes())
-        return this.moveTo(last, this.stacks[i+8]);
+      if(!this.piles[i].hasChildNodes())
+        return this.moveTo(last, this.piles[i]);
+      if(!this.piles[i+8].hasChildNodes())
+        return this.moveTo(last, this.piles[i+8]);
     }
     return false;
   },
@@ -115,13 +114,7 @@ Games["regiment"] = {
     return false;
   },
 
-  hasBeenWon: function() {
-    // game won if all 8 Foundations have 13 cards
-    for(var i = 0; i < 8; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation"  :  10,

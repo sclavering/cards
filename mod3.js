@@ -18,7 +18,7 @@ Games["mod3"] = {
     cards.splice(13,1); cards.splice(0, 1);
 
     // add useful properties to the cards
-    for(i = 0; i < 96; i++) {
+    for(i = 0; i != 96; i++) {
       // the row this card should end up in
       cards[i].row = i % 3;
       // a renumbering of cards so that all foundations are built 0,1,2,3,
@@ -28,7 +28,7 @@ Games["mod3"] = {
 
     // other useful things
     var f = this.foundations;
-    for(var i = 0; i < 24; i++) f[i].baseCardInPlace = function() {
+    for(var i = 0; i != 24; i++) f[i].baseCardInPlace = function() {
       return (this.hasChildNodes() && this.firstChild.number==this.baseNumber);
     };
     this.rows = [f.slice(0,8),f.slice(8,16),f.slice(16,24)];
@@ -50,33 +50,33 @@ Games["mod3"] = {
           impossible = false;
     }
 
-    for(i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
-    for(i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
-    this.dealToStack(cards,this.stock,cards.length,0);
+    for(i = 0; i != 24; i++) dealToPile(cards, this.foundations[i], 0, 1);
+    for(i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 0, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
 
     // set the initial score
-    for(i = 0; i < 24; i++) {
+    for(i = 0; i != 24; i++) {
       var f = this.foundations[i];
       if(f.firstChild.number==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
     }
   },
 
-  canMoveToFoundation: function(card, stack) {
-    if(card.parentNode == stack) return false;
+  canMoveToFoundation: function(card, pile) {
+    if(card.parentNode == pile) return false;
     // row 2 has 2,5,8,J in it,  row 3 has 3,6,9,Q,  row 4 has 4,7,10,K
-    if(!stack.hasChildNodes()) return (card.number==stack.baseNumber);
-    var last = stack.lastChild;
-    return (card.isSameSuit(last) && card.number==last.number+3 && stack.baseCardInPlace());
+    if(!pile.hasChildNodes()) return (card.number==pile.baseNumber);
+    var last = pile.lastChild;
+    return (card.isSameSuit(last) && card.number==last.number+3 && pile.baseCardInPlace());
   },
 
   getHints: function() {
-    for(var i = 0; i < this.allstacks.length; i++) {
-      var source = this.allstacks[i];
+    for(var i = 0; i != this.allpiles.length; i++) {
+      var source = this.allpiles[i];
       if(source.isStock || !source.hasChildNodes()) continue;
       var card = source.lastChild;
 
       var row = this.rows[card.row];
-      for(var j = 0; j < 8; j++) {
+      for(var j = 0; j != 8; j++) {
         var target = row[j];
         if(!this.canMoveTo(card,target)) continue;
         // hints are useful if:
@@ -90,7 +90,7 @@ Games["mod3"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     // it's inefficient to look at all foundations, but as this only happens when
     // the user middle clicks a card speed is probably not all that important
     return searchPiles(this.foundations, testCanMoveToFoundation(card))
@@ -98,8 +98,8 @@ Games["mod3"] = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i < 8; i++) {
-      var card = this.stacks[i].lastChild;
+    for(var i = 0; i != 8; i++) {
+      var card = this.piles[i].lastChild;
       if(!card) continue;
 
       var row = this.rows[card.row];
@@ -143,8 +143,8 @@ Games["mod3"] = {
 
     if(action.action=="dealt-from-stock") {
       // how many empty piles are we going to fill?
-      for(var j = 0; j < 8; j++)
-        if(!this.stacks[j].hasChildNodes()) score -= MOD3_EMPTY_PILE;
+      for(var j = 0; j != 8; j++)
+        if(!this.piles[j].hasChildNodes()) score -= MOD3_EMPTY_PILE;
       return score;
     }
 

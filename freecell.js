@@ -8,9 +8,8 @@ Games["freecell"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    var i;
-    for(i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
-    for(i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
+    for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 7);
+    for(i = 4; i != 8; i++) dealToPile(cards, this.piles[i], 0, 6);
   },
 
   // test if there are enough spaces/cells to perform a move, not just is it is legal.
@@ -18,8 +17,8 @@ Games["freecell"] = {
     // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
     // count spaces, excluding the destination
     var spaces = 0;
-    for(var i = 0; i < 8; i++)
-      if(!this.stacks[i].hasChildNodes() && this.stacks[i]!=target) spaces++;
+    for(var i = 0; i != 8; i++)
+      if(!this.piles[i].hasChildNodes() && this.piles[i]!=target) spaces++;
     var cells = this.countEmptyCells();
     // this is the number we can move using the most complex algorithm
     var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
@@ -33,11 +32,11 @@ Games["freecell"] = {
   getHints: function() {
     var i;
     for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
-    for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testCanMoveToEmptyPile(card))
         || (!card.nextSibling && (
@@ -47,25 +46,20 @@ Games["freecell"] = {
 
   autoplayMove: function() {
     var i, last;
-    for(i = 0; i < 4; i++) {
+    for(i = 0; i != 4; i++) {
       last = this.cells[i].firstChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
-    for(i = 0; i < 8; i++) {
-      last = this.stacks[i].lastChild;
+    for(i = 0; i != 8; i++) {
+      last = this.piles[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;
   },
-  // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
+
   canAutoplayCard: function(card) {
-    if(card.isAce || card.number==2) return true;
-    return (countCardsOnFoundations(card.altcolour,card.number-1) == 2);
+    return card.isAce || card.number==2 || countCardsOnFoundations(card.altcolour,card.number-1)==2;
   },
 
-  hasBeenWon: function() {
-    for(var i = 0; i < 4; i++)
-      if(this.foundations[i].childNodes.length!=13) return false;
-    return true;
-  }
+  hasBeenWon: "13 cards on each foundation"
 };

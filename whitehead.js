@@ -10,17 +10,17 @@ Games["whitehead"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, i+1);
-    this.dealToStack(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, i+1);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
   getHints: function() {
     this.addHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 7; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 7; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
         || searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testPileIsEmpty)
@@ -34,17 +34,12 @@ Games["whitehead"] = {
     }
     return false;
   },
+
   canAutoplayCard: function(card) {
-    if(card.isAce || card.number==2) return true;
-    return (countCardsOnFoundations(card.colour,card.number-1) == 2);
+    return card.isAce || card.number==2 || countCardsOnFoundations(card.altcolour,card.number-1)==2;
   },
 
-  hasBeenWon: function() {
-    for(var i = 0; i != 4; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation"  :   10,

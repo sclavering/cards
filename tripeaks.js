@@ -12,9 +12,9 @@ Games["tripeaks"] = {
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
 
     for(var i = 0; i != 18; i++) {
-      var p = this.stacks[i];
-      var l = this.stacks[lefts[i]];
-      var r = this.stacks[lefts[i]+1];
+      var p = this.piles[i];
+      var l = this.piles[lefts[i]];
+      var r = this.piles[lefts[i]+1];
       p.leftChild = l;
       l.rightParent = p;
       p.rightChild = r;
@@ -24,12 +24,12 @@ Games["tripeaks"] = {
     // these are the piles which have no left/right parent
     const nolp = [0,1,2,3,5,7,9,12,15,18];
     const norp = [0,1,2,4,6,8,11,14,17,27];
-    for(i = 0; i != nolp.length; i++) this.stacks[nolp[i]].leftParent = null;
-    for(i = 0; i != norp.length; i++) this.stacks[norp[i]].rightParent = null;
+    for(i = 0; i != nolp.length; i++) this.piles[nolp[i]].leftParent = null;
+    for(i = 0; i != norp.length; i++) this.piles[norp[i]].rightParent = null;
 
     // handler, and we need them to have .leftChild and .rightChild
-    for(i = 0; i < this.stacks.length; i++) {
-      var s = this.stacks[i];
+    for(i = 0; i != this.piles.length; i++) {
+      var s = this.piles[i];
       s.leftFree = function() { return !(this.leftChild && this.leftChild.hasChildNodes()); };
       s.rightFree = function() { return !(this.rightChild && this.rightChild.hasChildNodes()); };
       s.free = function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
@@ -40,10 +40,10 @@ Games["tripeaks"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i != 18; i++) this.dealToStack(cards, this.stacks[i], 1, 0);
-    for(i = 18; i != 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
-    this.dealToStack(cards, this.waste, 0, 1);
-    this.dealToStack(cards, this.stock, cards.length, 0);
+    for(var i = 0; i != 18; i++) dealToPile(cards, this.piles[i], 1, 0);
+    for(i = 18; i != 28; i++) dealToPile(cards, this.piles[i], 0, 1);
+    dealToPile(cards, this.waste, 0, 1);
+    dealToPile(cards, this.stock, cards.length, 0);
   },
 
   canRemoveCard: function(card) {
@@ -74,7 +74,7 @@ Games["tripeaks"] = {
   // This game has no autoplay, but does need special auto-revealing:
   autoReveal: function() {
     for(var i = 27; i >= 0; i--) {
-      var p = this.stacks[i];
+      var p = this.piles[i];
       if(!p.hasChildNodes() || p.lastChild.faceUp || !p.free()) continue;
       this.doAction(new RevealCardAction(p.lastChild));
       return true;
@@ -84,7 +84,7 @@ Games["tripeaks"] = {
 
   hasBeenWon: function() {
     // won when the the peaks are empty
-    for(var i = 0; i != 3; i++) if(this.stacks[i].hasChildNodes()) return false;
+    for(var i = 0; i != 3; i++) if(this.piles[i].hasChildNodes()) return false;
     return true;
   }
 }

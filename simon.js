@@ -16,19 +16,15 @@ Games["simon"] = {
 
   deal: function() {
     var cards = shuffle(this.cards[this.difficultyLevel]);
-    this.dealToStack(cards,this.stacks[0],0,8);
-    this.dealToStack(cards,this.stacks[1],0,8);
-    for(var i = 2; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,10-i);
+    dealToPile(cards, this.piles[0], 0, 8);
+    dealToPile(cards, this.piles[1], 0, 8);
+    for(var i = 2; i != 10; i++) dealToPile(cards, this.piles[i], 0, 10-i);
   },
 
-  canMoveToFoundation: function(card, stack) {
-    // only a K->A run can be put on a foundation, and the foundation must be empty
-    // canMoveCard() will ensure we have a run, so only need to check the ends
-    return (!stack.hasChildNodes() && card.isKing && card.parentNode.lastChild.isAce);
-  },
+  canMoveToFoundation: "13 cards, if empty",
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getBestMoveForCard: function(card) {
@@ -39,21 +35,15 @@ Games["simon"] = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i < 10; i++) {
-      var pile = this.stacks[i];
+    for(var i = 0; i != 10; i++) {
+      var pile = this.piles[i];
       var n = pile.childNodes.length - 13;
       if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
     }
     return false;
   },
 
-  hasBeenWon: function() {
-    // game won if all 4 Foundations have 13 cards
-    for(var i = 0; i < 4; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation": 100,

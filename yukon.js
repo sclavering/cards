@@ -3,13 +3,13 @@ var YukonBase = {
 
   canMoveToPile: "descending, alt colours",
 
-  // take a card a find another card on a different stack of opposite colour and one less in rank
+  // take a card a find another card on a different pile of opposite colour and one less in rank
   getHintsForCard: function(card) {
     if(!card) return;
-    for(var i = 0; i < this.stacks.length; i++) {
-      var stack = this.stacks[i];
-      if(stack==card.parentNode) continue;
-      var current = stack.lastChild;
+    for(var i = 0; i != this.piles.length; i++) {
+      var pile = this.piles[i];
+      if(pile==card.parentNode) continue;
+      var current = pile.lastChild;
       while(current && current.faceUp) {
         if(card.isConsecutiveTo(current) && !card.isSameColour(current)) {
           // |current| could be moved onto |card|.  test if it's not already
@@ -24,7 +24,7 @@ var YukonBase = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testPileIsEmpty)
         || searchPiles(this.foundations, testCanMoveToFoundation(card));
@@ -38,13 +38,7 @@ var YukonBase = {
     return false;
   },
 
-  hasBeenWon: function() {
-    // game won if all foundations have 13 cards
-    for(var i = 0; i != this.foundations.length; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation"  :  10,
@@ -62,22 +56,18 @@ Games["yukon"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    this.dealToStack(cards,this.stacks[0],0,1);
-    for(var i = 1; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,5);
+    dealToPile(cards, this.piles[0], 0, 1);
+    for(var i = 1; i != 7; i++) dealToPile(cards, this.piles[i], i, 5);
   },
 
   getHints: function() {
-    // hints in Yukon are weird.  we look at the last card on each stack for targets, then go and find
+    // hints in Yukon are weird.  we look at the last card on each pile for targets, then find
     // cards which could be moved there. (this is because any faceUp card can be moved in Yukon)
-    for(var i = 0; i < 7; i++) {
-      this.getHintsForCard(this.stacks[i].lastChild);
-    }
+    for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastChild);
   },
 
-  // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
-    if(card.isAce) return true;
-    return (countCardsOnFoundations(card.altcolour,card.number-1) == 2);
+    return card.isAce || countCardsOnFoundations(card.altcolour,card.number-1)==2;
   }
 };
 
@@ -92,26 +82,22 @@ Games["sanibel"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    this.dealToStack(cards,this.stock,3,0);
-    this.dealToStack(cards,this.waste,0,1);
-    for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],3,7);
+    dealToPile(cards, this.stock, 3, 0);
+    dealToPile(cards, this.waste, 0, 1);
+    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 3, 7);
   },
 
   getHints: function() {
     var i;
     var card = this.waste.lastChild;
     if(card) {
-      for(i = 0; i < 10; i++) {
-        if(this.canMoveTo(card, this.stacks[i])) this.addHint(card, this.stacks[i]);
-      }
+      for(i = 0; i != 10; i++)
+        if(this.canMoveTo(card, this.piles[i])) this.addHint(card, this.piles[i]);
     }
-    for(i = 0; i < 10; i++) {
-      this.getHintsForCard(this.stacks[i].lastChild);
-    }
+    for(i = 0; i != 10; i++) this.getHintsForCard(this.piles[i].lastChild);
   },
 
   canAutoplayCard: function(card) {
-    if(card.isAce) return true;
-    return (countCardsOnFoundations(card.altcolour,card.number-1) == 4);
+    return card.isAce || countCardsOnFoundations(card.altcolour,card.number-1)==4;
   }
 };

@@ -15,7 +15,7 @@ function toggleAnimation(menuitem) {
 
 
 var CardMover1 = {
-  cards: null, // a <stack/> to hold the cards being moved
+  cards: null, // a pile to hold the cards being moved
 
   init: function() {
     // class doesn't need to be flexible yet
@@ -45,7 +45,7 @@ var CardMover1 = {
 
     // put cards in the temp pile. _top and _left properties remain as numbers, unlike top and left
     var cards = this.cards; // so we can use it in the nested functions
-//    cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
+//    cards.className = firstCard.parentNode.className; // so cards layed out as in originating pile
     cards.left = cards._left = sx;
     cards.top = cards._top = sy;
     firstCard.transferTo(cards);

@@ -97,7 +97,7 @@ function init() {
 
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
-    to = to.lastChild || to; // |to| could be a stack
+    to = to.lastChild || to; // |to| could be a pile
     disableUI();
     this.highlight(from);
     var thisthis = this; // because |this| within these functions would refer to the wrong thing
@@ -300,7 +300,7 @@ function initPile(elt) {
 
   elt.offset = 0;
 
-  // for the animated move stack and the drag stack |source|
+  // for the animated move pile and the drag pile |source|
   // is set to the pile the cards originally came from.
   elt.source = elt;
 
@@ -420,7 +420,7 @@ function initPile(elt) {
       card.top = 0;
     };
 
-    elt.fixLayout = function(stack) { this.offset = 0; };
+    elt.fixLayout = function() { this.offset = 0; };
 
   } else {
     elt.getNextCardLeft = function() { return 0; };
@@ -430,10 +430,8 @@ function initPile(elt) {
       card.top = 0;
       card.left = 0;
     };
-    elt.fixLayout = function(stack) {
-      // xxx: could reposition all cards to (0,0) here just to be sure?
-      this.offset = 0;
-    };
+    // xxx: could reposition all cards to (0,0) here just to be sure?
+    elt.fixLayout = function() {this.offset = 0; };
   }
 
   // transfers the card and all those that follow it
@@ -487,7 +485,7 @@ function createHighlighter() {
     this.width = 0;
   };
   box.highlight = function(card) {
-    // card may in fact be a stack
+    // card might be a pile really
     const cardbox = card.boxObject;
     this.left = cardbox.x - gGameStackLeft;
     this.top = cardbox.y - gGameStackTop;

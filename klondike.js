@@ -8,20 +8,20 @@ Games["klondike"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,1);
-    this.dealToStack(cards,this.stock,cards.length,0);
+    for(var i = 0; i != 7; i++) dealToPile(cards,this.piles[i],i,1);
+    dealToPile(cards,this.stock,cards.length,0);
   },
 
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
   getHintsFor: function(card) {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
       if(card.previousSibling || card.parentNode.isWaste) {
-        var pile = searchPiles(this.stacks, testPileIsEmpty);
+        var pile = searchPiles(this.piles, testPileIsEmpty);
         if(pile) this.addHint(card, pile);
       }
       // to foundation
@@ -34,7 +34,7 @@ Games["klondike"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToPile(card))
         || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
@@ -46,18 +46,12 @@ Games["klondike"] = {
     }
     return false;
   },
+
   canAutoplayCard: function(card) {
-    if(card.isAce || card.number==2) return true;
-    return (countCardsOnFoundations(card.altcolour,card.number-1) == 2);
+    return card.isAce || card.number==2 || countCardsOnFoundations(card.altcolour,card.number-1)==2;
   },
 
-  hasBeenWon: function() {
-    // game won if all 4 foundations have 13 cards
-    for(var i = 0; i < 4; i++)
-      if(this.foundations[i].childNodes.length!=13)
-        return false;
-    return true;
-  },
+  hasBeenWon: "13 cards on each foundation",
 
   scores: {
     "move-to-foundation"  :   10,

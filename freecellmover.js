@@ -59,19 +59,19 @@ var FreeCellGame = {
 
   getEmptyCells: function() {
     var freecells = [];
-    for(var i = 0; i < this.cells.length; i++)
+    for(var i = 0; i != this.cells.length; i++)
       if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
     return freecells;
   },
   countEmptyCells: function() {
     var cells = 0;
-    for(var i = 0; i < this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
+    for(var i = 0; i != this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
     return cells;
   },
   getEmptyPiles: function() {
     var spaces = [];
-    for(var i = 0; i < this.stacks.length; i++)
-      if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
+    for(var i = 0; i != this.piles.length; i++)
+      if(!this.piles[i].hasChildNodes()) spaces.push(this.piles[i]);
     return spaces;
   },
 
@@ -142,7 +142,7 @@ var FreeCellMover = {
     // this is a workaround for the case where the card end up being moved onto the target,
     // but above other cards that should be below it.  this is not the ideal solution though
     // because complex moves should be able to use the target as a space if it is one (I think)
-    for(var i = 0; i < spaces.length; i++)
+    for(var i = 0; i != spaces.length; i++)
       if(spaces[i]==target) spaces.splice(i,1);
     // groupsize is the number of cards which can be moved without filling spaces
     var groupsize = freeCells.length+1;

@@ -8,8 +8,8 @@ Games["towers"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
-    for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
+    for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
+    for(i = 1; i != 3; i++) dealToPile(cards, this.cells[i], 0, 1);
   },
 
   // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
@@ -21,13 +21,12 @@ Games["towers"] = {
   },
 
   getHints: function() {
-    var i;
-    for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
-    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
+    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testCanMoveToEmptyPile(card))
         || (!card.nextSibling && (
@@ -38,20 +37,16 @@ Games["towers"] = {
   // cards are always allowed to be autoplayed in Towers
   autoplayMove: function() {
     var i, last;
-    for(i = 0; i < 10; i++) {
-      last = this.stacks[i].lastChild;
+    for(i = 0; i != 10; i++) {
+      last = this.piles[i].lastChild;
       if(last && this.sendToFoundations(last)) return true;
     }
-    for(i = 0; i < 4; i++) {
+    for(i = 0; i != 4; i++) {
       last = this.cells[i].firstChild;
       if(last && this.sendToFoundations(last)) return true;
     }
     return false;
   },
 
-  hasBeenWon: function() {
-    for(var i = 0; i < 4; i++)
-      if(this.foundations[i].childNodes.length!=13) return false;
-    return true;
-  }
+  hasBeenWon: "13 cards on each foundation"
 };

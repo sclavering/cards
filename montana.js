@@ -12,19 +12,19 @@ Games["montana"] = {
     var cards = this.cards = getDecks(1);
     cards[0] = cards[13] = cards[26] = cards[39] = null;
     // label the piles for use by canMoveTo
-    for(var i = 0; i < 52; i++) {
-      this.stacks[i].row = Math.floor(i / 13);
-      this.stacks[i].col = i % 13;
+    for(var i = 0; i != 52; i++) {
+      this.piles[i].row = Math.floor(i / 13);
+      this.piles[i].col = i % 13;
     }
     this.canMoveToPile = this.canMoveTo;
 
-    var p = this.stacks;
+    var p = this.piles;
     this.rows = [p.slice(0,13), p.slice(13,26), p.slice(26,39), p.slice(39,52)];
   },
 
   deal: function() {
     var cards = shuffle(this.cards);
-    for(var i = 0; i < 52; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
+    for(var i = 0; i != 52; i++) dealToPile(cards, this.piles[i], 0, 1);
   },
 
   canMoveTo: function(card, pile) {
@@ -32,22 +32,22 @@ Games["montana"] = {
     if(pile.col==0) return (card.number==2);
 
     // get the card in the pile to the left of the target pile
-    var last = this.stacks[pile.row*13 + pile.col - 1].lastChild;
+    var last = this.piles[pile.row*13 + pile.col - 1].lastChild;
     return (last && card.isSameSuit(last) && card.isConsecutiveTo(last));
   },
 
   getHints: function() {
-    for(var i = 0; i < 52; i++) {
-      var card = this.stacks[i].firstChild;
+    for(var i = 0; i != 52; i++) {
+      var card = this.piles[i].firstChild;
       if(!card) continue;
 
-      var piles = filter(this.stacks, testCanMoveToPile(card));
+      var piles = filter(this.piles, testCanMoveToPile(card));
       if(piles.length) this.addHints(card, piles);
     }
   },
 
   getBestMoveForCard: function(card) {
-  	return searchPiles(this.stacks, testCanMoveToPile(card));
+    return searchPiles(this.piles, testCanMoveToPile(card));
   },
 
   redeal: function() {
@@ -60,15 +60,15 @@ Games["montana"] = {
 
   hasBeenWon: function() {
     var suit, prvcard;
-    for(var i = 0; i < 52; i++) {
-      var stack = this.stacks[i];
-      var card = stack.firstChild;
-      if(stack.col==12) {
+    for(var i = 0; i != 52; i++) {
+      var pile = this.piles[i];
+      var card = pile.firstChild;
+      if(pile.col==12) {
         if(card) return false;
         continue;
       }
       if(!card) return false;
-      if(stack.col==0) {
+      if(pile.col==0) {
         suit = card.suit;
         if(card.number!=2) return false;
       } else {
@@ -115,7 +115,7 @@ MontanaRedealAction.prototype = {
     var easy = hardGame ? 0 : 1;
     for(r in rows)
       for(c = 13 - map[r].length + easy; c != 13; c++)
-        Game.dealToStack(cards, rows[r][c], 0, 1);
+        dealToPile(cards, rows[r][c], 0, 1);
   },
 
   isPileComplete: function(pile, prv) {

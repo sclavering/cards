@@ -23,9 +23,9 @@ var BaseCardGame = {
   mouseHandling: "drag+drop",
   mouseHandler: null,
 
-  // these are all automatically set up by initStacks()
-  allstacks: [],   // array of piles of all times.  used for clearing the game
-  stacks: [],      // array of tableau piles
+  // these are all automatically set up by initPiles()
+  allpiles: [],    // array of piles of all types.  used for clearing the game
+  piles: [],       // array of tableau piles
   foundations: [], // array of foundation piles
   reserves: [],    // ...
   cells: [],
@@ -67,8 +67,8 @@ var BaseCardGame = {
     this.initXulElement();
     this.initPiles();
     // if layout from another game has been cloned we need to throw away any cards in it
-    for(var i in this.allstacks) {
-      var s = this.allstacks[i];
+    for(var i in this.allpiles) {
+      var s = this.allpiles[i];
       while(s.hasChildNodes()) s.removeChild(s.lastChild);
     }
 
@@ -79,15 +79,11 @@ var BaseCardGame = {
 
     // if the game doesn't specify something
     // xxx still required for init'ing stock.counter, but not for anything else!
-    if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
+    if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.piles;
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function
-    var rules = ["canMoveCard","canMoveToPile","canMoveToFoundation","dealFromStock","getLowestMovableCard"];
-    for(var r in rules) {
-      r = rules[r];
-      if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
-    }
+    for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
   },
 
   initXulElement: function() {
@@ -95,7 +91,7 @@ var BaseCardGame = {
 
     function replaceIds(newId, old, node) {
       if(node.id) node.id = newId + node.id.substring(old.length);
-      for(var i = 0; i < node.childNodes.length; i++) replaceIds(newId, old, node.childNodes[i]);
+      for(var i = 0; i != node.childNodes.length; i++) replaceIds(newId, old, node.childNodes[i]);
     }
 
     // if it uses the same layout as another game then clone that layout and fix the ids in the clone (so initPiles() works)
@@ -104,16 +100,16 @@ var BaseCardGame = {
     gGameStack.insertBefore(elt, gGameStack.firstChild);
   },
 
-  // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
+  // Init's piles[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
   // Requires relevant XUL elements to have ids of the form {this.id}-{pile-type}[-{int}]
   initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
-    this.stacks = [];
+    this.piles = [];
     this.foundations = [];
     this.reserves = [];
     this.cells = [];
-    var allpiles = this.allstacks = [];
+    var allpiles = this.allpiles = [];
 
     var id = this.id;
     var thiss = this; // so it can be referred to in nested functions
@@ -141,7 +137,7 @@ var BaseCardGame = {
     initPileOfType("-foundation", "isFoundation", "foundation");
     initPileOfType("-reserve", "isReserve", "reserve");
 
-    initPilesOfType("-pile-", "isNormalPile", this.stacks);
+    initPilesOfType("-pile-", "isNormalPile", this.piles);
     initPilesOfType("-foundation-", "isFoundation", this.foundations);
     initPilesOfType("-reserve-", "isReserve", this.reserves);
     initPilesOfType("-cell-", "isCell", this.cells);
@@ -153,13 +149,13 @@ var BaseCardGame = {
     }
 
     // autoplay sources
-    this.sourcePiles = this.waste ? [this.waste].concat(this.stacks) : this.stacks;
+    this.sourcePiles = this.waste ? [this.waste].concat(this.piles) : this.piles;
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
-    this.dragDropTargets = this.stacks.concat(this.foundations);
+    this.dragDropTargets = this.piles.concat(this.foundations);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
     // which piles should we automatically reveal the top card of?
     // (some games have no use for this, but checking all these piles doesn't take very long so...)
-    this.thingsToReveal = this.stacks.concat(this.reserves);
+    this.thingsToReveal = this.piles.concat(this.reserves);
     if(this.reserve) this.thingsToReveal.push(this.reserve);
   },
 
@@ -186,7 +182,7 @@ var BaseCardGame = {
     }
     this.difficultyLevel = currentLevel;
     // add appropriate menu items
-    for(var i = 0; i < levels.length; i++) {
+    for(var i = 0; i != levels.length; i++) {
       var mi = document.createElement("menuitem");
       mi.setAttribute("label",gStrings["difficulty."+levels[i]]);
       mi.setAttribute("value",i+1); // number from 1, to avoid js 0==false thing
@@ -207,7 +203,7 @@ var BaseCardGame = {
 
 
   // === Start Game =======================================
-  // Games should override deal(), and should use dealToStack to do so.
+  // Games should override deal()
 
   newGame: function() {
     this.mouseHandler.reset();
@@ -217,9 +213,9 @@ var BaseCardGame = {
     this.clearHints();
     this.redealsRemaining = this.redeals;
     // reset offset used when stacking cards.
-    if(this.stacks)
-      for(var i = 0; i < this.stacks.length; i++)
-        this.stacks[i].fixLayout();
+    if(this.piles)
+      for(var i = 0; i != this.piles.length; i++)
+        this.piles[i].fixLayout();
     //
     this.deal();
 
@@ -237,23 +233,13 @@ var BaseCardGame = {
   },
 
   clearGame: function() {
-    var s = this.allstacks; //this is an array of <stack>s provided by each game for this purpose
     // remove all cards and set them all face down
+    var s = this.allpiles;
     for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
   },
 
-  // should deal out the cards for a new game. newGame() will ensure all stacks are empty
+  // should deal out the cards for a new game. newGame() will ensure all piles are empty
   deal: function() {
-  },
-
-  // useful function for deal() to use.  can (and should) be used for all card dealing
-  dealToStack: function(cards, stack, numDown, numUp) {
-    for(var i = 0; i < numDown+numUp; i++) {
-      var card = cards.pop();
-      if(!card) continue;
-      stack.addCard(card);
-      if(i>=numDown) card.setFaceUp();
-    }
   },
 
 
@@ -326,7 +312,7 @@ var BaseCardGame = {
 
 
 
-  // === Moving between stacks ============================
+  // === Moving between piles =============================
 
   // returns true/false for whether the card can be moved from its current position
   // this version will be sufficient for some games, others will need to override (e.g. Spider)
@@ -375,7 +361,7 @@ var BaseCardGame = {
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
     if(!this.canMoveCard(card)) return false;
-    for(var i = 0; i < this.foundations.length; i++)
+    for(var i = 0; i != this.foundations.length; i++)
       if(this.attemptMove(card,this.foundations[i]))
         return true;
     return false;
@@ -447,7 +433,7 @@ var BaseCardGame = {
   getHints: function() {
   },
 
-  // takes the card to suggest moving, and the destination to suggest moving to (generally a stack)
+  // takes the card to suggest moving, and the destination to suggest moving to (generally a pile)
   addHint: function(source, dest) {
     this.hintSources.push(source);
     this.hintDestinations.push(dest);
@@ -464,7 +450,7 @@ var BaseCardGame = {
   // a common pattern.  xxx doesn't quite fit Klondike and Double Solitaire
   addHintsFor: function(card) {
     if(!card) return;
-    this.addHints(card, filter(this.stacks, testCanMoveToNonEmptyPile(card)));
+    this.addHints(card, filter(this.piles, testCanMoveToNonEmptyPile(card)));
     var f = searchPiles(this.foundations, testCanMoveToFoundation(card));
     if(f) this.addHint(card, f);
   },
@@ -514,10 +500,10 @@ var BaseCardGame = {
   },
 
   autoReveal: function() {
-    var stacks = this.thingsToReveal;
-    if(!stacks) return false;
-    for(var i = 0; i < stacks.length; i++) {
-      var last = stacks[i].lastChild;
+    var piles = this.thingsToReveal;
+    if(!piles) return false;
+    for(var i = 0; i != piles.length; i++) {
+      var last = piles[i].lastChild;
       if(last && last.faceDown) {
         this.revealCard(last);
         return true;

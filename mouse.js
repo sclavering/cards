@@ -52,9 +52,9 @@ function handleMouseMove(e) {
 var MouseHandlers = [];
 
 MouseHandlers["drag+drop"] = {
-  nextCard: null, // set on mousedown, so that on mousemove a stack c can be created
-  cards: null, // the stack of cards being dragged
-  tx: 0, // tx and ty used in positioning for drag+drop
+  nextCard: null, // set on mousedown, so that on mousemove it can be moved to |cards|
+  cards: null, // the pile holding the cards being dragged
+  tx: 0, // used in positioning for drag+drop
   ty: 0,
   dragInProgress: false,
 

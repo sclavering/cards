@@ -15,7 +15,7 @@
   *
   *
   */
-FreeCellMover = {
+var FreeCellMover = {
   // for Simple/Medium/ComplexMover, state=0 means that this mover is currently inactive
   SimpleMover: {
     state: 0, // 1 = moving cards to cells, 2 = moving card, 3 = bringing cards back from cells

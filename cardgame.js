@@ -49,6 +49,7 @@ CardGame.prototype = {
   // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
   // to use this game must init game.shortname first
   initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols, numCells) {
+    var i, j;
     this.allstacks = [];
     var name = this.shortname; // e.g. "klondike", "simon" etc
     if(numStacks) {
@@ -61,11 +62,11 @@ CardGame.prototype = {
     }
     if(numFoundations==1) {
       this.foundation = document.getElementById(name+"-foundation");
-      this.foundation.isFoundation;
+      this.foundation.isFoundation = true;
       this.allstacks.push(this.foundation);
     } else if(numFoundations) {
       this.foundations = new Array(numFoundations);
-      for(var i = 0; i < numFoundations; i++) {
+      for(i = 0; i < numFoundations; i++) {
         this.foundations[i] = document.getElementById(name+"-foundation-"+i);
         this.foundations[i].isFoundation = true;
         this.allstacks.push(this.foundations[i]);
@@ -77,13 +78,12 @@ CardGame.prototype = {
       this.allstacks.push(this.reserve);
     } else if(numReserves) {
       this.reserves = new Array(numReserves);
-      for(var i = 0; i < numReserves; i++) {
+      for(i = 0; i < numReserves; i++) {
         this.reserves[i] = document.getElementById(name+"-reserve-"+i);
         this.reserves[i].isReserve = true;
         this.allstacks.push(this.reserves[i]);
       }
     }
-    // XXX should these have .isStock/.isWaste set, or is foo==Game.stock sufficient?
     if(hasStock) {
       this.stock = document.getElementById(name+"-stock");
       this.stock.isStock = true;
@@ -97,9 +97,9 @@ CardGame.prototype = {
     // create a 2D stacks array
     if(tableauRows) {
       this.tableau = new Array(tableauRows);
-      for(var i = 0; i < tableauRows; i++) {
+      for(i = 0; i < tableauRows; i++) {
         this.tableau[i] = new Array(tableauCols);
-        for(var j = 0; j < tableauCols; j++) {
+        for(j = 0; j < tableauCols; j++) {
           var s = document.getElementById(name+"-tableau-"+i+"-"+j);
           s.row = i;
           s.col = j;
@@ -112,7 +112,7 @@ CardGame.prototype = {
     // cells
     if(numCells) {
       this.cells = new Array(numCells);
-      for(var i = 0; i < numCells; i++) {
+      for(i = 0; i < numCells; i++) {
         this.cells[i] = document.getElementById(name+"-cell-"+i);
         this.cells[i].isCell = true;
         this.allstacks.push(this.cells[i]);

@@ -110,7 +110,7 @@ Mod3.getHints = function() {
 // searches the foundation (only!) for a place to put the card
 Mod3.findTargets = function(card) {
   var targets = [];
-  if( !card ) 
+  if(!card) 
     return targets;
   var row = (card.number() - 2) % 3;
   for(var j = row*8; j < (row*8+8); j++) {

@@ -37,7 +37,8 @@ AcesUp.canMoveCard = function(card) {
   return (card.isLastOnPile() && p!=this.foundation && p!=this.stock);
 };
 
-AcesUp.canMoveToFoundation = function(card, stack) {
+// the |foundation| arg is irrelevant, because there is only one foundation
+AcesUp.canMoveToFoundation = function(card, foundation) {
   for(var i = 0; i < 4; i++) {
     var stack = this.stacks[i];
     var top = stack.lastChild;
@@ -60,7 +61,7 @@ AcesUp.canMoveToPile = function(card, stack) {
 ///////////////////////////////////////////////////////////
 //// smart move
 AcesUp.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
+  if(!this.canMoveCard(card)) return;
   if(this.canMoveToFoundation(card)) {
     this.moveTo(card,this.foundation);
   } else {

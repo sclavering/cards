@@ -222,9 +222,8 @@ var cardMethods = {
     return (diff==1 || diff==-1 || diff==12 || diff==-12);
   },
 
-  // returns true if card is one less than this, or card is King and this is Ace
   isConsecutiveMod13To: function(card) {
-    return ((this.realNumber==card.realNumber+1) || (this.realNumber-1==card.realNumber%13));
+    return this.isAce ? card.isKing : this.realNumber==card.realNumber+1;
   },
 
   isAtLeastCountingFrom: function(number, from_num) {

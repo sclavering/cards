@@ -2,7 +2,6 @@ Games["canfield"] = {
   __proto__: BaseCardGame,
 
   id: "canfield",
-  acesHigh: true,
   dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 

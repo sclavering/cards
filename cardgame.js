@@ -124,7 +124,7 @@ CardGame.prototype = {
 
 
   start: function() {
-    // conditionally show Difficulty Level menu
+    // conditionally enable Difficulty Level menu
     if(this.hasDifficultyLevels) Cards.enableDifficultyMenu();
     else Cards.disableDifficultyMenu();
     MouseHandler = (this.usesMouseHandler2) ? MouseHandler2 : MouseHandler1;
@@ -163,6 +163,7 @@ CardGame.prototype = {
     Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
     this.updateScoreDisplay();
     this.clearGame();
+    this.clearHints();
     // reset offset used when stacking cards.
     if(this.stacks)
       for(var i = 0; i < this.stacks.length; i++)
@@ -506,22 +507,26 @@ CardGame.prototype = {
 
 
   // === Hints ============================================
-  hints: [],
+  hintSources: [],
+  hintDestinations: [],
+  haveHints: false, // means hints have been calculated, though there may not be any.
   hintNum: 0,
 
   hint: function() {
-    //XXX use a bool flag, hince player might hit Hint repeatedly when none are available
-    if(this.hints.length==0) this.getHints();
+    if(!this.haveHints) {
+      this.getHints();
+      this.haveHints = true;
+    }
     this.showHint();
   },
 
-  // XXX kludged, clean up once games are all using addHint
   showHint: function() {
-    if(this.hints.length==0) return;
-    var hint = this.hints[this.hintNum];
-    HintHighlighter.showHint(hint.source, hint.destinations);
+    if(this.hintSources.length == 0) return;
+    var src = this.hintSources[this.hintNum];
+    var dest = this.hintDestinations[this.hintNum];
+    HintHighlighter.showHint(src,dest);
     this.hintNum++;
-    this.hintNum %= this.hints.length;
+    this.hintNum %= this.hintSources.length;
   },
 
   // should repeatedly call addHint
@@ -530,13 +535,14 @@ CardGame.prototype = {
 
   // takes the card to suggest moving, and the destination to suggest moving to (generally a stack)
   addHint: function(source,dest) {
-    //XXX switch this over
-    //this.hints.push({source:source,destination:dest});
-    this.hints.push({source:source,destinations:[dest]});
+    this.hintSources.push(source);
+    this.hintDestinations.push(dest);
   },
 
   clearHints: function() {
-    this.hints = [];
+    this.hintSources = [];
+    this.hintDestinations = [];
+    this.haveHints = false;
     this.hintNum = 0;
   },
 

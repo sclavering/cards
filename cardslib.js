@@ -643,49 +643,45 @@ var CardPositioner = {
   */
 var HintHighlighter = {
   positioningLayer: null, // stack where box is to be created
-  highlightBoxes: null, // a bunch of boxes that get positioned round cards to highlight them
-  destinations: null, // where the hint should show the card moving to
+  highlightBox: null, // a bunch of boxes that get positioned round cards to highlight them
+  destination: null, // where the hint should show the card moving to
 
   init: function(stack) {
     this.positioningLayer = stack;
-    this.highlightBoxes = new Array(10);
-    for(var i = 0; i < 10; i++) {
-      this.highlightBoxes[i] = document.createElement("box");
-      this.highlightBoxes[i].className = "card-highlight";
-      this.highlightBoxes[i].hidden = true;
-      // must position it or it will fill its parent
-      this.highlightBoxes[i].top = 0;
-      this.highlightBoxes[i].left = 0;
-      this.positioningLayer.appendChild(this.highlightBoxes[i]);
-    }
+    var box = document.createElement("box");
+    box.className = "card-highlight";
+    box.hidden = true;
+    // must position it or it will fill its parent, blocking click events
+    box.top = 0;
+    box.left = 0;
+    this.positioningLayer.appendChild(box);
+    this.highlightBox = box;
   },
 
   showHint: function(from, to) {
     Cards.disableUI();
-    this.destinations = to;
-    this.highlight(from, 0);
-    setTimeout("HintHighlighter.highlightDestinations()",300);
+    // for when hint destination is really a stack
+    this.destination = to.hasChildNodes() ? to.lastChild : to;
+    this.highlight(from);
+    setTimeout("HintHighlighter.highlightDestination()",300);
   },
-  highlight: function(card, i) {
+  highlight: function(card) {
     // hide it while we move it
-    this.highlightBoxes[i].hidden = true;
+    this.highlightBox.hidden = true;
     // card may be a stack if hint suggests moving to an empty stack
-    if(card.hasChildNodes()) card = card.lastChild; // for when hint destination is really a stack
     var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
-    this.highlightBoxes[i].height = height;
-    this.highlightBoxes[i].width = getWidth(card);
-    this.highlightBoxes[i].top  = getTop(card)  - getTop(this.positioningLayer);
-    this.highlightBoxes[i].left = getLeft(card) - getLeft(this.positioningLayer);
-    this.highlightBoxes[i].hidden = false;
+    this.highlightBox.height = height;
+    this.highlightBox.width = getWidth(card);
+    this.highlightBox.top  = getTop(card)  - getTop(this.positioningLayer);
+    this.highlightBox.left = getLeft(card) - getLeft(this.positioningLayer);
+    this.highlightBox.hidden = false;
   },
-  highlightDestinations: function() {
-    for(var i = 0; i < this.destinations.length; i++)
-      this.highlight(this.destinations[i],i);
+  highlightDestination: function() {
+    this.highlight(this.destination);
     setTimeout("HintHighlighter.highlightComplete()",300);
   },
   highlightComplete: function() {
-    for(var i = 0; i < this.destinations.length; i++)
-      this.highlightBoxes[i].hidden = true;
+    this.highlightBox.hidden = true;
     Cards.enableUI();
   }
 }

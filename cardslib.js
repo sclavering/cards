@@ -267,15 +267,14 @@ var cardMethods = {
     var card = this;
     disableUI();
     var oldLeft = card._left;
-    var oldWidth = card.boxObject.width;
-    var oldHalfWidth = oldWidth / 2;
+    var oldHalfWidth = card.boxObject.width / 2;
     var stepNum = 7;
     var interval = setInterval(function() {
       stepNum--;
       if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
         clearInterval(interval);
         card.left = oldLeft;
-        card.width = oldWidth;
+        card.removeAttribute("width"); // the width needs to be CSS controlled so that switching cardsets works properly
         animatedActionFinished();
         return;
       }
@@ -493,6 +492,7 @@ function animatedActionFinished(pileWhichHasHadCardsRemoved) {
   gFloatingPileNeedsHiding = false;
   gFloatingPile.hide();
 }
+
 
 function playGame(game) {
   if(GameController) GameController.switchFrom();

@@ -8,6 +8,8 @@ AllGames.regiment = {
   canMoveCard: "last on pile",
 
   init: function() {
+    var cards = this.cards = getDecks(1).concat(getDecks(1)); // I want a certain ordering
+
     for(var i = 0; i != 8; i++) {
       this.foundations[i].isAceFoundation = (i < 4);
       this.reserves[i].col = i;
@@ -17,6 +19,18 @@ AllGames.regiment = {
     this.autoplayFrom = this.piles.concat(this.reserves);
     this.aceFoundations = this.foundations.slice(0,4);
     this.kingFoundations = this.foundations.slice(4,8);
+
+    var acepos = [0, 13, 26, 39, 52, 65, 78, 91];
+    var aces = this.aces = new Array(8);
+    var kings = this.kings = new Array(8);
+    for(i = 0; i != 8; i++) aces[i] = cards[acepos[i]], kings[i] = cards[acepos[i]+12];
+
+    for(i = 0; i != 52; i++) cards[i].twin = cards[i+52], cards[i+52].twin = cards[i];
+
+    // it's easy enough to look at both card.up and card.twin.up
+    for(i = 1; i != 103; i++) cards[i].up = cards[i+1], cards[i].down = cards[i-1];
+    cards[0].up = cards[1]; cards[103].down = cards[102];
+    for(i = 0; i != 8; i++) aces[i].down = null, kings[i].up = null;
   },
 
   deal: function(cards) {
@@ -24,28 +38,16 @@ AllGames.regiment = {
     for(i = 0; i != 8; i++) dealToPile(cards,this.reserves[i],10,1);
   },
 
-  // this is likely to be the standard format for games with a set of both Ace and King foundations
-  canMoveToFoundation: function(card, target) {
-    var last = target.lastChild;
-    if(target.isAceFoundation) {
-      // can move an ace provided we haven't already got an Ace foundation for this suit,
-      // or can build the foundation up in suit
-      return (last ? (card.isConsecutiveTo(last) && card.isSameSuit(last))
-                   : (card.isAce && this.canMakeFoundation(true,card.suit)) );
-    } else {
-      // can start a king foundation for the suit if we don't have one already,
-      // or can build the foundation down in suit
-      return (last ? (last.isConsecutiveTo(card) && card.isSameSuit(last))
-                   : (card.isKing && this.canMakeFoundation(false,card.suit)) );
+  canMoveToFoundation: function(card, pile) {
+    var last = pile.lastChild, twinp = card.twin.parentNode;
+    if(pile.isAceFoundation) {
+      // can't start a second ace foundation for a suit
+      if(card.isAce) return !last && !(twinp.isFoundation && twinp.isAceFoundation);
+      return last && card.isConsecutiveTo(last) && card.isSameSuit(last);
     }
-  },
-  canMakeFoundation: function(isAceFoundation, suit) {
-    var fs = isAceFoundation ? this.aceFoundations : this.kingFoundations;
-    for(var i = 0; i != 4; i++) {
-      var last = fs[i].lastChild;
-      if(last && last.suit==suit) return false;
-    }
-    return true;
+
+    if(card.isKing) return !last && !(twinp.isFoundation && !twinp.isAceFoundation);
+    return last && last.isConsecutiveTo(card) && card.isSameSuit(last);
   },
 
   canMoveToPile: function(card, target) {
@@ -79,38 +81,27 @@ AllGames.regiment = {
         || searchPiles(this.piles, testCanMoveToEmptyPile(card));
   },
 
-  autoplayMove: function() {
-    // move stuff to foundations
-    for(var i = 0; i != this.autoplayFrom.length; i++) {
-      var source = this.autoplayFrom[i].lastChild;
-      if(source && this.autoplayToFoundations(source)) return true;
+  autoplayMove: function(pileWhichHasHadCardsRemoved) {
+    var i, pile, last, card;
+    if(pileWhichHasHadCardsRemoved) {
+      pile = pileWhichHasHadCardsRemoved;
+      if(pile.isNormalPile && !pile.hasChildNodes() && this.reserves[pile.col].hasChildNodes())
+        return this.moveTo(this.reserves[pile.col].lastChild, pile);
     }
-    // fill empty spaces, but only from reserves in same column
-    for(i = 0; i != 8; i++) {
-      var last = this.reserves[i].lastChild;
-      if(!last) continue;
-      if(!this.piles[i].hasChildNodes())
-        return this.moveTo(last, this.piles[i]);
-      if(!this.piles[i+8].hasChildNodes())
-        return this.moveTo(last, this.piles[i+8]);
-    }
-    return false;
-  },
-  autoplayToFoundations: function(card) {
-    var test = testLastIsSuit(card.suit);
-    var af = searchPiles(this.aceFoundations, test);
-    if(!af) return false;
-    var kf = searchPiles(this.kingFoundations, test);
-    if(!kf) return false;
 
-    var ac = af.lastChild, kc = kf.lastChild;
-    if(card.isConsecutiveTo(ac) && card.number > kc.number) {
-      this.moveTo(card, af);
-      return true;
+    for(i = 0; i != 4; i++) {
+      pile = this.foundations[i], last = pile.lastChild;
+      if(last && last.up && last.twin.parentNode.isFoundation) {
+        card = last.up.parentNode.isFoundation ? last.twin.up : last.up;
+        if(!card.nextSibling) return this.moveTo(card, pile);
+      }
     }
-    if(kc.isConsecutiveTo(card) && card.number < ac.number) {
-      this.moveTo(card, kf);
-      return true;
+    for(i = 4; i != 8; i++) {
+      pile = this.foundations[i], last = pile.lastChild;
+      if(last && last.down && last.twin.parentNode.isFoundation) {
+        card = last.down.parentNode.isFoundation ? last.twin.down : last.down;
+        if(!card.nextSibling) return this.moveTo(card, pile);
+      }
     }
     return false;
   },

@@ -16,6 +16,8 @@ AllGames.fan = {
 
     cards[12].up = cards[25].up = cards[38].up = cards[51].up = null;
     cards[0].down = cards[13].down = cards[26].down = cards[39].down = null;
+
+    this.aces = [cards[0], cards[13], cards[26], cards[39]];
   },
 
   deal: function(cards) {
@@ -55,12 +57,19 @@ AllGames.fan = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i != this.piles.length; i++) {
-      var card = this.piles[i].lastChild;
-      if(!card) continue;
-      if(!card.down) return this.moveTo(card, searchPiles(this.foundations, testPileIsEmpty));
-      var pile = card.down.parentNode;
-      if(pile.isFoundation) return this.moveTo(card, pile);
+    var lookedForAces = false;
+    for(var i = 0; i != 4; i++) {
+      var f = this.foundations[i];
+      if(f.hasChildNodes()) {
+        var c = f.lastChild.up;
+        if(c && this.canMoveCard(c)) return this.moveTo(c, f);
+      } else if(!lookedForAces) {
+        lookedForAces = true;
+        for(var j = 0; j != 4; j++) {
+          var a = this.aces[j];
+          if(!a.parentNode.isFoundation && !a.nextSibling) return this.moveTo(a, f);
+        }
+      }
     }
     return false;
   },

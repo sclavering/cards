@@ -18,15 +18,21 @@ AllGames.montana = {
     // get cards and replace Aces with nulls (so spaces will appear randomly)
     var cards = this.cards = getDecks(1);
     cards[0] = cards[13] = cards[26] = cards[39] = null;
+
+    var ps = this.piles;
     // label the piles for use by canMoveTo
     for(var i = 0; i != 52; i++) {
-      this.piles[i].row = Math.floor(i / 13);
-      this.piles[i].col = i % 13;
+      ps[i].row = Math.floor(i / 13);
+      ps[i].col = i % 13;
     }
     this.canMoveToPile = this.canMoveTo;
 
-    var p = this.piles;
-    this.rows = [p.slice(0,13), p.slice(13,26), p.slice(26,39), p.slice(39,52)];
+    var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
+
+    // leftp == left pile.  .left already exists (used for positioning in <stack>s)
+    for(i = 0; i != ps.length - 1; i++) ps[i].rightp = ps[i+1], ps[i+1].leftp = ps[i];
+    ps[0].leftp = ps[13].leftp = ps[26].leftp = ps[39].leftp = null;
+    ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
   },
 
   deal: function(cards) {
@@ -35,10 +41,8 @@ AllGames.montana = {
 
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
-    if(pile.col==0) return (card.number==2);
-
-    // get the card in the pile to the left of the target pile
-    var last = this.piles[pile.row*13 + pile.col - 1].lastChild;
+    if(!pile.leftp) return card.number==2;
+    var last = pile.leftp.lastChild;
     return (last && card.isSameSuit(last) && card.isConsecutiveTo(last));
   },
 
@@ -65,22 +69,14 @@ AllGames.montana = {
   },
 
   hasBeenWon: function() {
-    var suit, prvcard;
-    for(var i = 0; i != 52; i++) {
-      var pile = this.piles[i];
-      var card = pile.firstChild;
-      if(pile.col==12) {
-        if(card) return false;
-        continue;
+    for(var i = 0; i != 4; i++) {
+      var r = this.rows[i];
+      if(!r[0].hasChildNodes() || r[12].hasChildNodes()) return false;
+      var suit = r[0].lastChild.suit;
+      for(var j = 1; j != 12; j++) {
+        var c = r[j].lastChild;
+        if(!c || c.suit!=suit || c.number!=j+2) return false;
       }
-      if(!card) return false;
-      if(pile.col==0) {
-        suit = card.suit;
-        if(card.number!=2) return false;
-      } else {
-        if(!card.isSameSuit(prvcard) || !card.isConsecutiveTo(prvcard)) return false;
-      }
-      prvcard = card;
     }
     return true;
   }

@@ -100,10 +100,6 @@ Golf.autoplayMove = function() {
 	}
 	
   // dealFromStock doesn't animate, so it's easy to miss...  we can do it ourself
-	if( allEmpty ) { 
-		this.dealFromStock();
-		return true;
-  }
 	card = this.stock.lastChild;
   // If we want to move a card, first we'll flip it, then next autoplay will move it.
 	if(card) { 

@@ -55,15 +55,21 @@ AllGames.penguin = {
         if(!up.nextSibling && upp.isNormalPile) this.addHint(c, upp);
       }
       // remember cards
-      if(i<7) cs[i] = c;
+      if(i<7) cs[i] = c.nextSibling ? null : c;
     }
     // suggest moving things to cells
     p = this.emptyCell;
     if(!p) return;
+    // cards that aren't in a seq.
     for(i = 0; i != 7; i++) {
       c = cs[i];
-      if(c.nextSibling) continue;
+      if(!c) continue;
       this.addHint(c, p);
+    }
+    // cards which are
+    for(i = 0; i != 7; i++) {
+      if(cs[i]) continue;
+      this.addHint(ps[i].lastChild, p);
     }
   },
 

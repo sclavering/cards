@@ -1,5 +1,9 @@
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
+// the top and left coords of the <stack id="games"/>
+var gGameStack = null;
+var gGameStackTop = 0;
+var gGameStackLeft = 0;
 
 
 /** A lot of stuff that individual card games need to call is accessed from the <image/> element that
@@ -417,7 +421,6 @@ var CardTurner = {
   * current game)
   */
 var MouseHandler1 = {
-  dragLayer: null, // a stack containing the whole game area which card(s) are moved to while dragging
   nextCard: null, // set on mousedown, so that on mousemove a stack c can be created
   cards: null, // the stack of cards being dragged
   tx: 0, // tx and ty used in positioning for drag+drop
@@ -428,12 +431,11 @@ var MouseHandler1 = {
   // it is toggled false again when a drag is finished
   mouseMoved: false,
 
-  init: function(dragLayer) {
-    this.dragLayer = dragLayer;
+  init: function() {
     this.cards = document.createElement("stack");
     this.cards.className = "fan-down"; // doesn't need to be flexible for the moment
     this.cards.hidden = true;
-    this.dragLayer.appendChild(this.cards);
+    gGameStack.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
     // have to position the <stack/> or it fills its parent, blocking all mouse clicks!
     this.cards.top = 0; this.cards.left = 0;
@@ -448,16 +450,16 @@ var MouseHandler1 = {
   },
 
   enable: function() {
-    this.dragLayer.addEventListener("mousedown", this.mouseDownWrapper, false);
-    this.dragLayer.addEventListener("mousemove", this.mouseMoveWrapper, false);
-    this.dragLayer.addEventListener("mouseup",   this.mouseUpWrapper,   false);
-    this.dragLayer.addEventListener("click", this.mouseClickedWrapper,  false);
+    gGameStack.addEventListener("mousedown", this.mouseDownWrapper, false);
+    gGameStack.addEventListener("mousemove", this.mouseMoveWrapper, false);
+    gGameStack.addEventListener("mouseup",   this.mouseUpWrapper,   false);
+    gGameStack.addEventListener("click", this.mouseClickedWrapper,  false);
   },
   disable: function() {
-    this.dragLayer.removeEventListener("mousedown", this.mouseDownWrapper, false);
-    this.dragLayer.removeEventListener("mousemove", this.mouseMoveWrapper, false);
-    this.dragLayer.removeEventListener("mouseup",   this.mouseUpWrapper,   false);
-    this.dragLayer.removeEventListener("click", this.mouseClickedWrapper,  false);
+    gGameStack.removeEventListener("mousedown", this.mouseDownWrapper, false);
+    gGameStack.removeEventListener("mousemove", this.mouseMoveWrapper, false);
+    gGameStack.removeEventListener("mouseup",   this.mouseUpWrapper,   false);
+    gGameStack.removeEventListener("click", this.mouseClickedWrapper,  false);
   },
 
   // wrappers so that the *this* keyword works correctly in handlers
@@ -480,8 +482,8 @@ var MouseHandler1 = {
       // move the cards to the drag box (this.cards)
       this.cards.hidden = false;
 //      this.cards.className = card.parentNode.className;
-      this.cards.left = getLeft(card) - getLeft(this.dragLayer);
-      this.cards.top  = getTop(card) - getTop(this.dragLayer);
+      this.cards.left = getLeft(card) - gGameStackLeft;
+      this.cards.top = getTop(card) - gGameStackTop;
       // property to retrieve original source of cards. for most
       // piles |source| is a pointer back to the pile itself.
       this.cards.source = card.parentNode.source;
@@ -559,12 +561,10 @@ var MouseHandler1 = {
   */
 var MouseHandler2 = {
   source: null,
-  dragLayer: null,
 
-  init: function(stack) { this.dragLayer = stack; },
   start: function() { this.enable(); },
-  enable: function() { this.dragLayer.addEventListener("click",this.mouseClickedWrapper,false); },
-  disable: function() { this.dragLayer.removeEventListener("click",this.mouseClickedWrapper,false); },
+  enable: function() { gGameStack.addEventListener("click",this.mouseClickedWrapper,false); },
+  disable: function() { gGameStack.removeEventListener("click",this.mouseClickedWrapper,false); },
 
   mouseClickedWrapper: function(e) { MouseHandler2.mouseClicked(e); },
 
@@ -611,27 +611,25 @@ var MouseHandler2 = {
 }
 
 var Highlighter = {
-  positioningLayer: null, // stack where box is to be created
   highlightBox: null, // a boxes that get positioned round cards to highlight them
   destinations: null, // where the hint should show the card moving to
 
   init: function(stack) {
-    this.positioningLayer = stack;
     this.highlightBox = document.createElement("box");
     this.highlightBox.className = "card-highlight";
   },
 
   highlight: function(card) {
     // card may be a stack if hint suggests moving to an empty stack
-    this.highlightBox.left = getLeft(card) - getLeft(this.positioningLayer);
-    this.highlightBox.top  = getTop(card)  - getTop(this.positioningLayer);
+    this.highlightBox.left = getLeft(card) - gGameStackLeft;
+    this.highlightBox.top = getTop(card) - gGameStackTop;
     this.highlightBox.width = getWidth(card);
     var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
     this.highlightBox.height = height;
-    this.positioningLayer.appendChild(this.highlightBox);
+    gGameStack.appendChild(this.highlightBox);
   },
   clearHighlight: function() {
-    this.positioningLayer.removeChild(this.highlightBox);
+    gGameStack.removeChild(this.highlightBox);
   }
 }
 
@@ -649,40 +647,38 @@ var Highlighter = {
   * move(card,target) - animated move of card and all cards on top of it to target
   *   call via card.moveTo(target) instead
   *
-  * init(dragLayer) - called by application onload handler, gives it a ref to the <stack> to move cards round in
+  * init() - called by application onload handler,
   */
 var CardMover = {
   cards: null, // object being moved by animatedMoveObject
   target: null, // where its going to
   interval: null, // ref to the window.setInterval triggering the animation
-  dragLayer: null, // ref to a stack which covers the whole game area and can be used to move the cards round in
   targetTop: 0, // coords where the card should end up (incl offset into pile)
   targetLeft: 0,
   moveStack: null, // a <stack/> element that holds cards during moves. used to be created+destroyed as needed
 
-  init: function(stack) {
-    this.dragLayer = stack;
+  init: function() {
     this.cards = document.createElement("stack");
     this.cards.top = 0; this.cards.left = 0; // so it doesn't fill parent and block clicks
     this.cards.hidden = true;
     this.cards.id = "card-move-pile";
     // doesn't need to be flexible yet
     this.cards.className = "fan-down";
-    this.dragLayer.appendChild(this.cards);
+    gGameStack.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
   },
   move: function(firstCard, target) {
     Cards.disableUI();
     // move firstCard and all card on top of it to the move stack
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
-    this.cards.left = getLeft(firstCard) - getLeft(this.dragLayer);
-    this.cards.top  = getTop(firstCard) - getTop(this.dragLayer); // fudge for margin
+    this.cards.left = getLeft(firstCard) - gGameStackLeft;
+    this.cards.top  = getTop(firstCard) - gGameStackTop
     firstCard.transferTo(this.cards);
     this.cards.hidden = false;
     // set up conditions for animation stuff
     this.target = target;
-    this.targetTop = getTop(this.target) - getTop(this.dragLayer) + this.target.getNextCardTop();
-    this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer) + this.target.getNextCardLeft();
+    this.targetLeft = getLeft(this.target) - gGameStackLeft + this.target.getNextCardLeft();
+    this.targetTop = getTop(this.target) - gGameStackTop + this.target.getNextCardTop();
     this.interval = setInterval(function(){CardMover.step();}, 30);
     // angle stays constant now that parseFloat is being used on top and left attrs
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
@@ -746,23 +742,19 @@ var CardMover = {
   *
   * showHint(from, to) - indicate a suggested move to the user. "from" is the card to move
   *   "to" is an array of stacks and/or other cards where the "from" card should be moved to
-  *
-  * init(stack) - called by the onload handler in main.js
   */
 var HintHighlighter = {
-  positioningLayer: null, // stack where box is to be created
   highlightBox: null, // a bunch of boxes that get positioned round cards to highlight them
   destination: null, // where the hint should show the card moving to
 
   init: function(stack) {
-    this.positioningLayer = stack;
     var box = document.createElement("box");
     box.className = "card-highlight";
     box.hidden = true;
     // must position it or it will fill its parent, blocking click events
     box.top = 0;
     box.left = 0;
-    this.positioningLayer.appendChild(box);
+    gGameStack.appendChild(box);
     this.highlightBox = box;
   },
 
@@ -780,8 +772,8 @@ var HintHighlighter = {
     var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
     this.highlightBox.height = height;
     this.highlightBox.width = getWidth(card);
-    this.highlightBox.top  = getTop(card)  - getTop(this.positioningLayer);
-    this.highlightBox.left = getLeft(card) - getLeft(this.positioningLayer);
+    this.highlightBox.left = getLeft(card) - gGameStackLeft;
+    this.highlightBox.top = getTop(card) - gGameStackTop;
     this.highlightBox.hidden = false;
   },
   highlightDestination: function() {
@@ -823,7 +815,6 @@ var Cards = {
   difficultyLevelPopup: null, // the <menupopup> for difficultyLevelMenu
   gameSelector: null,
 
-  gameDisplayStack: null, // ref to <stack> used for moving content around in and holding current game
   scoreDisplay: null,     // ref to label on toolbar where score displayed
 
   init: function() {
@@ -838,14 +829,16 @@ var Cards = {
     this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
     this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
     this.gameSelector = document.getElementById("game-type-menu");
-    this.gameDisplayStack = document.getElementById("games");
+
+    gGameStack = document.getElementById("games");
+    gGameStackTop = gGameStack.boxObject.y;
+    gGameStackLeft = gGameStack.boxObject.x;
 
     // init other objects in cardslib.js
-    MouseHandler1.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
-    CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
-    HintHighlighter.init(this.gameDisplayStack); // shows hints by drawing boxes round source/destination
-    MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
-    Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
+    MouseHandler1.init();   // handles drag-drop and mouse clicks
+    CardMover.init();       // contains all the card moving animation code
+    HintHighlighter.init(); // shows hints by drawing boxes round source/destination
+    Highlighter.init();     // used by MouseHandler2
 
     // build the games menu
     var menu = document.getElementById("menupopup-gametypes");

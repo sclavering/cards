@@ -269,8 +269,6 @@ var cardMethods = {
     return this.number==card.upNumber || card.number==this.upNumber;
   },
 
-  moveTo: function(targetPile) { moveCards(this, targetPile); },
-
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;

@@ -125,14 +125,14 @@ function MoveAction(card, source, destination) {
   this.action =
       (destination.isFoundation && !source.isFoundation) ? "move-to-foundation" :
       (source.isFoundation && !destination.isFoundation) ? "move-from-foundation" :
-      (source==Game.waste) ? "move-from-waste" :
+      (source.isWaste) ? "move-from-waste" :
       "move-between-piles";
 }
 MoveAction.prototype = {
   synchronous: false,
 
   perform: function() {
-    this.card.moveTo(this.destination);
+    moveCards(this.card, this.destination);
   },
   undo: function() {
     this.source.addCards(this.card);

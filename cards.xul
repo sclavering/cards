@@ -87,8 +87,8 @@
   </toolbarbutton>
   <flex/>
   <hbox id="score-panel">
-    <description value="&statusbar-score-label;"/>
-    <description id="score-display"/>
+    <label value="&statusbar-score-label;"/>
+    <label id="score-display"/>
   </hbox>
 </toolbar>
 </toolbox>

@@ -135,7 +135,7 @@ var FreeCellMover = {
   // perform the next move in the current sequence (if any)
   step: function() {
     if(!this.cards.length) return false;
-    this.cards.shift().moveTo(this.tos.shift());
+    moveCards(this.cards.shift(), this.tos.shift());
     return true;
   },
 

@@ -396,7 +396,7 @@ var BaseCardGame = {
 
 
   // === Revealing Cards ==================================
-  tryRevealCard: function(card) {
+  attemptRevealCard: function(card) {
     if(card.faceDown && !card.nextSibling) this.doAction(new RevealCardAction(card));
   },
 

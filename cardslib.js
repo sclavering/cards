@@ -48,10 +48,13 @@ var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
 
 
 function init() {
-  var things = ["gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
+  const things = ["gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
       "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu",
       "gGameSelector","gScoreDisplay","gGameStack","gGameMenuPopup"];
-  for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
+  for(var i = 0; i != things.length; ++i) {
+    var thing = things[i];
+    window[thing] = document.getElementById(window[thing]);
+  }
 
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;
@@ -106,7 +109,8 @@ function init() {
   if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
 
   // build the games menu
-  var gamesInMenu = ["spider","klondike"];
+  var gamesInMenu = ["freecell","fan","divorce","gypsy","klondike","mod3","penguin","pileon",
+      "russiansol","simon","spider","spider-2suits","unionsquare","whitehead","wasp","yukon"];
   try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
   buildGamesMenu(gamesInMenu, game);
 
@@ -495,10 +499,18 @@ function doneShowingMessage() {
 
 
 function useCardSet(set) {
-  // switch stylesheets
+  // xxx As of Fx 1.0 (on Ubuntu Linux 4.10) stylesheets in XUL still lose their titles'
+  // if Cards is run more than once (without closing Firefox in between)
+  const isCardset = /\/cardsets\/[^.]*\.css$/;
+  const rightCardset = new RegExp(set+".css$");
   const sheets = document.styleSheets, num = sheets.length;
-  for(var i = 0; i != num; i++)
-    if(sheets[i].title) sheets[i].disabled = sheets[i].title!=set;
+  for(var i = 0; i != num; i++) {
+    var sheet = sheets[i];
+    // the right way
+    //if(sheet.title) sheet.disabled = sheet.title!=set;
+    // the unpleasant hack
+    if(isCardset.test(sheet.href)) sheet.disabled = !rightCardset.test(sheet.href);
+  }
   // save pref
   gPrefs.setCharPref("cardset", set);
   // xxx evilish hack

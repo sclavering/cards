@@ -81,7 +81,6 @@ var FreeCellGame = {
     if(FreeCellMover.step() || this.autoplayMove()) {
       return true;
     } else if(Game.hasBeenWon()) {
-      this.endGame();
       showGameWon();
       return true;
     }

@@ -601,6 +601,7 @@ function displayScore(score) {
 // called from BaseCardGame.autoplay(), which is a function called after all significant
 // moves, so handles checking whether the game has been won and taking appropriate action.
 function showGameWon() {
+  disableUI();
   gGameWonMsg.hidden = false;
   // will get click events before the other event handlers
   window.onclick = function(e) {

@@ -48,15 +48,15 @@ var BaseCardGame = {
   },
 
   start: function() {
-    if(!this.initialised) this.initialise();
+    var initialised = this.initialised;
+    if(!initialised) this.initialise();
     this.xulElement.hidden = false;
     this.initDifficultyLevel();
-    this.newGame();
+    // xxx restore the game the user was playing in the previous session instead
+    if(!initialised) this.newGame();
   },
 
   end: function() {
-    this.endGame();
-    this.clearGame();
     this.mouseHandler.reset();
     this.xulElement.hidden = true;
   },
@@ -64,8 +64,14 @@ var BaseCardGame = {
   initialise: function() {
     this.initialised = true;
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
+    this.initXulElement();
     this.initPiles();
-    this.xulElement = document.getElementById(this.layout || this.id);
+    // if layout from another game has been cloned we need to throw away any cards in it
+    for(var i in this.allstacks) {
+      var s = this.allstacks[i];
+      while(s.hasChildNodes()) s.removeChild(s.lastChild);
+    }
+
     this.init(); // game specific stuff
 
     // see comments above
@@ -84,9 +90,23 @@ var BaseCardGame = {
     }
   },
 
+  initXulElement: function() {
+    if(!this.layout || this.layout==this.id) { this.xulElement = document.getElementById(this.id); return; }
+
+    function replaceIds(newId, old, node) {
+      if(node.id) node.id = newId + node.id.substring(old.length);
+      for(var i = 0; i < node.childNodes.length; i++) replaceIds(newId, old, node.childNodes[i]);
+    }
+
+    // if it uses the same layout as another game then clone that layout and fix the ids in the clone (so initPiles() works)
+    var elt = this.xulElement = document.getElementById(this.layout).cloneNode(true);
+    replaceIds(this.id, this.layout, elt);
+    gGameStack.insertBefore(elt, gGameStack.firstChild);
+  },
+
   // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
-  // Requires relevant XUL elements to have ids of the form {this.layout||this.id}-{pile-type}[-{int}]
+  // Requires relevant XUL elements to have ids of the form {this.id}-{pile-type}[-{int}]
   initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
     this.stacks = [];
@@ -95,7 +115,7 @@ var BaseCardGame = {
     this.cells = [];
     var allpiles = this.allstacks = [];
 
-    var id = this.layout || this.id;
+    var id = this.id;
     var thiss = this; // so it can be referred to in nested functions
 
     function initPileOfType(type, property, field) {
@@ -214,6 +234,12 @@ var BaseCardGame = {
     enableUI();
   },
 
+  clearGame: function() {
+    var s = this.allstacks; //this is an array of <stack>s provided by each game for this purpose
+    // remove all cards and set them all face down
+    for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
+  },
+
   // should deal out the cards for a new game. newGame() will ensure all stacks are empty
   deal: function() {
   },
@@ -226,19 +252,6 @@ var BaseCardGame = {
       stack.addCard(card);
       if(i>=numDown) card.setFaceUp();
     }
-  },
-
-
-
-  // === Finish Game ======================================
-  clearGame: function() {
-    var s = this.allstacks; //this is an array of <stack>s provided by each game for this purpose
-    // remove all cards and set them all face down
-    for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
-  },
-
-  endGame: function() {
-    disableUI();
   },
 
 
@@ -261,7 +274,7 @@ var BaseCardGame = {
 
   // action is an Action object
   getScoreFor: function(action) {
-    var actionstr = action.action
+    var actionstr = action.action;
     if(actionstr in this.scores) return this.scores[actionstr];
     return 0;
   },
@@ -492,7 +505,6 @@ var BaseCardGame = {
     if(this.autoReveal() || this.autoplayMove()) {
       return true;
     } else if(Game.hasBeenWon()) {
-      this.endGame();
       showGameWon();
       return true;
     }

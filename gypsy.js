@@ -9,11 +9,10 @@ Games["gypsy"] = {
   getLowestMovableCard: "descending, alt colours",
 
   init: function() {
-    var cards = this.cards = [];
-    // cards for easy games
-    cards[1] = getDecks(2);
-    // cards for hard games - spades and hearts only
-    cards[2] = getCardSuits(4, 4, 0, 0);
+    this.cards = {
+      1: getCardSuits(4, 4, 0, 0), // easy games - spades and hearts only
+      2: getDecks(2)
+    };
   },
 
   deal: function() {

@@ -643,10 +643,12 @@ CardGame.prototype = {
   // XXX add some useful comments!
   autoReveal: function() {
     var stacks = this.thingsToReveal; // games should create this array if they want autoRevealing
-    if(stacks) {
-      for(var i = 0; i < stacks.length; i++) {
-        var last = stacks[i].lastChild;
-        if(last && last.faceDown()) { this.revealCard(last); return true; }
+    if(!stacks) return false;
+    for(var i = 0; i < stacks.length; i++) {
+      var last = stacks[i].lastChild;
+      if(last && last.faceDown()) {
+        this.revealCard(last); 
+        return true; 
       }
     }
     return false;

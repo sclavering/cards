@@ -2,13 +2,27 @@ Games["pyramid"] = {
   __proto__: BaseCardGame,
 
   id: "pyramid",
-  mouseHandling: "click-to-select",
+  mouseHandling: "pyramid",
   rule_dealFromStock: "to-waste,can-turn-stock-over",
 
   init: function() {
-    // set up a children array on each pile, which consists of the piles immediately covering it
-    for(var i = 0, row = 1, col = 1; i <= 20; i++) {
-      this.stacks[i].children = [this.stacks[i+row], this.stacks[i+row+1]];
+    var i, row, col;
+    // All piles must have .leftParent and .rightParent fields for the mouse
+    // handler, and we need them to have .leftChild and .rightChild
+    for(i = 0; i < this.stacks.length; i++) {
+      var s = this.stacks[i];
+      s.leftParent = null; s.rightParent = null;
+      s.leftChild = null; s.rightChild = null;
+      s.leftFree = function() { return !(this.leftChild && this.leftChild.hasChildNodes()); };
+      s.rightFree = function() { return !(this.rightChild && this.rightChild.hasChildNodes()); };
+      s.free = function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
+    }
+    // now set the non-null values where applicable
+    for(i = 0, row = 1, col = 1; i <= 20; i++) {
+      this.stacks[i].leftChild = this.stacks[i+row];
+      this.stacks[i+row].rightParent = this.stacks[i];
+      this.stacks[i].rightChild = this.stacks[i+row+1];
+      this.stacks[i+row+1].leftParent = this.stacks[i];
       if(col==row) {
         col = 1;
         row++;
@@ -16,49 +30,50 @@ Games["pyramid"] = {
         col++;
       }
     }
-    // piles on bottom row have no children
-    for(i = 21; i < 28; i++) this.stacks[i].children = [];
+    // convenience
+    this.foundation.free = function() { return false; };
+    this.waste.free = function() { return true; };
   },
 
   deal: function() {
-    var cards = this.getCardDecks(1);
-    //xxx Remove the kings, because making them be moved to the foundation when clicked
-    // on would require some serious redesigning-of/hacks-in MouseHandler2.
-    cards.splice(51,1); cards.splice(38,1); cards.splice(25,1); cards.splice(12,1);
-    cards = this.shuffle(cards);
-
+    var cards = this.shuffleDecks(1);
+//    for(var i = 0; i < 15; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     for(var i = 0; i < 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
 
-  canMoveCard: function(card) {
-    if(card.parentNode.isFoundation || !card.isLastOnPile()) return false;
-    if(card.parentNode.isWaste) return true;
-    var kids = card.parentNode.children;
-    for(var i = 0; i < kids.length; i++) if(kids[i].hasChildNodes()) return false;
-    return true;
+  canRemoveCard: function(card) {
+    return card.isKing() && card.parentNode.free();
   },
-
-  canMoveTo: function(card, pile) {
-    if(pile.isStock || pile.isFoundation) return false;
-    var last = pile.lastChild;
-    if(!last) return false;
-
-    if(!pile.isWaste) {
-      // the destination pile must either have both children empty, or one child
-      // empty and the other containing |card|
-      var kids = pile.children;
-      for(var i = 0; i < kids.length; i++)
-        if(kids[i]!=card.parentNode && kids[i].hasChildNodes()) return false;
+  
+  removeCard: function(card) {
+    // we don't use MoveAction because we don't want animation (for consistency with removing pairs)
+    this.doAction(new PyramidMoveAction(card,null));
+  },
+  
+  canSelectCard: function(card) {
+//    return true;
+    return card.parentNode.free();
+  },
+  
+  canRemovePair: function(a, b) {
+    if(a.number()+b.number()!=13) return false;
+    var ap = a.parentNode, bp = b.parentNode;
+    if(ap.free()) {
+      if(bp.free()) return true;
+      // ap could be a branch from bp
+      return (bp.leftChild==ap && bp.rightFree())
+          || (bp.rightChild==ap && bp.leftFree());
     }
-
-    return (card.number() + last.number() == 13);
+    if(bp.free()) {
+      return (ap.leftChild==bp && ap.rightFree())
+          || (ap.rightChild==bp && ap.leftFree());
+    }
+    return false;
   },
-
-  // "target" is the second card of the pair to be removed (to the foundation).
-  moveTo: function(card, target) {
-    this.doAction(new PyramidMoveAction(card.parentNode, target));
-    return true;
+  
+  removePair: function(a, b) {
+    this.doAction(new PyramidMoveAction(a,b));
   },
 
   getHints: function() {
@@ -70,28 +85,26 @@ Games["pyramid"] = {
   // this game has no autoplay
 
   hasBeenWon: function() {
-    for(var i = 0; i < this.stacks.length; i++)
-      if(this.stacks[i].hasChildNodes())
-        return false;
-    return true;
+    // won when the tip of the pyramid has been removed
+    return !this.stacks[0].hasChildNodes();
   }
 }
 
 
-function PyramidMoveAction(pile1, pile2) {
-  this.pile1 = pile1;
-  this.pile2 = pile2;
+function PyramidMoveAction(card1, card2) {
+  this.c1 = card1; this.p1 = card1.parentNode;
+  this.c2 = card2; this.p2 = card2 ? card2.parentNode : null;
 }
 PyramidMoveAction.prototype = {
   action: "pyramid-move",
   
   perform: function() {
-    this.pile1.lastChild.transferTo(Game.foundation);
-    this.pile2.lastChild.transferTo(Game.foundation);
+    this.c1.transferTo(Game.foundation);
+    if(this.c2) this.c2.transferTo(Game.foundation);
     Game.autoplay();
   },
   undo: function(undo) {
-    Game.foundation.lastChild.transferTo(this.pile2);
-    Game.foundation.lastChild.transferTo(this.pile1);
+    if(this.c2) this.c2.transferTo(this.p2);
+    this.c1.transferTo(this.p1);
   }
 }

@@ -208,3 +208,93 @@ MouseHandlers["click-to-select"] = {
     }
   }
 };
+
+
+
+
+MouseHandlers["pyramid"] = {
+  card: null,
+  highlighter: null,
+
+  init: function() {
+    this.highlighter = createHighlighter();
+  },
+
+  reset: function() {
+    this.card = null;
+    this.highlighter.unhighlight();
+  },
+
+  mouseUp: function(e) {},
+  mouseDown: function(e) {},
+  mouseMove: function(e) {},
+
+  mouseClick: function(e) {
+    var t = e.target, x = e.pageX, y = e.pageY;
+    if(e.button!==0) return;
+
+    if((t.isCard && t.parentNode.isStock) || (t.isPile && t.isStock)) {
+      if(this.card) {
+        this.highlighter.unhighlight();
+        this.card = null;
+      }
+      Game.dealFromStock();
+      return;
+    }
+
+    // a <flex/>, the highlighter, or something like that
+    // quite why this doesn't cause js strict warnings I don't know
+    if(!t.isCard && !t.isPile) {
+      // if t is a spacer between two piles we change t to the pile on the row above
+      t = t.previousSibling;
+      var rpp = t ? t.rightParent : null;
+      if(t && t.isPile && rpp && (rpp.boxObject.y+rpp.boxObject.height > y)) {
+        t = rpp;
+      } else {
+        // user is probably trying to dismiss the selection
+        if(this.card) {
+          this.highlighter.unhighlight();
+          this.card = null;
+        }
+        return;
+      }
+    }
+    
+    // With pyramid layouts click often end up targetted at empty piles;
+    // here we work out which card the user was probably trying to click
+    if(t.isPile) {
+      if(!t.isNormalPile) return; // clicking on an empty foundation or waste pile should do nothing
+      
+      while(!t.hasChildNodes()) {
+        var lp = t.leftParent, rp = t.rightParent;
+        if(rp && x > rp.boxObject.x) t = rp;
+        else if(lp && lp.boxObject.x+lp.boxObject.width > x) t = lp;
+        // is it the pile directly above?
+        else if(lp && lp.rightParent) t = lp.rightParent;
+        // user is probably being stupid
+        else return;
+        // are we too low down anyway?
+        if(t.boxObject.y+t.boxObject.height < y) return;
+      }
+      // we're interested in cards, not piles
+      t = t.firstChild;
+    }
+    
+    if(this.card) {
+      this.highlighter.unhighlight();
+      if(Game.canRemovePair(this.card, t)) Game.removePair(this.card, t);
+      this.card = null;
+    } else {
+      if(Game.canRemoveCard(t)) {
+        Game.removeCard(t);
+      } else if(Game.canSelectCard(t)) {
+        this.card = t;
+        this.highlighter.highlight(t);
+      }
+    }
+    
+    // otherwise the final click of the game gets caught by the window.onclick
+    // handler for the game-won message, instantly starting a new game :(
+    e.stopPropagation();
+  }
+};

@@ -3,6 +3,7 @@ Games["montana"] = {
 
   id: "montana",
   redeals: 2,
+  difficultyLevels: ["easy","hard"],
 
 
   init: function() {
@@ -65,6 +66,7 @@ Games["montana"] = {
   ///////////////////////////////////////////////////////////
   //// redeal
   redeal: function() {
+    var hardGame = (this.difficultyLevel==2);
     this.redealsRemaining--;
     var cards = []; 
     var map = new Array(4);
@@ -76,18 +78,20 @@ Games["montana"] = {
       map[r] = new Array(13 - c);
       for(var j = 0; j < 13 - c; j++) {
         var card = this.stacks[s+j].firstChild;
-        if(card) {
-          card.parentNode.removeChild(card);
-          cards.push(card);
-        }
+        if(card) card.parentNode.removeChild(card);
+        // in hard games we want the null's in the array too
+        if(card || hardGame) cards.push(card);
         map[r][j] = card;
       }
     }
     // shuffle
     cards = this.shuffle(cards);
     // deal
+    // in easy games the spaces go at the of rows. in hard games they occur randomly
+    var easyGame = hardGame ? 0 : 1;
     for(r = 0, end = 13; r < 4; r++, end+=13) {
-      var start = end - map[r].length + 1;
+      var start = end - map[r].length + easyGame;
+      // dealToStack does the right thing when there are nulls in |cards|
       for(s = start; s < end; s++) this.dealToStack(cards, this.stacks[s], 0, 1);
     }
     // track

@@ -3,7 +3,7 @@ var Golf = new CardGame();
 Golf.shortname = "golf";
 
 Golf.init = function() {
-  this.stockDealTargets = this.dragDropTargets;
+  this.stockDealTargets = [this.foundation];
 };
 
 

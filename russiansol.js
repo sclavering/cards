@@ -13,20 +13,18 @@ Games["russiansol"] = {
 
   getHints: function() {
     for(var i = 0; i < 7; i++) {
-      this.getHintForCard(this.stacks[i].lastChild);
+      var pile = this.stacks[i];
+      if(pile.hasChildNodes()) this.getHintForPile(pile);
     }
   },
-  // find card one greater in number and of the same suit
-  getHintForCard: function(card) {
-    if(!card) return;
+  getHintForPile: function(pile) {
     for(var i = 0; i < 7; i++) {
-      var stack = this.stacks[i];
-      if(stack==card.parentNode) continue;
-      var current = stack.lastChild;
-      while(current && current.faceUp()) {
-        if(card.isConsecutiveTo(current) && card.isSameSuit(current))
-          return this.addHint(current,card.parentNode);
-        current = current.previousSibling;
+      var p = this.stacks[i];
+      if(p==pile) continue;
+      for(var card = p.lastChild; card && card.faceUp(); card = card.previousSibling) {
+        if(!this.canMoveTo(card, pile)) continue;
+        this.addHint(card, pile);
+        return;
       }
     }
   },

@@ -143,6 +143,21 @@ Games["wasp"] = {
   },
 
   getHints: function() {
+    for(var i = 0; i < 7; i++) {
+      var pile = this.stacks[i];
+      if(pile.hasChildNodes()) this.getHintForPile(pile);
+    }
+  },
+  getHintForPile: function(pile) {
+    for(var i = 0; i < 7; i++) {
+      var p = this.stacks[i];
+      if(p==pile) continue;
+      for(var card = p.lastChild; card && card.faceUp(); card = card.previousSibling) {
+        if(!this.canMoveTo(card, pile)) continue;
+        this.addHint(card, pile);
+        return;
+      }
+    }
   }
 };
 

@@ -60,7 +60,7 @@ var SpiderLayoutBase = {
 };
 
 
-var Spider =
+var Spider = {
   __proto__: SpiderLayoutBase,
 
   canMoveCard: "descending, in suit, not from foundation",

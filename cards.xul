@@ -32,6 +32,7 @@
 <script type="application/x-javascript" src="acesup.js"/>
 <script type="application/x-javascript" src="canfield.js"/>
 <script type="application/x-javascript" src="doublesol.js"/>
+<script type="application/x-javascript" src="fan.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
 <script type="application/x-javascript" src="golf.js"/>
 <script type="application/x-javascript" src="grandfather.js"/>
@@ -172,6 +173,54 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="doublesol-pile-7"/><flex/>
       <pile class="fan-down" id="doublesol-pile-8"/><flex/>
       <pile class="fan-down" id="doublesol-pile-9"/><flex/>
+    </hbox>
+  </vbox>
+
+  <!-- Fan -->
+  <vbox id="Fan" name="&fan.name;" menukey="&fan.menukey;"
+      hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex3/>
+      <foundation id="fan-foundation-0"/><flex/>
+      <foundation id="fan-foundation-1"/><flex/>
+      <foundation id="fan-foundation-2"/><flex/>
+      <foundation id="fan-foundation-3"/><flex3/>
+    </hbox>
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <vbox>
+        <pile class="fan-right" id="fan-pile-0"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-1"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-2"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="fan-right" id="fan-pile-3"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-4"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-5"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="fan-right" id="fan-pile-6"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-7"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-8"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="fan-right" id="fan-pile-9"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-10"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-11"/>
+      </vbox><flex/>
+      <vbox>
+        <flex/>
+        <pile class="fan-right" id="fan-pile-12"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-13"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-14"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="fan-right" id="fan-pile-15"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-16"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-17"/>
+      </vbox><flex/>
     </hbox>
   </vbox>
 

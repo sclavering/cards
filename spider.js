@@ -18,6 +18,11 @@ Spider.init = function() {
 };
 
 
+// XXX hack. can probably remove once spider's foundations code is normalised
+Spider.sendToFoundations = function() {
+  return false;
+};
+
 
 ///////////////////////////////////////////////////////////
 //// start game

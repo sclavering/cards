@@ -514,6 +514,7 @@ var CardMover = {
   interval: null, // ref to the window.setInterval triggering the animation
   targetTop: 0, // coords where the card should end up (incl offset into pile)
   targetLeft: 0,
+  stepNum: 0,
 
   init: function() {
     // class doesn't need to be flexible yet
@@ -524,46 +525,46 @@ var CardMover = {
     Cards.disableUI();
     // move firstCard and all cards on top of it to the move stack
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
-    const firstbox = firstCard.boxObject;
-    // _top and _left remain as numbers, whereas top and left get converted to strings
-    this.cards.left = this.cards._left = firstbox.x - gGameStackLeft;
-    this.cards.top = this.cards._top = firstbox.y - gGameStackTop
+    // _top/_left remain as numbers, whereas top/left get converted to strings
+    this.cards.left = this.cards._left = firstCard.boxObject.x - gGameStackLeft;
+    this.cards.top = this.cards._top = firstCard.boxObject.y - gGameStackTop
     firstCard.transferTo(this.cards);
     // set up conditions for animation stuff
     this.target = target;
-    const targetbox = target.boxObject;
-    this.targetLeft = targetbox.x - gGameStackLeft + target.getNextCardLeft();
-    this.targetTop = targetbox.y - gGameStackTop + target.getNextCardTop();
-    this.interval = setInterval(function(){CardMover.step();}, 30);
+    this.targetLeft = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
+    this.targetTop = target.boxObject.y - gGameStackTop + target.getNextCardTop();
     //
     var xdistance = this.targetLeft - this.cards._left;
     var ydistance = this.targetTop - this.cards._top;
     var angle = Math.atan2(ydistance,xdistance);
-    this.xchange = Math.cos(angle) * 50;
-    this.ychange = Math.sin(angle) * 50;
+    this.xchange = Math.cos(angle) * 55;
+    this.ychange = Math.sin(angle) * 55;
+    this.stepNum = xdistance ? Math.floor(xdistance / this.xchange) : Math.floor(ydistance / this.ychange);
+
+    this.interval = setInterval(function(){CardMover.step();}, 30);
+    this.step();
   },
 
   step: function() {
-    // return the shorter distance (if either both are negative or both are positive)
-    function absMin(n, m) { return (n<0 ? m<n : n<m) ? n : m; }
-    // calculate how far the card has to move
-    var xdistance = this.targetLeft - this.cards._left;
-    var ydistance = this.targetTop  - this.cards._top;
-    //
-    var xchange = absMin(this.xchange,xdistance);
-    var ychange = absMin(this.ychange,ydistance);
-    this.cards.left = this.cards._left = this.cards._left + xchange;
-    this.cards.top = this.cards._top = this.cards._top + ychange;
-    // if its reached the destination
-    if(xchange==xdistance && ychange==ydistance) this.moveComplete();
+    if(this.stepNum==0) return this.moveComplete();
+    this.cards.left = this.cards._left += this.xchange;
+    this.cards.top = this.cards._top += this.ychange;
+    this.stepNum--;
   },
 
   moveComplete: function() {
+    this.cards.left = this.targetLeft;
+    this.cards.top = this.targetTop;
     clearInterval(this.interval);
-    this.transfer(this.cards.firstChild, this.target);
-    this.cards.hide();
-    // don't enable the UI till we're finished autoplaying
-    if(!Game.autoplay()) Cards.enableUI();
+    // Using a timer forces moz to paint the cards at their destination (but still as children
+    // of this.cards) before transferring them, which is good because the transfer takes a while.
+    setTimeout(function() {
+      var cm = CardMover;
+      cm.transfer(cm.cards.firstChild, cm.target);
+      cm.cards.hide();
+      // don't enable UI until autoplay finished
+      if(!Game.autoplay()) Cards.enableUI();
+    }, 0);
   },
 
   transfer: function(firstCard, target) {

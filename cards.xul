@@ -4,10 +4,7 @@
 <?xml-stylesheet href="chrome://cards/content/cardsets/normal.css" type="text/css" title="normal"?>
 <?xml-stylesheet href="chrome://cards/content/cardsets/small.css" type="text/css" title="small"?>
 
-<!DOCTYPE window [
-<!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
-%cardsDTD;
-]>
+<!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   windowtype="cardgames-main"
@@ -17,7 +14,6 @@
 
   insufficientSpacesMessage="&insufficientSpacesMessage;"
   >
-
 
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="moving.js"/>

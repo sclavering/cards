@@ -1,6 +1,7 @@
 var Grandfather = new CardGame();
 
 Grandfather.shortname = "grandfather";
+Grandfather.redeals = 2;
 
 
 

@@ -800,6 +800,7 @@ var Cards = {
   cmdHint: null,
   cmdNewGame: null,
   cmdRestartGame: null,
+  cmdRedeal: null,
   cmdSetDifficulty: null,
   // refs to toolbar elements so they can be disabled
   difficultyLevelMenu: null,
@@ -815,6 +816,7 @@ var Cards = {
     this.cmdNewGame = document.getElementById("cmd:newgame");
     this.cmdRestartGame = document.getElementById("cmd:restart");
     this.cmdHint = document.getElementById("cmd:hint");
+    this.cmdRedeal = document.getElementById("cmd:redeal");
     this.cmdSetDifficulty = document.getElementById("cmd:setdifficulty");
     this.scoreDisplay = document.getElementById("score-display");
     this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
@@ -852,6 +854,7 @@ var Cards = {
     this.cmdHint.removeAttribute("disabled");
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
+    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
     this.conditionalEnableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
@@ -867,10 +870,18 @@ var Cards = {
     this.cmdHint.setAttribute("disabled","true");
     this.cmdNewGame.setAttribute("disabled","true");
     this.cmdRestartGame.setAttribute("disabled","true");
+    this.cmdRedeal.setAttribute("disabled","true");
     this.difficultyLevelMenu.setAttribute("disabled","true");
     this.gameSelector.setAttribute("disabled","true");
     this.disableUndo();
     MouseHandler.disable();
+  },
+  // en/dis-able the Undo and Redeal commands as required
+  fixUI: function() {
+    if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
+    else this.cmdUndo.setAttribute("disabled","true");
+    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
+    else this.cmdRedeal.setAttribute("disabled","true");
   },
 
   // enable/disable undo must be seperate as they are called from CardGame.trackMove() or something like that

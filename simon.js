@@ -3,7 +3,7 @@ var SimpleSimon = {
 
   shortname: "simon",
 
-  
+
   ///////////////////////////////////////////////////////////
   //// start game
   deal: function() {
@@ -15,8 +15,8 @@ var SimpleSimon = {
     this.dealToStack(cards,this.stacks[1],0,8);
     for(var i = 2; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,10-i);
   },
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// Moving
   canMoveCard: function(card) {
@@ -33,8 +33,8 @@ var SimpleSimon = {
     var last = stack.lastChild;
     return (!last || last.isConsecutiveTo(card));
   },
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// hint
   getHints: function() {
@@ -42,14 +42,14 @@ var SimpleSimon = {
       this.getHintsForCards(this.getLowestMoveableCard_Suit(this.stacks[i]));
   },
   getHintsForCards: function(card) {
-    if(!card) return null;
+    if(!card) return;
     for(var i = 0; i < 10; i++) {
       var stack = this.stacks[i];
       if(this.canMoveTo(card,stack) && stack.hasChildNodes()) this.addHint(card,stack);
     }
   },
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// smartmove
   getBestMoveForCard: function(card) {
@@ -64,8 +64,8 @@ var SimpleSimon = {
     if(dest) return dest;
     return null;
   },
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// Autoplay
   autoplayMove: function() {
@@ -74,8 +74,9 @@ var SimpleSimon = {
       var length = stack.childNodes.length;
       if(length < 13) continue;
       var card = stack.childNodes[length-13];
+      if(!this.canMoveCard(card)) continue;
       for(var j = 0; j < 4; j++) {
-        if(this.canMoveCard(card) && this.canMoveTo(card, this.foundations[j])) {
+        if(this.canMoveTo(card, this.foundations[j])) {
           this.moveTo(card, this.foundations[j]);
           return true;
         }
@@ -83,8 +84,8 @@ var SimpleSimon = {
     }
     return false;
   },
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// winning, scoring, undo
   hasBeenWon: function() {

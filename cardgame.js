@@ -23,7 +23,7 @@ function CardGame(params) {
   this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
 };
 
-var BaseCardGame = CardGame.prototype = {  
+var BaseCardGame = CardGame.prototype = {
   // older games get these set by the CardGame() constructor.  newer games may want to override
   stockCanTurnOver: false,
   acesHigh: false,
@@ -39,21 +39,21 @@ var BaseCardGame = CardGame.prototype = {
   waste: null,
   foundation: null, // if the game has just one foundation this will be it
   reserve: null,
-  
+
   thingsToReveal: null,
   dragDropTargets: null, // list of elements which the DragDrop system should test if cards are being dropped on
-  
+
 
 
 
   // === Start/Finish Playing =============================
   initialised: false,
-  
+
   // Games which need to do some additional initialisation should override this.
   // It is called the first time the game is played.
   init: function() {
   },
-  
+
   // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
   // Requires game to have a |shortname| param, and all piles of various types to have ids of
@@ -68,7 +68,7 @@ var BaseCardGame = CardGame.prototype = {
     this.reserves = [];
     this.foundations = [];
     this.allstacks = [];
-    
+
     var name = this.shortname;
     this.stock = createCardPile(name+"-stock");
     if(this.stock) {
@@ -197,10 +197,11 @@ var BaseCardGame = CardGame.prototype = {
   newGame: function() {
     this.score = 0;
     this.undoHistory = [];
-    Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
+//    Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
     this.updateScoreDisplay();
     this.clearGame();
     this.clearHints();
+    this.redealsRemaining = this.redeals;
     // reset offset used when stacking cards.
     if(this.stacks)
       for(var i = 0; i < this.stacks.length; i++)
@@ -208,6 +209,7 @@ var BaseCardGame = CardGame.prototype = {
     //
     this.deal();
     Cards.enableUI();
+    Cards.fixUI();
   },
   // should deal out the cards for a new game. newGame() will ensure all stacks are empty
   deal: function() {
@@ -216,8 +218,10 @@ var BaseCardGame = CardGame.prototype = {
   // useful function for deal() to use.  can (and should) be used for all card dealing
   dealToStack: function(cards, stack, numDown, numUp) {
     for(var i = 0; i < numDown+numUp; i++) {
-      stack.addCard(cards.pop());
-      if(i>=numDown) stack.lastChild.setFaceUp();
+      var card = cards.pop();
+      if(!card) continue;
+      stack.addCard(card);
+      if(i>=numDown) card.setFaceUp();
     }
   },
   // card shuffling.  games should use this to get an array of shuffled cards
@@ -269,7 +273,7 @@ var BaseCardGame = CardGame.prototype = {
   undo: function() {
     var undo = this.undoHistory.pop(); //the undo item
     // disable undo if no possible undo's left
-    if(this.undoHistory.length==0) Cards.disableUndo();
+//    if(this.undoHistory.length==0) Cards.disableUndo();
     this.score -= undo.score;
     this.updateScoreDisplay();
     // undo the move of it is a basic action type, otherwise hand it to Game.undo to deal with
@@ -283,14 +287,17 @@ var BaseCardGame = CardGame.prototype = {
       // hence the hard coding of this.waste should be okay
       case "stock-turned-over":
         while(this.stock.hasChildNodes()) this.dealCardTo(this.waste); break;
-      // Games should implement undoMove to deal with undoing any nonstandard actions.
+      // redeals/reshuffles require a full map of where cards were previously
+      case "redeal": this.undoRedeal(undo.map); break;
+      // Games should override undoMove to deal with undoing any nonstandard actions.
       default: this.undoMove(undo);
     }
+    // en/dis-able the Undo and Redeal buttons
+    Cards.fixUI();
   },
   // Is passed an object with source and card properties.  must move card back, turn over or whatever
   // Should not handle "card-turned-up" or "dealt-from-stock", which are dealt with in undo() above
-  // This default version may be sufficient for some games (e.g. AcesUp) which don't have anything other
-  // than moves of cards from one stack to another.
+  // This version should be sufficient for most games
   undoMove: function(undo) {
     undo.card.transferTo(undo.source);
   },
@@ -314,8 +321,21 @@ var BaseCardGame = CardGame.prototype = {
     this.undoHistory.push(move);
     this.score += scorechange;
     this.updateScoreDisplay();
-    // if this is the first undo added, enable the command
-    if(this.undoHistory.length==1) Cards.enableUndo();
+    // if this is the first undo added enable the command
+//    if(this.undoHistory.length==1) Cards.enableUndo();
+    // en/dis-able the Undo and Redeal buttons as required
+    Cards.fixUI();
+    // force hints to be regenerated
+    this.clearHints();
+  },
+  trackRedeal: function(map) {
+    var scorechange = this.getScoreForAction("redeal");
+    var move = {action: "redeal", map: map, score: scorechange};
+    this.undoHistory.push(move);
+    this.score += scorechange;
+    this.updateScoreDisplay();
+    // en/dis-able the Undo and Redeal buttons as required
+    Cards.fixUI();
     // force hints to be regenerated
     this.clearHints();
   },
@@ -467,36 +487,82 @@ var BaseCardGame = CardGame.prototype = {
 
 
   // === Redealing ========================================
-  // XXX: add some UI for this
   // some games allow a certain number of "redeals", where all the remaining cards on the tableau
   // are collected together and shuffled, then redealt in the pattern that was present before
 
-  // At the moment this only works for tableau piles, not stocks, reserves, or anything else
+  // notes:
+  // * this will only work when all face up cards are above all face down cards on each stack
+  //   (but that seems always to be the case...)
+  // * this only works for tableau piles, not stocks, reserves, or anything else
+
+  redeals: 0,
+  redealsRemaining: 0,
+
+  canRedeal: function() {
+    return (this.redealsRemaining > 0);
+  },
+
   redeal: function() {
-    var stacks = this.stacks;
-    var numdown = [];
-    var numup = [];
+    this.redealsRemaining--;
+    var numStacks = this.stacks.length;
+    var i, j;
+    // for redealing
+    var down = new Array(numStacks);
+    var up = new Array(numStacks);
     var cards = [];
-    var i;
+    // for undoing the redeal in the future
+    var map = {};
+    map.cards = new Array(numStacks);
+    map.faceUp = new Array(numStacks);
     // remove cards and store pattern
-    for(i = 0; i < stacks.length; i++) {
-      var down = 0, up = 0;
-      while(stacks[i].hasChildNodes()) {
-        var card = stacks[i].removeChild(stacks[i].lastChild);
-        if(card.faceDown()) down++;
-        else up++;
+    for(i = 0; i < numStacks; i++) {
+      down[i] = 0;
+      up[i] = 0;
+      var stack = this.stacks[i];
+      map.cards[i] = new Array(stack.childNodes.length);
+      map.faceUp[i] = new Array(stack.childNodes.length);
+      j = stack.childNodes.length;
+      while(stack.hasChildNodes()) {
+        j--;
+        var card = stack.removeChild(stack.lastChild);
+        map.cards[i][j] = card;
+        map.faceUp[i][j] = card.faceUp();
+        if(card.faceDown()) down[i]++;
+        else up[i]++;
         card.setFaceDown();
         cards.push(card);
       }
-      numdown.push(down);
-      numup.push(up);
     }
     // shuffle
-    this.shuffle(cards);
+    cards = this.shuffle(cards);
     // deal out again
-    for(i = 0; i < stacks.length; i++) {
-      this.dealToStack(cards,this.stacks[i],numdown[i],numup[i]);
+    for(i = 0; i < this.stacks.length; i++) {
+      this.dealToStack(cards,this.stacks[i],down[i],up[i]);
     }
+    // track
+    this.trackRedeal(map);
+  },
+
+  undoRedeal: function(map) {
+    var i, j, stack;
+    // remove all cards from present positions
+    // (map holds references to them)
+    for(i = 0; i < this.stacks.length; i++) {
+      stack = this.stacks[i];
+      while(stack.hasChildNodes()) stack.removeChild(stack.lastChild);
+    }
+    // restore previous position
+    for(i = 0; i < map.cards.length; i++) {
+      stack = this.stacks[i];
+      for(j = 0; j < map.cards[i].length; j++) {
+        var card = map.cards[i][j];
+        if(map.faceUp[i][j]) card.setFaceUp();
+        else card.setFaceDown();
+        stack.addCard(card);
+      }
+    }
+    //
+    this.redealsRemaining++;
   },
 
 
@@ -625,7 +691,7 @@ var BaseCardGame = CardGame.prototype = {
   getBestMoveForCard: function(card) {
     return null;
   },
-  
+
 
   // smartMove is more intuitive if it looks alternately left and right of the source
   // of the card for moves. This function starts from stack.parentNode and does that,

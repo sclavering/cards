@@ -18,11 +18,7 @@ var Maze = {
     cards[52] = null; cards[53] = null;
     // shuffle and deal.  the nulls will result in empty spaces
     cards = this.shuffle(cards);
-    for(var i = 0; i < 54; i++) {
-      if(!cards[i]) continue;
-      this.stacks[i].appendChild(cards[i]);
-      cards[i].setFaceUp();
-    }
+    for(var i = 0; i < 54; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
 

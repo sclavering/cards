@@ -39,6 +39,7 @@
 <script type="application/x-javascript" src="klondike.js"/>
 <script type="application/x-javascript" src="maze.js"/>
 <script type="application/x-javascript" src="mod3.js"/>
+<script type="application/x-javascript" src="montana.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
@@ -50,6 +51,7 @@
   <command id="cmd:hint"    oncommand="Game.hint();"/>
   <command id="cmd:undo"    oncommand="Game.undo();"/>
   <command id="cmd:restart" oncommand="Game.restart();"/>
+  <command id="cmd:redeal"  oncommand="Game.redeal();"/>
   <command id="cmd:setdifficulty" oncommand="Game.setDifficultyLevel(event.target.value);"/>
 </commandset>
 
@@ -77,6 +79,7 @@
   <toolbarbutton command="cmd:restart" label="&restart.label;" tooltiptext="&restart.tooltip;"/>
   <toolbarbutton command="cmd:undo"    label="&undo.label;"    tooltiptext="&undo.tooltip;"/>
   <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
+  <toolbarbutton command="cmd:redeal"  label="&redeal.label;"  tooltiptext="&redeal.tooltip;"/>
   <toolbarbutton id="options-menu" type="menu" label="&options.label;">
     <menupopup id="options-popup" oncommand="useCardSet(event.originalTarget.value);">
       <menuitem type="radio" label="&cardset.small;" value="small" id="cardset-small"/>
@@ -500,6 +503,76 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="mod3-pile-7"/><colspacer/><flex/>
       <stock id="mod3-stock"/><flex/>
     </hbox>
+  </vbox>
+
+  <!-- Montana -->
+  <vbox id="Montana" name="&montana.name;" menukey="&montana.menukey;"
+      hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex/>
+      <pile id="montana-pile-0"/><flex/>
+      <pile id="montana-pile-1"/><flex/>
+      <pile id="montana-pile-2"/><flex/>
+      <pile id="montana-pile-3"/><flex/>
+      <pile id="montana-pile-4"/><flex/>
+      <pile id="montana-pile-5"/><flex/>
+      <pile id="montana-pile-6"/><flex/>
+      <pile id="montana-pile-7"/><flex/>
+      <pile id="montana-pile-8"/><flex/>
+      <pile id="montana-pile-9"/><flex/>
+      <pile id="montana-pile-10"/><flex/>
+      <pile id="montana-pile-11"/><flex/>
+      <pile id="montana-pile-12"/><flex/>
+    </hbox><rowspacer/>
+    <hbox>
+      <flex/>
+      <pile id="montana-pile-13"/><flex/>
+      <pile id="montana-pile-14"/><flex/>
+      <pile id="montana-pile-15"/><flex/>
+      <pile id="montana-pile-16"/><flex/>
+      <pile id="montana-pile-17"/><flex/>
+      <pile id="montana-pile-18"/><flex/>
+      <pile id="montana-pile-19"/><flex/>
+      <pile id="montana-pile-20"/><flex/>
+      <pile id="montana-pile-21"/><flex/>
+      <pile id="montana-pile-22"/><flex/>
+      <pile id="montana-pile-23"/><flex/>
+      <pile id="montana-pile-24"/><flex/>
+      <pile id="montana-pile-25"/><flex/>
+    </hbox><rowspacer/>
+    <hbox>
+      <flex/>
+      <pile id="montana-pile-26"/><flex/>
+      <pile id="montana-pile-27"/><flex/>
+      <pile id="montana-pile-28"/><flex/>
+      <pile id="montana-pile-29"/><flex/>
+      <pile id="montana-pile-30"/><flex/>
+      <pile id="montana-pile-31"/><flex/>
+      <pile id="montana-pile-32"/><flex/>
+      <pile id="montana-pile-33"/><flex/>
+      <pile id="montana-pile-34"/><flex/>
+      <pile id="montana-pile-35"/><flex/>
+      <pile id="montana-pile-36"/><flex/>
+      <pile id="montana-pile-37"/><flex/>
+      <pile id="montana-pile-38"/><flex/>
+    </hbox><rowspacer/>
+    <hbox>
+      <flex/>
+      <pile id="montana-pile-39"/><flex/>
+      <pile id="montana-pile-40"/><flex/>
+      <pile id="montana-pile-41"/><flex/>
+      <pile id="montana-pile-42"/><flex/>
+      <pile id="montana-pile-43"/><flex/>
+      <pile id="montana-pile-44"/><flex/>
+      <pile id="montana-pile-45"/><flex/>
+      <pile id="montana-pile-46"/><flex/>
+      <pile id="montana-pile-47"/><flex/>
+      <pile id="montana-pile-48"/><flex/>
+      <pile id="montana-pile-49"/><flex/>
+      <pile id="montana-pile-50"/><flex/>
+      <pile id="montana-pile-51"/><flex/>
+    </hbox><flex/>
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->

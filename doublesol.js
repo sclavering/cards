@@ -8,15 +8,12 @@ Games["doublesol"] = {
 
   id: "doublesol",
   rule_dealFromStock: "to-waste,can-turn-stock-over",
-
+  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     // get two packs less one set of aces
     var cards = this.getCardDecks(2);
@@ -26,11 +23,6 @@ Games["doublesol"] = {
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
-
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
 
   canMoveToFoundation: function(card, stack) {
     if(!card.isLastOnPile()) return false;
@@ -44,9 +36,6 @@ Games["doublesol"] = {
       && card.isConsecutiveTo(last));
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     this.getHintsForCard(this.waste.lastChild);
     for(var i = 0; i < 10; i++) {
@@ -58,7 +47,7 @@ Games["doublesol"] = {
     var i, stack;
     for(i = 0; i < 10; i++) {
       stack = this.stacks[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
+      if(stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
     }
     for(i = 0; i < 4; i++) {
       stack = this.foundations[i];
@@ -69,18 +58,12 @@ Games["doublesol"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
     return searchPiles(piles, testCanMoveToPile(card))
         || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // automove cards to suit stacks
     for(var i = 0; i < this.sourceStacks.length; i++) {
@@ -95,9 +78,6 @@ Games["doublesol"] = {
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 4 Foundations have 25==13*2-1 cards
     for(var i = 0; i < 4; i++)
@@ -105,6 +85,7 @@ Games["doublesol"] = {
         return false;
     return true;
   },
+  
   scores: {
     "move-to-foundation"  :   10,
     "move-from-waste"     :    5,

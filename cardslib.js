@@ -533,8 +533,6 @@ var CardMover = {
     this.transfer(this.cards.firstChild, this.target);
     this.cards.setAttribute("style","display:none");
     // don't enable the UI till we're finished autoplaying
-//    if(!Game.autoplay()) Cards.enableUI();
-    // FREECELL ified
     if(!FreeCellMover.step() && !Game.autoplay())
       Cards.enableUI();
   },

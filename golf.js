@@ -15,18 +15,17 @@ Games["golf"] = {
     var cards;
     var cardsPerColumn;
     if(this.difficultyLevel==3) {
-  	  cards = this.shuffleDecks(2);
+      cards = this.shuffleDecks(2);
       cardsPerColumn = 8;
-    	this.score = 103;
+      this.score = 103;
     } else {
-  	  cards = this.shuffleDecks(1);
+      cards = this.shuffleDecks(1);
       cardsPerColumn = 5;
-    	this.score = 51;
-  	}
-  	for(var i = 0; i < 7; i++)
-  	  this.dealToStack(cards,this.stacks[i],0,cardsPerColumn);
-  	this.dealToStack(cards,this.foundation,0,1);
-  	this.dealToStack(cards,this.stock,cards.length,0);
+      this.score = 51;
+    }
+    for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],0,cardsPerColumn);
+    this.dealToStack(cards,this.foundation,0,1);
+    this.dealToStack(cards,this.stock,cards.length,0);
   },
 
 
@@ -37,10 +36,11 @@ Games["golf"] = {
   },
 
   canMoveTo: function(card, stack) {
-    if(stack != this.foundation) return false;
-    var diff = this.foundation.lastChild.number() - card.number();
-    return (diff ==  1 || diff == -1 // can go up or one by down
-            || (this.difficultyLevel==1 && (diff == -12 || diff == 12)));  // Or King<->Ace in easy mode
+    if(stack!=this.foundation) return false;
+    var last = stack.lastChild;
+    // K->A or A->K allowed in Easy mode
+    if(this.difficultyLevel==1) return card.differsByOneMod13To(last);
+    return card.differsByOneTo(last);
   },
 
 

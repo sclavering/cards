@@ -15,14 +15,8 @@ Games["fan"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveCard: function(card) {
-    return card.isLastOnPile();
-  },
-
-  canMoveToPile: function(card, pile) {
-    var last = pile.lastChild;
-    return (last ? last.isConsecutiveTo(card) && last.isSameSuit(card) : card.isKing());
-  },
+  rule_canMoveCard: "last-on-pile",
+  rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
 
   canMoveToFoundation: function(card, pile) {
     var last = pile.lastChild;

@@ -26,17 +26,17 @@ vbox[name], hbox[name], #game-won-msg { margin: 0 200px 1000px 0; }
 
 
 #game-won-msg {
-  padding: 3em;
+  padding: 2em;
   background: -moz-dialog;
   border: 1px solid;
 }
 #game-won-msg1 {
-  font-size: 2.5em;
+  font-size: 2em;
   font-weight: bold;
 }
 #game-won-msg2 {
   margin-top: 1em;
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 
 

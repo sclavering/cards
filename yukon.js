@@ -15,12 +15,7 @@ Games["yukon"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveToPile: function(card, stack) {
-    var lc = stack.lastChild; // last card
-    if(!lc) return true; // !lc && card.isKing()
-    // or last card (lc) in stack opposite colour and 1 greater than dragged card,
-    return (lc.faceUp() && lc.notSameColour(card) && lc.isConsecutiveTo(card));
-  },
+  rule_canMoveToPile: "descending,alt-colours",
 
 
   ///////////////////////////////////////////////////////////
@@ -55,16 +50,16 @@ Games["yukon"] = {
 
   ///////////////////////////////////////////////////////////
   //// smart move
-  // finds the first stack from the left where the card can be moved to
   getBestMoveForCard: function(card) {
-    var i, stack;
-    for(i = 0; i < 7; i++) {
-      stack = this.stacks[i];
-      if(stack!=card.parentNode && stack.hasChildNodes() && this.canMoveTo(card,stack)) return stack;
+    var piles = card.parentNode.isNormalPile ? this.getPilesRound(card.parentNode) : this.stacks;
+    var i, pile;
+    for(i = 0; i < piles.length; i++) {
+      pile = piles[i];
+      if(pile.hasChildNodes() && this.canMoveTo(card,pile)) return pile;
     }
-    for(i = 0; i < 7; i++) {
-      stack = this.stacks[i];
-      if(stack!=card.parentNode && this.canMoveTo(card,stack)) return stack;
+    for(i = 0; i < piles.length; i++) {
+      pile = piles[i];
+      if(this.canMoveTo(card,pile)) return pile;
     }
     return null;
   },
@@ -98,11 +93,9 @@ Games["yukon"] = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation"   ?  10 :
-      action=="card-revealed"        ?   5 :
-      action=="move-from-foundation" ? -15 :
-      0);
+  scores: {
+    "move-to-foundation"  :  10,
+    "card-revealed"       :   5,
+    "move-from-foundation": -15
   }
 }

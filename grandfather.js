@@ -16,12 +16,8 @@ Games["grandfather"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveToPile: function(card, stack) {
-    // stack must be empty (in kde version the card has to be a king, but that makes the game too hard)
-    // or last card in stack same suit and consecutive to card,
-    var last = stack.lastChild;
-    return (!last || (last.isSameSuit(card) && last.isConsecutiveTo(card)));
-  },
+  // in KPatience only kings can go in spaces, but that makes the game rarely work
+  rule_canMoveToPile: "descending,in-suit",
 
 
   ///////////////////////////////////////////////////////////

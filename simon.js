@@ -19,19 +19,13 @@ Games["simon"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveCard: function(card) {
-    if(card.parentNode.isFoundation) return false;
-    // card can be moved as long as it only has a descending sequence of cards of its suit on it
-    return this.canMoveCard_DescendingInSuit(card);
-  },
+  rule_canMoveCard: "descending,in-suit,not-from-foundation",
+  rule_canMoveToPile: "descending",
+
   canMoveToFoundation: function(card, stack) {
     // only a K->A run can be put on a foundation, and the foundation must be empty
     // canMoveCard() will ensure we have a run, so only need to check the ends
     return (card.isKing() && card.parentNode.lastChild.isAce() && !stack.hasChildNodes());
-  },
-  canMoveToPile: function(card, stack) {
-    var last = stack.lastChild;
-    return (!last || last.isConsecutiveTo(card));
   },
 
 

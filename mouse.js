@@ -118,10 +118,13 @@ MouseHandlers["drag+drop"] = {
       var overlaps = (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
       if(overlaps && Game.attemptMove(card,target)) success = true;
     }
+
+    // do this before moving back (if not successful) because otherwise we get repainting issues
+    // (bits of cards remain on the screen where this.cards was located)
+    this.cards.hide();
+
     // move cards back
     if(!success) card.transferTo(source);
-
-    this.cards.hide();
   },
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),
@@ -168,7 +171,7 @@ MouseHandlers["click-to-select"] = {
   mouseClick: function(e) {
     var t = e.target;
     if(e.button==0) {
-      if(e.detail==2) { // && Game.foundations) {  // don't need for FreeCell, but might do in future
+      if(e.detail==2) {
         this.highlighter.unhighlight();
         // in a double click the first click will have highlighted the card, so the
         // second click's target is the highlight box

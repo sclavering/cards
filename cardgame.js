@@ -6,6 +6,11 @@ var BaseCardGame = {
   canTurnStockOver: false,
   acesHigh: false,
 
+  // rule vars that can be set rather than a Game providing the corresponding function
+  // see rules.js for the possible values
+  rule_canMoveCard: null,
+  rule_canMoveToPile: null,
+
   // see mouse.js
   mouseHandling: "drag+drop",
   mouseHandler: null,
@@ -67,6 +72,9 @@ var BaseCardGame = {
 
     // if the game doesn't specify something
     if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
+
+    if(this.rule_canMoveCard) this.canMoveCard = Rules.canMoveCard[this.rule_canMoveCard];
+    if(this.rule_canMoveToPile) this.canMoveToPile = Rules.canMoveToPile[this.rule_canMoveToPile];
   },
 
   // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
@@ -196,7 +204,6 @@ var BaseCardGame = {
     this.mouseHandler.reset();
     this.score = 0;
     this.undoHistory = [];
-    this.updateScoreDisplay();
     this.clearGame();
     this.clearHints();
     this.redealsRemaining = this.redeals;
@@ -208,6 +215,7 @@ var BaseCardGame = {
     this.deal();
     if(this.stock) this.initDealsLeft(); // must happen after deal because it counts the cards on the stock
 
+    this.updateScoreDisplay(); // must do after deal(), because not all games start the score at 0
     Cards.disableUndo();
     Cards.disableRedeal();
     Cards.enableUI();
@@ -370,27 +378,6 @@ var BaseCardGame = {
   canMoveCard: function(card) {
     return card.faceUp();
   },
-  // standard forms of canMoveCard. games can just do FooSol.canMoveCard = FooSol.canMoveCard_foo_bar
-  // XXX would it be better to make these params of CardGame(...), or properties of FooSol checked in
-  // a default canMoveCard (which non standard games would just override)?  Same question about
-  // canMoveToPile.  perhaps   new CardGame(whenCanCardsMove, howPilesBuild, other options...)
-  // or just a bunch of PILEBUILD_SomeMethod const's to OR with the rest???
-  canMoveCard_DescendingAltColours: function(card) {
-    if(card.faceDown()) return false;
-    // ensure we have a run in alternating colours
-    for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
-      if(card.isSameColour(next) || card.notConsecutiveTo(next)) return false;
-    }
-    return true;
-  },
-  canMoveCard_DescendingInSuit: function(card) {
-    if(card.faceDown()) return false;
-    // ensure we have a running flush from top card on stack to |card|
-    for(var next = card.nextSibling; next; card = next, next = next.nextSibling) {
-      if(card.notSameSuit(next) || card.notConsecutiveTo(next)) return false;
-    }
-    return true;
-  },
 
   // returns true/false for whether it is a legal move to take card to destination
   // this function follows the pattern needed by all games seen so far, leaving
@@ -412,30 +399,15 @@ var BaseCardGame = {
     return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
   },
 
-  // this should work for most games which have cells
-  canMoveToCell: function(card, target) {
-    return (!target.hasChildNodes() && card.isLastOnPile());
-  },
-
-  // some standard forms for canMoveToPile
-  canMoveTo_LastOnPile: function(card, target) {
-    return (card.faceUp() && card.isLastOnPile());
-  },
-
-
   // actually perform the move, return true/false  for success.  Should generally call
   // this.trackMove(action: "some-string", card: card, source: someStackNode);
-  // source can generally be retrieved by card.getSource(), if the function is being called
-  // by CardMover, or CardTurner
-  // This generic version copes with all the games except Spider at the moment, and Spider
-  // was written in a very unusual way :)
+  // source can be retrieved via card.getSource()
+  // Spider, Pyramid and FreeCellGame override this
   moveTo: function(card, target) {
     var source = card.getSource();
-    var targetIsFoundation = target.isFoundation;
-    var sourceIsFoundation = source.isFoundation;
     var action =
-      (targetIsFoundation && !sourceIsFoundation) ? "move-to-foundation" :
-      (sourceIsFoundation && !targetIsFoundation) ? "move-from-foundation" :
+      (target.isFoundation && !source.isFoundation) ? "move-to-foundation" :
+      (source.isFoundation && !target.isFoundation) ? "move-from-foundation" :
       (source==this.waste) ? "move-from-waste" :
       "move-between-piles";
     card.moveTo(target);
@@ -443,7 +415,7 @@ var BaseCardGame = {
     return true;
   },
 
-  // convenience function, used in mouse handlers
+  // convenience function
   attemptMove: function(source, target) {
     if(Game.canMoveTo(source,target)) {
       Game.moveTo(source,target);
@@ -456,12 +428,9 @@ var BaseCardGame = {
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
     if(!this.canMoveCard(card)) return false;
-    for(var i = 0; i < this.foundations.length; i++) {
-      if(this.canMoveTo(card,this.foundations[i])) {
-        this.moveTo(card,this.foundations[i]);
+    for(var i = 0; i < this.foundations.length; i++)
+      if(this.attemptMove(card,this.foundations[i]))
         return true;
-      }
-    }
     return false;
   },
 
@@ -712,25 +681,33 @@ var BaseCardGame = {
     return null;
   },
 
-
   // smartMove is more intuitive if it looks alternately left and right of the source
   // of the card for moves. This function starts from stack.parentNode and does that,
   // applying test(card,left|right) to each one and returning the stack if test() is true
   searchAround: function(card, test) {
-    // try alternately right and left of the stack the card is from to find a move
-    var left = card.parentNode;
-    var right = card.parentNode;
+    var piles = this.getPilesRound(card.parentNode);
+    for(var i = 0; i < piles.length; i++) if(test(card,piles[i])) return piles[i];
+    return null;
+  },
+
+  getPilesRound: function(pile) {
+    if("surroundingPiles" in pile) return pile.surroundingPiles;
+
+    var left = this.nextStackLeft(pile)
+    var right = this.nextStackRight(pile);
+    var piles = [];
     while(left || right) {
       if(left) {
-        if(test(card,left)) return left;
+        piles.push(left);
         left = this.nextStackLeft(left);
       }
       if(right) {
-        if(test(card,right)) return right;
+        piles.push(right);
         right = this.nextStackRight(right);
       }
     }
-    return null;
+    pile.surroundingPiles = piles;
+    return piles;
   },
   // these rely on a row of stacks being sibing nodes, so XUL should be set up appropriately
   nextStackLeft: function(stack) {
@@ -743,6 +720,7 @@ var BaseCardGame = {
       if(("isPile" in n) && n.isPile) return n;
     return null;
   },
+
   // some functions to pass to searchAround
   lastIsConsecutiveAndSameSuit: function(c,s) {
     var last = s.lastChild;

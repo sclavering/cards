@@ -135,6 +135,14 @@ var CardShuffler = {
     c.notSameSuit = function(card) { return this._suit!=card._suit; };
     c.isSameColour = function(card) { return this._colour==card._colour; };
     c.notSameColour = function(card) { return this._colour!=card._colour; };
+    c.differsByOneTo = function(card) {
+      var diff = this.number()-card.number();
+      return (diff==1 || diff==-1);
+    };
+    c.differsByOneMod13To = function(card) {
+      var diff = this.number()-card.number();
+      return (diff==1 || diff==-1 || diff==12 || diff==-12);
+    };
     // advanced queries, used in games where stacks can wrap round (King,Ace,2)
     c.isConsecutiveMod13To = function(card) {
       // returns true if card is one less than this, or card is King and this is Ace
@@ -366,6 +374,8 @@ function createFloatingPile(className) {
   _createCardPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
+    this.width = 0;
+    this.height = 0;
     this.top = -1000;
     this.left = -1000;
   };

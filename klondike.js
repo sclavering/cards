@@ -21,13 +21,7 @@ Games["klondike"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveToPile: function(card, stack) {
-    // last on stack must be opposite colour and consecutive to card, or stack empty and card is a king
-    var last = stack.lastChild;
-    return (last
-      ? (last.faceUp() && last.notSameColour(card) && last.isConsecutiveTo(card))
-      : card.isKing());
-  },
+  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
 
 
   ///////////////////////////////////////////////////////////
@@ -58,21 +52,17 @@ Games["klondike"] = {
   ///////////////////////////////////////////////////////////
   //// smart move
   getBestMoveForCard: function(card) {
+    var parent = card.parentNode;
+    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
     var i;
-    if(card.parentNode==this.waste) {
-      // hunt through tableau piles
-      for(i = 0; i < 7; i++)
-        if(this.canMoveToPile(card,this.stacks[i])) return this.stacks[i];
-    } else {
-      // find move to surrounding pile
-      var dest = this.searchAround(card,this.canMoveToPile);
-      if(dest) return dest;
-    }
+    for(i = 0; i < piles.length; i++)
+      if(this.canMoveToPile(card,piles[i]))
+        return piles[i];
     // find move to foundation
+    if(parent.isFoundation) return null;
     for(i = 0; i < 4; i++) {
-      var stack = this.foundations[i];
-      if(stack==card.parentNode) continue;
-      if(this.canMoveToFoundation(card,stack)) return stack;
+      var pile = this.foundations[i];
+      if(this.canMoveToFoundation(card, pile)) return pile;
     }
     return null;
   },

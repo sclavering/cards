@@ -30,13 +30,8 @@ Games["doublesol"] = {
 
   ///////////////////////////////////////////////////////////
   //// Moving
-  canMoveToPile: function(card, stack) {
-    // last on stack must be opposite colour and consecutive to card, or stack empty and card is a king
-    var last = stack.lastChild;
-    return (last
-      ? (last.faceUp() && last.notSameColour(card) && last.isConsecutiveTo(card))
-      : card.isKing());
-  },
+  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
+
   canMoveToFoundation: function(card, stack) {
     if(!card.isLastOnPile()) return false;
     // foundations are built A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
@@ -124,13 +119,11 @@ Games["doublesol"] = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation"   ?   10 :
-      action=="move-from-waste"      ?    5 :
-      action=="card-revealed"        ?    5 :
-      action=="move-from-foundation" ?  -15 :
-      action=="stock-turned-over"    ? -100 :
-      0);
+  scores: {
+    "move-to-foundation"  :   10,
+    "move-from-waste"     :    5,
+    "card-revealed"       :    5,
+    "move-from-foundation":  -15,
+    "stock-turned-over"   : -100
   }
 }

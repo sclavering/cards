@@ -24,6 +24,11 @@ var FreeCellGame = {
     return false;
   },
 
+  // this should work for most games which have cells
+  canMoveToCell: function(card, target) {
+    return (!target.hasChildNodes() && card.isLastOnPile());
+  },
+
   moveTo: function(card, target) {
     var source = card.parentNode;
     var action;
@@ -55,7 +60,6 @@ var FreeCellGame = {
     }
     return false;
   }
-
 }
 
 

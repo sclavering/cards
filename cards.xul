@@ -23,6 +23,7 @@
 
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="mouse.js"/>
+<script type="application/x-javascript" src="rules.js"/>
 <script type="application/x-javascript" src="cardgame.js"/>
 <script type="application/x-javascript" src="freecellmover.js"/>
 

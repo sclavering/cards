@@ -29,8 +29,10 @@ Games["acesup"] = {
   //// Moving
   canMoveCard: function(card) {
     var p = card.parentNode;
-    return (card.isLastOnPile() && p!=this.foundation && p!=this.stock);
+    return (card.isLastOnPile() && !p.isFoundation && !p.isStock);
   },
+
+  rule_canMoveToPile: "isempty",
 
   canMoveToFoundation: function(card, foundation) {
     for(var i = 0; i < 4; i++) {
@@ -40,9 +42,6 @@ Games["acesup"] = {
       if(top && card.isSameSuit(top) && card.number()<top.number()) return true;
     }
     return false;
-  },
-  canMoveToPile: function(card, stack) {
-    return !stack.hasChildNodes();
   },
 
 

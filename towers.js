@@ -9,13 +9,8 @@ AllGames.towers = {
   getLowestMovableCard: "descending, in suit",
 
   init: function() {
-    var cards = this.cards = getDecks(1);
-
-    // add pointers to next card up and down in same suit
-    for(var i = 0; i != 51; i++) cards[i].up = cards[i+1];
-    cards[12].up = cards[25].up = cards[38].up = cards[51].up = null;
-
-    this.aces = [cards[0], cards[13], cards[26], cards[39]];
+    var cs = this.cards = makeDecks(1);
+    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
   },
 
   deal: function(cards) {
@@ -49,23 +44,7 @@ AllGames.towers = {
            (this.emptyCell || searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
 
-  autoplayMove: function() {
-    var lookedForAces = false;
-    for(var i = 0; i != 4; i++) {
-      var f = this.foundations[i];
-      if(f.hasChildNodes()) {
-        var c = f.lastChild.up;
-        if(c && this.canMoveCard(c)) return this.moveTo(c, f);
-      } else if(!lookedForAces) {
-        lookedForAces = true;
-        for(var j = 0; j != 4; j++) {
-          var a = this.aces[j];
-          if(!a.parentNode.isFoundation && !a.nextSibling) return this.moveTo(a, f);
-        }
-      }
-    }
-    return false;
-  },
+  autoplayMove: "commonish",
 
   hasBeenWon: "13 cards on each foundation"
 };

@@ -54,13 +54,13 @@ function nextPileRight(pile) {
 function testLastIsConsecutiveAndSameSuit(card) {
   return function(pile) {
     var last = pile.lastChild;
-    return (last && last.isSameSuit(card) && last.isConsecutiveTo(card));
+    return last && last.suit==card.suit && last.number==card.upNumber;
   };
 }
 function testLastIsConsecutive(card) {
   return function(pile) {
     var last = pile.lastChild;
-    return (last && last.isConsecutiveTo(card));
+    return last && last.number==card.upNumber;
   };
 }
 function testLastIsSuit(suit) {
@@ -93,14 +93,15 @@ function testPileIsEmpty(pile) {
   return !pile.hasChildNodes();
 }
 
-// This is useful when deciding whether a card can be autoplayed to the foundations. e.g.:
-//   if(numCardsOnFoundations(RED,4)==2) ... can autoplay black fives ... (for Klondike)
-// It assumes foundations are built in ascending order within a single colour, which is often true
-function countCardsOnFoundations(colour, number) {
-  var found = 0;
-  for(var i in Game.foundations) {
-    var top = Game.foundations[i].lastChild;
-    if(top && top.number>=number && top.colour==colour) found++;
-  }
-  return found;
+
+
+// these are to be used as mayAutoplay getter functions on cards
+function mayAutoplayAfterTwoOthers() {
+  return this.autoplayAfterA.parentNode.isFoundation && this.autoplayAfterB.parentNode.isFoundation;
+}
+
+function mayAutoplayAfterFourOthers() {
+  var a = this.autoplayAfterA, b = this.autoplayAfterB;
+  return a.parentNode.isFoundation && a.twin.parentNode.isFoundation
+      && b.parentNode.isFoundation && b.twin.parentNode.isFoundation;
 }

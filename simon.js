@@ -13,6 +13,11 @@ var SimonBase = {
   getLowestMovableCard: "descending, in suit",
 
   deal: function(cards) {
+    if(!("kings" in this)) {
+      var cs = this.cards;
+      this.kings = [cs[12], cs[25], cs[38], cs[51]];
+    }
+
     dealToPile(cards, this.piles[0], 0, 8);
     dealToPile(cards, this.piles[1], 0, 8);
     for(var i = 2; i != 10; i++) dealToPile(cards, this.piles[i], 0, 10-i);
@@ -32,10 +37,11 @@ var SimonBase = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i != 10; i++) {
-      var pile = this.piles[i];
-      var n = pile.childNodes.length - 13;
-      if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
+    for(var i = 0; i != 4; i++) {
+      var k = this.kings[i], p = k.parentNode;
+      if(!p.isNormalPile) continue;
+      var n = p.childNodes.length - 13;
+      if(n>=0 && p.childNodes[n]==k && this.canMoveCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
     }
     return false;
   },
@@ -52,14 +58,14 @@ var SimonBase = {
 AllGames["simon-easy"] = {
   __proto__: SimonBase,
   id: "simon-easy",
-  cards: [4, 0, 0, 0]
+  cards: [[SPADE], 4]
 };
 
 
 AllGames["simon-medium"] = {
   __proto__: SimonBase,
   id: "simon-medium",
-  cards: [2, 2, 0, 0]
+  cards: [[SPADE, HEART], 2]
 };
 
 

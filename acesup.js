@@ -4,11 +4,11 @@ AllGames.acesup = {
   __proto__: BaseCardGame,
 
   id: "acesup",
-  acesHigh: true,
   dealFromStock: "to piles",
   canMoveToPile: "isempty",
 
   init: function() {
+    this.cards = makeCardRuns(2, 14); // aces high
     for(var i = 0; i != 4; i++) this.piles[i].num = i;
   },
 
@@ -26,7 +26,7 @@ AllGames.acesup = {
     for(var i = 0; i != 4; i++) {
       var top = this.piles[i].lastChild;
       if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
-      if(top && card.isSameSuit(top) && card.number<top.number) return true;
+      if(top && card.suit==top.suit && card.number<top.number) return true;
     }
     return false;
   },
@@ -47,10 +47,10 @@ AllGames.acesup = {
   // no autoplay for this game
 
   hasBeenWon: function() {
-    if(this.stock.childNodes.length!=0) return false;
+    if(this.stock.hasChildNodes()) return false;
     for(var i = 0; i != 4; i++) {
-      var s = this.piles[i];
-      if(s.childNodes.length!=1 || !s.lastChild.isAce) return false;
+      var c = this.firstChild;
+      if(!c.isAce || c.nextSibling) return false;
     }
     return true;
   }

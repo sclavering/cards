@@ -7,28 +7,49 @@ AllGames.canfield = {
   dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 
+  init: function() {
+    var cs = this.cards = makeDecks(1);
+    var i, j, k;
+    for(i = 0, j = 0; i != 4; i++, j+=13) cs[j].down = cs[j+12], cs[j+12].up = cs[j];
+
+    function mayAutoplay() {
+      var base = Game.foundationStartNumber;
+      return this.number==base || this.number==base+1
+          || (this.autoplayAfterA.parentNode.isFoundation && this.autoplayAfterB.parentNode.isFoundation);
+    };
+
+    const off = [13, -13, -26, -26, 26, 26, 13, -13];
+    for(i = 0, k = 0; i != 4; i++) {
+      for(j = 0; j != 13; j++, k++) {
+        var card = cs[k], offf = j==0 ? 13 : 0;
+        card.autoplayAfterA = cs[k+off[i]+offf-1];
+        card.autoplayAfterB = cs[k+off[i+4]+offf-1];
+        //card.onA = cards[k+off[i]+1];
+        //card.onB = cards[k+off[i+4]+1];
+        card.__defineGetter__("mayAutoplay", mayAutoplay);
+      }
+    }
+  },
+
   deal: function(cards) {
     dealToPile(cards, this.reserve, 12, 1);
     dealToPile(cards, this.foundations[0], 0, 1);
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 1);
     dealToPile(cards, this.stock, cards.length, 0);
-    this.foundationStartNumber = this.foundations[0].firstChild.number;
+
+    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
+    var cs = this.cards;
+    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 
   canMoveToFoundation: function(card, pile) {
-    // only the top card on a pile can be moved to foundations
     if(card.nextSibling) return false;
-    // either the foundation is empty and the card is whatever base number we are building from,
-    // or it is consecutive (wrapping round at 13) and of the same suit
-    var last = pile.lastChild;
-    return (last ? (card.isSameSuit(last) && card.isConsecutiveMod13To(last))
-                 : (card.number==this.foundationStartNumber));
+    return pile.hasChildNodes() ? pile.lastChild.up==card : card.number==this.foundationStartNumber;
   },
 
   canMoveToPile: function(card, pile) {
-    // either the pile must be empty, or the top card must be consecutive (wrapping at king) and opposite colour
     var last = pile.lastChild;
-    return (!last || (!last.isSameColour(card) && last.isConsecutiveMod13To(card)));
+    return !last || (last.colour!=card.colour && last.isConsecutiveMod13To(card));
   },
 
   getHints: function() {
@@ -44,28 +65,7 @@ AllGames.canfield = {
         || searchPiles(this.foundations, testCanMoveToFoundation(card));
   },
 
-  autoplayMove: function() {
-    for(var i in this.sourcePiles) {
-      var last = this.sourcePiles[i].lastChild;
-      if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
-    }
-    return false;
-  },
-  canAutoplayCard: function(card) {
-    // can always move card of the same num as the one which was initially dealt to foundations
-    if(card.number==this.foundationStartNumber) return true;
-    // can move any other card there as long as the two one less in number and of the same colour are already there
-    var found = 0;
-    for(var i = 0; i != 4; i++) {
-      var top = this.foundations[i].lastChild;
-      if(top && top.colour!=card.colour) {
-        var num = card.number-1;
-        if(num<0) num+=13;
-        if(top.isAtLeastCountingFrom(num,this.foundationStartNumber)) found++;
-      }
-    }
-    return (found==2);
-  },
+  autoplayMove: "commonish",
 
   hasBeenWon: "13 cards on each foundation",
 

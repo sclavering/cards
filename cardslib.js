@@ -1,23 +1,22 @@
 document.window = window;
 
-// constants for colours and suits
-const RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
-// these are used in setting the class attribute of cards.
-const CLUBSTR = "C", SPADESTR = "S", HEARTSTR = "H", DIAMONDSTR = "D";
+// these are defined as getters so they're not enumerable (so for(... in ...) loops ignore them)
+Array.prototype.__defineGetter__("flattenedOnce", function() { return this.concat.apply([], this); });
+Array.prototype.__defineGetter__("copy", function() { return this.slice(0); });
 
+// constants for colours and suits
+const RED = 1, BLACK = 2;
+const SPADE = 1, HEART = 2, DIAMOND = 3, CLUB = 4;
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
-
 var gStrings = []; // the contents of the stringbundle
-
 
 var Game = null;  // the current games
 var GameController = null;
 
-var AllGames = []; // aaa
+var AllGames = [];
 var Games = [];   // all the games, indexed by id
-
 
 var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 
@@ -51,7 +50,6 @@ var gGameStackLeft = 0;
 
 var gFloatingPile = null;
 var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
-
 
 
 function init() {
@@ -131,7 +129,7 @@ function init() {
 
   for(game in Games) {
     var gamee = Games[game];
-    if(typeof gamee == "boolean") Games[game] = AllGames[game];
+    if(gamee===true) Games[game] = AllGames[game];
     else Games[game] = new DifficultyLevelsController(game, gamee.ids, gamee.names);
   }
 
@@ -153,11 +151,9 @@ window.addEventListener("load", init, false);
 
 
 
-
-
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
-  cards = cards.slice(0); // get a copy of the array
+  cards = cards.copy;
 
   // shuffle several times, because Math.random() appears to be rather bad.
   for(var i = 0; i != 5; i++) {
@@ -179,53 +175,86 @@ function shuffle(cards) {
   return cards;
 }
 
-function getDecks(num) {
-  return getCardSuits(num, num, num, num);
+
+function makeDecks(num) {
+  return makeCardRuns(1, 13, null, num);
 }
 
-function getSuits(arr) {
-  return getCardSuits(arr[0], arr[1], arr[2], arr[3]);
+
+function makeCardSuits(suits, repeat) {
+  return makeCardRuns(1, 13, suits, repeat);
 }
 
-function getCardSuits(numSpades, numHearts, numDiamonds, numClubs) {
-  var i, cards = [];
-  for(i = 0; i != numSpades;   i++) addSuitSet(cards, BLACK, SPADE, SPADESTR);
-  for(i = 0; i != numHearts;   i++) addSuitSet(cards, RED, HEART, HEARTSTR);
-  for(i = 0; i != numDiamonds; i++) addSuitSet(cards, RED, DIAMOND, DIAMONDSTR);
-  for(i = 0; i != numClubs;    i++) addSuitSet(cards, BLACK, CLUB, CLUBSTR);
-  return cards;
+
+function makeCardRuns(start, finish, suits, repeat) {
+  finish++; // so we make a run [start..finish], not [start..finish)
+  var nums = new Array(finish - start);
+  for(var i = 0; i != nums.length; i++) nums[i] = start+i;
+  return makeCards(nums, suits, repeat);
 }
 
-function addSuitSet(cards, colour, suit, suitstr) {
-  for(var i = 1; i != 14; i++) cards.push(createCard(colour, suit, suitstr, i));
+
+function makeCards(numbers, suits, repeat) {
+  if(!suits) suits = [SPADE, HEART, DIAMOND, CLUB];
+  if(!repeat) repeat = 1;
+  var cards = [], cs, numNums = numbers.length, numSuits = suits.length;
+  // make cards and init |up| and |down| fields
+  for(var r = 0; r != repeat; r++) {
+    for(var s = 0; s != numSuits; s++) {
+      cards.push(cs = new Array(numNums));
+      for(var i = 0; i != numNums; i++) {
+        cs[i] = makeCard(numbers[i], suits[s]);
+        if(i != 0) cs[i-1].up = cs[i], cs[i].down = cs[i-1];
+      }
+    }
+  }
+  // init |twin| fields
+  if(repeat!=1) {
+    const numSets = cards.length;
+    for(s = 0; s != numSets; s++) {
+      var set = cards[s], twins = cards[(s+numSuits) % numSets];
+      for(i = 0; i != numNums; i++) set[i].twin = twins[i];
+    }
+  }
+  return cards.flattenedOnce;
 }
 
-function createCard(colour, suit, suitstr, number) {
+
+// pass number==14 for a "high" Ace
+function makeCard(number, suit) {
   var c = document.createElement("image");
   for(var m in cardMethods) c[m] = cardMethods[m]; // add standard methods
-  c.number = (number==1 && Game.acesHigh) ? 14 : number; // Ace==14 when aces are high
-  c.realNumber = number; // sometimes you don't want Ace==14
-  c.colour = colour;
-  c.altcolour = colour==RED ? BLACK : RED;
+  c.number = number;
+  c.upNumber = number+1; // card.number==other.number+1 used to be very common
+  c.realNumber = number==14 ? 1 : number;
+  c.colour = [,BLACK, RED, RED, BLACK][suit];
+  c.altcolour = c.colour==RED ? BLACK : RED;
   c.suit = suit;
-  c.suitstr = suitstr;
-  c.isAce = number==1;
+  c.suitstr = [,"S", "H", "D", "C"][suit];
+  c.isAce = realNumber==1;
   c.isQueen = number==12;
   c.isKing = number==13;
-  c.isCard = true;
-  c.isPile = false;
   c.setFaceDown(); // sets faceUp, faceDown and className
   return c;
 }
 
+
 var cardMethods = {
+  isCard: true,
+  isPile: false,
+
+  // pointers to next card up and down in the same suit
+  // for Mod3 3C.up==6C etc.
+  up: null,
+  down: null,
+
+  // null, or a pointer to another card of the same type with the pointer chains forming a loop
+  twin: null,
+
+  // often overridden with a getter function
+  mayAutoplay: true,
+
   toString: function() { return this.number+this.suitstr; },
-
-  isConsecutiveTo: function(card) { return (this.number==card.number+1); },
-
-  isSameSuit: function(card) { return this.suit==card.suit; },
-
-  isSameColour: function(card) { return this.colour==card.colour; },
 
   differsByOneFrom: function(card) {
     var diff = this.number-card.number;
@@ -263,10 +292,6 @@ var cardMethods = {
   }
 };
 
-// precompute cosines for cardMethods.turnFaceUp
-var cardTurnFaceUpCosines = new Array(7);
-for(var i = 0; i != 7; i++) cardTurnFaceUpCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
-
 
 
 
@@ -277,38 +302,78 @@ function initPileFromId(id) {
   return initPile(elt);
 }
 
+
 function initPile(elt) {
-  elt.isCard = false;
-  elt.isPile = true;
-  elt.isFoundation = false;
-  elt.isCell = false;
-  elt.isReserve = false;
-  elt.isStock = false;
-  elt.isWaste = false;
-  elt.isNormalPile = false;
-
   elt.offset = 0;
-
-  // for the animated move pile and the drag pile |source|
-  // is set to the pile the cards originally came from.
+  // for the floating pile |source| is set to the pile the cards originally came from.
   elt.source = elt;
 
-  if(elt.className=="fan-down") {
-    elt.getNextCardLeft = function() { return 0; };
+  // copy methods for specific pile type
+  var ms = elt.className in pileProperties ? pileProperties[elt.className] : basicPileProperties;
+  for(var m in ms) elt[m] = ms[m];
 
-    elt.getNextCardTop = function() {
+  return elt;
+}
+
+
+// all piles get these
+var basicPileProperties = {
+  isCard: false,
+  isPile: true,
+  // one of these will be set to true elsewhere
+  isFoundation: false,
+  isCell: false,
+  isReserve: false,
+  isStock: false,
+  isWaste: false,
+  isNormalPile: false,
+
+  getNextCardLeft: function() { return 0; },
+
+  getNextCardTop: function() { return 0; },
+
+  addCard: function(card) {
+    this.appendChild(card);
+    card.top = card.left = card._top = card._left = 0;
+  },
+
+  fixLayout: function() {},
+
+  // transfers the card and all those that follow it
+  addCards: function(first) {
+    var next, card = first, source = first.parentNode.source;
+    if(!this.offset) this.offset = source.offset;
+    while(card) {
+      next = card.nextSibling;
+      this.addCard(card);
+      card = next;
+    }
+    // xxx this no longer does what is wanted (probably since introduction of single floating pile)
+    if(this.id) {
+      this.fixLayout();
+      if(source.id) source.fixLayout();
+    }
+  }
+};
+
+
+var pileProperties = {
+  "fan-down": {
+    __proto__: basicPileProperties,
+
+    getNextCardTop: function() {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild._top + (this.offset || gVFanOffset);
-    };
+    },
 
-    elt.addCard = function(card) {
+    addCard: function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       card.top = card._top = prev ? prev._top + (this.offset || gVFanOffset) : 0;
       card.left = card._left = 0;
-    };
+    },
 
-    elt.fixLayout = function() {
+    fixLayout: function() {
       if(!this.hasChildNodes()) {
         this.offset = 0;
         return;
@@ -327,20 +392,23 @@ function initPile(elt) {
         top += offset;
         card = card.nextSibling;
       }
-    };
+    }
+  },
 
-  } else if(elt.className=="slide") {
-    elt.getNextCardLeft = function() {
+  "slide": {
+    __proto__: basicPileProperties,
+
+    getNextCardLeft: function() {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
-    };
+    },
 
-    elt.getNextCardTop = function() {
+    getNextCardTop: function() {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
-    };
+    },
 
-    elt.addCard = function(card) {
+    addCard: function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       if(!prev) {
@@ -350,53 +418,26 @@ function initPile(elt) {
       var offset = this.childNodes.length<6 ? gSlideOffset : 0;
       card.top = card._top = prev._top + offset
       card.left = card._left = prev._left + offset;
-    };
+    }
+  },
 
-    elt.fixLayout = function() {};
+  "fan-right": {
+    __proto__: basicPileProperties,
 
-  } else if(elt.className=="fan-right") {
-    elt.getNextCardLeft = function() {
+    getNextCardLeft: function() {
       return this.hasChildNodes() ? this.lastChild._left + gHFanOffset : 0;
-    };
+    },
 
-    elt.getNextCardTop = function() { return 0; };
-
-    elt.addCard = function(card) {
+    addCard: function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       card.left = card._left = prev ? prev._left + gHFanOffset : 0;
       card.top = card._top = 0;
-    };
-
-    elt.fixLayout = function() { this.offset = 0; };
-
-  } else {
-    elt.getNextCardLeft = function() { return 0; };
-    elt.getNextCardTop = function() { return 0; };
-    elt.addCard = function(card) {
-      this.appendChild(card);
-      card.top = card.left = card._top = card._left = 0;
-    };
-    elt.fixLayout = function() { this.offset = 0; };
+    }
   }
+};
 
-  // transfers the card and all those that follow it
-  elt.addCards = function(first) {
-    var next, card = first, source = first.parentNode.source;
-    if(!this.offset) this.offset = source.offset;
-    while(card) {
-      next = card.nextSibling;
-      this.addCard(card);
-      card = next;
-    }
-    if(this.id) {
-      this.fixLayout();
-      if(source.id) source.fixLayout();
-    }
-  };
 
-  return elt;
-}
 
 
 
@@ -427,7 +468,6 @@ function createFloatingPile() {
 }
 
 
-
 function createHighlighter() {
   var box = document.createElement("box");
   box.className = "card-highlight";
@@ -451,11 +491,6 @@ function createHighlighter() {
   box.unhighlight();
   return box;
 }
-
-
-
-
-
 
 
 

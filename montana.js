@@ -4,27 +4,24 @@ Games.montana = {
 };
 
 
-var Montana =
-AllGames.montana = {
+var Montana = {
   __proto__: BaseCardGame,
 
-  id: "montana",
   layout: "montana",
 
   redeals: 2,
   redealsRemaining: 2,
 
   init: function() {
-    // get cards and replace Aces with nulls (so spaces will appear randomly)
-    var cards = this.cards = getDecks(1);
-    cards[0] = cards[13] = cards[26] = cards[39] = null;
+    // the four nulls get shuffled with the cards, producing spaces in random places in the lay out
+    var cs = this.cards = makeCardRuns(2, 13);
+    cs[51] = cs[50] = cs[49] = cs[48] = null;
+
+    this.twos = [cs[0], cs[12], cs[24], cs[36]];
 
     var ps = this.piles;
     // label the piles for use by canMoveTo
-    for(var i = 0; i != 52; i++) {
-      ps[i].row = Math.floor(i / 13);
-      ps[i].col = i % 13;
-    }
+    for(var i = 0; i != 52; i++) ps[i].col = i % 13;
     this.canMoveToPile = this.canMoveTo;
 
     var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
@@ -33,6 +30,8 @@ AllGames.montana = {
     for(i = 0; i != ps.length - 1; i++) ps[i].rightp = ps[i+1], ps[i+1].leftp = ps[i];
     ps[0].leftp = ps[13].leftp = ps[26].leftp = ps[39].leftp = null;
     ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
+
+    this.rowStarts = [ps[0], ps[13], ps[26], ps[39]];
   },
 
   deal: function(cards) {
@@ -40,28 +39,34 @@ AllGames.montana = {
   },
 
   canMoveTo: function(card, pile) {
-    if(pile.hasChildNodes()) return false;
-    if(!pile.leftp) return card.number==2;
-    var last = pile.leftp.lastChild;
-    return (last && card.isSameSuit(last) && card.isConsecutiveTo(last));
+    var left = pile.leftp;
+    return !pile.hasChildNodes() && (left ? left.hasChildNodes() && left.lastChild.up==card : card.number==2);
   },
 
   getHints: function() {
     for(var i = 0; i != 52; i++) {
-      var card = this.piles[i].firstChild;
-      if(!card) continue;
-
-      var piles = filter(this.piles, testCanMoveToPile(card));
-      if(piles.length) this.addHints(card, piles);
+      var pile = this.piles[i];
+      if(pile.hasChildNodes()) continue;
+      if(pile.leftp) {
+        var card = pile.leftp.lastChild;
+        if(card && card.up) this.addHint(card.up, pile);
+      } else {
+        for(var j = 0; j != 4; j++) {
+          card = this.twos[j];
+          if(card.parentNode.leftp) this.addHint(card, pile);
+        }
+      }
     }
   },
 
   getBestMoveForCard: function(card) {
-    return searchPiles(this.piles, testCanMoveToPile(card));
+    if(!card.down) return searchPiles(this.rowStarts, testPileIsEmpty);
+    var pile = card.down.parentNode.rightp;
+    return pile && !pile.hasChildNodes() ? pile : null;
   },
 
   redeal: function() {
-    this.doAction(new MontanaRedealAction(false));
+    this.doAction(new MontanaRedealAction(this.isHardGame));
   },
 
   canRedeal: function() {
@@ -70,12 +75,11 @@ AllGames.montana = {
 
   hasBeenWon: function() {
     for(var i = 0; i != 4; i++) {
-      var r = this.rows[i];
-      if(!r[0].hasChildNodes() || r[12].hasChildNodes()) return false;
-      var suit = r[0].lastChild.suit;
-      for(var j = 1; j != 12; j++) {
-        var c = r[j].lastChild;
-        if(!c || c.suit!=suit || c.number!=j+2) return false;
+      var pile = this.rowStarts[i], card = pile.lastChild, prv;
+      if(!card || card.down) return false;
+      while(pile.rightp) {
+        pile = pile.rightp; prv = card; card = pile.lastChild;
+        if(prv.up!=card) return false; // this works fine even when prv is a King
       }
     }
     return true;
@@ -83,14 +87,17 @@ AllGames.montana = {
 };
 
 
+AllGames.montana = {
+  __proto__: Montana,
+  id: "montana",
+  isHardGame: false
+};
+
+
 AllGames["montana-hard"] = {
   __proto__: Montana,
-
   id: "montana-hard",
-
-  redeal: function() {
-    this.doAction(new MontanaRedealAction(true));
-  }
+  isHardGame: true
 };
 
 
@@ -125,7 +132,7 @@ MontanaRedealAction.prototype = {
 
     // shuffle
     cards = shuffle(cards);
-    this.shuffled = cards.slice(0); // make copy for redo()
+    this.shuffled = cards.copy; // for redo()
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = hardGame ? 0 : 1;
@@ -139,7 +146,7 @@ MontanaRedealAction.prototype = {
     if(!card) return (pile.col==12);
     if(pile.col==0) return (card.number==2);
     var prvcard = prv.lastChild;
-    return (card.isSameSuit(prvcard) && card.isConsecutiveTo(prvcard));
+    return card.suit==prvcard.suit && card.number==prvcard.upNumber;
   },
 
   undo: function() {
@@ -157,7 +164,7 @@ MontanaRedealAction.prototype = {
 
   redo: function() {
     Game.redealsRemaining--;
-    var map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
+    var map = this.map, cards = this.shuffled.copy, rows = Game.rows;
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = this.isHardGame ? 0 : 1;

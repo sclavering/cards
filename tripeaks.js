@@ -8,8 +8,7 @@ AllGames.tripeaks = {
   dealFromStock: "to waste",
 
   init: function() {
-    // The numbers of the piles that should be the leftChild of piles 0 to 17.
-    // (The rightChild's are all 1 greater than the leftChild's.)
+    // The numbers of the piles that should be the leftChild of piles 0-17, rightChilds are all 1 greater.
     // Piles 18-27 have no children.
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
 
@@ -35,13 +34,12 @@ AllGames.tripeaks = {
     for(i = 0; i != ps.length; i++) {
       var s = ps[i];
       s.isPeak = false;
-      s.leftFree getter= function() { return !this.leftChild || !this.leftChild.hasChildNodes(); };
-      s.rightFree getter= function() { return !this.rightChild || !this.rightChild.hasChildNodes(); };
-      s.free getter= function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
+      s.__defineGetter__("leftFree", function() { return !this.leftChild || !this.leftChild.hasChildNodes(); });
+      s.__defineGetter__("rightFree", function() { return !this.rightChild || !this.rightChild.hasChildNodes(); });
+      s.__defineGetter__("free", function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); });
     }
     ps[0].isPeak = ps[1].isPeak = ps[2].isPeak = true;
 
-    // convenience
     this.waste.free = true;
   },
 

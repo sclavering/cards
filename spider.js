@@ -15,11 +15,19 @@ var SpiderBase = {
   canMoveToPile: "descending",
 
   getBestMoveForCard: function(card) {
-    var piles = getPilesRound(card.parentNode);
-    var nonempty = filter(piles, testCanMoveToNonEmptyPile(card));
-    return searchPiles(nonempty, testLastIsSuit(card.suit))
-        || (nonempty.length && nonempty[0])
-        || searchPiles(piles, testPileIsEmpty);
+    const ps = getPilesRound(card.parentNode), num = ps.length;
+    var maybe = null, empty = null;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i], last = p.lastChild;
+      if(!last) {
+        if(!empty) empty = p;
+        continue;
+      }
+      if(!this.canMoveToPile(card, p)) continue;
+      if(card.suit==p.lastChild.suit) return p;
+      if(!maybe) maybe = p;
+    }
+    return maybe || empty;
   },
 
   autoplayMove: function() {
@@ -46,7 +54,7 @@ var SpiderLayoutBase = {
   layout: "spider",
 
   moveTo: function(card, target) {
-    if(target.isFoundation) target = searchPiles(this.foundations, testPileIsEmpty);
+    if(target.isFoundation) target = this.firstEmptyFoundation;
     BaseCardGame.moveTo.call(this,card,target);
     return true;
   },
@@ -67,7 +75,14 @@ var Spider = {
   canMoveToFoundation: "13 cards",
   getLowestMovableCard: "descending, in suit",
 
+  kings: null,
+
   deal: function(cards) {
+    if(!this.kings) {
+      var cs = this.cards;
+      this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
+    }
+
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
     for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
     dealToPile(cards, this.stock, 50, 0);
@@ -75,7 +90,31 @@ var Spider = {
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+  },
+
+  autoplayMove: function() {
+    for(var i = 0; i != 8; i++) {
+      var k = this.kings[i], p = k.parentNode;
+      if(!p.isNormalPile) continue;
+      var n = p.childNodes.length - 13;
+      if(n>=0 && p.childNodes[n]==k && this.canMoveCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
+    }
+    return false;
   }
+};
+
+
+AllGames["spider-easy"] = {
+  __proto__: Spider,
+  id: "spider-easy",
+  cards: [[SPADE], 8]
+};
+
+
+AllGames["spider-medium"] = {
+  __proto__: Spider,
+  id: "spider-medium",
+  cards: [[SPADE, HEART], 4]
 };
 
 
@@ -86,25 +125,11 @@ AllGames.spider = {
 };
 
 
-AllGames["spider-easy"] = {
-  __proto__: Spider,
-  id: "spider-easy",
-  cards: [8, 0, 0, 0]
-};
-
-
-AllGames["spider-medium"] = {
-  __proto__: Spider,
-  id: "spider-medium",
-  cards: [4, 4, 0, 0]
-};
-
-
 AllGames.blackwidow = {
   __proto__: SpiderLayoutBase,
 
   id: "blackwidow",
-  cards: 2, // uses 2 decks
+  cards: 2,
   canMoveCard: "descending, not from foundation",
   canMoveToFoundation: "king->ace flush",
 
@@ -121,10 +146,10 @@ AllGames.blackwidow = {
         var prv = card.previousSibling;
         if(!prv || !prv.faceUp) {
           this.addHintsFor(card);
-        } else if(!prv.isConsecutiveTo(card)) {
+        } else if(prv.number!=card.upNumber) {
           this.addHintsFor(card);
           break;
-        } else if(!prv.isSameSuit(card)) {
+        } else if(prv.suit!=card.suit) {
           this.addHintsFor(card);
         } // otherwise it's from the same suit, so don't suggest moving
         card = prv;
@@ -165,7 +190,6 @@ AllGames.wasp = {
   id: "wasp",
   dealFromStock: "to piles",
   canMoveCard: "not from foundation",
-  canMoveToPile: "descending, in suit",
   canMoveToFoundation: "king->ace flush",
 
   deal: function(cards) {
@@ -174,27 +198,18 @@ AllGames.wasp = {
     dealToPile(cards, this.stock, 3, 0);
   },
 
-  getBestMoveForCard: function(card) {
-    var piles = getPilesRound(card.parentNode);
-    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
-        || searchPiles(piles, testPileIsEmpty);
-  },
+  canMoveToPile: "onto up, any in spaces",
+
+  getBestMoveForCard: "to up or nearest space",
 
   getHints: function() {
     for(var i = 0; i != 7; i++) {
       var pile = this.piles[i];
-      if(pile.hasChildNodes()) this.getHintForPile(pile);
-    }
-  },
-  getHintForPile: function(pile) {
-    for(var i = 0; i != 7; i++) {
-      var p = this.piles[i];
-      if(p==pile) continue;
-      for(var card = p.lastChild; card && card.faceUp; card = card.previousSibling) {
-        if(!this.canMoveTo(card, pile)) continue;
-        this.addHint(card, pile);
-        return;
-      }
+      if(!pile.hasChildNodes()) continue;
+      var last = pile.lastChild, down = last.down;
+      if(!down || down.faceDown) continue;
+      var downp = down.parentNode;
+      if(downp!=pile && downp.isNormalPile) this.addHint(down, pile);
     }
   }
 };

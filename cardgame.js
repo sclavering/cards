@@ -4,14 +4,9 @@ var BaseCardGame = {
   layout: null, // id of a xul element.  if left null this.id will be used instead
   xulElement: null, // the container vbox/hbox for the game (set automatically)
 
-  // Games should create all the cards they need the first time they are run.  if they set this field
-  // to a number then it will be replaced by an array holding the cards for that many decks (by the
-  // initialise() method below).  If they set it to an array of four numbers those nums will be passed
-  // to getCardSuits().  If they need something more complex they should set this in init()
+  // This becomes an array of all the cards a game uses, either explicitly in the game's init(), or
+  // by initialise() if it is a number (of decks to be created) or an array [[suits], repeat]
   cards: 1,
-
-  // boolean flags that games might want to override
-  acesHigh: false,
 
   // works for most games
   get stockCounterStart() {
@@ -70,8 +65,8 @@ var BaseCardGame = {
     this.init(); // game specific stuff
 
     // see comments above
-    if(typeof this.cards == "number") this.cards = getDecks(this.cards);
-    else if(typeof this.cards[0] == "number") this.cards = getSuits(this.cards);
+    if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
+    else if(!("isCard" in this.cards[0])) this.cards = makeCardSuits.apply(null, this.cards);
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function
@@ -173,7 +168,7 @@ var BaseCardGame = {
       do cards = shuffle(cards);
       while(this.shuffleImpossible(cards));
     }
-    this.cardsAsDealt = cards.slice(0);
+    this.cardsAsDealt = cards.copy;
     this.deal(cards);
 
     if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
@@ -187,7 +182,7 @@ var BaseCardGame = {
     this.setScoreTo(0);
     this.clearGame();
     this.redealsRemaining = this.redeals;
-    this.deal(this.cardsAsDealt.slice(0));
+    this.deal(this.cardsAsDealt.copy);
     if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
 
     var done = this.actionsDone;
@@ -286,11 +281,16 @@ var BaseCardGame = {
 
     // asynch. (i.e. animated) actions will trigger autoplay themselves,
     // and autoplay will trigger a UI update if it actually does anything
+    if(!action.synchronous) return;
+    disableUI();
+    setTimeout(animatedActionFinished, 30);
+/*
     if(action.synchronous && !this.autoplay()) {
       if(this.actionsDone.length==1) gCmdUndo.removeAttribute("disabled");
       if(hadRedos) gCmdRedo.setAttribute("disabled","true");
       if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true"); // yuck.
     }
+*/
   },
 
   // Action objects (see actions.js) each implement an undo() method.
@@ -349,7 +349,7 @@ var BaseCardGame = {
     if(card.nextSibling) return false;
     // can move Ace to empty foundation, or other card if it is consecutive and same suit as top card there
     var last = target.lastChild;
-    return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce);
+    return last ? card.suit==last.suit && card.number==last.upNumber : card.isAce;
   },
 
   // xxx maybe this should die now?  it was important before doAction existed
@@ -519,6 +519,15 @@ var BaseCardGame = {
   // call autoplay again on completion.)
   autoplayMove: function() {
     return false;
+  },
+
+
+
+  // === Miscellany =======================================
+  get firstEmptyFoundation() {
+    var fs = this.foundations, len = fs.length;
+    for(var i = 0; i != len; i++) if(!fs[i].hasChildNodes()) return fs[i];
+    return null; // xxx throw an exception instead?
   }
 }
 
@@ -580,7 +589,7 @@ GameController.prototype = {
 
   restartGame: function() {
     // we have to pass a copy of the array, or restoring the old game won't work
-    this.newGame(Game.cardsAsDealt.slice(0));
+    this.newGame(Game.cardsAsDealt.copy);
   },
 
   restorePastGame: function() {

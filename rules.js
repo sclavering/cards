@@ -18,6 +18,7 @@ canMoveCard:
   "last on pile"
 
 canMoveToPile:
+  "onto up, any in spaces"
   "descending"
   "descending mod13"
   "descending, alt colours, kings in spaces"
@@ -50,6 +51,11 @@ getLowestMovableCard:
 hasBeenWon:
   "13 cards on each foundation":
 
+getBestMoveForCard
+  "to up or nearest space"
+
+autoplayMove
+  "commonish"
 */
 
 var Rules = {
@@ -58,7 +64,7 @@ var Rules = {
     function(card) {
       if(card.faceDown) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(!card.isConsecutiveTo(next)) return false;
+        if(card.number!=next.upNumber) return false;
       return true;
     },
 
@@ -66,7 +72,7 @@ var Rules = {
     function(card) {
       if(card.faceDown || card.parentNode.isFoundation) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(!card.isConsecutiveTo(next)) return false;
+        if(card.number!=next.upNumber) return false;
       return true;
     },
 
@@ -75,7 +81,7 @@ var Rules = {
       if(card.faceDown) return false;
       // ensure we have a run in alternating colours
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.isSameColour(next) || !card.isConsecutiveTo(next)) return false;
+        if(card.colour==next.colour || card.number!=next.upNumber) return false;
       return true;
     },
 
@@ -84,7 +90,7 @@ var Rules = {
       if(card.faceDown) return false;
       // ensure we have a running flush from top card on pile to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(!card.isSameSuit(next) || !card.isConsecutiveTo(next)) return false;
+        if(card.suit!=next.suit || card.number!=next.upNumber) return false;
       return true;
     },
 
@@ -92,7 +98,7 @@ var Rules = {
     function(card) {
       if(card.faceDown || card.parentNode.isFoundation) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(!card.isSameSuit(next) || !card.isConsecutiveMod13To(next)) return false;
+        if(card.suit!=next.suit || !card.isConsecutiveMod13To(next)) return false;
       return true;
     },
 
@@ -101,7 +107,7 @@ var Rules = {
       if(card.faceDown || card.parentNode.isFoundation) return false;
       // ensure we have a running flush from top card on pile to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(!card.isSameSuit(next) || !card.isConsecutiveTo(next)) return false;
+        if(card.suit!=next.suit || card.number!=next.upNumber) return false;
       return true;
     },
 
@@ -118,10 +124,15 @@ var Rules = {
 
 
   canMoveToPile: {
+    "onto up, any in spaces":
+    function(card, pile) {
+      return !pile.hasChildNodes() || pile.lastChild==card.up;
+    },
+
     "descending":
     function(card, pile) {
       var last = pile.lastChild;
-      return (!last || (last.faceUp && last.isConsecutiveTo(card)));
+      return !last || (last.faceUp && last.number==card.upNumber);
     },
 
     "descending mod13":
@@ -133,31 +144,31 @@ var Rules = {
     "descending, alt colours, kings in spaces":
     function(card, pile) {
       var last = pile.lastChild;
-      return (last ? last.faceUp && last.isConsecutiveTo(card) && !last.isSameColour(card) : card.isKing);
+      return last ? last.faceUp && last.number==card.upNumber && last.colour!=card.colour : card.isKing;
     },
 
     "descending, in suit, kings in spaces":
     function(card, pile) {
       var last = pile.lastChild;
-      return (last ? last.faceUp && last.isConsecutiveTo(card) && last.isSameSuit(card) : card.isKing);
+      return last ? last.faceUp && last.number==card.upNumber && last.suit==card.suit : card.isKing;
     },
 
     "descending, alt colours":
     function(card, pile) {
       var last = pile.lastChild;
-      return (!last || (last.faceUp && last.isConsecutiveTo(card) && !last.isSameColour(card)));
+      return !last || (last.faceUp && last.number==card.upNumber && last.colour!=card.colour);
     },
 
     "descending, same colour":
     function(card, pile) {
       var last = pile.lastChild;
-      return (!last || (last.faceUp && last.isConsecutiveTo(card) && last.isSameColour(card)));
+      return !last || (last.faceUp && last.number==card.upNumber && last.colour==card.colour);
     },
 
     "descending, in suit":
     function(card, pile) {
       var last = pile.lastChild;
-      return (!last || (last.faceUp && last.isConsecutiveTo(card) && last.isSameSuit(card)));
+      return !last || (last.faceUp && last.number==card.upNumber && last.suit==card.suit);
     },
 
     "isempty":
@@ -173,7 +184,7 @@ var Rules = {
       if(pile && pile.hasChildNodes()) return false; // pile==null for Black Widow
       if(!card.isKing || !card.parentNode.lastChild.isAce) return false;
       var next = card.nextSibling;
-      while(next && card.isSameSuit(next) && card.isConsecutiveTo(next)) card = next, next = next.nextSibling;
+      while(next && card.suit==next.suit && card.number==next.upNumber) card = next, next = next.nextSibling;
       return !next; // all cards should be part of the run
     },
 
@@ -228,7 +239,7 @@ var Rules = {
     function(pile) {
       if(!pile.hasChildNodes()) return null;
       var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.isConsecutiveTo(card) && prv.isSameSuit(card)) {
+      while(prv && prv.faceUp && prv.number==card.upNumber && prv.suit==card.suit) {
         card = prv; prv = card.previousSibling;
       }
       return card;
@@ -238,7 +249,7 @@ var Rules = {
     function(pile) {
       if(!pile.hasChildNodes()) return null;
       var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.isConsecutiveMod13To(card) && prv.isSameSuit(card)) {
+      while(prv && prv.faceUp && prv.isConsecutiveMod13To(card) && prv.suit==card.suit) {
         card = prv; prv = card.previousSibling;
       }
       return card;
@@ -248,7 +259,7 @@ var Rules = {
     function(pile) {
       if(!pile.hasChildNodes()) return null;
       var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.isConsecutiveTo(card) && prv.colour!=card.colour) {
+      while(prv && prv.faceUp && prv.number==card.upNumber && prv.colour!=card.colour) {
         card = prv; prv = card.previousSibling;
       }
       return card;
@@ -270,6 +281,43 @@ var Rules = {
       var fs = this.foundations;
       for(var i = 0; i != fs.length; i++) if(fs[i].childNodes.length!=13) return false;
       return true;
+    }
+  },
+
+
+  getBestMoveForCard: {
+    "to up or nearest space":
+    function(card) {
+      var up = card.up;
+      if(up && up.faceUp && up.parentNode.isNormalPile && !up.nextSibling) return up.parentNode;
+      return searchPiles(getPilesRound(card.parentNode), testPileIsEmpty);
+    }
+  },
+
+
+  autoplayMove: {
+    // To use this games must have 4 foundations, built one card at a time, starting with those cards
+    // in foundationBases[], and continuing with the unique |up| member of each card.
+    // Cards' mayAutoplay field can be overridden with a getter function if needed.
+    // xxx the .faceUp checks are redundant with the !.nextSibling ones at present
+    "commonish":
+    function() {
+      var triedToFillEmpty = false;
+      const fs = this.foundations, bs = this.foundationBases;
+      for(var i = 0; i != 4; i++) {
+        var f = fs[i];
+        if(f.hasChildNodes()) {
+          var c = f.lastChild.up;
+          if(c && c.faceUp && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+        } else if(!triedToFillEmpty) {
+          triedToFillEmpty = true;
+          for(var j = 0; j != 4; j++) {
+            var b = bs[j];
+            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling) return this.moveTo(b, f);
+          }
+        }
+      }
+      return false;
     }
   }
 }

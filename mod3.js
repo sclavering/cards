@@ -14,37 +14,34 @@ AllGames.mod3 = {
   canMoveToPile: "isempty",
 
   init: function() {
-    // get 2 decks less the aces
-    var cs = this.cards = getDecks(1).concat(getDecks(1));
-    cs.splice(91,1); cs.splice(78,1); cs.splice(65,1); cs.splice(52,1);
-    cs.splice(39,1); cs.splice(26,1); cs.splice(13,1); cs.splice(0, 1);
+    var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
 
-    var i, j, k, n;
-    for(i = 0; i != 48; i++) cs[i].twin = cs[i+48], cs[i+48].twin = cs[i];
-    for(i = 0; i != 93; i++) cs[i].up = cs[i+3], cs[i+3].down = cs[i];
+    function inPlace() { return this.parentNode.isFoundation && !!this.previousSibling; };
+    function inPlace2() { return this.parentNode.row == this.row; }
+    function baseInPlace() { return this.hasChildNodes() && this.firstChild.number==this.baseNumber; }
 
-    var bs = this.bases = [[],[],[]];
+    this.bases = new Array(3);
 
-    for(i = 0; i != 96; i+=12) {
-      cs[i].down = cs[i+1].down = cs[i+2].down = cs[i+9].up = cs[i+10].up = cs[i+11].up = null;
-      for(j = 0; j != 3; j++) {
-        cs[i+j].inPlace getter= function() { return this.parentNode.row==this.row };
-        bs[j].push(cs[i+j]);
+    for(var i = 0; i != 3; i++) {
+      var cs = css[i] = makeCards(css[i], null, 2);
+
+      for(var j = 0; j != 16; j++) {
+        var c = cs[j], c2 = cs[j+16];
+        c.row = c2.row = i;
+        c.__defineGetter__("inPlace", inPlace);
+        c2.__defineGetter__("inPlace", inPlace);
       }
-      for(j = 3; j != 12; j++)
-        cs[i+j].inPlace getter= function() { var prv = this.previousSibling; return prv && (prv==this.down || prv==this.twin.down); };
+
+      var bs = this.bases[i] = [cs[0], cs[4], cs[8], cs[12], cs[16], cs[20], cs[24], cs[28]];
+      for(j = 0; j != 8; j++) bs[j].__defineGetter__("inPlace", inPlace2);
     }
 
-    // the row this card should end up in
-    for(i = 0; i != 96; i++) cs[i].row = i % 3;
+    this.cards = css.flattenedOnce;
 
     var fs = this.foundations, ps = this.piles;
-    for(i = 0; i != 24; i++) fs[i].baseCardInPlace = function() {
-      return (this.hasChildNodes() && this.firstChild.number==this.baseNumber);
-    };
-
-    for(i = 0; i != 8; i++) ps[i].baseCardInPlace = function() { return false; };
-    this.stock.baseCardInPlace = function() { return false; }
+    for(i = 0; i != 24; i++) fs[i].__defineGetter__("baseCardInPlace", baseInPlace);
+    for(i = 0; i != 8; i++) ps[i].baseCardInPlace = false;
+    this.stock.baseCardInPlace = false;
 
     var rs = this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16), ps];
     for(i = 0; i != 4; i++)
@@ -94,20 +91,21 @@ AllGames.mod3 = {
         // hints are useful if:
         // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
         // - |target| is nonempty, and |card| is the only card in |source|
-        if(source.isFoundation && (target.hasChildNodes()
-            ? card.previousSibling : source.parentNode==target.parentNode)) continue;
+        if(source.isFoundation && (target.hasChildNodes() ? card.previousSibling : source.row==target.row)) continue;
         this.addHint(card, target);
       }
     }
   },
 
   getBestMoveForCard: function(card) {
+    if(card.down) {
+      var d1 = card.down, d2 = card.twin.down;
+      if(d1.inPlace && !d1.nextSibling) return d1.parentNode;
+      if(d2.inPlace && !d2.nextSibling) return d2.parentNode;
+    }
+
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     if(!card.down) return searchPiles(this.rows[card.row], testPileIsEmpty) || searchPiles(piles, testPileIsEmpty);
-
-    var d1 = card.down, d2 = card.twin.down;
-    if(d1.inPlace && !d1.nextSibling) return d1.parentNode;
-    if(d2.inPlace && !d2.nextSibling) return d2.parentNode;
     return searchPiles(piles, testPileIsEmpty);
   },
 
@@ -161,7 +159,7 @@ AllGames.mod3 = {
     var notInSource = card.parentNode!=source;
 
     if(source.isFoundation) {
-      if(notInSource ? this.canMoveTo(card,source) : source.baseCardInPlace()) score -= MOD3_CARD_IN_PLACE;
+      if(notInSource ? this.canMoveTo(card,source) : source.baseCardInPlace) score -= MOD3_CARD_IN_PLACE;
     } else {
       if(notInSource ? !source.hasChildNodes() : !card.previousSibling) score += MOD3_EMPTY_PILE;
     }

@@ -83,11 +83,8 @@ Games["regiment"] = {
   },
 
   getBestMoveForCard: function(card) {
-    for(var i = 0; i < 16; i++) {
-      var stack = this.stacks[i];
-      if(stack!=card.parentNode && this.canMoveTo(card,stack)) return stack;
-    }
-    return null;
+    return searchPiles(this.stacks, testCanMoveToNonEmptyPile(card))
+        || searchPiles(this.stacks, testCanMoveToEmptyPile(card));
   },
 
   autoplayMove: function() {

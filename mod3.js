@@ -87,9 +87,7 @@ Games["mod3"] = {
 
   getBestMoveForCard: function(card) {
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    // it's inefficient to look at all foundations, but as this only happens when
-    // the user middle clicks a card speed is probably not all that important
-    return searchPiles(this.foundations, testCanMoveToFoundation(card))
+    return searchPiles(this.rows[card.row], testCanMoveToFoundation(card))
         || searchPiles(piles, testPileIsEmpty);
   },
 

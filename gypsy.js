@@ -10,7 +10,7 @@ Games["gypsy"] = {
 
   deal: function() {
     // 1==easy, 2==hard
-    var cards = this.difficultyLevel==2 ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
+    var cards = this.difficultyLevel==2 ? getShuffledDecks(2) : getShuffledSuits(4,4,0,0);
     for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],2,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
@@ -28,7 +28,7 @@ Games["gypsy"] = {
 
   sendToFoundations: function(card) {
     if(!this.canMoveCard(card)) return false;
-    if(card.isAce()) return this.sendAceToFoundations(card);
+    if(card.isAce) return this.sendAceToFoundations(card);
     for(var i = 0; i < this.foundations.length; i++)
       if(this.attemptMove(card,this.foundations[i]))
         return true;
@@ -60,8 +60,8 @@ Games["gypsy"] = {
   },
   // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
-    if(card.isAce() || card.number()==2) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 4);
+    if(card.isAce || card.number==2) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 4);
   },
 
   hasBeenWon: function() {

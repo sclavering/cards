@@ -11,10 +11,10 @@ Games["canfield"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1)
+    var cards = getShuffledDecks(1)
     this.dealToStack(cards,this.reserve,12,1);
     this.dealToStack(cards,this.foundations[0],0,1);
-    this.foundationStartNumber = this.foundations[0].firstChild.number()
+    this.foundationStartNumber = this.foundations[0].firstChild.number;
     for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
@@ -26,13 +26,13 @@ Games["canfield"] = {
     // or it is consecutive (wrapping round at 13) and of the same suit
     var last = stack.lastChild;
     return (last ? (card.isSameSuit(last) && card.isConsecutiveMod13To(last))
-                 : (card.number()==this.foundationStartNumber));
+                 : (card.number==this.foundationStartNumber));
   },
 
   canMoveToPile: function(card, stack) {
     // either the pile must be empty, or the top card must be consecutive (wrapping at king) and opposite colour
     var last = stack.lastChild;
-    return (!last || (last.notSameColour(card) && last.isConsecutiveMod13To(card)));
+    return (!last || (!last.isSameColour(card) && last.isConsecutiveMod13To(card)));
   },
 
   getHints: function() {
@@ -59,13 +59,13 @@ Games["canfield"] = {
   },
   canAutoSendCardToFoundations: function(card) {
     // can always move card of the same num as the one which was initially dealt to foundations
-    if(card.number()==this.foundationStartNumber) return true;
+    if(card.number==this.foundationStartNumber) return true;
     // can move any other card there as long as the two one less in number and of the same colour are already there
     var found = 0;
     for(var i = 0; i < 4; i++) {
       var top = this.foundations[i].lastChild;
-      if(top && top.colour()!=card.colour()) {
-        var num = card.number()-1;
+      if(top && top.colour!=card.colour) {
+        var num = card.number-1;
         if(num<0) num+=13;
         if(top.isAtLeastCountingFrom(num,this.foundationStartNumber)) found++;
       }

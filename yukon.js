@@ -10,12 +10,12 @@ var YukonBase = {
       var stack = this.stacks[i];
       if(stack==card.parentNode) continue;
       var current = stack.lastChild;
-      while(current && current.faceUp()) {
-        if(card.isConsecutiveTo(current) && card.notSameColour(current)) {
+      while(current && current.faceUp) {
+        if(card.isConsecutiveTo(current) && !card.isSameColour(current)) {
           // |current| could be moved onto |card|.  test if it's not already
           // on a card consecutive and of opposite colour
           var prev = current.previousSibling;
-          if(!prev || !prev.isConsecutiveTo(current) || !prev.notSameColour(current))
+          if(!prev || !prev.isConsecutiveTo(current) || prev.isSameColour(current))
             this.addHint(current,card.parentNode);
         }
         current = current.previousSibling;
@@ -61,7 +61,7 @@ Games["yukon"] = {
   id: "yukon",
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     this.dealToStack(cards,this.stacks[0],0,1);
     for(var i = 1; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,5);
   },
@@ -76,8 +76,8 @@ Games["yukon"] = {
 
   // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
-    if(card.isAce()) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
+    if(card.isAce) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 2);
   }
 };
 
@@ -90,7 +90,7 @@ Games["sanibel"] = {
   rule_dealFromStock: "to-waste",
 
   deal: function() {
-    var cards = this.shuffleDecks(2);
+    var cards = getShuffledDecks(2);
     this.dealToStack(cards,this.stock,3,0);
     this.dealToStack(cards,this.waste,0,1);
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],3,7);
@@ -110,7 +110,7 @@ Games["sanibel"] = {
   },
 
   canAutoplayCard: function(card) {
-    if(card.isAce()) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 4);
+    if(card.isAce) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 4);
   }
 };

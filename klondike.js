@@ -11,7 +11,7 @@ Games["klondike"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
@@ -22,7 +22,7 @@ Games["klondike"] = {
   },
   getHintsFor: function(card) {
     if(!card) return;
-    if(card.isKing()) {
+    if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
       if(card.previousSibling || card.parentNode.isWaste) {
         var pile = searchPiles(this.stacks, testPileIsEmpty);
@@ -51,8 +51,8 @@ Games["klondike"] = {
     return false;
   },
   canAutoplayCard: function(card) {
-    if(card.isAce() || card.number()==2) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
+    if(card.isAce || card.number==2) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 2);
   },
 
   hasBeenWon: function() {

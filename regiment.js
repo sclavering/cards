@@ -18,7 +18,7 @@ Games["regiment"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(2);
+    var cards = getShuffledDecks(2);
     var i;
     for(i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
     for(i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
@@ -31,19 +31,19 @@ Games["regiment"] = {
       // can move an ace provided we haven't already got an Ace foundation for this suit,
       // or can build the foundation up in suit
       return (last ? (card.isConsecutiveTo(last) && card.isSameSuit(last))
-                   : (card.isAce() && this.canMakeFoundation(true,card.suit())) );
+                   : (card.isAce && this.canMakeFoundation(true,card.suit)) );
     } else {
       // can start a king foundation for the suit if we don't have one already,
       // or can build the foundation down in suit
       return (last ? (last.isConsecutiveTo(card) && card.isSameSuit(last))
-                   : (card.isKing() && this.canMakeFoundation(false,card.suit())) );
+                   : (card.isKing && this.canMakeFoundation(false,card.suit)) );
     }
   },
   canMakeFoundation: function(isAceFoundation, suit) {
     var fs = isAceFoundation ? this.aceFoundations : this.kingFoundations;
     for(var i = 0; i != 4; i++) {
       var last = fs[i].lastChild;
-      if(last && last.suit()==suit) return false;
+      if(last && last.suit==suit) return false;
     }
     return true;
   },
@@ -53,7 +53,7 @@ Games["regiment"] = {
     var last = target.lastChild;
 
     // piles are built up or down (or both) within suit
-    if(last) return (card.isSameSuit(last) && card.differsByOneTo(last));
+    if(last) return (card.isSameSuit(last) && card.differsByOneFrom(last));
 
     // can only move to an empty pile from the closest reserve pile(s)
     if(!source.isReserve) return false;
@@ -97,18 +97,18 @@ Games["regiment"] = {
     return false;
   },
   autoplayToFoundations: function(card) {
-    var test = testLastIsSuit(card.suit());
+    var test = testLastIsSuit(card.suit);
     var af = searchPiles(this.aceFoundations, test);
     if(!af) return false;
     var kf = searchPiles(this.kingFoundations, test);
     if(!kf) return false;
 
     var ac = af.lastChild, kc = kf.lastChild;
-    if(card.isConsecutiveTo(ac) && card.number() > kc.number()) {
+    if(card.isConsecutiveTo(ac) && card.number > kc.number) {
       this.moveTo(card, af);
       return true;
     }
-    if(kc.isConsecutiveTo(card) && card.number() < ac.number()) {
+    if(kc.isConsecutiveTo(card) && card.number < ac.number) {
       this.moveTo(card, kf);
       return true;
     }

@@ -10,12 +10,12 @@ Games["maze"] = {
   },
 
   deal: function() {
-    var cards = this.getCardDecks(1);
+    var cards = getDecks(1);
     // remove kings and add 2 nulls
     cards[12] = null; cards[25] = null; cards[38] = null; cards[51] = null;
     cards[52] = null; cards[53] = null;
     // shuffle and deal.  the nulls will result in empty spaces
-    cards = this.shuffle(cards);
+    cards = shuffle(cards);
     for(var i = 0; i < 54; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
@@ -28,7 +28,7 @@ Games["maze"] = {
     var right = this.stacks[(i+1) % 54].firstChild;
     if(right) {
       if(right.isSameSuit(card) && right.isConsecutiveTo(card)) return true;
-      if(card.isQueen() && right.isAce()) return true;
+      if(card.isQueen && right.isAce) return true;
     }
     // if card is consecutive and same suit as card to the left
     // or if this is an ace and the card to the left any queen
@@ -36,7 +36,7 @@ Games["maze"] = {
     left = this.stacks[left].firstChild;
     if(left) {
       if(card.isSameSuit(left) && card.isConsecutiveTo(left)) return true;
-      if(card.isAce() && left.isQueen()) return true;
+      if(card.isAce && left.isQueen) return true;
     }
     return false;
   },
@@ -52,8 +52,8 @@ Games["maze"] = {
   },
 
   getBestMoveForCard: function(card) {
-  	return (card.isQueen() && searchPiles(this.stacks, this.queenTest(card)))
-  	    || (card.isAce() && searchPiles(this.stacks, this.aceTest(card)))
+  	return (card.isQueen && searchPiles(this.stacks, this.queenTest(card)))
+  	    || (card.isAce && searchPiles(this.stacks, this.aceTest(card)))
   	    || searchPiles(this.stacks, testCanMoveToPile(card));
   },
   aceTest: function(card) {
@@ -61,7 +61,7 @@ Games["maze"] = {
       if(pile.hasChildNodes()) return false;
       var r = pile.pileNumber+1;
       r = Game.stacks[r==54 ? 0 : r].lastChild;
-      return r && r.isSameSuit(card) && r.number()==2;
+      return r && r.isSameSuit(card) && r.number==2;
     };
   },
   queenTest: function(card) {
@@ -69,7 +69,7 @@ Games["maze"] = {
       if(pile.hasChildNodes()) return false;
       var l = pile.pileNumber-1;
       l = Game.stacks[l==-1 ? 53 : l].lastChild;
-      return l && l.isSameSuit(card) && l.number()==11;
+      return l && l.isSameSuit(card) && l.number==11;
     };
   },
 
@@ -82,13 +82,13 @@ Games["maze"] = {
       // the pair must be consecutive and same suit except for queens and aces,
       // which can sit next to empty spaces, or next to one another ignoring suit
       if(right) {
-        if(right.isAce()) {
-          if(left && !left.isQueen()) return false
+        if(right.isAce) {
+          if(left && !left.isQueen) return false
         } else {
           if(!(left && right.isSameSuit(left) && right.isConsecutiveTo(left))) return false;
         }
       } else {
-        if(left && !left.isQueen()) return false;
+        if(left && !left.isQueen) return false;
       }
     }
     return true;

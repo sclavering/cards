@@ -36,26 +36,26 @@ Games["pyramid"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i < 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
 
   canRemoveCard: function(card) {
-    return card.isKing() && card.parentNode.free();
+    return card.isKing && card.parentNode.free();
   },
-  
+
   removeCard: function(card) {
     // we don't use MoveAction because we don't want animation (for consistency with removing pairs)
     this.doAction(new PyramidMoveAction(card,null));
   },
-  
+
   canSelectCard: function(card) {
     return card.parentNode.free();
   },
-  
+
   canRemovePair: function(a, b) {
-    if(a.number()+b.number()!=13) return false;
+    if(a.number+b.number!=13) return false;
     var ap = a.parentNode, bp = b.parentNode;
     if(ap.free()) {
       if(bp.free()) return true;
@@ -69,7 +69,7 @@ Games["pyramid"] = {
     }
     return false;
   },
-  
+
   removePair: function(a, b) {
     this.doAction(new PyramidMoveAction(a,b));
   },
@@ -93,7 +93,7 @@ function PyramidMoveAction(card1, card2) {
 }
 PyramidMoveAction.prototype = {
   action: "pyramid-move",
-  
+
   perform: function() {
     this.c1.transferTo(Game.foundation);
     if(this.c2) this.c2.transferTo(Game.foundation);

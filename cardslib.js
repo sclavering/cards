@@ -146,131 +146,110 @@ window.addEventListener("load", init, false);
 
 
 
-/** CardShuffler
-  *
-  * This object creates cards (<image/> elements) as well as handling shuffling. It is accessed via a
-  * bunch of methods on the CardGame object, from which all games inherit.
-  *
-  * some random old documentation:
-  *
-  * shuffleSuits(numSpades, numHearts, numDiamonds, numClubs)
-  *   numSuitName specifies how many complete sets of that suit to use (Ace->King of that suit)
-  *      e.g. shuffleCardsOfSuits(1,1,0,0) uses half a pack of cards, only the spades and clubs
-  *
-  * shuffleCards(numOfPacks) {
-  *   shuffles the specified number of full packs of cards. If called without a number 1 pack is used
-  *
-  * createCard(suit, number) - creates a facedown card of specified suit an number
-  */
-var CardShuffler = {
-  shuffleDecks: function(num) {
-    return this.shuffleSuits(num, num, num, num);
-  },
-  shuffleSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
-    return this.shuffle(this.getCardSuits(numSpades, numHearts, numDiamonds, numClubs));
-  },
 
-  // modifies argument and returns it as well (both are useful in some circumstances)
-  shuffle: function(cards) {
-    // shuffle several times, because Math.random() appears to be rather bad.
-    for(var i = 0; i < 3; i++) {
-      // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
-      var n = cards.length;
-      while(n != 0) {
-        // get num from range [0..n)
-        var num = Math.random();
-        while(num==1.0) num = Math.random();
-        num = Math.floor(num * n);
-        // swap
-        n--;
-        var temp = cards[n];
-        cards[n] = cards[num];
-        cards[num] = temp;
-      }
+// takes an array of cards, shuffles it in-place and returns it as well
+function shuffle(cards) {
+  // shuffle several times, because Math.random() appears to be rather bad.
+  for(var i = 0; i != 3; i++) {
+    // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
+    var n = cards.length;
+    while(n != 0) {
+      // get num from range [0..n)
+      var num = Math.random();
+      while(num==1.0) num = Math.random();
+      num = Math.floor(num * n);
+      // swap
+      n--;
+      var temp = cards[n];
+      cards[n] = cards[num];
+      cards[num] = temp;
     }
-
-    return cards;
-  },
-
-  getCardDecks: function(num) {
-    return this.getCardSuits(num,num,num,num);
-  },
-  getCardSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
-    var i, allcards = [];
-    for(i = 0; i < numSpades;   i++) this.addSuitSet(allcards, BLACK, SPADE, SPADESTR);
-    for(i = 0; i < numHearts;   i++) this.addSuitSet(allcards, RED, HEART, HEARTSTR);
-    for(i = 0; i < numDiamonds; i++) this.addSuitSet(allcards, RED, DIAMOND, DIAMONDSTR);
-    for(i = 0; i < numClubs;    i++) this.addSuitSet(allcards, BLACK, CLUB, CLUBSTR);
-    return allcards;
-  },
-  addSuitSet: function(cards, colour, suit, suitstr) {
-    for(var i = 1; i <= 13; i++) cards.push(this.createCard(colour, suit, suitstr, i));
-  },
-
-  createCard: function(colour, suit, suitstr, number) {
-    var c = document.createElement("image");
-    // base query methods, number() returns 14 if Game.acesHigh==true
-    c.number = function() { return (number==1 ? (Game.acesHigh ? 14 : 1) : number); };
-    //c.trueNumber = function() { return number; }; // needed for isConsecMod13To, but for mo just using _num
-    c.colour = function() { return colour; };
-    c.altcolour = function() { return (colour==RED ? BLACK : RED); };
-    c.suit   = function() { return suit; };
-    c.faceUp   = function() { return !this._facedown;};
-    c.faceDown = function() { return this._facedown; };
-    c.isAce  = function() { return number==1;  };
-    c.isQueen = function() { return number==12;};
-    c.isKing = function() { return number==13; };
-    // more queries (consecutive ones use number() to get 14 for Aces)
-    c.isConsecutiveTo = function(card) { return (this.number()==card.number()+1); };
-    c.notConsecutiveTo = function(card) { return (this.number()!=card.number()+1); };
-    c.isSameSuit = function(card) { return this._suit==card._suit; };
-    c.notSameSuit = function(card) { return this._suit!=card._suit; };
-    c.isSameColour = function(card) { return this._colour==card._colour; };
-    c.notSameColour = function(card) { return this._colour!=card._colour; };
-    c.differsByOneTo = function(card) {
-      var diff = this.number()-card.number();
-      return (diff==1 || diff==-1);
-    };
-    c.differsByOneMod13To = function(card) {
-      var diff = this.number()-card.number();
-      return (diff==1 || diff==-1 || diff==12 || diff==-12);
-    };
-    // advanced queries, used in games where stacks can wrap round (King,Ace,2)
-    c.isConsecutiveMod13To = function(card) {
-      // returns true if card is one less than this, or card is King and this is Ace
-      // uses _number rather than number() to avoid the Ace=14 thingy
-      return ((this._number==card._number+1) || (this._number-1==card._number%13));
-    };
-    c.isAtLeastCountingFrom = function(number, from_num) {
-      var thisnum = this._number;
-      if(thisnum<from_num) thisnum+=13;
-      if(number<from_num) number+=13;
-      return (thisnum>=number);
-    };
-    // simple card turning
-    c.setFaceUp = function() {
-      this._facedown = false;
-      this.className = "card "+suitstr+"-"+number;
-    };
-    c.setFaceDown = function() {
-      this._facedown = true;
-      this.className = "card facedown";
-    };
-    // other methods
-    c.turnFaceUp = function() { turnCardFaceUp(this); };
-    c.moveTo     = function(targetStack) { CardMover.move(this,targetStack); };
-    c.transferTo = function(targetPile) { targetPile.addCards(this); };
-    // initialise properties
-    c.isCard = true;
-    c.isPile = false;
-    c._number = number; // needed for isConsecMod13, but no longer used in number()
-    c._suit = suit; // used in the more complex queries.  may delete in future.
-    c._colour = colour;
-    c.setFaceDown();
-    return c;
   }
+
+  return cards;
 }
 
+function getDecks(num) {
+  return getCardSuits(num, num, num, num);
+}
+
+function getShuffledDecks(num) {
+  return shuffle(getCardSuits(num, num, num, num));
+}
+
+function getShuffledSuits(numSpades, numHearts, numDiamonds, numClubs) {
+  return shuffle(getCardSuits(numSpades, numHearts, numDiamonds, numClubs));
+}
+
+function getCardSuits(numSpades, numHearts, numDiamonds, numClubs) {
+  var i, cards = [];
+  for(i = 0; i != numSpades;   i++) addSuitSet(cards, BLACK, SPADE, SPADESTR);
+  for(i = 0; i != numHearts;   i++) addSuitSet(cards, RED, HEART, HEARTSTR);
+  for(i = 0; i != numDiamonds; i++) addSuitSet(cards, RED, DIAMOND, DIAMONDSTR);
+  for(i = 0; i != numClubs;    i++) addSuitSet(cards, BLACK, CLUB, CLUBSTR);
+  return cards;
+}
+
+function addSuitSet(cards, colour, suit, suitstr) {
+  for(var i = 1; i != 14; i++) cards.push(createCard(colour, suit, suitstr, i));
+}
+
+function createCard(colour, suit, suitstr, number) {
+  var c = document.createElement("image");
+  for(var m in cardMethods) c[m] = cardMethods[m]; // add standard methods
+  c.number = (number==1 && Game.acesHigh) ? 14 : number; // Ace==14 when aces are high
+  c.realNumber = number; // sometimes you don't want Ace==14
+  c.colour = colour;
+  c.altcolour = colour==RED ? BLACK : RED;
+  c.suit = suit;
+  c.suitstr = suitstr;
+  c.isAce = number==1;
+  c.isQueen = number==12;
+  c.isKing = number==13;
+  c.isCard = true;
+  c.isPile = false;
+  c.setFaceDown(); // sets faceUp, faceDown and className
+  return c;
+}
+
+var cardMethods = {
+  isConsecutiveTo: function(card) { return (this.number==card.number+1); },
+  isSameSuit: function(card) { return this.suit==card.suit; },
+  isSameColour: function(card) { return this.colour==card.colour; },
+  differsByOneFrom: function(card) {
+    var diff = this.number-card.number;
+    return (diff==1 || diff==-1);
+  },
+  differsByOneMod13From: function(card) {
+    var diff = this.number-card.number;
+    return (diff==1 || diff==-1 || diff==12 || diff==-12);
+  },
+  // returns true if card is one less than this, or card is King and this is Ace
+  isConsecutiveMod13To: function(card) {
+    return ((this.realNumber==card.realNumber+1) || (this.realNumber-1==card.realNumber%13));
+  },
+  isAtLeastCountingFrom: function(number, from_num) {
+    var thisnum = this.realNumber;
+    if(thisnum<from_num) thisnum+=13;
+    if(number<from_num) number+=13;
+    return (thisnum>=number);
+  },
+  // simple card turning
+  setFaceUp: function() {
+    this.faceUp = true;
+    this.faceDown = false;
+    this.className = "card "+this.suitstr+"-"+this.realNumber;
+  },
+  setFaceDown: function() {
+    this.faceUp = false;
+    this.faceDown = true;
+    this.className = "card facedown";
+  },
+  // other methods
+  turnFaceUp: function() { turnCardFaceUp(this); },
+  moveTo:     function(targetPile) { CardMover.move(this,targetPile); },
+  transferTo: function(targetPile) { targetPile.addCards(this); }
+};
 
 
 
@@ -302,14 +281,14 @@ function _createCardPile(elt) {
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
+      return this.lastChild.top - 0 + (this.lastChild.faceUp ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
     };
 
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       if(prev)
-        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
+        card.top = prev.top - 0 + (prev.faceUp ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
       else
         card.top = 0;
       card.left = 0;
@@ -322,7 +301,7 @@ function _createCardPile(elt) {
       }
       var card;
       var numFaceUp = 0;
-      for(card = this.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
+      for(card = this.lastChild; card && card.faceUp; card = card.previousSibling) numFaceUp++;
       if(numFaceUp <= 1) {
         this.offset = 0;
         return;
@@ -408,7 +387,7 @@ function _createCardPile(elt) {
     elt.getNextCardLeft = function() {
       var last = this.lastChild;
       if(!last) return 0;
-      return last.left - 0 + (last.faceUp() ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
+      return last.left - 0 + (last.faceUp ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
     };
 
     elt.getNextCardTop = function() { return 0; };
@@ -417,7 +396,7 @@ function _createCardPile(elt) {
       this.appendChild(card);
       var prev = card.previousSibling;
       if(prev)
-        card.left = prev.left - 0 + (prev.faceUp() ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
+        card.left = prev.left - 0 + (prev.faceUp ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
       else
         card.left = 0;
       card.top = 0;

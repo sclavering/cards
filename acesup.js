@@ -11,10 +11,10 @@ Games["acesup"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     // If the four cards at the bottom of the stock are all different suits the
     // game is impossible. Check if this has happened and reshuffle if so
-    while(this.allDifferentSuits(cards)) cards = this.shuffle(cards);
+    while(this.allDifferentSuits(cards)) cards = shuffle(cards);
     // deal the cards
     for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,1);
     this.dealToStack(cards,this.stock,cards.length,0);
@@ -37,7 +37,7 @@ Games["acesup"] = {
       var stack = this.stacks[i];
       var top = stack.lastChild;
       if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
-      if(top && card.isSameSuit(top) && card.number()<top.number()) return true;
+      if(top && card.isSameSuit(top) && card.number<top.number) return true;
     }
     return false;
   },
@@ -61,7 +61,7 @@ Games["acesup"] = {
     if(this.stock.childNodes.length!=0) return false;
     for(var i = 0; i < 4; i++) {
       var s = this.stacks[i];
-      if(s.childNodes.length!=1 || !s.lastChild.isAce()) return false;
+      if(s.childNodes.length!=1 || !s.lastChild.isAce) return false;
     }
     return true;
   }

@@ -9,7 +9,7 @@ var SpiderBase = {
   getBestMoveForCard: function(card) {
     var piles = getPilesRound(card.parentNode);
     var nonempty = filter(piles, testCanMoveToNonEmptyPile(card));
-    return searchPiles(nonempty, testLastIsSuit(card.suit()))
+    return searchPiles(nonempty, testLastIsSuit(card.suit))
         || (nonempty.length && nonempty[0])
         || searchPiles(piles, testPileIsEmpty);
   },
@@ -70,9 +70,9 @@ Games["spider"] = {
   deal: function() {
     var cards;
     switch(this.difficultyLevel) {
-      case 1: cards = this.shuffleSuits(8,0,0,0); break;
-      case 2: cards = this.shuffleSuits(4,4,0,0); break;
-      default: cards = this.shuffleSuits(2,2,2,2);
+      case 1: cards = getShuffledSuits(8,0,0,0); break;
+      case 2: cards = getShuffledSuits(4,4,0,0); break;
+      default: cards = getShuffledSuits(2,2,2,2);
     }
     var i;
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
@@ -95,7 +95,7 @@ Games["blackwidow"] = {
   rule_canMoveToFoundation: "king->ace flush",
 
   deal: function() {
-    var cards = this.shuffleDecks(2);
+    var cards = getShuffledDecks(2);
     var i;
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
@@ -105,9 +105,9 @@ Games["blackwidow"] = {
   getHints: function() {
     for(var i = 0; i < 10; i++) {
       var card = this.stacks[i].lastChild;
-      while(card && card.faceUp()) {
+      while(card && card.faceUp) {
         var prv = card.previousSibling;
-        if(!prv || !prv.faceUp()) {
+        if(!prv || !prv.faceUp) {
           this.addHintsFor(card);
         } else if(!prv.isConsecutiveTo(card)) {
           this.addHintsFor(card);
@@ -134,7 +134,7 @@ Games["divorce"] = {
   rule_getLowestMovableCard: "descending mod13, in suit",
 
   deal: function() {
-    var cards = this.shuffleDecks(2);
+    var cards = getShuffledDecks(2);
     for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
@@ -156,7 +156,7 @@ Games["wasp"] = {
   rule_canMoveToFoundation: "king->ace flush",
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i != 3; i++) this.dealToStack(cards, this.stacks[i], 3, 4);
     for(i = 3; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, 7);
     this.dealToStack(cards, this.stock, 3, 0);
@@ -178,7 +178,7 @@ Games["wasp"] = {
     for(var i = 0; i < 7; i++) {
       var p = this.stacks[i];
       if(p==pile) continue;
-      for(var card = p.lastChild; card && card.faceUp(); card = card.previousSibling) {
+      for(var card = p.lastChild; card && card.faceUp; card = card.previousSibling) {
         if(!this.canMoveTo(card, pile)) continue;
         this.addHint(card, pile);
         return;

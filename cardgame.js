@@ -248,24 +248,6 @@ var BaseCardGame = {
       if(i>=numDown) card.setFaceUp();
     }
   },
-  // card shuffling.  games should use this to get an array of shuffled cards
-  // get "num" standard 52 cards shuffled decks as a card array
-  shuffleDecks: function(num) {
-    return CardShuffler.shuffleDecks(num);
-  },
-  // get an array of shuffled cards containing "spades" Ace->King sets of spades etc.
-  // this allows for games such as spider which someties need just one or two suits
-  shuffleSuits: function(spades, hearts, diamonds, clubs) {
-    return CardShuffler.shuffleSuits(spades,hearts,diamonds,clubs);
-  },
-  // shuffle an array of cards provided by the game (needed for Mod3, which doesn't use Aces)
-  shuffle: function(cardArray) {
-    return CardShuffler.shuffle(cardArray);
-  },
-  // get "num" decks of cards, sorted Ace->King; Spades, Diamonds, Hearts, Clubs
-  getCardDecks: function(num) {
-    return CardShuffler.getCardDecks(num);
-  },
 
 
 
@@ -355,7 +337,7 @@ var BaseCardGame = {
   // returns true/false for whether the card can be moved from its current position
   // this version will be sufficient for some games, others will need to override (e.g. Spider)
   canMoveCard: function(card) {
-    return card.faceUp();
+    return card.faceUp;
   },
 
   // returns true/false for whether it is a legal move to take card to destination
@@ -375,7 +357,7 @@ var BaseCardGame = {
     if(card.nextSibling) return false;
     // can move Ace to empty foundation, or other card if it is consecutive and same suit as top card there
     var last = target.lastChild;
-    return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
+    return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce);
   },
 
   // xxx maybe this should die now?  it was important before doAction existed
@@ -421,7 +403,7 @@ var BaseCardGame = {
 
   // === Revealing Cards ==================================
   revealCard: function(card) {
-    if(card.faceDown() && !card.nextSibling)
+    if(card.faceDown && !card.nextSibling)
       this.doAction(new RevealCardAction(card));
   },
 
@@ -542,7 +524,7 @@ var BaseCardGame = {
     if(!stacks) return false;
     for(var i = 0; i < stacks.length; i++) {
       var last = stacks[i].lastChild;
-      if(last && last.faceDown()) {
+      if(last && last.faceDown) {
         this.revealCard(last);
         return true;
       }
@@ -565,7 +547,7 @@ var BaseCardGame = {
     var found = 0;
     for(var i = 0; i < this.foundations.length; i++) {
       var top = this.foundations[i].lastChild;
-      if(top && top.number()>=number && top.colour()==colour) found++;
+      if(top && top.number>=number && top.colour==colour) found++;
     }
     return found;
   }

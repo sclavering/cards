@@ -13,7 +13,7 @@ Games["whitehead"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, i+1);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
@@ -39,8 +39,8 @@ Games["whitehead"] = {
     return false;
   },
   canAutoplayCard: function(card) {
-    if(card.isAce() || card.number()==2) return true;
-    return (this.numCardsOnFoundations(card.colour(),card.number()-1) == 2);
+    if(card.isAce || card.number==2) return true;
+    return (this.numCardsOnFoundations(card.colour,card.number-1) == 2);
   },
 
   hasBeenWon: function() {

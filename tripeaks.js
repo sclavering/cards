@@ -10,7 +10,7 @@ Games["tripeaks"] = {
     // (The rightChild's are all 1 greater than the leftChild's.)
     // Piles 18-27 have no children.
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
-    
+
     for(var i = 0; i != 18; i++) {
       var p = this.stacks[i];
       var l = this.stacks[lefts[i]];
@@ -20,7 +20,7 @@ Games["tripeaks"] = {
       p.rightChild = r;
       r.leftParent = p;
     }
-    
+
     // these are the piles which have no left/right parent
     const nolp = [0,1,2,3,5,7,9,12,15,18];
     const norp = [0,1,2,4,6,8,11,14,17,27];
@@ -39,22 +39,22 @@ Games["tripeaks"] = {
   },
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i != 18; i++) this.dealToStack(cards, this.stacks[i], 1, 0);
     for(i = 18; i != 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     this.dealToStack(cards, this.waste, 0, 1);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
-  
+
   canRemoveCard: function(card) {
     // can be called with waste.lastChild, but that won't matter
-    return card.differsByOneMod13To(this.waste.lastChild) && card.parentNode.free();
+    return card.differsByOneMod13From(this.waste.lastChild) && card.parentNode.free();
   },
-  
+
   removeCard: function(card) {
     this.doAction(new MoveAction(card, card.parentNode, this.waste));
   },
-  
+
   canSelectCard: function(card) {
     return false;
   },
@@ -75,7 +75,7 @@ Games["tripeaks"] = {
   autoReveal: function() {
     for(var i = 27; i >= 0; i--) {
       var p = this.stacks[i];
-      if(!p.hasChildNodes() || p.lastChild.faceUp() || !p.free()) continue;
+      if(!p.hasChildNodes() || p.lastChild.faceUp || !p.free()) continue;
       this.doAction(new RevealCardAction(p.lastChild));
       return true;
     }

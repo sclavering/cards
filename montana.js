@@ -17,17 +17,17 @@ Games["montana"] = {
   },
 
   deal: function() {
-    var cards = this.getCardDecks(1);
+    var cards = getDecks(1);
     // replace the aces with nulls
     cards[0] = null; cards[13] = null; cards[26] = null; cards[39] = null;
     // shuffle and deal.  the nulls will result in empty spaces
-    cards = this.shuffle(cards);
+    cards = shuffle(cards);
     for(var i = 0; i < 52; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
-    if(pile.col==0) return (card.number()==2);
+    if(pile.col==0) return (card.number==2);
 
     // get the card in the pile to the left of the target pile
     var last = this.stacks[pile.row*13 + pile.col - 1].lastChild;
@@ -68,7 +68,7 @@ Games["montana"] = {
       if(!card) return false;
       if(stack.col==0) {
         suit = card.suit;
-        if(card.number()!=2) return false;
+        if(card.number!=2) return false;
       } else {
         if(!card.isSameSuit(prvcard) || !card.isConsecutiveTo(prvcard)) return false;
       }
@@ -120,7 +120,7 @@ MontanaRedealAction.prototype = {
     var pile = Game.stacks[num];
     var card = pile.lastChild;
     if(!card) return (pile.col==12);
-    if(pile.col==0) return (card.number()==2);
+    if(pile.col==0) return (card.number==2);
     var prvcard = Game.stacks[num-1].lastChild;
     return (card.isSameSuit(prvcard) && card.isConsecutiveTo(prvcard));
   },

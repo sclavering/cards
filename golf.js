@@ -13,11 +13,11 @@ Games["golf"] = {
     var cards;
     var cardsPerColumn;
     if(this.difficultyLevel==3) {
-      cards = this.shuffleDecks(2);
+      cards = getShuffledDecks(2);
       cardsPerColumn = 8;
       this.score = 103;
     } else {
-      cards = this.shuffleDecks(1);
+      cards = getShuffledDecks(1);
       cardsPerColumn = 5;
       this.score = 51;
     }
@@ -34,8 +34,8 @@ Games["golf"] = {
     if(stack!=this.foundation) return false;
     var last = stack.lastChild;
     // K->A or A->K allowed in Easy mode
-    if(this.difficultyLevel==1) return card.differsByOneMod13To(last);
-    return card.differsByOneTo(last);
+    if(this.difficultyLevel==1) return card.differsByOneMod13From(last);
+    return card.differsByOneFrom(last);
   },
 
   getHints: function() {

@@ -6,7 +6,7 @@ Games["russiansol"] = {
   rule_canMoveToPile: "descending, in suit",
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     this.dealToStack(cards,this.stacks[0],0,1);
     for(var i = 1; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,5);
   },
@@ -21,7 +21,7 @@ Games["russiansol"] = {
     for(var i = 0; i < 7; i++) {
       var p = this.stacks[i];
       if(p==pile) continue;
-      for(var card = p.lastChild; card && card.faceUp(); card = card.previousSibling) {
+      for(var card = p.lastChild; card && card.faceUp; card = card.previousSibling) {
         if(!this.canMoveTo(card, pile)) continue;
         this.addHint(card, pile);
         return;

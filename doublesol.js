@@ -17,10 +17,10 @@ Games["doublesol"] = {
 
   deal: function() {
     // get two packs less one set of aces
-    var cards = this.getCardDecks(2);
+    var cards = getDecks(2);
     cards.splice(78,1); cards.splice(52,1);
     cards.splice(26,1); cards.splice(0,1);
-    cards = this.shuffle(cards);
+    cards = shuffle(cards);
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
@@ -29,11 +29,11 @@ Games["doublesol"] = {
     if(card.nextSibling) return false;
     // foundations are built A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
     var last = stack.lastChild;
-    if(!last) return card.isAce();
+    if(!last) return card.isAce;
     if(!card.isSameSuit(last)) return false;
-    if(card.number()==last.number()) return true;
+    if(card.number==last.number) return true;
     return (
-      (!last.previousSibling || last.previousSibling.number()==last.number())
+      (!last.previousSibling || last.previousSibling.number==last.number)
       && card.isConsecutiveTo(last));
   },
 
@@ -43,7 +43,7 @@ Games["doublesol"] = {
   },
   getHintsFor: function(card) {
     if(!card) return;
-    if(card.isKing()) {
+    if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
       if(card.previousSibling || card.parentNode.isWaste) {
         var pile = searchPiles(this.stacks, testPileIsEmpty);
@@ -74,8 +74,8 @@ Games["doublesol"] = {
   },
   // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
-    if(card.isAce() || card.number()==2) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
+    if(card.isAce || card.number==2) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 2);
   },
 
   hasBeenWon: function() {

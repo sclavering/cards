@@ -7,7 +7,7 @@ Games["freecell"] = {
   rule_getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     var i;
     for(i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
     for(i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
@@ -59,8 +59,8 @@ Games["freecell"] = {
   },
   // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
-    if(card.isAce() || card.number()==2) return true;
-    return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
+    if(card.isAce || card.number==2) return true;
+    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 2);
   },
 
   hasBeenWon: function() {

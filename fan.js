@@ -6,7 +6,7 @@ Games["fan"] = {
   rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
 
   deal: function() {
-    var cards = this.shuffleDecks(1);
+    var cards = getShuffledDecks(1);
     for(var i = 0; i < 17; i++) this.dealToStack(cards, this.stacks[i], 0, 3);
     this.dealToStack(cards, this.stacks[17], 0, 1);
   },
@@ -15,7 +15,7 @@ Games["fan"] = {
     for(var i = 0; i != this.stacks.length; i++) {
       var card = this.stacks[i].lastChild;
       // don't suggest moving kings that are not on top of anything
-      if(!card || (card.isKing() && !card.previousSibling)) continue;
+      if(!card || (card.isKing && !card.previousSibling)) continue;
       var pile = searchPiles(this.stacks, testCanMoveToPile(card));
       if(pile) this.addHint(card, pile);
     }

@@ -13,7 +13,7 @@ Games["mod3"] = {
   init: function() {
     var f = this.foundations;
     for(var i = 0; i < 24; i++) f[i].baseCardInPlace = function() {
-      return (this.hasChildNodes() && this.firstChild.number()==this.baseNumber);
+      return (this.hasChildNodes() && this.firstChild.number==this.baseNumber);
     };
     this.rows = [f.slice(0,8),f.slice(8,16),f.slice(16,24)];
     for(var j = 0; j != 3; j++) {
@@ -25,7 +25,7 @@ Games["mod3"] = {
     var i;
 
     // get 2 decks, remove the aces, shuffle
-    var cards = this.getCardDecks(2);
+    var cards = getDecks(2);
     cards.splice(91,1); cards.splice(78,1); cards.splice(65,1);
     cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
     cards.splice(13,1); cards.splice(0, 1);
@@ -35,16 +35,16 @@ Games["mod3"] = {
       cards[i].row = i % 3;
       // a renumbering of cards so that all foundations are built 0,1,2,3,
       // i.e. 2==0, 5==1, 8==2, J==3 in row 0, and similar in the other rows
-      cards[i].rowNum = Math.floor((cards[i].number()-2) / 3);
+      cards[i].rowNum = Math.floor((cards[i].number-2) / 3);
     }
 
     // shuffle, and prevent games where that start with no cards in the correct place
     // on the foundations (because such games are impossible)
     var impossible = true;
     while(impossible) {
-      cards = this.shuffle(cards);
+      cards = shuffle(cards);
       for(i = 95; impossible && i != 87; i--)
-        if(cards[i].number()==2 || cards[i-8].number()==3 || cards[i-16].number()==4)
+        if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
           impossible = false;
     }
 
@@ -55,16 +55,16 @@ Games["mod3"] = {
     // set the initial score
     for(i = 0; i < 24; i++) {
       var f = this.foundations[i];
-      if(f.firstChild.number()==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
+      if(f.firstChild.number==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
     }
   },
 
   canMoveToFoundation: function(card, stack) {
     if(card.parentNode == stack) return false;
     // row 2 has 2,5,8,J in it,  row 3 has 3,6,9,Q,  row 4 has 4,7,10,K
-    if(!stack.hasChildNodes()) return (card.number()==stack.baseNumber);
+    if(!stack.hasChildNodes()) return (card.number==stack.baseNumber);
     var last = stack.lastChild;
-    return (card.isSameSuit(last) && card.number()==last.number()+3 && stack.baseCardInPlace());
+    return (card.isSameSuit(last) && card.number==last.number+3 && stack.baseCardInPlace());
   },
 
   getHints: function() {
@@ -109,7 +109,7 @@ Games["mod3"] = {
         ok = true;
         for(c = 0; ok && c != 8; c++) {
           f = row[c];
-          if(f.hasChildNodes()) { if(f.firstChild.number()!=f.baseNumber) ok = false; }
+          if(f.hasChildNodes()) { if(f.firstChild.number!=f.baseNumber) ok = false; }
           else if(!target) target = f;
         }
       } else {

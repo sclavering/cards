@@ -56,7 +56,7 @@ function testLastIsConsecutive(card) {
 function testLastIsSuit(suit) {
   return function(pile) {
     var last = pile.lastChild;
-    return last && last.suit()==suit;
+    return last && last.suit==suit;
   };
 }
 function testCanMoveToNonEmptyPile(card) {

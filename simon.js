@@ -9,9 +9,9 @@ Games["simon"] = {
 
   deal: function() {
     var cards =
-      this.difficultyLevel==1 ? this.shuffleSuits(4,0,0,0) :
-      this.difficultyLevel==2 ? this.shuffleSuits(2,2,0,0) :
-      this.shuffleDecks(1);
+      this.difficultyLevel==1 ? getShuffledSuits(4,0,0,0) :
+      this.difficultyLevel==2 ? getShuffledSuits(2,2,0,0) :
+      getShuffledDecks(1);
     this.dealToStack(cards,this.stacks[0],0,8);
     this.dealToStack(cards,this.stacks[1],0,8);
     for(var i = 2; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,10-i);
@@ -20,7 +20,7 @@ Games["simon"] = {
   canMoveToFoundation: function(card, stack) {
     // only a K->A run can be put on a foundation, and the foundation must be empty
     // canMoveCard() will ensure we have a run, so only need to check the ends
-    return (!stack.hasChildNodes() && card.isKing() && card.parentNode.lastChild.isAce());
+    return (!stack.hasChildNodes() && card.isKing && card.parentNode.lastChild.isAce);
   },
 
   getHints: function() {

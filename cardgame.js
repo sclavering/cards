@@ -173,16 +173,9 @@ var BaseCardGame = {
 
   // |cards| is only defined if we're trying to restart a game
   begin: function(cards) {
-    var pro = this.__proto__;
-    // we only need to initialise once per game, not once per instance of the game.
+    // most initialisation can be done once per game, rather than once per instance of the game.
+    const pro = this.__proto__;
     if(!pro.initialised) pro.initialise();
-
-    this.mouseHandler.reset();
-    this.setScoreTo(0);
-    this.actionsDone = [];
-    this.actionsUndone = [];
-    this.clearGame();
-    this.redealsRemaining = this.redeals;
 
     if(!cards) {
       cards = this.cards;
@@ -190,28 +183,38 @@ var BaseCardGame = {
       while(this.shuffleImpossible(cards));
     }
     this.cardsAsDealt = cards.slice(0); // copy of array
-    this.deal(cards);
 
-    if(this.stock) this.stock.counter = this.stockCounterStart;
+    this.actionsDone = [];
+    this.actionsUndone = [];
+    this._begin(cards);
 
-    if(this.canRedeal()) gCmdRedeal.removeAttribute("disabled");
-    else gCmdRedeal.setAttribute("disabled", "true");
   },
 
   restore: function() {
-    this.mouseHandler.reset();
-    this.setScoreTo(0);
-    this.clearGame();
-    this.redealsRemaining = this.redeals;
-    this.deal(this.cardsAsDealt.slice(0)); // deal a copy (since deal empties the array)
-    if(this.stock) this.stock.counter = this.stockCounterStart;
+    this._begin(this.cardsAsDealt.slice(0)); // deal() destroys the array, so use a copy
 
     var done = this.actionsDone;
     for(var i = 0; i != done.length; i++) {
       var d = done[i];
       if("redo" in d) d.redo();
       else d.perform();
+      this.score += d.score;
     }
+
+    gScoreDisplay.value = this.score;
+
+    // necessary because global undo() function does not use disableUI/enableUI
+    if(this.canRedeal()) gCmdRedeal.removeAttribute("disabled");
+    else gCmdRedeal.setAttribute("disabled", "true");
+  },
+
+  _begin: function(cards) {
+    this.mouseHandler.reset();
+    this.clearGame();
+    this.redealsRemaining = this.redeals;
+    this.deal(cards);
+    gScoreDisplay.value = this.score = this.initialScore;
+    if(this.stock) this.stock.counter = this.stockCounterStart;
   },
 
   clearGame: function() {
@@ -246,18 +249,13 @@ var BaseCardGame = {
 
   // === Scoring ==========================================
   // games should override either |getScoreFor|, or |scores|
+
+  // score at the start of a game
+  // read after deal() (which is important if a game uses a getter function for this)
+  initialScore: 0,
+
+  // when adjusting this you should also adjust gScoreDisplay.value
   score: 0,
-
-  setScoreTo: function(value) {
-    this.score = value;
-    gScoreDisplay.value = value;
-  },
-
-  adjustScoreBy: function(delta) {
-    if(!delta) return;
-    this.score += delta;
-    gScoreDisplay.value = this.score;
-  },
 
   // action is an Action object
   getScoreFor: function(action) {
@@ -288,12 +286,11 @@ var BaseCardGame = {
   // would be called "do", but that's a language keyword
   doAction: function(action) {
     this.actionsDone.push(action);
-    var hadRedos = this.actionsUndone.length!=0;
-    if(hadRedos) this.actionsUndone = [];
+    if(this.actionsUndone.length) this.actionsUndone = [];
     action.score = this.getScoreFor(action);
     action.perform();
 
-    this.adjustScoreBy(action.score);
+    gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;
 
     // xxx yuck
@@ -311,7 +308,7 @@ var BaseCardGame = {
   undo: function() {
     var action = this.actionsDone.pop();
     this.actionsUndone.push(action);
-    this.adjustScoreBy(-action.score);
+    gScoreDisplay.value = this.score -= action.score;
     this.hintsReady = false;
 
     action.undo();
@@ -324,7 +321,7 @@ var BaseCardGame = {
   redo: function() {
     var action = this.actionsUndone.pop();
     this.actionsDone.push(action);
-    this.adjustScoreBy(action.score);
+    gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;
 
     if("redo" in action) action.redo();

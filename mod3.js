@@ -56,10 +56,13 @@ AllGames.mod3 = {
     for(var i = 0; i != 24; i++) this.foundations[i].dealTo(cards, 0, 1);
     for(i = 0; i != 8; i++) this.piles[i].dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
+  },
 
-    var score = 0, fs = this.foundations;
-    for(i = 0; i != 24; i++) if(fs[i].lastChild.inPlace) score += MOD3_CARD_IN_PLACE;
-    this.setScoreTo(score);
+  get initialScore() {
+    var score = 0;
+    const fs = this.foundations;
+    for(var i = 0; i != 24; i++) if(fs[i].lastChild.inPlace) score += MOD3_CARD_IN_PLACE;
+    return score;
   },
 
   // games that start with no cards in the correct place on the foundations are impossible

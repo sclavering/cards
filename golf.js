@@ -16,7 +16,6 @@ var GolfBase = {
   initialScore: 51,
 
   deal: function(cards) {
-    this.setScoreTo(this.initialScore);
     for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, this.cardsPerColumn);
     this.foundation.dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);

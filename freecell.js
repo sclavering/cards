@@ -34,28 +34,41 @@ AllGames.freecell = {
 
   // test if there are enough spaces/cells to perform a move, not just is it is legal.
   movePossible: function(card, target) {
+    dump("FreeCell.movePossible "+card.toString()+" "+target.id+"\n");
     var spaces = this.countEmptyPiles(target);
+    dump(" s: "+spaces+"\n");
     var cells = this.numEmptyCells;
+    dump(" c: "+cells+"\n");
     // this is the number we can move using the most complex algorithm
     var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
+    dump("canMove: "+numCanMove+"\n");
     // count number of cards to move
     var numToMove = 0;
     for(var next = card; next; next = next.nextSibling) numToMove++;
+    dump("numToMove: "+numToMove+"\n");
     //
     return numToMove<=numCanMove;
   },
 
   getHints: function() {
-    var i;
-    for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
-  getBestMoveForCard2: Rules.getBestMoveForCard["legal nonempty, or empty"],
-
+  // this is very like Rules.getBestMoveForCard["legal nonempty, or empty"], but it has to call movePossible (and look at cells)
   getBestMoveForCard: function(card) {
-    var p = this.getBestMoveForCard2(card);
-    return p && (p.hasChildNodes() || this.movePossible(card, p)) ? p : !card.nextSibling && this.emptyCell;
+    var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
+    var empty = null;
+    for(var i = 0; i != num; i++) {
+      p = ps[i];
+      if(p.hasChildNodes()) {
+        if(this.canMoveToPile(card, p) && this.movePossible(card, p)) return p;
+      } else if(!empty) {
+        empty = p;
+      }
+    }
+    if(empty && this.movePossible(card, empty)) return empty;
+    return !card.nextSibling ? this.emptyCell : null;
   },
 
   autoplayMove: "commonish",

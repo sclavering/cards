@@ -108,13 +108,26 @@ Games["blackwidow"] = {
 
   getHints: function() {
     for(var i = 0; i < 10; i++) {
-      var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
-      if(!card) continue;
-      for(var j = 0; j < 10; j++) {
-        var stack = this.stacks[j];
-        if(stack.hasChildNodes() && this.canMoveTo(card,stack))
-          this.addHint(card,stack);
+      var card = this.stacks[i].lastChild;
+      while(card && card.faceUp()) {
+        var prv = card.previousSibling;
+        if(!prv || !prv.faceUp()) {
+          this.getHintsFor(card);
+        } else if(!prv.isConsecutiveTo(card)) {
+          this.getHintsFor(card);
+          break;
+        } else if(!prv.isSameSuit(card)) {
+          this.getHintsFor(card);
+        } // otherwise it's from the same suit, so don't suggest moving
+        card = prv;
       }
+    }
+  },
+
+  getHintsFor: function(card) {
+    for(var i = 0; i < 10; i++) {
+      var pile = this.stacks[i];
+      if(pile.hasChildNodes() && this.canMoveTo(card,pile)) this.addHint(card,pile);
     }
   }
 };

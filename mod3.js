@@ -18,6 +18,8 @@ Mod3.init = function() {
 ///////////////////////////////////////////////////////////
 //// start game
 Mod3.deal = function() {
+  var i;
+
   // get 2 decks, remove the aces, shuffle
   var cards = this.getCardDecks(2);
   cards.splice(91,1); cards.splice(78,1); cards.splice(65,1);
@@ -37,7 +39,7 @@ Mod3.deal = function() {
       inplay[targetRow] = Array(4);
     }
     for(var row = 0; row <3; row++){
-      for(var i = 0; i < 8; i++){
+      for(i = 0; i < 8; i++){
         var currCard = cards[cardindex--];
         if( currCard.number() == row+2 ){
           inplace[row][currCard.suit()-SPADE] = true;
@@ -60,8 +62,8 @@ Mod3.deal = function() {
     }
   }
   // Now that we have ok cards, deal them out
-  for(var i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
+  for(i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
+  for(i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
   this.dealToStack(cards,this.stock,cards.length,0);
   this.updateScoreDisplay();
 };
@@ -156,10 +158,10 @@ Mod3.autoplayMove = function (){
   for(var i = 0; i < 8; i++) {
     var card = this.stacks[i].lastChild;
     if(!card) continue;
-    
+
     var targets = this.findTargets(card);
     if(targets.length==0) continue;
-    
+
     // It's a pain when stuff automoves and you have to undo, so
     // to be conservative we'll limit ourselves to the patently obvious...
     for(var j = 0; j < targets.length; j++) {

@@ -31,8 +31,9 @@ Spider.deal = function() {
     case 2: cards = this.shuffleSuits(4,4,0,0); break;
     default: cards = this.shuffleSuits(2,2,2,2);
   }
-  for(var i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
-  for(var i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
+  var i;
+  for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
+  for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
   this.dealToStack(cards,this.stock,50,0);
 };
 

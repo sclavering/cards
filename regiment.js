@@ -17,8 +17,9 @@ Regiment.init = function() {
 //// start game
 Regiment.deal = function() {
   var cards = this.shuffleDecks(2);
-  for(var i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
+  var i;
+  for(i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
+  for(i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
 };
 
 

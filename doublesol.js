@@ -79,9 +79,10 @@ DoubleSol.getHintsForCard = function(card) {
 ///////////////////////////////////////////////////////////
 //// smart move
 DoubleSol.getBestMoveForCard = function(card) {
+  var i;
   if(card.parentNode==this.waste) {
     // hunt through tableau piles
-    for(var i = 0; i < 10; i++)
+    for(i = 0; i < 10; i++)
       if(this.canMoveToPile(card,this.stacks[i])) return this.stacks[i];
   } else {
     // find move to surrounding pile
@@ -89,7 +90,7 @@ DoubleSol.getBestMoveForCard = function(card) {
     if(dest) return dest;
   }
   // find move to foundation
-  for(var i = 0; i < 4; i++) {
+  for(i = 0; i < 4; i++) {
     var stack = this.foundations[i];
     if(stack==card.parentNode) continue;
     if(this.canMoveToFoundation(card,stack)) return stack;
@@ -136,4 +137,4 @@ DoubleSol.getScoreForAction = function(action) {
     0);
 };
 
-Games["DoubleSol"] = DoubleSol;  
+Games["DoubleSol"] = DoubleSol;

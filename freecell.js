@@ -1,6 +1,6 @@
 var FreeCell = {
   __proto__: FreeCellGame,
-  
+
   shortname: "freecell"
 }
 
@@ -10,8 +10,9 @@ var FreeCell = {
 //// start game
 FreeCell.deal = function() {
   var cards = this.shuffleDecks(1);
-  for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
-  for(var i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
+  var i;
+  for(i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
+  for(i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
 };
 
 

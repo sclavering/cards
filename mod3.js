@@ -1,6 +1,6 @@
 // Scoring constants:
-const MOD3_CARD_IN_PLACE = 10, MOD3_EMPTY_TABLEAU = 5;
-const MOD3_MAX_SCORE = 1000; // (96*MOD3_CARD_IN_PLACE + 8*MOD3_EMPTY_TABLEAU);
+const MOD3_CARD_IN_PLACE = 10, MOD3_EMPTY_PILE = 5;
+const MOD3_MAX_SCORE = 1000; // (96*MOD3_CARD_IN_PLACE + 8*MOD3_EMPTY_PILE);
 
 Games["mod3"] = {
   __proto__: BaseCardGame,
@@ -138,42 +138,30 @@ Games["mod3"] = {
     return (this.score==MOD3_MAX_SCORE);
   },
 
-  getScoreFor: function(actionObj) {
-    var action = actionObj.action;
+  getScoreFor: function(action) {
+    var score = 0;
 
-    if(action=="dealt-from-stock") {
-      var score = 0;
+    if(action.action=="dealt-from-stock") {
       // how many empty piles are we going to fill?
       for(var j = 0; j < 8; j++)
-        if(!this.stacks[j].hasChildNodes()) score -= MOD3_EMPTY_TABLEAU;
+        if(!this.stacks[j].hasChildNodes()) score -= MOD3_EMPTY_PILE;
       return score;
     }
 
     // it's a MoveAction
-    var card = actionObj.card, source = actionObj.source;
-    switch(action) {
-      case "move-to-foundation":
-        // will we create an empty space?
-        // source==card.parentNode for smartMove, but not if the card was dragged.
-        var emptySpace = (source==card.parentNode ? !card.previousSibling : source.hasChildNodes());
-        return MOD3_CARD_IN_PLACE + (emptySpace ? MOD3_EMPTY_TABLEAU : 0);
-      case "move-from-foundation":
-        // will we be moving the card out of position too?
-        return -MOD3_EMPTY_TABLEAU - (source.baseCardInPlace() ? MOD3_CARD_IN_PLACE : 0);
-      case "move-between-piles":
-        if(source.isFoundation) {
-          // is the card in place already?
-          // again, we have to handle both drag+drop and smart move, so |card| might or might
-          // not still be a child of |source|
-          if((!source.hasChildNodes() && card.rowNum===0) || source.baseCardInPlace()) return 0;
-          return MOD3_CARD_IN_PLACE;
-        }
-        // have we used up an empty space, or just moved the card from one space to another?
-        if(source==card.parentNode ? !!card.previousSibling : !source.hasChildNodes()) return 0;
-        return -MOD3_EMPTY_TABLEAU;
-    }
+    var card = action.card, source = action.source, destination = action.destination;
+    // if the user dragged+dropped the card then the source isn't the card's parent node, but if they
+    // right-clicked it then it will be.
+    var notInSource = card.parentNode!=source;
 
-    // just in case
-    return 0;
+    if(source.isFoundation) {
+      if(notInSource ? this.canMoveTo(card,source) : source.baseCardInPlace()) score -= MOD3_CARD_IN_PLACE;
+    } else {
+      if(notInSource ? !source.hasChildNodes() : !card.previousSibling) score += MOD3_EMPTY_PILE;
+    }
+    if(destination.isFoundation) score += MOD3_CARD_IN_PLACE;
+    else if(!destination.hasChildNodes()) score -= MOD3_EMPTY_PILE;
+
+    return score;
   }
 }

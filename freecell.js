@@ -20,22 +20,11 @@ FreeCell.deal = function() {
 //// Moving
 FreeCell.canMoveCard = FreeCell.canMoveCard_DescendingAltColours;
 
-
-// unlike in other games where this function returns a boolean, here we sometimes return an int.
-// false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
-// (using 0 means the overall behaviour will match other games, but callers which do want to 
-// know about an insufficent spaces result can test if the result ===0)
-FreeCell.canMoveTo = function(card, target) {
-  if(target.isCell) return this.canMoveToCell(card,target);
+FreeCell.canMoveToPile = function(card, target) {
   var last = target.lastChild;
-  if(target.isFoundation)
-    return this.canMoveToFoundation(card, target); // inherited method
-  if(!last || (last.isConsecutiveTo(card) && last.notSameColour(card))) {
-    if(this.movePossible(card,target)) return true;
-    return 0;
-  }
-  return false;
+  return (!last || (last.isConsecutiveTo(card) && last.notSameColour(card)));
 };
+
 // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
 FreeCell.movePossible = function(card,target) {
   // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
@@ -52,36 +41,6 @@ FreeCell.movePossible = function(card,target) {
   //
   return numToMove<=numCanMove;
 }
-
-// must override global version to deal with oddities of canMoveTo in Freecell
-FreeCell.attemptMove = function(source, target) {
-  var can = Game.canMoveTo(source,target)
-  if(can) {
-    Game.moveTo(source,target);
-    return true;
-  }
-  // insufficient spaces
-  if(can===0) {
-    // XXX: use prompt service, or thing of some completely different way
-    // of informing the user (e.g. status bar, but we don't have one)
-    alert(this.insufficientSpacesMessage);
-  }
-  return false;
-}
-
-FreeCell.moveTo = function(card, target) {
-  var source = card.parentNode;
-  var action;
-  if(target.isPile) {
-    action = "move-between-piles";
-    FreeCellMover.move(card,target,this.getEmptyCells(),this.getEmptyPiles());
-  } else {
-    action = target.isCell ? "card-moved-to-cell" : "cards-moved-to-foundation";
-    card.moveTo(target);
-  }
-  this.trackMove(action,card,source);
-  return true;
-};
 
 
 

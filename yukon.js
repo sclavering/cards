@@ -24,17 +24,10 @@ var YukonBase = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? this.getPilesRound(card.parentNode) : this.stacks;
-    var i, pile;
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(pile.hasChildNodes() && this.canMoveTo(card,pile)) return pile;
-    }
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(!pile.hasChildNodes() && this.canMoveTo(card,pile)) return pile;
-    }
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
+        || searchPiles(piles, testPileIsEmpty)
+        || searchPiles(this.foundations, testCanMoveToFoundation(card));
   },
 
   autoplayMove: function() {

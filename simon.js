@@ -35,10 +35,10 @@ Games["simon"] = {
   },
 
   getBestMoveForCard: function(card) {
-    // behold the wonders of javascript's || operator!
-    return this.searchAround(card, this.lastIsConsecutiveAndSameSuit)
-      || this.searchAround(card, this.lastIsConsecutive)
-      || this.searchAround(card, this.stackIsEmpty);
+    var piles = getPilesRound(card.parentNode);
+    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
+        || searchPiles(piles, testLastIsConsecutive(card))
+        || searchPiles(piles, testPileIsEmpty);
   },
 
   autoplayMove: function() {

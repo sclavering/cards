@@ -38,19 +38,9 @@ Games["klondike"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var parent = card.parentNode;
-    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
-    var i;
-    for(i = 0; i < piles.length; i++)
-      if(this.canMoveToPile(card,piles[i]))
-        return piles[i];
-    // find move to foundation
-    if(parent.isFoundation) return null;
-    for(i = 0; i < 4; i++) {
-      var pile = this.foundations[i];
-      if(this.canMoveToFoundation(card, pile)) return pile;
-    }
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToPile(card))
+        || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
 
   autoplayMove: function() {

@@ -58,26 +58,10 @@ Games["canfield"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var i, pile;
-    var parent = card.parentNode;
-    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
-    // move to non-empty pile
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(stack.hasChildNodes() && this.canMoveToPile(card,pile)) return pile;
-    }
-    // move to an empty pile
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(!stack.hasChildNodes() && this.canMoveToPile(card,pile)) return pile;
-    }
-    // move to foundations
-    if(parent.isFoundation) return null;
-    for(i = 0; i < 4; i++) {
-      pile = this.foundations[i];
-      if(this.canMoveToFoundation(card,pile)) return pile;
-    }
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
+        || searchPiles(piles, testPileIsEmpty)
+        || searchPiles(this.foundations, testCanMoveToFoundation(card));
   },
 
   autoplayMove: function() {

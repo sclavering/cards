@@ -6,10 +6,6 @@ var BaseSpiderGame = {
   id: "spider",
   
   rule_dealFromStock: "to-stacks,if-none-empty",
-
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   rule_canMoveToPile: "descending",
 
   moveTo: function(card, target) {
@@ -17,32 +13,19 @@ var BaseSpiderGame = {
     BaseCardGame.moveTo.call(this,card,target);
     return true; // xxx unnecessary?
   },
-
   getFirstEmptyFoundation: function() {
     for(var i = 0; i < this.foundations.length; i++)
       if(!this.foundations[i].hasChildNodes()) return this.foundations[i];
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
-    // find move to next card up of same suit
-    var dest = this.searchAround(card,this.lastIsConsecutiveAndSameSuit);
-    if(dest) return dest;
-    // find move to next card up of any suit
-    dest = this.searchAround(card,this.lastIsConsecutive);
-    if(dest) return dest;
-    // find moves to empty space
-    dest = this.searchAround(card,this.stackIsEmpty);
-    if(dest) return dest;
-    return null;
+    var piles = getPilesRound(card.parentNode);
+    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
+        || searchPiles(piles, testLastIsConsecutive(card))
+        || searchPiles(piles, testPileIsEmpty);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // remove completed suits
     for(var i = 0; i < 10; i++) {
@@ -60,14 +43,12 @@ var BaseSpiderGame = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     for(var i = 0; i < 8; i++)
       if(this.foundations[i].childNodes.length!=13) return false;
     return true;
   },
+
   scores: {
     "move-to-foundation": 100,
     "move-between-piles":  -1
@@ -82,6 +63,7 @@ Games["spider"] = {
   __proto__: BaseSpiderGame,
 
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
+  rule_canMoveCard: "descending,in-suit",
 
   deal: function() {
     var cards;
@@ -95,8 +77,6 @@ Games["spider"] = {
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
     this.dealToStack(cards,this.stock,50,0);
   },
-
-  rule_canMoveCard: "descending,in-suit",
 
   canMoveToFoundation: function(card, pile) {
     // canMoveCard will ensure that this is a running flush, so we just nee this simple check.
@@ -126,6 +106,8 @@ Games["spider"] = {
 Games["blackwidow"] = {
   __proto__: BaseSpiderGame,
 
+  rule_canMoveCard: "descending",
+
   deal: function() {
     var cards = this.shuffleDecks(2);
     var i;
@@ -133,8 +115,6 @@ Games["blackwidow"] = {
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
     this.dealToStack(cards,this.stock,50,0);
   },
-
-  rule_canMoveCard: "descending",
 
   canMoveToFoundation: function(card, pile) {
     if(!(card.isKing() && card.parentNode.lastChild.isAce())) return false;

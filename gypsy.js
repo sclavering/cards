@@ -34,24 +34,10 @@ Games["gypsy"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? this.getPilesRound(card.parentNode) : this.stacks;
-    var i, pile;
-    // find a move onto another nonempty pile
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(pile.hasChildNodes() && this.canMoveTo(card, pile)) return pile;
-    }
-    // find a move to an empty pile
-    for(i = 0; i < piles.length; i++) {
-      pile = piles[i];
-      if(!pile.hasChildNodes() && this.canMoveTo(card, pile)) return pile;
-    }
-    // move to a foundation
-    for(i = 0; i < 8; i++) {
-      pile = this.foundations[i];
-      if(pile!=card.parentNode && this.canMoveToFoundation(card,pile)) return pile;
-    }
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
+        || searchPiles(piles, testPileIsEmpty)
+        || searchPiles(this.foundations, testCanMoveToFoundation(card));
   },
 
   sendToFoundations: function(card) {

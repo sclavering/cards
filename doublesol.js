@@ -73,18 +73,9 @@ Games["doublesol"] = {
   ///////////////////////////////////////////////////////////
   //// smart move
   getBestMoveForCard: function(card) {
-    // to a non-foundation
-    var parent = card.parentNode;
-    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
-    for(var i = 0; i < piles.length; i++)
-      if(this.canMoveToPile(card,piles[i])) return piles[i];
-    // to a foundation
-    if(card.parentNode.isFoundation) return null;
-    for(var j = 0; j < this.foundations.length; j++) {
-      var pile = this.foundations[j];
-      if(this.canMoveToFoundation(card, pile)) return pile;
-    }
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToPile(card))
+        || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
   },
 
 

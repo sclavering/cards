@@ -285,16 +285,17 @@ var BaseCardGame = {
 
 
   // === Scoring ==========================================
-  // games should override either |getScoreForAction|, or |scores|
+  // games should override either |getScoreFor|, or |scores|
   score: 0,
 
   updateScoreDisplay: function() {
     Cards.displayScore(this.score);
   },
 
-  // action is a string.  card and source are optional
-  getScoreForAction: function(action, card, source) {
-    if(action in this.scores) return this.scores[action];
+  // action is an Action object
+  getScoreFor: function(action) {
+    var actionstr = action.action
+    if(actionstr in this.scores) return this.scores[actionstr];
     return 0;
   },
 
@@ -312,7 +313,7 @@ var BaseCardGame = {
   // would be called "do", but that's a language keyword
   doAction: function(action) {
     action.perform();
-    action.score = this.getScoreForAction(action.action);
+    action.score = this.getScoreFor(action);
     this.undoHistory.push(action);
     this.score += action.score;
     this.updateScoreDisplay();
@@ -483,7 +484,7 @@ var BaseCardGame = {
   // Smart move is called when the player middle clicks on a card.  It should
   // perform the best possible move for that card.
   // Games should implement getBestMoveForCard(card), or maybe override smartMove()
-  // itself.  The other functions here are generally helpful in doing so.
+  // itself.  See util.js for functions that are helpful in doing so.
   smartMove: function(card) {
     if(!this.canMoveCard(card)) return;
     var target = this.getBestMoveForCard(card);
@@ -491,59 +492,6 @@ var BaseCardGame = {
   },
   getBestMoveForCard: function(card) {
     return null;
-  },
-
-  // smartMove is more intuitive if it looks alternately left and right of the source
-  // of the card for moves. This function starts from stack.parentNode and does that,
-  // applying test(card,left|right) to each one and returning the stack if test() is true
-  searchAround: function(card, test) {
-    var piles = this.getPilesRound(card.parentNode);
-    for(var i = 0; i < piles.length; i++) if(test(card,piles[i])) return piles[i];
-    return null;
-  },
-
-  getPilesRound: function(pile) {
-    if("surroundingPiles" in pile) return pile.surroundingPiles;
-
-    var left = this.nextStackLeft(pile)
-    var right = this.nextStackRight(pile);
-    var piles = [];
-    while(left || right) {
-      if(left) {
-        piles.push(left);
-        left = this.nextStackLeft(left);
-      }
-      if(right) {
-        piles.push(right);
-        right = this.nextStackRight(right);
-      }
-    }
-    pile.surroundingPiles = piles;
-    return piles;
-  },
-  // these rely on a row of stacks being sibing nodes, so XUL should be set up appropriately
-  nextStackLeft: function(stack) {
-    for(var n = stack.previousSibling; n; n = n.previousSibling)
-      if(("isPile" in n) && n.isPile) return n;
-    return null;
-  },
-  nextStackRight: function(stack) {
-    for(var n = stack.nextSibling; n; n = n.nextSibling)
-      if(("isPile" in n) && n.isPile) return n;
-    return null;
-  },
-
-  // some functions to pass to searchAround
-  lastIsConsecutiveAndSameSuit: function(c,s) {
-    var last = s.lastChild;
-    return (last && last.isSameSuit(c) && last.isConsecutiveTo(c));
-  },
-  lastIsConsecutive: function(c,s) {
-    var last = s.lastChild;
-    return (last && last.isConsecutiveTo(c));
-  },
-  stackIsEmpty: function(c,s) {
-    return !s.hasChildNodes();
   },
 
 

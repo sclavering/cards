@@ -96,7 +96,7 @@ FreeCell.getHints = function() {
     this.getHintsForCard(this.cells[i].firstChild);
   }
   for(i = 0; i < 8; i++) {
-    card = this.getLowestMoveableCard_AltColours(this.stacks[i])
+    card = this.getLowestMoveableCard_AltColours(this.stacks[i]);
     this.getHintsForCard(card);
   }
 };

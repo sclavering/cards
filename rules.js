@@ -54,6 +54,7 @@ getLowestMovableCard:
 
 hasBeenWon:
   "13 cards on each foundation"
+  "foundation holds all cards"
 
 getBestMoveForCard
   "to up or nearest space"
@@ -255,9 +256,9 @@ var Rules = {
       return true;
     },
 
-    "52 cards on foundation":
+    "foundation holds all cards":
     function() {
-      return this.foundation.childNodes.length==52;
+      return this.foundation.childNodes.length==this.cards.length;
     }
   },
 
@@ -280,8 +281,8 @@ var Rules = {
           if(!empty) empty = p;
           continue;
         }
-        if(!p.mayAddCard(card)) continue;
-        if(card.suit==p.lastChild.suit) return p;
+        if(card.upNumber!=last.number) continue;
+        if(card.suit==last.suit) return p;
         if(!maybe) maybe = p;
       }
       return maybe || empty;

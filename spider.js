@@ -13,6 +13,15 @@ var SpiderBase = {
 
   layout: "spider",
 
+  kings: [12, 25, 38, 51, 64, 77, 90, 103],
+
+  init2: function() {
+    // replace the array of indices with a *new* array of cards
+    const ki = this.kings, num = ki.length, cs = this.cards;
+    const ks = this.kings = new Array(num);
+    for(var i = 0; i != num; i++) ks[i] = cs[ki[i]];
+  },
+
   dealFromStock: "to piles, if none empty",
 
   mayTakeCardFromFoundation: "no",
@@ -22,10 +31,11 @@ var SpiderBase = {
   getBestMoveForCard: "down and same suit, or down, or empty",
 
   autoplayMove: function() {
-    for(var i = 0; i != this.piles.length; i++) {
-      var pile = this.piles[i];
-      var n = pile.childNodes.length - 13;
-      if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
+    const ks = this.kings, num = ks.length, f = this.foundation;
+    for(var i = 0; i != num; i++) {
+      var k = ks[i], p = k.parentNode;
+      if(p.isNormalPile && p.mayTakeCard(k) && f.mayAddCard(k))
+        return this.moveTo(k, f);
     }
     return false;
   },
@@ -35,9 +45,7 @@ var SpiderBase = {
     return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
   },
 
-  hasBeenWon: function() {
-    return this.foundation.childNodes.length==104;
-  },
+  hasBeenWon: "foundation holds all cards",
 
   scores: {
     "->foundation": 100,
@@ -51,14 +59,7 @@ var Spider = {
 
   getLowestMovableCard: "descending, in suit",
 
-  kings: null,
-
   deal: function(cards) {
-    if(!this.kings) {
-      var cs = this.cards;
-      this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
-    }
-
     for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
     for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
     this.stock.dealTo(cards, 50, 0);
@@ -70,17 +71,6 @@ var Spider = {
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
-  },
-
-  autoplayMove: function() {
-    const ks = this.kings;
-    for(var i = 0; i != 8; i++) {
-      var k = ks[i], p = k.parentNode;
-      if(!p.isNormalPile) continue;
-      var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.foundation);
-    }
-    return false;
   }
 };
 
@@ -170,6 +160,17 @@ AllGames.divorce = {
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+  },
+
+  autoplayMove: function() {
+    const ps = this.piles, num = ps.length, f = this.foundation;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i], n = p.childNodes.length - 13;
+      if(n < 0) continue;
+      var c = p.childNodes[n];
+      if(p.mayTakeCard(c) && f.mayAddCard(c)) return this.moveTo(c, f);
+    }
+    return false;
   }
 };
 
@@ -179,6 +180,9 @@ AllGames.wasp = {
 
   id: "wasp",
   layout: "wasp",
+
+  // converted to an array of cards by SpiderBase.init2()
+  kings: [12, 25, 38, 51],
 
   deal: function(cards) {
     for(var i = 0; i != 3; i++) this.piles[i].dealTo(cards, 3, 4);
@@ -203,7 +207,5 @@ AllGames.wasp = {
       var downp = down.parentNode;
       if(downp!=pile && downp.isNormalPile) this.addHint(down, pile);
     }
-  },
-
-  hasBeenWon: "52 cards on foundation"
+  }
 };

@@ -10,12 +10,12 @@ var SimonBase = {
   layout: "simon",
   getLowestMovableCard: "descending, in suit",
 
-  deal: function(cards) {
-    if(!("kings" in this)) {
-      const cs = this.cards;
-      this.kings = [cs[12], cs[25], cs[38], cs[51]];
-    }
+  init2: function() {
+    const cs = this.cards;
+    this.kings = [cs[12], cs[25], cs[38], cs[51]];
+  },
 
+  deal: function(cards) {
     const ps = this.piles;
     ps[0].dealTo(cards, 0, 8);
     ps[1].dealTo(cards, 0, 8);
@@ -40,14 +40,13 @@ var SimonBase = {
     const ks = this.kings;
     for(var i = 0; i != 4; i++) {
       var k = ks[i], p = k.parentNode;
-      if(!p.isNormalPile) continue;
-      var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.foundation);
+      if(p.isNormalPile && p.lastChild.isAce && p.mayTakeCard(k))
+        return this.moveTo(k, this.foundation);
     }
     return false;
   },
 
-  hasBeenWon: "52 cards on foundation",
+  hasBeenWon: "foundation holds all cards",
 
   scores: {
     "->foundation": 100,

@@ -24,7 +24,7 @@ var CardMover1 = {
   },
 
   move: function(firstCard, target) {
-    Cards.disableUI();
+    disableUI();
 
     // initial coords
     var sx = firstCard.boxObject.x - gGameStackLeft;
@@ -39,7 +39,7 @@ var CardMover1 = {
     // otherwise we'll end up doing an inifinite step move
     if(!dx && !dy) {
       firstCard.transferTo(target);
-      if(!Game.autoplay()) Cards.enableUI();
+      if(!Game.autoplay()) enableUI();
       return;
     }
 
@@ -73,7 +73,7 @@ var CardMover1 = {
           cards.firstChild.transferTo(target);
           cards.hide();
           // don't enable UI until autoplay finished
-          if(!Game.autoplay()) Cards.enableUI();
+          if(!Game.autoplay()) enableUI();
         }, 0);
       }
     };
@@ -95,7 +95,7 @@ var CardMover2 = {
   },
 
   move: function(card, to) {
-    Cards.disableUI();
+    disableUI();
     var highlighter = this.highlighter;
     highlighter.highlight(card);
     setTimeout(function() {
@@ -104,7 +104,7 @@ var CardMover2 = {
       setTimeout(function() {
         highlighter.unhighlight();
         // xxx this is turning up in too many places.  make it a function
-        if(!Game.autoplay()) Cards.enableUI();
+        if(!Game.autoplay()) enableUI();
       }, 500);
     }, 260);
   }

@@ -171,12 +171,12 @@ var BaseCardGame = {
   initDifficultyLevel: function() {
     // clear the 'Difficulty' menu on the toolbar
     // (menu being empty is used to indicate game does not have multiple difficulty levels)
-    var menu = Cards.difficultyLevelPopup;
+    var menu = gDifficultyLevelPopup;
     while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
     // get levels.  if none then return (updateUI will ensure menu disabled)
     var levels = this.difficultyLevels;
     if(!levels) return;
-    Cards.enableDifficultyMenu();
+    enableDifficultyMenu();
     // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
     var currentLevel;
     try {
@@ -231,9 +231,9 @@ var BaseCardGame = {
     }
 
     this.updateScoreDisplay(); // must do after deal(), because not all games start the score at 0
-    Cards.disableUndo();
-    Cards.disableRedeal();
-    Cards.enableUI();
+    disableUndo();
+    disableRedeal();
+    enableUI();
   },
   // should deal out the cards for a new game. newGame() will ensure all stacks are empty
   deal: function() {
@@ -277,7 +277,7 @@ var BaseCardGame = {
     }
   },
   endGame: function() {
-    Cards.disableUI();
+    disableUI();
   },
 
 
@@ -295,7 +295,7 @@ var BaseCardGame = {
   score: 0,
 
   updateScoreDisplay: function() {
-    Cards.displayScore(this.score);
+    displayScore(this.score);
   },
 
   // action is an Action object
@@ -325,8 +325,8 @@ var BaseCardGame = {
     this.updateScoreDisplay();
     this.clearHints();
     // update UI
-    if(this.redealsRemaining==0) Cards.disableRedeal(); // yuck.  redeals should die.
-    if(this.undoHistory.length==1) Cards.doEnableUndo();
+    if(this.redealsRemaining==0) disableRedeal(); // yuck.  redeals should die.
+    if(this.undoHistory.length==1) doEnableUndo();
   },
 
   canUndo: function() {
@@ -341,7 +341,7 @@ var BaseCardGame = {
     this.updateScoreDisplay();
     undo.undo();
     // en/dis-able the Undo and Redeal buttons
-    Cards.fixUI();
+    fixUI();
   },
 
   restart: function() {
@@ -531,7 +531,7 @@ var BaseCardGame = {
       return true;
     } else if(Game.hasBeenWon()) {
       this.endGame();
-      Cards.showGameWon();
+      showGameWon();
       return true;
     }
     return false;

@@ -82,7 +82,7 @@ var FreeCellGame = {
       return true;
     } else if(Game.hasBeenWon()) {
       this.endGame();
-      Cards.showGameWon();
+      showGameWon();
       return true;
     }
     return false;

@@ -15,7 +15,7 @@ var gStrings = []; // the contents of the stringbundle
 var Game = null;  // the current games
 var Games = [];   // all the games, indexed by id
 
-var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
+var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 
 var gHintHighlighter = null;
 
@@ -26,19 +26,46 @@ var gXOffsetFromFaceDownCard = 5; // num pixels between left edges of two face d
 var gXOffsetFromFaceUpCard = 12;  // num pixels between left edges of two face up cards
 var gOffsetForCardSlide = 2; // num picels between top+left edges of two cards in a slide
 
+// <command/> elements
+var gCmdUndo = null;
+var gCmdHint = null;
+var gCmdNewGame = null;
+var gCmdRestartGame = null;
+var gCmdRedeal = null;
+var gCmdSetDifficulty = null;
+
+// other bits of UI
+var gOptionsMenu = null;
+var gDifficultyLevelMenu = null;
+var gDifficultyLevelPopup = null; // the <menupopup> for difficultyLevelMenu
+var gGameSelector = null;
+var gGameWonMsg = null;
+var gScoreDisplay = null; // <label/> on toolbar where score is displayed
+
 
 
 function init() {
+  gCmdUndo = document.getElementById("cmd:undo");
+  gCmdNewGame = document.getElementById("cmd:newgame");
+  gCmdRestartGame = document.getElementById("cmd:restart");
+  gCmdHint = document.getElementById("cmd:hint");
+  gCmdRedeal = document.getElementById("cmd:redeal");
+  gCmdSetDifficulty = document.getElementById("cmd:setdifficulty");
+
+  gOptionsMenu = document.getElementById("options-menu");
+  gDifficultyLevelMenu = document.getElementById("game-difficulty-menu");
+  gDifficultyLevelPopup = document.getElementById("game-difficulty-popup");
+  gGameSelector = document.getElementById("game-type-menu");
+  gGameWonMsg = document.getElementById("game-won-msg-box");
+  gScoreDisplay = document.getElementById("score-display");
+
   // init the pref branch
-  var prefService = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefService);
-  gPrefs = prefService.getBranch("games.cards.");
+  gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
+  gPrefs = gPrefs.getBranch("games.cards.");
 
   // load stringbundle
-  var svc = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                      .getService(Components.interfaces.nsIStringBundleService);
-  var bundle = svc.createBundle("chrome://cards/locale/cards.properties");
-  bundle = bundle.getSimpleEnumeration();
+  var svc = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+  var bundle = svc.createBundle("chrome://cards/locale/cards.properties").getSimpleEnumeration();
   while(bundle.hasMoreElements()) {
     var property = bundle.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
     gStrings[property.key] = property.value;
@@ -72,11 +99,11 @@ function init() {
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
     to = to.lastChild || to; // |to| could be a stack
-    Cards.disableUI();
+    disableUI();
     this.highlight(from);
     var thisthis = this; // because |this| within these functions would refer to the wrong thing
     setTimeout(function(){thisthis.highlight(to);}, 350);
-    setTimeout(function(){thisthis.unhighlight();Cards.enableUI();}, 800);
+    setTimeout(function(){thisthis.unhighlight();enableUI();}, 800);
   };
 
   // build the games menu
@@ -99,8 +126,19 @@ function init() {
     menu.appendChild(mi);
   }
 
-  Cards.init();
+  // switch to last played game
+  game = "klondike";
+  try {
+    game = gPrefs.getCharPref("current-game");
+  } catch(e) {}
+  if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
+  Game = Games[game];
+  Game.start();
+
+  // set window title. (setting window.title does not work while the app. is starting)
+  document.documentElement.setAttribute("title",gStrings[game+".name"]);
 }
+
 window.addEventListener("load", init, false);
 
 
@@ -473,7 +511,7 @@ var turnCardFaceUpCosines = new Array(7);
 for(var i = 0; i != 7; i++) turnCardFaceUpCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
 
 function turnCardFaceUp(card) {
-  Cards.disableUI();
+  disableUI();
   var oldLeft = parseInt(card.left);
   var oldWidth = card.boxObject.width;
   var oldHalfWidth = oldWidth / 2;
@@ -484,7 +522,7 @@ function turnCardFaceUp(card) {
       clearInterval(interval);
       card.left = oldLeft;
       card.width = oldWidth;
-      if(!Game.autoplay()) Cards.enableUI();
+      if(!Game.autoplay()) enableUI();
       return;
     }
     var newHalfWidth = turnCardFaceUpCosines[stepNum] * oldHalfWidth;
@@ -497,143 +535,103 @@ function turnCardFaceUp(card) {
 
 
 
-/** Cards
-  *
-  * this mainly handles the behaviour of the chrome, especially switching between different card games
-  */
-var Cards = {
-  // refs to various <command> elements so they can be disabled
-  cmdUndo: null,
-  cmdHint: null,
-  cmdNewGame: null,
-  cmdRestartGame: null,
-  cmdRedeal: null,
-  cmdSetDifficulty: null,
-  // refs to toolbar elements so they can be disabled
-  optionsMenu: null,
-  difficultyLevelMenu: null,
-  difficultyLevelPopup: null, // the <menupopup> for difficultyLevelMenu
-  gameSelector: null,
-  gameWonMsg: null,
 
-  scoreDisplay: null,     // ref to label on toolbar where score displayed
 
-  init: function() {
-    // init chrome DOM refs
-    this.cmdUndo = document.getElementById("cmd:undo");
-    this.cmdNewGame = document.getElementById("cmd:newgame");
-    this.cmdRestartGame = document.getElementById("cmd:restart");
-    this.cmdHint = document.getElementById("cmd:hint");
-    this.cmdRedeal = document.getElementById("cmd:redeal");
-    this.cmdSetDifficulty = document.getElementById("cmd:setdifficulty");
-    this.scoreDisplay = document.getElementById("score-display");
-    this.optionsMenu = document.getElementById("options-menu");
-    this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
-    this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
-    this.gameSelector = document.getElementById("game-type-menu");
-    this.gameWonMsg = document.getElementById("game-won-msg-box");
 
-    // switch to last played game
-    var game = "klondike";
-    try {
-      game = gPrefs.getCharPref("current-game");
-    } catch(e) {}
-    if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
-    Game = Games[game];
-    Game.start();
-    // set window title. (setting window.title does not work while the app. is starting)
-    document.documentElement.setAttribute("title",gStrings[game+".name"]);
-  },
 
-  // switches which game is currently being played
-  playGame: function(game) {
-    if(Game) Game.end();
-    // store current game pref and start the game
-    gPrefs.setCharPref("current-game",game);
-    Game = Games[game];
-    Game.start();
-    // set the window title
-    window.title = gStrings[game+".name"];
-  },
-
-  // enable/disable the UI elements. this is done whenever any animation
-  // is taking place, as problems ensue otherwise.
-  enableUI: function() {
-    gUIEnabled = true;
-    this.cmdHint.removeAttribute("disabled");
-    this.cmdNewGame.removeAttribute("disabled");
-    this.cmdRestartGame.removeAttribute("disabled");
-    this.optionsMenu.removeAttribute("disabled");
-    this.enableDifficultyMenu();
-    this.gameSelector.removeAttribute("disabled");
-    this.enableUndo();
-    this.enableRedeal();
-  },
-  disableUI: function() {
-    gUIEnabled = false;
-    this.cmdHint.setAttribute("disabled","true");
-    this.cmdNewGame.setAttribute("disabled","true");
-    this.cmdRestartGame.setAttribute("disabled","true");
-    this.optionsMenu.setAttribute("disabled","true");
-    this.difficultyLevelMenu.setAttribute("disabled","true");
-    this.gameSelector.setAttribute("disabled","true");
-    this.cmdUndo.setAttribute("disabled","true");
-    this.cmdRedeal.setAttribute("disabled","true");
-  },
-  // en/dis-able the Undo and Redeal commands as required
-  // don't use this too much because it's slow (it always adjusts attributes)
-  fixUI: function() {
-    if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
-    else this.cmdUndo.setAttribute("disabled","true");
-    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
-    else this.cmdRedeal.setAttribute("disabled","true");
-  },
-
-  enableUndo: function() {
-    if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
-  },
-  doEnableUndo: function() {
-    this.cmdUndo.removeAttribute("disabled");
-  },
-  disableUndo: function() {
-    this.cmdUndo.setAttribute("disabled","true");
-  },
-  enableRedeal: function() {
-    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
-  },
-  disableRedeal: function() {
-    this.cmdRedeal.setAttribute("disabled","true");
-  },
-
-  enableDifficultyMenu: function() {
-    // the popup for the menu is built when the game is started
-    // and will be empty if difficulty levels are not supported
-    if(this.difficultyLevelPopup.hasChildNodes())
-      this.difficultyLevelMenu.removeAttribute("disabled");
-  },
-  disableDifficultyMenu: function() {
-    this.difficultyLevelMenu.setAttribute("disabled","true");
-  },
-
-  // called by BaseCardGame.updateScoreDisplay()
-  displayScore: function(score) { this.scoreDisplay.value = score; },
-
-  // called from BaseCardGame.autoplay(), which is a function called after all significant
-  // moves, so handles checking whether the game has been won and taking appropriate action.
-  showGameWon: function() {
-    this.gameWonMsg.hidden = false;
-    // will get click events before the other event handlers
-    window.onclick = function(e) {
-      window.onclick = null;
-      Cards.gameWonMsg.hidden = true;
-      Game.newGame();
-    };
-  }
+// switches which game is currently being played
+function playGame(game) {
+  if(Game) Game.end();
+  // store current game pref and start the game
+  gPrefs.setCharPref("current-game",game);
+  Game = Games[game];
+  Game.start();
+  // set the window title
+  window.title = gStrings[game+".name"];
 }
 
+// enable/disable the UI elements. this is done whenever any animation
+// is taking place, as problems ensue otherwise.
+function enableUI() {
+  gUIEnabled = true;
+  gCmdHint.removeAttribute("disabled");
+  gCmdNewGame.removeAttribute("disabled");
+  gCmdRestartGame.removeAttribute("disabled");
+  gOptionsMenu.removeAttribute("disabled");
+  this.enableDifficultyMenu();
+  gGameSelector.removeAttribute("disabled");
+  this.enableUndo();
+  this.enableRedeal();
+}
 
+function disableUI() {
+  gUIEnabled = false;
+  gCmdHint.setAttribute("disabled","true");
+  gCmdNewGame.setAttribute("disabled","true");
+  gCmdRestartGame.setAttribute("disabled","true");
+  gOptionsMenu.setAttribute("disabled","true");
+  gDifficultyLevelMenu.setAttribute("disabled","true");
+  gGameSelector.setAttribute("disabled","true");
+  gCmdUndo.setAttribute("disabled","true");
+  gCmdRedeal.setAttribute("disabled","true");
+}
 
+// en/dis-able the Undo and Redeal commands as required
+// don't use this too much because it's slow (it always adjusts attributes)
+function fixUI() {
+  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
+  else gCmdUndo.setAttribute("disabled","true");
+  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
+  else gCmdRedeal.setAttribute("disabled","true");
+}
 
+function enableUndo() {
+  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
+}
+
+function doEnableUndo() {
+  gCmdUndo.removeAttribute("disabled");
+}
+
+function disableUndo() {
+  gCmdUndo.setAttribute("disabled","true");
+}
+
+function enableRedeal() {
+  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
+}
+
+function disableRedeal() {
+  gCmdRedeal.setAttribute("disabled","true");
+}
+
+function enableDifficultyMenu() {
+  // the popup for the menu is built when the game is started
+  // and will be empty if difficulty levels are not supported
+  if(gDifficultyLevelPopup.hasChildNodes())
+    gDifficultyLevelMenu.removeAttribute("disabled");
+}
+
+function disableDifficultyMenu() {
+  gDifficultyLevelMenu.setAttribute("disabled","true");
+}
+
+// called by BaseCardGame.updateScoreDisplay()
+function displayScore(score) {
+  gScoreDisplay.value = score;
+}
+
+// called from BaseCardGame.autoplay(), which is a function called after all significant
+// moves, so handles checking whether the game has been won and taking appropriate action.
+function showGameWon() {
+  gGameWonMsg.hidden = false;
+  // will get click events before the other event handlers
+  window.onclick = function(e) {
+    window.onclick = null;
+    gGameWonMsg.hidden = true;
+    Game.newGame();
+  };
+}
 
 function useCardSet(set) {
   // XXX: Ideally the disabling of stylesheets would be based on their titles, but

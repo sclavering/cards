@@ -12,7 +12,7 @@
   */
 
 // flags to indicate some of the rules of a card game.  usage:  FooSolitaire = new CardGame(FLAG_1 | FLAG_2 | ...);
-const ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, NO_DRAG_DROP = 4;
+var ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2, NO_DRAG_DROP = 4;
 
 function CardGame(params) {
   // for Klondike, Canfield and others, where when reaching the bottom of
@@ -55,42 +55,42 @@ CardGame.prototype = {
     if(numStacks) {
       this.stacks = new Array(numStacks);
       for(var i = 0; i < numStacks; i++) {
-        this.stacks[i] = document.getElementById(name+"-pile-"+i);
+        this.stacks[i] = createCardPile(name+"-pile-"+i);
         this.stacks[i].isPile = true;
         this.allstacks.push(this.stacks[i]);
       }
     }
     if(numFoundations==1) {
-      this.foundation = document.getElementById(name+"-foundation");
+      this.foundation = createCardPile(name+"-foundation");
       this.foundation.isFoundation = true;
       this.allstacks.push(this.foundation);
     } else if(numFoundations) {
       this.foundations = new Array(numFoundations);
       for(i = 0; i < numFoundations; i++) {
-        this.foundations[i] = document.getElementById(name+"-foundation-"+i);
+        this.foundations[i] = createCardPile(name+"-foundation-"+i);
         this.foundations[i].isFoundation = true;
         this.allstacks.push(this.foundations[i]);
       }
     }
     if(numReserves==1) {
-      this.reserve = document.getElementById(name+"-reserve");
+      this.reserve = createCardPile(name+"-reserve");
       this.reserve.isReserve = true;
       this.allstacks.push(this.reserve);
     } else if(numReserves) {
       this.reserves = new Array(numReserves);
       for(i = 0; i < numReserves; i++) {
-        this.reserves[i] = document.getElementById(name+"-reserve-"+i);
+        this.reserves[i] = createCardPile(name+"-reserve-"+i);
         this.reserves[i].isReserve = true;
         this.allstacks.push(this.reserves[i]);
       }
     }
     if(hasStock) {
-      this.stock = document.getElementById(name+"-stock");
+      this.stock = createCardPile(name+"-stock");
       this.stock.isStock = true;
       this.allstacks.push(this.stock);
     }
     if(hasWaste) {
-      this.waste = document.getElementById(name+"-waste");
+      this.waste = createCardPile(name+"-waste");
       this.waste.isWaste = true;
       this.allstacks.push(this.waste);
     }
@@ -100,7 +100,7 @@ CardGame.prototype = {
       for(i = 0; i < tableauRows; i++) {
         this.tableau[i] = new Array(tableauCols);
         for(j = 0; j < tableauCols; j++) {
-          var s = document.getElementById(name+"-tableau-"+i+"-"+j);
+          var s = createCardPile(name+"-tableau-"+i+"-"+j);
           s.row = i;
           s.col = j;
           s.isPile = true;
@@ -113,7 +113,7 @@ CardGame.prototype = {
     if(numCells) {
       this.cells = new Array(numCells);
       for(i = 0; i < numCells; i++) {
-        this.cells[i] = document.getElementById(name+"-cell-"+i);
+        this.cells[i] = createCardPile(name+"-cell-"+i);
         this.cells[i].isCell = true;
         this.allstacks.push(this.cells[i]);
       }

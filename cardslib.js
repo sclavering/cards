@@ -39,17 +39,9 @@ function getWidth(box) { return box.boxObject.width; }
 function getHeight(box) { return box.boxObject.height; }
 
 // constants for colours and suits
-const RED = 1;
-const BLACK = 2;
-const SPADE = 3;
-const HEART = 4;
-const DIAMOND = 5;
-const CLUB = 6;
+var RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
 // these are used in setting the class attribute of cards.
-const CLUBSTR = "club";
-const SPADESTR = "spade";
-const HEARTSTR = "heart";
-const DIAMONDSTR = "diamond";
+var CLUBSTR = "club", SPADESTR = "spade", HEARTSTR = "heart", DIAMONDSTR = "diamond";
 
 
 
@@ -164,6 +156,37 @@ var CardShuffler = {
 
 
 
+// give it a <stack> element or the id for one. adds some expando properties
+// (tried doing this in XBL, but it was unbearably slow)
+function createCardPile(id) {
+  return _createCardPile(document.getElementById(id));
+}
+function _createCardPile(elt) {
+  elt.isCard = false;
+  elt.isPile = true;
+  elt.isFoundation = false;
+  elt.isCell = false;
+  elt.isReserve = false;
+  elt.isStock = false;
+  elt.isWaste = false;
+  
+  // transfers the card and all those that follow it
+  // xxx: not in use yet
+  elt.transferCards = function(first) {
+    var next, card = first;
+    while(card) {
+      next = card.nextSibling;
+      card.parentNode.removeChild(card);
+      this.appendChild(card);
+      card = next;
+    }
+    CardPositioner.fixStack(this);
+  };
+  
+  return elt;
+}
+    
+  
 
 
 
@@ -171,7 +194,6 @@ var CardShuffler = {
   *
   * Handles the animated turning-face-up of cards.
   * Do not call directly, just use somecard.turnFaceUp() instead
-  *
   */
 var CardTurner = {
   angle: null,    // the angle the card has reached in being turned
@@ -185,7 +207,7 @@ var CardTurner = {
     this.angle = 0;
     this.oldLeft = parseInt(card.left);
     this.oldWidth = getWidth(card);
-    this.interval = setInterval("CardTurner.turnFaceUpStep()",50);
+    this.interval = setInterval(function(){CardTurner.turnFaceUpStep();}, 50);
     Cards.disableUI();
   },
   turnFaceUpStep: function() {
@@ -248,14 +270,14 @@ var MouseHandler1 = {
     this.cards = document.createElement("stack");
     this.cards.hidden = true;
     this.dragLayer.appendChild(this.cards);
+    this.cards = _createCardPile(this.cards);
     // have to position the <stack/> or it fills its parent, blocking all mouse clicks!
     this.cards.top = 0; this.cards.left = 0;
   },
 
   start: function() {
-//    MouseHandler2.disable();
-    //this.nextCard = null; // set on mousedown so that on mousemove cardStack can be created
-    // might need to clear .nextCard and hide .card
+    // might need to hide .card
+    this.nextCard = null;
     this.tx = 0;
     this.ty = 0;
     this.enable();
@@ -358,9 +380,6 @@ var MouseHandler1 = {
 
 
 
-// === BEGIN FREECELL ADDITIONS ===
-
-
 
 /** MouseHandler2
   *
@@ -377,10 +396,7 @@ var MouseHandler2 = {
   dragLayer: null,
 
   init: function(stack) { this.dragLayer = stack; },
-  start: function() {
-//    MouseHandler.disable();
-    this.enable();
-  },
+  start: function() { this.enable(); },
   enable: function() { this.dragLayer.addEventListener("click",this.mouseClickedWrapper,false); },
   disable: function() { this.dragLayer.removeEventListener("click",this.mouseClickedWrapper,false); },
 
@@ -428,7 +444,7 @@ var MouseHandler2 = {
 
 var Highlighter = {
   positioningLayer: null, // stack where box is to be created
-  highlightBoxes: null, // a bunch of boxes that get positioned round cards to highlight them
+  highlightBox: null, // a boxes that get positioned round cards to highlight them
   destinations: null, // where the hint should show the card moving to
 
   init: function(stack) {
@@ -450,11 +466,6 @@ var Highlighter = {
     this.positioningLayer.removeChild(this.highlightBox);
   }
 }
-// === END FREECELL ADDITIONS ===
-
-
-
-
 
 
 
@@ -488,6 +499,7 @@ var CardMover = {
     this.cards.hidden = true;
     this.cards.id = "card-move-pile";
     this.dragLayer.appendChild(this.cards);
+    this.cards = _createCardPile(this.cards);
   },
   move: function(firstCard, target) {
     Cards.disableUI(); // disabling the UI as early as pos might help SimpleSimon bug
@@ -501,7 +513,7 @@ var CardMover = {
     this.target = target;
     this.targetTop = getTop(this.target) - getTop(this.dragLayer) + CardPositioner.getNextCardTop(this.target);
     this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer); // just to be sure
-    this.interval = setInterval("CardMover.step()",30);
+    this.interval = setInterval(function(){CardMover.step();}, 30);
     // angle stays constant now that parseFloat is being used on top and left attrs
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
     var ydistance = this.targetTop  - parseFloat(this.cards.top);
@@ -511,20 +523,18 @@ var CardMover = {
   },
 
   step: function() {
+    // returns the numerically smaller of the two values (ignoring sign)
+    function absMin(num1, num2) { return (Math.abs(num1) < Math.abs(num2)) ? num1 : num2; }
     // calculate how far the card has to move
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
     var ydistance = this.targetTop  - parseFloat(this.cards.top);
     // caluclate angle, then use to calculate the x and y "speed"s (from a known overall speed)
-    var xchange = this.absMin(this.xchange,xdistance)
-    var ychange = this.absMin(this.ychange,ydistance)
+    var xchange = absMin(this.xchange,xdistance)
+    var ychange = absMin(this.ychange,ydistance)
     this.cards.left = parseFloat(this.cards.left) + xchange;
     this.cards.top = parseFloat(this.cards.top) + ychange;
     // if its reached the destination
     if(xchange==xdistance && ychange==ydistance) this.moveComplete();
-  },
-  // returns the numerically smaller of the two values (ignoring sign)
-  absMin: function(num1, num2) {
-    return (Math.abs(num1) < Math.abs(num2)) ? num1 : num2;
   },
 
   moveComplete: function() {
@@ -624,7 +634,7 @@ var CardPositioner = {
   getNextCardLeft: function(stack) {
     if(!stack.hasChildNodes() || stack.className!="card-slide") 
       return 0;
-    return stack.lastChild.left - 0 + (stack.childNodes.length < 6)? this.slideOffset:0;
+    return stack.lastChild.left - 0 + ((stack.childNodes.length < 6) ? this.slideOffset : 0);
   },
 
   fixStack: function(stack) {
@@ -639,7 +649,7 @@ var CardPositioner = {
       return;
     }
     var card;
-    if(stack.className=="card-slide") {/* figure out how many we can shift in space allotted */
+    if(stack.className=="card-slide") {// figure out how many we can shift in space allotted
       var maxYShifts = parseInt((window.innerHeight - getBottom(stack.firstChild))/this.slideOffset);
       var maxXShifts = parseInt((window.innerWidth - getRight(stack.firstChild))/this.slideOffset);
       var offX = 0;
@@ -690,7 +700,6 @@ var CardPositioner = {
 
 /** HintHighlighter
   *
-  * cards are highlighted by placing a coloured, translucent rectangle over them (or a coloured border round them)
   * This is used to indicate the card to be moved and the destination for hints
   * Hints are indicated by placing a translucent rectangle round the source, then the target
   *
@@ -721,7 +730,7 @@ var HintHighlighter = {
     // for when hint destination is really a stack
     this.destination = to.hasChildNodes() ? to.lastChild : to;
     this.highlight(from);
-    setTimeout("HintHighlighter.highlightDestination()",300);
+    setTimeout(function(){HintHighlighter.highlightDestination();}, 300);
   },
   highlight: function(card) {
     // hide it while we move it
@@ -736,7 +745,7 @@ var HintHighlighter = {
   },
   highlightDestination: function() {
     this.highlight(this.destination);
-    setTimeout("HintHighlighter.highlightComplete()",300);
+    setTimeout(function(){HintHighlighter.highlightComplete();}, 300);
   },
   highlightComplete: function() {
     this.highlightBox.hidden = true;
@@ -852,8 +861,6 @@ var Cards = {
       this.cmdUndo.removeAttribute("disabled");
   },
 
-  // need to be able to show/hide the difficulty level menu when a new game type is started
-  // because not all games have multiple difficulty levels.
   conditionalEnableDifficultyMenu: function() {
     // the popup for the menu is built when the game is started
     // and will be empty if difficulty levels are not supported
@@ -875,7 +882,7 @@ var Cards = {
   showGameWon: function() {
     // get a reference to the prompt service component.
     var prompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                                  .getService(Components.interfaces.nsIPromptService);
+                           .getService(Components.interfaces.nsIPromptService);
     var msg1 = document.documentElement.getAttribute("gameWonTitle");
     var msg2 = document.documentElement.getAttribute("gameWonMessage");
     if(prompt.confirm(window,msg1,msg2)) Game.newGame();

@@ -101,14 +101,9 @@ spacing at top and between rows of cards is done with <spacer class="row-spacer"
 rather than CSS, because margins and padding are not included in the result of
 boxEl.boxObject.top/left etc, so there is a jump (of the num of px of padding)
 when starting to move a card, which looks abysmal
-
-margin on the <stack/> lets you drag cards out of the edge of the window without
-forcing the stack to expand, which pulls the whole content of the game right, or
-causes slowdowns (dragging off bottom). padding stops the content from actually
-using those 100px :)  thanks Neil.
 -->
 
-<stack id="current-game-display" style="margin: 0 -100px -1000px 0; padding: 0 100px 1000px 0;" flex="1">
+<stack id="current-game-display" flex="1">
   <!-- Aces Up -->
   <vbox id="AcesUp" hidden="true" name="&acesup-name;">
     <spacer class="row-spacer"/>

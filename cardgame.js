@@ -119,8 +119,8 @@ CardGame.prototype = {
     // conditionally show Difficulty Level menu
     if(this.hasDifficultyLevels) Cards.enableDifficultyMenu();
     else Cards.disableDifficultyMenu();
-    if(this.usesMouseHandler2) MouseHandler2.start();
-    else MouseHandler.start();
+    MouseHandler = (this.usesMouseHandler2) ? MouseHandler2 : MouseHandler1;
+    MouseHandler.start();
     // init stack arrays and stuff
     if(!this.initialised) {
       this.init();

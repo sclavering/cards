@@ -213,7 +213,7 @@ var CardTurner = {
 
 
 
-/** MouseHandler
+/** MouseHandler1
   *
   * handles the dragging of cards (not true drag drop) and mouse clicks
   *
@@ -231,7 +231,7 @@ var CardTurner = {
   * on. Game.tryMoveTo() is then called (Game is always the object for the
   * current game)
   */
-var MouseHandler = {
+var MouseHandler1 = {
   dragLayer: null, // a stack containing the whole game area which card(s) are moved to while dragging
   nextCard: null, // set on mousedown, so that on mousemove a stack c can be created
   cards: null, // the stack of cards being dragged
@@ -253,6 +253,7 @@ var MouseHandler = {
   },
 
   start: function() {
+//    MouseHandler2.disable();
     //this.nextCard = null; // set on mousedown so that on mousemove cardStack can be created
     // might need to clear .nextCard and hide .card
     this.tx = 0;
@@ -273,11 +274,11 @@ var MouseHandler = {
     this.dragLayer.removeEventListener("click", this.mouseClickedWrapper,  false);
   },
 
-  // wrappers so that the *this* keyword works correctly in handlers (points to MouseHandlerManager, not the handler)
-  mouseDownWrapper: function(e){if(e.button==0)MouseHandler.mouseDown(e);},
-  mouseUpWrapper:   function(e){if(e.button==0)MouseHandler.mouseUp(e);  },
-  mouseMoveWrapper: function(e){if(e.button==0)MouseHandler.mouseMove(e);},
-  mouseClickedWrapper: function(e){if(!MouseHandler.dragInProgress) MouseHandler.mouseClicked(e);},
+  // wrappers so that the *this* keyword works correctly in handlers
+  mouseDownWrapper: function(e){if(e.button==0)MouseHandler1.mouseDown(e);},
+  mouseUpWrapper:   function(e){if(e.button==0)MouseHandler1.mouseUp(e);  },
+  mouseMoveWrapper: function(e){if(e.button==0)MouseHandler1.mouseMove(e);},
+  mouseClickedWrapper: function(e){if(!MouseHandler1.dragInProgress) MouseHandler1.mouseClicked(e);},
 
   mouseDown: function(e) {
     var t = e.target;
@@ -376,7 +377,10 @@ var MouseHandler2 = {
   dragLayer: null,
 
   init: function(stack) { this.dragLayer = stack; },
-  start: function() { this.enable(); }, // hangover from Cards version.  retaining for almagamation
+  start: function() {
+//    MouseHandler.disable();
+    this.enable();
+  },
   enable: function() { this.dragLayer.addEventListener("click",this.mouseClickedWrapper,false); },
   disable: function() { this.dragLayer.removeEventListener("click",this.mouseClickedWrapper,false); },
 
@@ -730,7 +734,7 @@ var Cards = {
     this.gameSelector = document.getElementById("game-type-menu");
     this.gameDisplayStack = document.getElementById("current-game-display");
     // init other objects in cardslib.js
-    MouseHandler.init(this.gameDisplayStack);    // handles drag-drop and mouse clicks
+    MouseHandler1.init(this.gameDisplayStack);    // handles drag-drop and mouse clicks
     CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
     HintHighlighter.init(this.gameDisplayStack); // shows hints by drawing boxes round source/destination
     // FREECELL additions
@@ -835,6 +839,8 @@ var Cards = {
 // Game var is always the object for the current game, this was a placeholder to avoid js errors
 var Game = null;
 var Games = new Array();
+
+var MouseHandler;
 
 
 window.addEventListener("load", function() {

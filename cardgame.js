@@ -55,15 +55,7 @@ var BaseCardGame = {
     this.initialised = true;
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
     this.initXulElement();
-    this.initPiles();
-    // if layout from another game has been cloned we need to throw away any cards in it
-    var ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      while(p.hasChildNodes()) p.removeChild(p.lastChild);
-    }
-
-    this.init(); // game specific stuff
+    this.init();
 
     // see comments above
     if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
@@ -75,17 +67,29 @@ var BaseCardGame = {
   },
 
   initXulElement: function() {
-    if(!this.layout || this.layout==this.id) { this.xulElement = document.getElementById(this.id); return; }
+    if(!this.layout || this.layout==this.id) {
+      this.xulElement = document.getElementById(this.id);
+      this.initPiles();
+      return;
+    }
 
-    function replaceIds(newId, old, node) {
-      if(node.id) node.id = newId + node.id.substring(old.length);
-      for(var i = 0; i != node.childNodes.length; i++) replaceIds(newId, old, node.childNodes[i]);
+    function replaceIds(newId, oldIdLength, node) {
+      if(node.id) node.id = newId + node.id.substring(oldIdLength);
+      for(var i = 0; i != node.childNodes.length; i++) replaceIds(newId, oldIdLength, node.childNodes[i]);
     }
 
     // if it uses the same layout as another game then clone that layout and fix the ids in the clone (so initPiles() works)
     var elt = this.xulElement = document.getElementById(this.layout).cloneNode(true);
-    replaceIds(this.id, this.layout, elt);
+    replaceIds(this.id, this.layout.length, elt);
     gGameStack.insertBefore(elt, gGameStack.firstChild);
+
+    this.initPiles();
+    // throw away any cards we cloned
+    var ps = this.allpiles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      while(p.hasChildNodes()) p.removeChild(p.lastChild);
+    }
   },
 
   // Init's piles[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
@@ -94,16 +98,14 @@ var BaseCardGame = {
   initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
     var allpiles = this.allpiles = [];
-
     var id = this.id;
-    var thiss = this; // so it can be referred to in nested functions
 
-    function initPileOfType(type, property, field) {
+    function initPileOfType(type, property) {
       var pile = initPileFromId(id+type);
-      if(!pile) return;
+      if(!pile) return null;
       pile[property] = true;
-      thiss[field] = pile;
       allpiles.push(pile);
+      return pile;
     }
 
     function initPilesOfType(type, property) {
@@ -122,10 +124,10 @@ var BaseCardGame = {
       return ps;
     }
 
-    initPileOfType("-stock", "isStock", "stock");
-    initPileOfType("-waste", "isWaste", "waste");
-    initPileOfType("-foundation", "isFoundation", "foundation");
-    initPileOfType("-reserve", "isReserve", "reserve");
+    this.stock = initPileOfType("-stock", "isStock");
+    this.waste = initPileOfType("-waste", "isWaste");
+    this.foundation = initPileOfType("-foundation", "isFoundation");
+    this.reserve = initPileOfType("-reserve", "isReserve");
 
     this.piles = initPilesOfType("-pile-", "isNormalPile");
     this.foundations = initPilesOfType("-foundation-", "isFoundation");

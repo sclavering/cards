@@ -206,8 +206,7 @@ CardGame.prototype = {
   // useful function for deal() to use.  can (and should) be used for all card dealing
   dealToStack: function(cards, stack, numDown, numUp) {
     for(var i = 0; i < numDown+numUp; i++) {
-      stack.appendChild(cards.pop());
-      stack.lastChild.position();
+      stack.addCard(cards.pop());
       if(i>=numDown) stack.lastChild.setFaceUp();
     }
   },

@@ -133,7 +133,6 @@ var CardShuffler = {
     c.getSource = function() { return this.parentNode.source; };
     // other methods
     c.turnFaceUp = function() { CardTurner.turnFaceUp(this); };
-    c.position   = function() { CardPositioner.position(this); };
     c.moveTo     = function(targetStack) { CardMover.move(this,targetStack); };
     c.transferTo = function(targetStack) { CardMover.transfer(this,targetStack); };
     // initialise properties
@@ -174,6 +173,15 @@ function _createCardPile(elt) {
       return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || CardPositioner.faceUpOffset) : CardPositioner.faceDownOffset);
     };
     
+    elt.positionCard = function(card) {
+      var prev = card.previousSibling;
+      if(prev)
+        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || CardPositioner.faceUpOffset) : CardPositioner.faceDownOffset);
+      else 
+        card.top = 0;
+      card.left = 0;
+    };
+    
   } else if(elt.className=="card-slide") {
     elt.getNextCardLeft = function() {
       if(!this.hasChildNodes()) return 0;
@@ -188,10 +196,34 @@ function _createCardPile(elt) {
       return this.lastChild.top;
     };
 
+    elt.positionCard =  function(card) {
+      var prev = card.previousSibling;
+      if(!prev) {
+        card.top = 0;
+        card.left = 0;
+        return;
+      }
+      card.top = prev.top;
+      card.left = prev.left;
+      if(this.childNodes.length < 6) {
+        card.top = card.top - 0 + CardPositioner.slideOffset;
+        card.left = card.left - 0 + CardPositioner.slideOffset;
+      }
+    };
+  
   } else {
     elt.getNextCardLeft = function() { return 0; };
     elt.getNextCardTop = function() { return 0; };
+    elt.positionCard = function(card) {
+      card.top = 0;
+      card.left = 0;
+    };
   }
+
+  elt.addCard = function(card) {
+    this.appendChild(card);
+    this.positionCard(card);
+  };
   
   // transfers the card and all those that follow it
   // xxx: not in use yet
@@ -292,6 +324,8 @@ var MouseHandler1 = {
   init: function(dragLayer) {
     this.dragLayer = dragLayer;
     this.cards = document.createElement("stack");
+    // doesn't need to be flexible for the moment
+    this.cards.className = "card-fan-down";
     this.cards.hidden = true;
     this.dragLayer.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
@@ -339,7 +373,7 @@ var MouseHandler1 = {
       var card = this.nextCard;
       // move the cards to the drag box (this.cards)
       this.cards.hidden = false;
-      this.cards.className = card.parentNode.className;
+//      this.cards.className = card.parentNode.className;
       this.cards.left = getLeft(card) - getLeft(this.dragLayer);
       this.cards.top  = getTop(card) - getTop(this.dragLayer);
       // property to retrieve original source of cards. for most
@@ -524,13 +558,15 @@ var CardMover = {
     this.cards.top = 0; this.cards.left = 0; // so it doesn't fill parent and block clicks
     this.cards.hidden = true;
     this.cards.id = "card-move-pile";
+    // doesn't need to be flexible yet
+    this.cards.className = "card-fan-down";
     this.dragLayer.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
   },
   move: function(firstCard, target) {
     Cards.disableUI(); // disabling the UI as early as pos might help SimpleSimon bug
     // move firstCard and all card on top of it to the move stack
-    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
+//    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
     this.cards.left = getLeft(firstCard) - getLeft(this.dragLayer);
     this.cards.top  = getTop(firstCard) - getTop(this.dragLayer); // fudge for margin
     firstCard.transferTo(this.cards);
@@ -580,8 +616,7 @@ var CardMover = {
     while(card) {
       nextCard = card.nextSibling;
       card.parentNode.removeChild(card);
-      target.appendChild(card);
-      card.position();
+      target.addCard(card);
       card = nextCard;
     }
     if(target.id) {
@@ -606,8 +641,6 @@ var CardMover = {
   * card-slide: cards are spread such that you have an idea how many are in the pile while only one
   *                 card on top is visible
   *
-  * position(card) - positions the card by looking at all its previousSibling's,
-  *       call after moving a card to a new stack, but get via card.position()
   * fixStack - repositions all the (face up) cards in a stack so that they fit in the available space
   *       called in CardMover.transfer, though this may change
   */
@@ -615,29 +648,6 @@ var CardPositioner = {
   faceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
   faceUpOffset: SkinPrefs.offsetBetweenFaceUpCards, // num of pixels between tops of two faceup cards
   slideOffset: SkinPrefs.offsetBetweenSlidCards, // num of pixels between edges of two slid cards
-
-  position: function(card) {
-    if(card.previousSibling){
-      if(card.parentNode.className=="card-fan-down") {
-        card.top = card.previousSibling.top - 0 + (card.previousSibling.faceUp() ? (card.parentNode.offset || this.faceUpOffset) : this.faceDownOffset);
-        card.left = card.previousSibling.left;
-        return;
-      }
-      if(card.parentNode.className=="card-slide") {
-        card.top = card.previousSibling.top;
-        card.left = card.previousSibling.left;
-//        if(card.parentNode.childNodes.length < 6){
-          card.top += this.slideOffset;
-          card.left += this.slideOffset;
-//         }
-      }
-      card.top = card.previousSibling.top;
-      card.left = card.previousSibling.left;
-      return;
-    }
-    card.top = 0;
-    card.left = 0;
-  },
 
   fixStack: function(stack) {
     if(!stack.hasChildNodes() ) {
@@ -930,8 +940,7 @@ var MouseHandler;
 
 window.addEventListener("load", function() {
   Cards.init();
-  // fix window title.  setting window.title at the end of Cards.playGame doesn't work the first time.
-  // I think it's something to do with the window not being visible yet
+  // fix window title. setting window.title at the end of Cards.playGame doesn't work the first time.
   var title = document.getElementById(Cards.currentGame).getAttribute("name");
   document.documentElement.setAttribute("title",title);
 }, false);

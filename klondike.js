@@ -32,7 +32,7 @@ Games["klondike"] = {
       stack = this.foundations[i];
       if(this.canMoveTo(card,stack)) {
         this.addHint(card,stack);
-        return; // don't hint more than one move to a foundation
+        return; // no need to suggest more than one move to a foundation
       }
     }
   },
@@ -44,21 +44,19 @@ Games["klondike"] = {
   },
 
   autoplayMove: function() {
-    // automove cards to suit stacks
     for(var i = 0; i < this.sourceStacks.length; i++) {
       var last = this.sourceStacks[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;
   },
-  // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
     if(card.isAce() || card.number()==2) return true;
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
   },
 
   hasBeenWon: function() {
-    // game won if all 4 Foundations have 13 cards
+    // game won if all 4 foundations have 13 cards
     for(var i = 0; i < 4; i++)
       if(this.foundations[i].childNodes.length!=13)
         return false;

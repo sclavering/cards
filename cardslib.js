@@ -670,6 +670,7 @@ var HintHighlighter = {
     // hide it while we move it
     this.highlightBoxes[i].hidden = true;
     // card may be a stack if hint suggests moving to an empty stack
+    if(card.hasChildNodes()) card = card.lastChild; // for when hint destination is really a stack
     var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
     this.highlightBoxes[i].height = height;
     this.highlightBoxes[i].width = getWidth(card);
@@ -836,7 +837,7 @@ var Cards = {
 
 // Game var is always the object for the current game, this was a placeholder to avoid js errors
 var Game = null;
-var Games = new Array();
+var Games = [];
 
 var MouseHandler;
 

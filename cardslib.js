@@ -72,9 +72,19 @@ function init() {
 
   // build the games menu
   var menu = document.getElementById("menupopup-gametypes");
-  for(var game in Games) {
+  var names = [];
+  var lookup = [];
+  var name, game;
+  for(game in Games) {
+    name = gStrings[game+".name"];
+    names.push(name);
+    lookup[name] = game;
+  }
+  names.sort();
+  for(var i in names) {
+    name = names[i], game = lookup[name];
     var mi = document.createElement("menuitem");
-    mi.setAttribute("label",gStrings[game+".name"]);
+    mi.setAttribute("label",names[i]);
     mi.setAttribute("accesskey",gStrings[game+".menukey"]);
     mi.value = game;
     menu.appendChild(mi);

@@ -61,11 +61,7 @@ var SpiderLayoutBase = {
 
 
 var Spider =
-AllGames.spider = {
   __proto__: SpiderLayoutBase,
-
-  id: "spider",
-  cards: 2,
 
   canMoveCard: "descending, in suit, not from foundation",
   canMoveToFoundation: "13 cards",
@@ -80,6 +76,13 @@ AllGames.spider = {
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   }
+};
+
+
+AllGames.spider = {
+  __proto__: Spider,
+  id: "spider",
+  cards: 2
 };
 
 

@@ -270,13 +270,6 @@ var cardMethods = {
     return this.number==card.upNumber || card.number==this.upNumber;
   },
 
-  isAtLeastCountingFrom: function(number, from_num) {
-    var thisnum = this.realNumber;
-    if(thisnum<from_num) thisnum+=13;
-    if(number<from_num) number+=13;
-    return (thisnum>=number);
-  },
-
   moveTo: function(targetPile) { moveCards(this, targetPile); },
 
   setFaceUp: function() {

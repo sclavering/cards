@@ -135,9 +135,8 @@ MouseHandlers["drag+drop"] = {
     if(this.dragInProgress) return;
 
     var t = e.target;
-    if(e.button==1) {
+    if(e.button==2) {
       if(t.isCard) Game.smartMove(t);
-    // right click should show card ?
     } else if(e.button===0) {
       if(t.isCard) {
         if(t.parentNode.isStock) Game.dealFromStock();
@@ -199,7 +198,7 @@ MouseHandlers["click-to-select"] = {
           }
         }
       }
-    } else if(e.button==1) {
+    } else if(e.button==2) {
       if(this.source) {
         this.highlighter.unhighlight();
         this.source = null;
@@ -259,12 +258,12 @@ MouseHandlers["pyramid"] = {
         return;
       }
     }
-    
+
     // With pyramid layouts click often end up targetted at empty piles;
     // here we work out which card the user was probably trying to click
     if(t.isPile) {
       if(!t.isNormalPile) return; // clicking on an empty foundation or waste pile should do nothing
-      
+
       while(!t.hasChildNodes()) {
         var lp = t.leftParent, rp = t.rightParent;
         if(rp && x > rp.boxObject.x) t = rp;
@@ -279,7 +278,7 @@ MouseHandlers["pyramid"] = {
       // we're interested in cards, not piles
       t = t.firstChild;
     }
-    
+
     if(this.card) {
       this.highlighter.unhighlight();
       if(Game.canRemovePair(this.card, t)) Game.removePair(this.card, t);
@@ -292,7 +291,7 @@ MouseHandlers["pyramid"] = {
         this.highlighter.highlight(t);
       }
     }
-    
+
     // otherwise the final click of the game gets caught by the window.onclick
     // handler for the game-won message, instantly starting a new game :(
     e.stopPropagation();

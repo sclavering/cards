@@ -117,12 +117,13 @@ Spider.unremoveCompleteSuit = function(card, source) {
 //// hint
 // getHint never suggests moving a card to an empty space (because it is pointless to do so, and keeps
 // the code slightly simpler)
-Spider.getHint = function() {
+Spider.getHints = function() {
+  var hints = []
   for(var i = 0; i < 10; i++) {
     var hint = this.getHintForStack(this.stacks[i]);
-    if(hint) return hint;
+    if(hint) hints.push(hint);
   }
-  return null;
+  return hints;
 };
 Spider.getHintForStack = function(stack) {
   if(!stack.hasChildNodes()) return null;

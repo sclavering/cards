@@ -79,9 +79,9 @@
       <menuitem label="&yukon-name;"       accesskey="&mi-yukon:accesskey;"       value="Yukon"      />
     </menupopup>
   </toolbarbutton>
-  <!-- difficulty level menu is show/hidden by removing/adding hidden="true" -->
-  <toolbarbutton id="game-difficulty-menu" type="menu" label="&m-game-difficulty:label;"
-      tooltiptext="&m-game-difficulty:tooltip;" command="cmd:setdifficulty">
+  <!-- content of menu generated dynamically based on a game's difficultyLevels attribute -->
+  <toolbarbutton id="game-difficulty-menu" type="menu" disabled="true" command="cmd:setdifficulty"
+      label="&m-game-difficulty:label;" tooltiptext="&m-game-difficulty:tooltip;">
     <menupopup id="game-difficulty-popup"/>
   </toolbarbutton>
   <!-- toolbarbutton command="command:options" label="&options:label;" tooltiptext="&options:tooltip;"/ -->

@@ -45,8 +45,7 @@ Games.unionsquare = {
     return card.isKing;
   },
 
-  getHints: function() {
-  },
+  // xxx write getHints()
 
   getBestMoveForCard: function(card) {
     const p = card.parentNode, ps = p.isPile ? p.following : this.piles, num = ps.length;
@@ -66,8 +65,8 @@ Games.unionsquare = {
     const twin = card.twin, twinp = twin.parentNode;
     if(twinp.isFoundation) {
       if(card.isKing) return twinp;
-      if(twinp.lastChild.number==card.upNumber && twinp.childNodes.length>=13) return twinp;
-      return null;
+      // >, not >=, or it'd allow Q,K,Q on foundations
+      return twinp.childNodes.length>13 && twinp.lastChild.number==card.upNumber ? twinp : null;
     }
     // can now assume twin is not on foundation
     if(card.isAce) return this.firstEmptyFoundation;
@@ -78,7 +77,19 @@ Games.unionsquare = {
     return null;
   },
 
-  //autoplayMove: "commonish",
+  // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
+  autoplayMove: function() {
+    const fs = this.foundations;
+    for(var i = 0; i != 4; ++i) {
+      var f = fs[i], len = f.childNodes.length, last = f.lastChild;
+      if(len<12 || len==26) continue;
+      var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.parentNode;
+      if((cp.isPile || cp.isWaste) && !c.nextSibling) return this.moveTo(c, f);
+      c = c.twin, cp = c.parentNode;
+      if((cp.isPile || cp.isWaste) && !c.nextSibling) return this.moveTo(c, f);
+    }
+    return false;
+  },
 
   hasBeenWon: "26 cards on each foundation"
 };

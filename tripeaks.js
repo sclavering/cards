@@ -71,9 +71,7 @@ Games.tripeaks = {
   removePair: function(a, b) {
   },
 
-  getHints: function() {
-    // xxx write me!
-  },
+  // xxx write getHints()
 
   cardWaitingToBeRevealed: null,
 

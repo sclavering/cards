@@ -121,6 +121,7 @@ function init() {
   // switch to the last game played
   GameController = Games[game];
   GameController.switchTo();
+  enableUI();
 }
 
 window.addEventListener("load", init, false);
@@ -342,6 +343,7 @@ function playGame(game) {
   GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
+  // xxx should use document.title in future (moz 1.8a supports it)
   window.title = gStrings["game."+game];
 
   GameController = Games[game];
@@ -448,7 +450,7 @@ function redo() {
 // is taking place, as problems ensue otherwise.
 function enableUI() {
   gUIEnabled = true;
-  gCmdHint.removeAttribute("disabled");
+  if(Game.getHints) gCmdHint.removeAttribute("disabled");
   gCmdNewGame.removeAttribute("disabled");
   gCmdRestartGame.removeAttribute("disabled");
   gOptionsMenu.removeAttribute("disabled");

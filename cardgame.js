@@ -485,8 +485,9 @@ var BaseCardGame = {
     if(this.hintNum==this.hintSources.length) this.hintNum = 0;
   },
 
-  getHints: function() {
-  },
+  // If left null the Hint toolbar button will be disabled.  Should be replaced with a zero-argument
+  // function that calls addHint(..) repeatedly, possibly via intermediaries (addHintsFor etc.).
+  getHints: null,
 
   // takes the card to suggest moving, and the destination to suggest moving to (generally a pile)
   addHint: function(source, dest) {

@@ -25,9 +25,7 @@ Games.pileon = {
     return (this.childNodes.length + num) <= 4;
   },
 
-  getHints: function() {
-    // xxx write me!
-  },
+  // xxx write getHints()
 
   getBestMoveForCard: "legal nonempty, or empty",
 

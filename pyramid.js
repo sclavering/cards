@@ -76,9 +76,7 @@ Games.pyramid = {
     this.doAction(new PyramidMoveAction(a,b));
   },
 
-  getHints: function() {
-    // xxx write me!
-  },
+  // xxx write getHints()
 
   // this game has no autoplay
 

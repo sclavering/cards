@@ -40,10 +40,10 @@
 <script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
+<script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="simon.js"/>
 <script type="application/x-javascript" src="spider.js"/>
-<script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">
@@ -87,7 +87,7 @@
 </toolbar>
 
 <!--
-spacing at top and between rows of cards is done with <spacer class="row-spacer"/>s
+spacing at top and between rows of cards is done with <rowspacer/>s
 rather than CSS, because margins and padding are not included in the result of
 boxEl.boxObject.top/left etc, so there is a jump (of the num of px of padding)
 when starting to move a card, which looks abysmal
@@ -101,7 +101,7 @@ used when building the game types menu
   <!-- Aces Up -->
   <vbox id="AcesUp" name="&acesup.name;" menukey="&acesup.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="acesup-stock" class="card-pile"/><spacer flex="2"/>
@@ -116,7 +116,7 @@ used when building the game types menu
   <!-- Canfield -->
   <vbox id="Canfield" name="&canfield.name;" menukey="&canfield.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="canfield-stock" class="card-pile"/><spacer flex="1"/>
@@ -127,7 +127,7 @@ used when building the game types menu
       <stack id="canfield-foundation-3" class="card-pile"/><spacer flex="2"/>
       <stack id="canfield-reserve" class="card-pile"/><spacer flex="1"/>
     </hbox>
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <spacer class="card-pile-spacer"/><spacer flex="1"/>
@@ -143,7 +143,7 @@ used when building the game types menu
   <!-- Double Solitaire -->
   <vbox id="DoubleSol" name="&doublesol.name;" menukey="&doublesol.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="doublesol-stock" class="card-pile"/><spacer flex="1"/>
@@ -154,7 +154,7 @@ used when building the game types menu
       <stack id="doublesol-foundation-2" class="card-pile"/><spacer flex="1"/>
       <stack id="doublesol-foundation-3" class="card-pile"/><spacer flex="1"/>
     </hbox>
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="doublesol-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -173,7 +173,7 @@ used when building the game types menu
   <!-- FreeCell -->
   <vbox id="FreeCell" name="&freecell.name;" menukey="&freecell.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="freecell-cell-0" class="card-pile"/><spacer flex="1"/>
@@ -185,7 +185,7 @@ used when building the game types menu
       <stack id="freecell-foundation-2" class="card-pile"/><spacer flex="1"/>
       <stack id="freecell-foundation-3" class="card-pile"/><spacer flex="1"/>
     </hbox>
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="2"/>
       <stack id="freecell-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -203,7 +203,7 @@ used when building the game types menu
   <!-- flex allow bottom alignment of golf-stack-row -->
   <vbox id="Golf" name="&golf.name;" menukey="&golf.menukey;"
       hidden="true" flex="1" difficultyLevels="&difficulty:golf;">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox id="golf-tableau-row">
       <spacer flex="1"/>
       <stack id="golf-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -222,13 +222,13 @@ used when building the game types menu
       <stack id="golf-foundation"  class="card-pile"/>
       <spacer flex="1"/>
     </hbox>
-    <spacer class="row-spacer"/>
+    <rowspacer/>
   </vbox>
 
   <!-- Grandfather Solitaire -->
   <vbox id="Grandfather" name="&grandfather.name;" menukey="&grandfather.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="grandfather-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -239,9 +239,9 @@ used when building the game types menu
       <stack id="grandfather-pile-5" class="card-fan-down"/><spacer flex="1"/>
       <stack id="grandfather-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <vbox>
-        <stack id="grandfather-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="grandfather-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="grandfather-foundation-2" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="grandfather-foundation-0" class="card-pile"/><rowspacer/>
+        <stack id="grandfather-foundation-1" class="card-pile"/><rowspacer/>
+        <stack id="grandfather-foundation-2" class="card-pile"/><rowspacer/>
         <stack id="grandfather-foundation-3" class="card-pile"/><spacer flex="1"/>
       </vbox>
       <spacer flex="1"/>
@@ -251,7 +251,7 @@ used when building the game types menu
   <!-- Gypsy -->
   <vbox id="Gypsy" name="&gypsy.name;" menukey="&gypsy.menukey;"
       hidden="true" difficultyLevels="&difficulty:easy-and-hard;">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="gypsy-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -264,21 +264,21 @@ used when building the game types menu
       <stack id="gypsy-pile-7" class="card-fan-down"/><spacer flex="1"/>
       <vbox>
         <hbox>
-          <stack id="gypsy-foundation-0" class="card-pile"/><spacer class="col-spacer"/>
+          <stack id="gypsy-foundation-0" class="card-pile"/><colspacer/>
           <stack id="gypsy-foundation-1" class="card-pile"/>
-        </hbox><spacer class="row-spacer"/>
+        </hbox><rowspacer/>
         <hbox>
-          <stack id="gypsy-foundation-2" class="card-pile"/><spacer class="col-spacer"/>
+          <stack id="gypsy-foundation-2" class="card-pile"/><colspacer/>
           <stack id="gypsy-foundation-3" class="card-pile"/>
-        </hbox><spacer class="row-spacer"/>
+        </hbox><rowspacer/>
         <hbox>
-          <stack id="gypsy-foundation-4" class="card-pile"/><spacer class="col-spacer"/>
+          <stack id="gypsy-foundation-4" class="card-pile"/><colspacer/>
           <stack id="gypsy-foundation-5" class="card-pile"/>
-        </hbox><spacer class="row-spacer"/>
+        </hbox><rowspacer/>
         <hbox>
-          <stack id="gypsy-foundation-6" class="card-pile"/><spacer class="col-spacer"/>
+          <stack id="gypsy-foundation-6" class="card-pile"/><colspacer/>
           <stack id="gypsy-foundation-7" class="card-pile"/>
-        </hbox><spacer class="row-spacer"/>
+        </hbox><rowspacer/>
         <hbox>
           <spacer flex="1"/>
           <stack id="gypsy-stock" class="card-pile"/>
@@ -293,7 +293,7 @@ used when building the game types menu
   <!-- Klondike -->
   <vbox id="Klondike" name="&klondike.name;" menukey="&klondike.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="klondike-stock" class="card-pile"/><spacer flex="1"/>
@@ -304,7 +304,7 @@ used when building the game types menu
       <stack id="klondike-foundation-2" class="card-pile"/><spacer flex="1"/>
       <stack id="klondike-foundation-3" class="card-pile"/><spacer flex="1"/>
     </hbox>
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="klondike-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -320,7 +320,7 @@ used when building the game types menu
   <!-- Mod 3 -->
   <vbox id="Mod3" name="&mod3.name;" menukey="&mod3.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox id="mod3-row1">
       <spacer flex="1"/>
       <stack id="mod3-foundation-0" class="card-slide"/><spacer flex="1"/>
@@ -332,7 +332,7 @@ used when building the game types menu
       <stack id="mod3-foundation-6" class="card-slide"/><spacer flex="1"/>
       <stack id="mod3-foundation-7" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="mod3-row2">
       <spacer flex="1"/>
       <stack id="mod3-foundation-8" class="card-slide"/><spacer flex="1"/>
@@ -344,7 +344,7 @@ used when building the game types menu
       <stack id="mod3-foundation-14" class="card-slide"/><spacer flex="1"/>
       <stack id="mod3-foundation-15" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="mod3-row3">
       <spacer flex="1"/>
       <stack id="mod3-foundation-16" class="card-slide"/><spacer flex="1"/>
@@ -356,7 +356,7 @@ used when building the game types menu
       <stack id="mod3-foundation-22" class="card-slide"/><spacer flex="1"/>
       <stack id="mod3-foundation-23" class="card-slide"/><spacer flex="1"/>
       <stack class="card-pile-spacer"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="mod3-row4">
       <spacer flex="1"/>
       <stack id="mod3-tableau-0-0" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
@@ -374,7 +374,7 @@ used when building the game types menu
   <!-- Regiment (also known as Heads or Tails) -->
   <vbox id="Regiment" name="&regiment.name;" menukey="&regiment.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox id="regiment-foundations"><spacer flex="1"/>
       <!-- first 4 foundations are built up from Ace, last 4 down from King -->
       <stack id="regiment-foundation-0" class="card-pile"/><spacer flex="1"/>
@@ -385,7 +385,7 @@ used when building the game types menu
       <stack id="regiment-foundation-5" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-foundation-6" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-foundation-7" class="card-pile"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="regiment-tableau-0"><spacer flex="1"/>
       <stack id="regiment-tableau-0-0" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-tableau-0-1" class="card-pile"/><spacer flex="1"/>
@@ -395,7 +395,7 @@ used when building the game types menu
       <stack id="regiment-tableau-0-5" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-tableau-0-6" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-tableau-0-7" class="card-pile"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="regiment-reserve"><spacer flex="1"/>
       <stack id="regiment-reserve-0" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-reserve-1" class="card-pile"/><spacer flex="1"/>
@@ -405,7 +405,7 @@ used when building the game types menu
       <stack id="regiment-reserve-5" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-reserve-6" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-reserve-7" class="card-pile"/><spacer flex="1"/>
-    </hbox><spacer class="row-spacer"/>
+    </hbox><rowspacer/>
     <hbox id="regiment-tableau-1"><spacer flex="1"/>
       <stack id="regiment-tableau-1-0" class="card-pile"/><spacer flex="1"/>
       <stack id="regiment-tableau-1-1" class="card-pile"/><spacer flex="1"/>
@@ -421,7 +421,7 @@ used when building the game types menu
   <!-- Simple Simon -->
   <vbox id="SimpleSimon" name="&simon.name;" menukey="&simon.menukey;"
       hidden="true" difficultyLevels="&difficulty:standard-levels;">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="simon-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -435,10 +435,10 @@ used when building the game types menu
       <stack id="simon-pile-8" class="card-fan-down"/><spacer flex="1"/>
       <stack id="simon-pile-9" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="simon-foundation">
-        <stack id="simon-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="simon-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="simon-foundation-2" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="simon-foundation-3" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="simon-foundation-0" class="card-pile"/><rowspacer/>
+        <stack id="simon-foundation-1" class="card-pile"/><rowspacer/>
+        <stack id="simon-foundation-2" class="card-pile"/><rowspacer/>
+        <stack id="simon-foundation-3" class="card-pile"/><rowspacer/>
         <spacer flex="1"/>
       </vbox>
       <spacer flex="1"/>
@@ -448,7 +448,7 @@ used when building the game types menu
   <!-- Spider Solitaire -->
   <vbox id="Spider" name="&spider.name;" menukey="&spider.menukey;"
       hidden="true" difficultyLevels="&difficulty:standard-levels;">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="spider-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -472,7 +472,7 @@ used when building the game types menu
           <stack id="spider-foundation-6" class="card-pile"/>
           <stack id="spider-foundation-7" class="card-pile"/>
         </vbox>
-        <spacer class="row-spacer"/>
+        <rowspacer/>
         <hbox>
           <description value="&deals-left-label;"/>
           <description id="spider-deals-left"/>
@@ -487,7 +487,7 @@ used when building the game types menu
   <!-- Yukon -->
   <vbox id="Yukon" name="&yukon.name;" menukey="&yukon.menukey;"
       hidden="true">
-    <spacer class="row-spacer"/>
+    <rowspacer/>
     <hbox>
       <spacer flex="1"/>
       <stack id="yukon-pile-0" class="card-fan-down"/><spacer flex="1"/>
@@ -498,9 +498,9 @@ used when building the game types menu
       <stack id="yukon-pile-5" class="card-fan-down"/><spacer flex="1"/>
       <stack id="yukon-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="yukon-foundation">
-        <stack id="yukon-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="yukon-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
-        <stack id="yukon-foundation-2" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="yukon-foundation-0" class="card-pile"/><rowspacer/>
+        <stack id="yukon-foundation-1" class="card-pile"/><rowspacer/>
+        <stack id="yukon-foundation-2" class="card-pile"/><rowspacer/>
         <stack id="yukon-foundation-3" class="card-pile"/><spacer flex="1"/>
       </vbox>
       <spacer flex="1"/>

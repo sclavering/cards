@@ -125,8 +125,10 @@ Games["sanibel"] = {
   getHints: function() {
     var i;
     var card = this.waste.lastChild;
-    for(i = 0; i < 10; i++) {
-      if(this.canMoveTo(card, this.stacks[i])) this.addHint(card, this.stacks[i]);
+    if(card) {
+      for(i = 0; i < 10; i++) {
+        if(this.canMoveTo(card, this.stacks[i])) this.addHint(card, this.stacks[i]);
+      }
     }
     for(i = 0; i < 10; i++) {
       this.getHintsForCard(this.stacks[i].lastChild);

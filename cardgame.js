@@ -389,6 +389,37 @@ CardGame.prototype = {
 
 
 
+  // === Redealing ========================================
+  // some games allow a certain number of "redeals", where all the remaining cards on the tableau
+  // are collected together and shuffled, then redealt in the pattern that was present before
+
+  // At the moment this only works for tableau piles, not stocks, reserves, or anything else
+  redeal: function() {
+    var stacks = this.stacks;
+    var pattern = [];
+    var cards = [];
+    // remove cards and store pattern
+    for(var i = 0; i < stacks.length; i++) {
+      var down = 0, up = 0;
+      while(stacks[i].hasChildNodes()) {
+        var card = stacks[i].removeChild(stacks[i].lastChild);
+        if(card.faceDown()) down++;
+        else up++;
+        card.setFaceDown();
+        cards.push(card);
+      }
+      pattern.push([down,up]);
+    }
+    // shuffle
+    this.shuffle(cards);
+    // deal out again
+    for(var i = 0; i < pattern.length; i++) {
+      this.dealToStack(cards,this.stacks[i],pattern[i][0],pattern[i][1]);
+    }
+  },
+
+
+
   // === Revealing Cards ==================================
   // some games may need to overridde these?  (seems unlikely on consideration)
   // note, may be able to remove canReveal, faceDown() check in reveal() is already done in Cards.clickHandler()

@@ -12,8 +12,8 @@ var FreeCellGame = {
   // note: the return value of 0 from mayAddCard is used to indicate the move is legal, but needs more cells/spaces
   attemptMove: function(card, destination) {
     var may = destination.mayAddCard(card);
-    if(may) return this.moveTo(card, destination, true);
-    if(may===0) showMessage("notEnoughSpaces")
+    if(may) return this.moveTo(card, destination);
+    if(may===0) showMessage("notEnoughSpaces");
     return false;
   },
 

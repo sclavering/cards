@@ -95,20 +95,17 @@
 </toolbox>
 
 <!--
-spacing at top and between rows of cards is done with <rowspacer/>s
-rather than CSS, because margins and padding are not included in the result of
-boxEl.boxObject.top/left etc, so there is a jump (of the num of px of padding)
-when starting to move a card, which looks abysmal
+Spacing between rows of cards is done with <rowspacer/>s rather than CSS because margins and padding
+used not to be included in the result of boxEl.boxObject.top/left etc., so animation would be jumpy.
 
-pile, stock, waste, cell, reserve and foundation elements are all essenitally <stack/>s
+pile, stock, waste, cell, reserve and foundation elements are all essentially <stack/>s
 
 <flex/> is equivalent to <spacer flex="1"/>
 -->
 
 <stack id="games" flex="1">
   <!-- Aces Up -->
-  <vbox id="acesup" hidden="true">
-    <rowspacer/>
+  <vbox id="acesup" hidden="true" class="game">
     <hbox flex="1">
       <flex/>
       <stock id="acesup-stock"/><flex2/>
@@ -121,8 +118,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Canfield -->
-  <vbox id="canfield" hidden="true">
-    <rowspacer/>
+  <vbox id="canfield" hidden="true" class="game">
     <hbox>
       <flex2/>
       <vbox>
@@ -151,8 +147,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Double Solitaire -->
-  <vbox id="doublesol" hidden="true">
-    <rowspacer/>
+  <vbox id="doublesol" hidden="true" class="game">
     <hbox>
       <flex/>
       <stock id="doublesol-stock"/><flex/>
@@ -180,8 +175,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Fan -->
-  <vbox id="fan" hidden="true">
-    <rowspacer/>
+  <vbox id="fan" hidden="true" class="game">
     <hbox>
       <flex3/>
       <foundation id="fan-foundation-0"/><flex/>
@@ -223,8 +217,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Forty Thieves -->
-  <vbox id="fortythieves" hidden="true">
-    <rowspacer/>
+  <vbox id="fortythieves" hidden="true" class="game">
     <hbox>
       <flex2/>
       <foundation id="fortythieves-foundation-0"/><flex/>
@@ -261,8 +254,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- FreeCell -->
-  <vbox id="freecell" hidden="true">
-    <rowspacer/>
+  <vbox id="freecell" hidden="true" class="game">
     <hbox>
       <flex/>
       <cell id="freecell-cell-0"/><flex/>
@@ -290,8 +282,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Golf -->
   <!-- flex allows bottom alignment of golf-stock-row -->
-  <vbox id="golf" hidden="true" flex="1">
-    <rowspacer/>
+  <vbox id="golf" hidden="true" class="game" flex="1">
     <hbox id="golf-tableau-row">
       <flex/>
       <pile class="fan-down" id="golf-pile-0"/><flex/>
@@ -319,8 +310,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Gypsy -->
-  <vbox id="gypsy" hidden="true">
-    <rowspacer/>
+  <vbox id="gypsy" hidden="true" class="game">
     <hbox>
       <flex/>
       <pile class="fan-down" id="gypsy-pile-0"/><flex/>
@@ -360,8 +350,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Klondike -->
-  <vbox id="klondike" hidden="true">
-    <rowspacer/>
+  <vbox id="klondike" hidden="true" class="game">
     <hbox>
       <flex/>
       <stock id="klondike-stock"/><flex/>
@@ -386,8 +375,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Maze -->
-  <vbox id="maze" hidden="true">
-    <rowspacer/>
+  <vbox id="maze" hidden="true" class="game">
     <hbox id="maze-row1">
       <flex/>
       <pile id="maze-pile-0"/><flex/>
@@ -463,8 +451,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Mod 3 -->
-  <vbox id="mod3" hidden="true">
-    <rowspacer/>
+  <vbox id="mod3" hidden="true" class="game">
     <hbox id="mod3-row1">
       <flex/>
       <pile class="slide" id="mod3-foundation-0"/><flex/>
@@ -523,8 +510,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Montana -->
-  <vbox id="montana" hidden="true">
-    <rowspacer/>
+  <vbox id="montana" hidden="true" class="game">
     <hbox>
       <flex/>
       <pile id="montana-pile-0"/><flex/>
@@ -592,8 +578,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- penguin -->
-  <vbox id="penguin" hidden="true">
-    <rowspacer/>
+  <vbox id="penguin" hidden="true" class="game">
     <hbox>
       <flex2/>
       <vbox>
@@ -634,8 +619,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Pyramid -->
-  <vbox id="pyramid" hidden="true">
-    <rowspacer/>
+  <vbox id="pyramid" hidden="true" class="game">
     <hbox flex="1">
       <flex/>
       <vbox>
@@ -717,8 +701,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="regiment" hidden="true">
-    <rowspacer/>
+  <vbox id="regiment" hidden="true" class="game">
     <hbox>
       <flex/>
       <foundation id="regiment-foundation-0"/><flex/>
@@ -766,8 +749,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Sanibel -->
-  <vbox id="sanibel" hidden="true">
-    <rowspacer/>
+  <vbox id="sanibel" hidden="true" class="game">
     <hbox>
       <flex/>
       <stock id="sanibel-stock"/><flex/>
@@ -798,8 +780,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Simple Simon -->
-  <vbox id="simon" hidden="true">
-    <rowspacer/>
+  <vbox id="simon" hidden="true" class="game">
     <hbox>
       <flex2/>
       <pile class="fan-down" id="simon-pile-0"/><flex/>
@@ -817,8 +798,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Spider Solitaire -->
-  <vbox id="spider" hidden="true">
-    <rowspacer/>
+  <vbox id="spider" hidden="true" class="game">
     <hbox>
       <flex2/>
       <pile class="fan-down" id="spider-pile-0"/><flex/>
@@ -846,8 +826,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- TriPeaks -->
-  <vbox id="tripeaks" hidden="true">
-    <rowspacer/>
+  <vbox id="tripeaks" hidden="true" class="game">
     <vbox class="pyramid-rows">
       <hbox class="pyramid-row">
         <flex4/>
@@ -924,8 +903,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Towers -->
-  <vbox id="towers" hidden="true">
-    <rowspacer/>
+  <vbox id="towers" hidden="true" class="game">
     <hbox>
       <flex/>
       <cell id="towers-cell-0"/><flex/>
@@ -954,8 +932,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Wasp -->
-  <vbox id="wasp" hidden="true">
-    <rowspacer/>
+  <vbox id="wasp" hidden="true" class="game">
     <hbox>
       <flex2/>
       <pile class="fan-down" id="wasp-pile-0"/><flex/>
@@ -974,8 +951,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Yukon, Russian Solitaire (formerly known as Grandfather) -->
-  <vbox id="yukon" hidden="true">
-    <rowspacer/>
+  <vbox id="yukon" hidden="true" class="game">
     <hbox>
       <flex/>
       <pile class="fan-down" id="yukon-pile-0"/><flex/>

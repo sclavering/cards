@@ -43,6 +43,10 @@ toolbarbutton { padding-left: 6px; padding-right: 6px; margin-right: 5px;}
 rowspacer { height: 10px;}
 colspacer { width: 10px; }
 
+.game {
+  padding-top: 10px;
+}
+
 
 .card-highlight { background: darkgray; -moz-opacity: 0.3; }
 

@@ -362,11 +362,7 @@ var basicPileProperties = {
       this.addCard(card);
       card = next;
     }
-    // xxx this no longer does what is wanted (probably since introduction of single floating pile)
-    if(this.id) {
-      this.fixLayout();
-      if(source.id) source.fixLayout();
-    }
+    this.fixLayout();
   },
 
   dealTo: function(cards, down, up) {
@@ -533,6 +529,7 @@ function createFloatingPile() {
     this.top = this.left = this._top = this._left = -1000;
   };
   pile.addCards = function(card) {
+    var src = card.parentNode.source;
     var left = card._left, top = card._top;
     for(var next = card.nextSibling; card; card = next) {
       next = card.nextSibling;
@@ -544,6 +541,8 @@ function createFloatingPile() {
     var last = this.lastChild;
     this.width = last._left + last.boxObject.width;
     this.height = last._top + last.boxObject.height;
+
+    src.fixLayout();
   };
   gGameStack.appendChild(pile);
   pile.hide();

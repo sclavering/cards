@@ -83,6 +83,7 @@ function moveCards2(card, to) {
     disableUI();
     var source = card.parentNode.source;
     to.addCards(card);
+    source.fixLayout();
     setTimeout(animatedActionFinished, 30, source);
 }
 
@@ -118,5 +119,5 @@ function turnCardUpAnimated(card) {
 function turnCardUpNonAnimated(card) {
   disableUI();
   card.setFaceUp();
-  setTimeout(animatedActionFinished, 30);
+  setTimeout(animatedActionFinished, 30, null);
 }

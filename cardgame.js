@@ -41,6 +41,8 @@ var BaseCardGame = {
   // It is called the first time the game is played.
   init: function() {
   },
+  // xxx called after initCards() (unlike init()). will kill this later
+  init2: function() {},
 
   show: function() {
     this.xulElement.hidden = false;
@@ -72,7 +74,11 @@ var BaseCardGame = {
 
     this.initXulElement();
     this.init();
+    this.initCards();
+    this.init2();
+  },
 
+  initCards: function() {
     // see comments above
     if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
     else if(!("isCard" in this.cards[0])) this.cards = makeCardSuits.apply(null, this.cards);
@@ -300,7 +306,7 @@ var BaseCardGame = {
     // and autoplay will trigger a UI update if it actually does anything
     if(!action.synchronous) return;
     disableUI();
-    setTimeout(animatedActionFinished, 30);
+    setTimeout(animatedActionFinished, 30, null);
   },
 
   // Action objects (see actions.js) each implement an undo() method.

@@ -37,7 +37,6 @@ Games["pyramid"] = {
 
   deal: function() {
     var cards = this.shuffleDecks(1);
-//    for(var i = 0; i < 15; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     for(var i = 0; i < 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
@@ -52,7 +51,6 @@ Games["pyramid"] = {
   },
   
   canSelectCard: function(card) {
-//    return true;
     return card.parentNode.free();
   },
   
@@ -80,8 +78,6 @@ Games["pyramid"] = {
     // xxx write me!
   },
 
-  // this game has no smartMove
-  
   // this game has no autoplay
 
   hasBeenWon: function() {

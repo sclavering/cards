@@ -279,6 +279,8 @@ CardGame.prototype = {
     this.updateScoreDisplay();
     // if this is the first undo added, enable the command
     if(this.undoHistory.length==1) Cards.enableUndo();
+    // force hints to be regenerated
+    this.clearHints();
   },
 
 
@@ -504,14 +506,34 @@ CardGame.prototype = {
 
 
   // === Hints ============================================
+  hints: [],
+  hintNum: 0,
+
   hint: function() {
-    var hint = Game.getHint();
-    if(hint) HintHighlighter.showHint(hint.source, hint.destinations);
+    if(this.hints.length==0)
+      this.hints = Game.getHints();
+    this.showHint();
   },
 
-  // return a hint object, of the form {source: ?, destinations: [?]} , or null
-  getHint: function() {
-    return null;
+  showHint: function() {
+    if(this.hints.length==0) return;
+    var hint = this.hints[this.hintNum];
+    HintHighlighter.showHint(hint.source, hint.destinations);
+    this.hintNum++;
+    this.hintNum %= this.hints.length;
+  },
+
+  // return an array of hint objects, of the form {source: ?, destinations: [?]} , or null
+  // XXX revise to only show one target at a time ??
+  getHints: function() {
+    // temporary measure while games are converted to have getHints()
+    if(this.getHint) return [this.getHint()];
+    return [];
+  },
+
+  clearHints: function() {
+    this.hints = [];
+    this.hintNum = 0;
   },
 
 

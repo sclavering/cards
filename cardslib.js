@@ -265,7 +265,7 @@ var cardMethods = {
         clearInterval(interval);
         card.left = oldLeft;
         card.width = oldWidth;
-        if(!Game.autoplay()) enableUI();
+        animatedActionFinished();
         return;
       }
       var newHalfWidth = cardTurnFaceUpCosines[stepNum] * oldHalfWidth;
@@ -522,7 +522,10 @@ function createHighlighter() {
 
 
 
-
+// we don't want to enable the UI between an animated move and any autoplay it triggers
+function animatedActionFinished() {
+  if(!Game.autoplay()) enableUI();
+}
 
 // switches which game is currently being played
 function playGame(game) {

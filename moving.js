@@ -39,7 +39,7 @@ var CardMover1 = {
     // otherwise we'll end up doing an inifinite step move
     if(!dx && !dy) {
       firstCard.transferTo(target);
-      if(!Game.autoplay()) enableUI();
+      animatedActionFinished();
       return;
     }
 
@@ -72,8 +72,7 @@ var CardMover1 = {
         setTimeout(function() {
           cards.firstChild.transferTo(target);
           cards.hide();
-          // don't enable UI until autoplay finished
-          if(!Game.autoplay()) enableUI();
+          animatedActionFinished();
         }, 0);
       }
     };
@@ -103,8 +102,7 @@ var CardMover2 = {
       highlighter.highlight(card);
       setTimeout(function() {
         highlighter.unhighlight();
-        // xxx this is turning up in too many places.  make it a function
-        if(!Game.autoplay()) enableUI();
+        animatedActionFinished();
       }, 500);
     }, 260);
   }

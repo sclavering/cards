@@ -47,6 +47,12 @@ function testLastIsConsecutive(card) {
     return (last && last.isConsecutiveTo(card));
   };
 }
+function testLastIsSuit(suit) {
+  return function(pile) {
+    var last = pile.lastChild;
+    return last && last.suit()==suit;
+  };
+}
 function testCanMoveToNonEmptyPile(card) {
   return function(pile) {
     return pile.hasChildNodes() && Game.canMoveTo(card,pile);
@@ -70,5 +76,3 @@ function testCanMoveToPile(card) {
 function testPileIsEmpty(pile) {
   return !pile.hasChildNodes();
 }
-
-

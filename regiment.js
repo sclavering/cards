@@ -12,6 +12,9 @@ Games["regiment"] = {
       this.stacks[i].col = i;
       this.stacks[i+8].col = i;
     }
+    this.autoplayFrom = this.stacks.concat(this.reserves);
+    this.aceFoundations = this.foundations.slice(0,4);
+    this.kingFoundations = this.foundations.slice(4,8);
   },
 
   deal: function() {
@@ -36,10 +39,10 @@ Games["regiment"] = {
                    : (card.isKing() && this.canMakeFoundation(false,card.suit())) );
     }
   },
-  canMakeFoundation: function(isAceFoundation,suit) {
-    var base = isAceFoundation ? 0 : 4;
-    for(var i = base; i < base+4; i++) {
-      var last = this.foundations[i].lastChild;
+  canMakeFoundation: function(isAceFoundation, suit) {
+    var fs = isAceFoundation ? this.aceFoundations : this.kingFoundations;
+    for(var i = 0; i != 4; i++) {
+      var last = fs[i].lastChild;
       if(last && last.suit()==suit) return false;
     }
     return true;
@@ -93,8 +96,13 @@ Games["regiment"] = {
   },
 
   autoplayMove: function() {
+    // move stuff to foundations
+    for(var i = 0; i != this.autoplayFrom.length; i++) {
+      var source = this.autoplayFrom[i].lastChild;
+      if(source && this.autoplayToFoundations(source)) return true;
+    }
     // fill empty spaces, but only from reserves in same column
-    for(var i = 0; i < 8; i++) {
+    for(i = 0; i != 8; i++) {
       var last = this.reserves[i].lastChild;
       if(!last) continue;
       if(!this.stacks[i].hasChildNodes()) {
@@ -105,6 +113,24 @@ Games["regiment"] = {
         this.moveTo(last, this.stacks[i+8]);
         return true;
       }
+    }
+    return false;
+  },
+  autoplayToFoundations: function(card) {
+    var test = testLastIsSuit(card.suit());
+    var af = searchPiles(this.aceFoundations, test);
+    if(!af) return false;
+    var kf = searchPiles(this.kingFoundations, test);
+    if(!kf) return false;
+    
+    var ac = af.lastChild, kc = kf.lastChild;
+    if(card.isConsecutiveTo(ac) && card.number() > kc.number()) {
+      this.moveTo(card, af);
+      return true;
+    }
+    if(kc.isConsecutiveTo(card) && card.number() < ac.number()) {
+      this.moveTo(card, kf);
+      return true;
     }
     return false;
   },

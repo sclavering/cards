@@ -209,9 +209,6 @@ var CardShuffler = {
       this._facedown = true;
       this.className = "card facedown";
     };
-    // hangover from when source was a property of the first card in the move/drag stacks
-    // (rather than of the stacks themselves as is now the case)
-    c.getSource = function() { return this.parentNode.source; };
     // other methods
     c.turnFaceUp = function() { CardTurner.turnFaceUp(this); };
     c.moveTo     = function(targetStack) { CardMover.move(this,targetStack); };

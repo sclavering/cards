@@ -378,7 +378,7 @@ var BaseCardGame = {
 
   // xxx maybe this should die now?  it was important before doAction existed
   moveTo: function(card, target) {
-    this.doAction(new MoveAction(card, card.getSource(), target));
+    this.doAction(new MoveAction(card, card.parentNode.source, target));
     return true;
   },
 

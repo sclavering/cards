@@ -49,7 +49,7 @@ Games["regiment"] = {
   },
 
   canMoveToPile: function(card, target) {
-    var source = card.getSource();
+    var source = card.parentNode.source;
     var last = target.lastChild;
 
     // piles are built up or down (or both) within suit

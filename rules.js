@@ -133,6 +133,13 @@ var Rules = {
       return !card.nextSibling && (this.hasChildNodes() ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
     },
 
+    // requires .up fields of cards to form circular lists within suits, and defining Game.foundationStartNumber
+    "canfield/penguin":
+    function(card) {
+      if(card.nextSibling) return false;
+      return this.hasChildNodes() ? this.lastChild.up==card : card.number==Game.foundationStartNumber;
+    },
+
     "13 cards":
     function(card) {
       if(this.hasChildNodes()) return false;
@@ -285,7 +292,8 @@ var Rules = {
     "commonish":
     function() {
       var triedToFillEmpty = false;
-      const fs = this.foundations, bs = this.foundationBases;
+      // numBs matters for Penguin
+      const fs = this.foundations, bs = this.foundationBases, numBs = bs.length;
       for(var i = 0; i != 4; i++) {
         var f = fs[i];
         if(f.hasChildNodes()) {
@@ -293,7 +301,7 @@ var Rules = {
           if(c && c.faceUp && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
         } else if(!triedToFillEmpty) {
           triedToFillEmpty = true;
-          for(var j = 0; j != 4; j++) {
+          for(var j = 0; j != numBs; j++) {
             var b = bs[j];
             if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling) return this.moveTo(b, f);
           }
@@ -312,18 +320,18 @@ var Rules = {
         if(last) {
           if(last.isKing) continue;
           var c = last.up, cp = c.parentNode;
-          if((cp.isNormalPile || cp.isWaste) && !c.nextSibling) {
+          if(!cp.isFoundation && !cp.isStock && !c.nextSibling) {
             if(c.mayAutoplay) return this.moveTo(c, f);
             continue; // mayAutoplay will also be false for the twin
           } else {
             c = c.twin, cp = c.parentNode;
-            if((cp.isNormalPile || cp.isWaste) && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
           }
         } else if(!lookedForAces) {
           lookedForAces = true;
           for(var j = 0; j != 8; j++) {
             var a = as[j], ap = a.parentNode;
-            if((ap.isNormalPile || ap.isWaste) && !a.nextSibling) return this.moveTo(a, f);
+            if(!ap.isFoundation && !ap.isStock && !a.nextSibling) return this.moveTo(a, f);
           }
         }
       }

@@ -118,7 +118,6 @@ function init() {
     name = names[i], game = lookup[name];
     var mi = document.createElement("menuitem");
     mi.setAttribute("label", names[i]);
-    mi.setAttribute("accesskey", gStrings[game+".menukey"]);
     mi.value = game;
     menu.appendChild(mi);
   }

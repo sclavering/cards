@@ -576,6 +576,12 @@ var BaseCardGame = {
     var ps = this.piles, len = ps.length;
     for(var i = 0; i != len; i++) if(!ps[i].hasChildNodes()) return ps[i];
     return null;
+  },
+
+  get emptyCell() {
+    const cs = this.cells, num = cs.length;
+    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) return cs[i];
+    return null;
   }
 }
 

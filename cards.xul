@@ -33,6 +33,7 @@
 <script type="application/x-javascript" src="maze.js"/>
 <script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="montana.js"/>
+<script type="application/x-javascript" src="penguin.js"/>
 <script type="application/x-javascript" src="pyramid.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="russiansol.js"/>
@@ -587,6 +588,48 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile id="montana-pile-49"/><flex/>
       <pile id="montana-pile-50"/><flex/>
       <pile id="montana-pile-51"/><flex/>
+    </hbox>
+  </vbox>
+
+  <!-- penguin -->
+  <vbox id="penguin" hidden="true">
+    <rowspacer/>
+    <hbox>
+      <flex2/>
+      <vbox>
+        <cell id="penguin-cell-0"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-0"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-1"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-1"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-2"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-2"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-3"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-3"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-4"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-4"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-5"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-5"/>
+      </vbox><flex/>
+      <vbox>
+        <cell id="penguin-cell-6"/><rowspacer/>
+        <pile class="fan-down" id="penguin-pile-6"/>
+      </vbox><flex2/>
+      <vbox>
+        <foundation id="penguin-foundation-0"/><rowspacer/>
+        <foundation id="penguin-foundation-1"/><rowspacer/>
+        <foundation id="penguin-foundation-2"/><rowspacer/>
+        <foundation id="penguin-foundation-3"/>
+      </vbox><flex2/>
     </hbox>
   </vbox>
 

@@ -44,12 +44,6 @@ var FreeCellGame = {
     return cells;
   },
 
-  get emptyCell() {
-    const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) return cs[i];
-    return null;
-  },
-
   // the target of a move can't also be used as a space
   getEmptyPiles: function(pileToIgnore) {
     var spaces = [];

@@ -40,10 +40,7 @@ AllGames.canfield = {
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 
-  mayAddCardToFoundation: function(card) {
-    if(card.nextSibling) return false;
-    return this.hasChildNodes() ? this.lastChild.up==card : card.number==Game.foundationStartNumber;
-  },
+  mayAddCardToFoundation: "canfield/penguin",
 
   mayAddCardToPile: "down, opposite colour",
 

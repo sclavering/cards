@@ -32,7 +32,7 @@ Towers.canMoveTo = function(card, target) {
   if(target.isCell) return this.canMoveToCell(card,target);
   var last = target.lastChild;
   if(target.isFoundation) return this.canMoveToFoundation(card, target); // inherited method
-  if((!last && card.isKing()) || (last.isConsecutiveTo(card) && last.isSameSuit(card))) {
+  if(last ? (last.isConsecutiveTo(card) && last.isSameSuit(card)) : card.isKing()) {
     if(this.movePossible(card,target)) return true;
     return 0;
   }
@@ -80,14 +80,13 @@ Towers.moveTo = function(card, target) {
 
 ///////////////////////////////////////////////////////////
 //// hint
-/*
 Towers.getHints = function() {
   var card, i;
   for(i = 0; i < 4; i++) {
     this.getHintsForCard(this.cells[i].firstChild);
   }
   for(i = 0; i < 10; i++) {
-    card = this.getLowestMoveableCard_AltColours(this.stacks[i])
+    card = this.getLowestMoveableCard_Suit(this.stacks[i]);
     this.getHintsForCard(card);
   }
 };
@@ -103,13 +102,11 @@ Towers.getHintsForCard = function(card) {
     if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
 };
-*/
 
 
 
 ///////////////////////////////////////////////////////////
 //// smartmove
-/*
 Towers.getBestMoveForCard = function(card) {
   var i;
   // move to another stack which has cards on
@@ -134,7 +131,6 @@ Towers.getBestMoveForCard = function(card) {
   // failed
   return null;
 };
-*/
 
 
 

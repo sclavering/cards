@@ -191,12 +191,6 @@ function _createCardPile(elt) {
         this.offset = 0;
         return;
       }
-      if(this.childNodes.length==1) {
-        this.offset = 0;
-        this.firstChild.top = 0;
-        this.firstChild.left = 0;
-        return;
-      }
       var card;
       var numFaceUp = 0;
       for(card = this.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
@@ -949,7 +943,7 @@ var Cards = {
 }
 
 
-// Game var is always the object for the current game, this was a placeholder to avoid js errors
+// Game var is always the object for the current game
 var Game = null;
 var Games = [];
 

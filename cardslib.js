@@ -1,9 +1,15 @@
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
-// the top and left coords of the <stack id="games"/>
-var gGameStack = null;
-var gGameStackTop = 0;
+var gGameStack = null;  // the <stack id="games"/>
+var gGameStackTop = 0;  // ... and its coords
 var gGameStackLeft = 0;
+
+var Game = null;  // the current games
+var Games = [];   // all the games, indexed by id
+var MouseHandler; // nasty thing.
+
+var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
+
 
 
 /** A lot of stuff that individual card games need to call is accessed from the <image/> element that
@@ -442,31 +448,10 @@ var MouseHandler1 = {
   },
 
   start: function() {
-    // might need to hide .card
     this.nextCard = null;
     this.tx = 0;
     this.ty = 0;
-    this.enable();
   },
-
-  enable: function() {
-    gGameStack.addEventListener("mousedown", this.mouseDownWrapper, false);
-    gGameStack.addEventListener("mousemove", this.mouseMoveWrapper, false);
-    gGameStack.addEventListener("mouseup",   this.mouseUpWrapper,   false);
-    gGameStack.addEventListener("click", this.mouseClickedWrapper,  false);
-  },
-  disable: function() {
-    gGameStack.removeEventListener("mousedown", this.mouseDownWrapper, false);
-    gGameStack.removeEventListener("mousemove", this.mouseMoveWrapper, false);
-    gGameStack.removeEventListener("mouseup",   this.mouseUpWrapper,   false);
-    gGameStack.removeEventListener("click", this.mouseClickedWrapper,  false);
-  },
-
-  // wrappers so that the *this* keyword works correctly in handlers
-  mouseDownWrapper: function(e){if(e.button==0)MouseHandler1.mouseDown(e);},
-  mouseUpWrapper:   function(e){if(e.button==0)MouseHandler1.mouseUp(e);  },
-  mouseMoveWrapper: function(e){if(e.button==0)MouseHandler1.mouseMove(e);},
-  mouseClickedWrapper: function(e){if(!MouseHandler1.dragInProgress) MouseHandler1.mouseClicked(e);},
 
   mouseDown: function(e) {
     var t = e.target;
@@ -528,7 +513,9 @@ var MouseHandler1 = {
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),
   // or turnStockOver(). double left click calls sendToFoundations()
-  mouseClicked: function(e) {
+  mouseClick: function(e) {
+    if(this.dragInProgress) return;
+
     var t = e.target;
     if(e.button==1) {
     if(e.target.isCard) Game.smartMove(e.target);
@@ -562,13 +549,13 @@ var MouseHandler1 = {
 var MouseHandler2 = {
   source: null,
 
-  start: function() { this.enable(); },
-  enable: function() { gGameStack.addEventListener("click",this.mouseClickedWrapper,false); },
-  disable: function() { gGameStack.removeEventListener("click",this.mouseClickedWrapper,false); },
+  start: function() {},
 
-  mouseClickedWrapper: function(e) { MouseHandler2.mouseClicked(e); },
+  mouseUp: function(e) {},
+  mouseDown: function(e) {},
+  mouseMove: function(e) {},
 
-  mouseClicked: function(e) {
+  mouseClick: function(e) {
     var t = e.target;
     if(e.button==0) {
       if(e.detail==2) { // && Game.foundations) {  // don't need for FreeCell, but might do in future
@@ -789,6 +776,25 @@ var HintHighlighter = {
 
 
 
+/* used to ensure that |this| refers to the right thing within the real event handler,
+   and so that we can avoid adding and removing the event listeners while animating */
+function handleMouseClick(e) {
+  if(!gUIEnabled) return;
+  MouseHandler.mouseClick(e);
+}
+function handleMouseUp(e) {
+  if(!gUIEnabled || e.button!=0) return;
+  MouseHandler.mouseUp(e);
+}
+function handleMouseDown(e) {
+  if(!gUIEnabled || e.button!=0) return;
+  MouseHandler.mouseDown(e);
+}
+function handleMouseMove(e) {
+  if(!gUIEnabled) return;
+  MouseHandler.mouseMove(e);
+}
+
 
 
 
@@ -834,11 +840,17 @@ var Cards = {
     gGameStackTop = gGameStack.boxObject.y;
     gGameStackLeft = gGameStack.boxObject.x;
 
+    // mouse event listeners
+    gGameStack.addEventListener("click", handleMouseClick, false);
+    gGameStack.addEventListener("mousemove", handleMouseMove, false);
+    gGameStack.addEventListener("mousedown", handleMouseDown, false);
+    gGameStack.addEventListener("mouseup", handleMouseUp, false);
+
     // init other objects in cardslib.js
-    MouseHandler1.init();   // handles drag-drop and mouse clicks
-    CardMover.init();       // contains all the card moving animation code
-    HintHighlighter.init(); // shows hints by drawing boxes round source/destination
-    Highlighter.init();     // used by MouseHandler2
+    MouseHandler1.init();
+    CardMover.init();
+    HintHighlighter.init();
+    Highlighter.init();
 
     // build the games menu
     var menu = document.getElementById("menupopup-gametypes");
@@ -879,6 +891,7 @@ var Cards = {
   // enable/disable the UI elements. this is done whenever any animation
   // is taking place, as problems ensue otherwise.
   enableUI: function() {
+    gUIEnabled = true;
     this.cmdHint.removeAttribute("disabled");
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
@@ -886,7 +899,6 @@ var Cards = {
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
     this.enableRedeal();
-    MouseHandler.enable();
   },
   enablePartialUI: function() {
     this.cmdNewGame.removeAttribute("disabled");
@@ -895,6 +907,7 @@ var Cards = {
     this.gameSelector.removeAttribute("disabled");
   },
   disableUI: function() {
+    gUIEnabled = false;
     this.cmdHint.setAttribute("disabled","true");
     this.cmdNewGame.setAttribute("disabled","true");
     this.cmdRestartGame.setAttribute("disabled","true");
@@ -902,7 +915,6 @@ var Cards = {
     this.gameSelector.setAttribute("disabled","true");
     this.cmdUndo.setAttribute("disabled","true");
     this.cmdRedeal.setAttribute("disabled","true");
-    MouseHandler.disable();
   },
   // en/dis-able the Undo and Redeal commands as required
   // don't use this too much because it's slow (it always adjusts attributes)
@@ -957,13 +969,6 @@ var Cards = {
   }
 }
 
-
-
-
-// Game var is always the object for the current game
-var Game = null;
-var Games = [];
-var MouseHandler;
 
 
 

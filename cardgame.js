@@ -29,6 +29,7 @@ CardGame.prototype = {
   foundations: null, // array of foundation stacks
   stock: null,       // the stock <stack>, if the game has one
   stacks: null,
+  thingsToReveal: null,
 
   dragDropTargets: null, // list of elements which the DragDrop system should test if cards are being dropped on
   allstacks: null, // list of all <stack>s for cards, so that they can be cleared when a game is started

@@ -8,7 +8,7 @@
 <overlay id="CardsOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<!-- Firebird -->
+<!-- Firefox -->
 <menupopup id="menu_ToolsPopup">
   <menuitem id="cards-launch" label="&cards-launch-label;" insertbefore="prefSep"
       oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>

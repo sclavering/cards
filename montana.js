@@ -1,9 +1,9 @@
-var Montana = {
+Games["montana"] = {
   __proto__: BaseCardGame,
 
-  shortname: "montana",
-
+  id: "montana",
   redeals: 2,
+
 
   init: function() {
     // label the piles for use by canMoveTo
@@ -148,5 +148,3 @@ var Montana = {
     return true;
   }
 }
-
-Games["Montana"] = Montana;

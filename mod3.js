@@ -1,16 +1,20 @@
-var Mod3 = new CardGame();
-
 // Scoring constants:
 const CARD_IN_PLACE = 10, EMPTY_TABLEAU = 5;
 
-Mod3.shortname = "mod3";
+var Mod3 =
+Games["mod3"] = {
+  __proto__: BaseCardGame,
 
-Mod3.init = function() {
-  this.stockDealTargets = this.stacks;
-  var i;
-  for(i = 0;  i < 8;  i++) this.foundations[i].baseCard = 2;
-  for(i = 8;  i < 16; i++) this.foundations[i].baseCard = 3;
-  for(i = 16; i < 24; i++) this.foundations[i].baseCard = 4;
+  id: "mod3",
+
+
+  init: function() {
+    this.stockDealTargets = this.stacks;
+    var i;
+    for(i = 0;  i < 8;  i++) this.foundations[i].baseCard = 2;
+    for(i = 8;  i < 16; i++) this.foundations[i].baseCard = 3;
+    for(i = 16; i < 24; i++) this.foundations[i].baseCard = 4;
+  }
 };
 
 
@@ -72,10 +76,8 @@ Mod3.deal = function() {
 
 ///////////////////////////////////////////////////////////
 //// Moving
-//Mod3.canMoveCard = Mod3.canMoveCard_LastOnPile;
 Mod3.canMoveCard = function(card) {
-  if(card.parentNode.length == 4) // Pile is done.
-    return false;
+  if(card.parentNode.length == 4) return false; // Pile is done.
   return (card.faceUp() && card.isLastOnPile());
 };
 
@@ -249,5 +251,3 @@ Mod3.getScoreForAction = function(action, card, source) {
   }
   return 0;
 }
-
-Games["Mod3"] = Mod3;

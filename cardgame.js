@@ -1,35 +1,11 @@
-/** CardGame.js
-  *
-  * Contains the CardGame function, used as a constructor for the objects for each game,
-  * so they can inherit lots (and lots and lots) of stuff
-  *
-  * individual game .js files should go:
-  *   var Klondike = {
-  *     __proto__: BaseCardGame,
-  *     
-  *     ...
-  *   };
-  *
-  *   Games["Klondike"] = Klondike;
-  */
+var BaseCardGame = {
+  // games must provide this, the id of the vbox/hbox that contains all the game's content
+  id: null,
 
-// flags to indicate some of the rules of a card game.  usage:  FooSolitaire = new CardGame(FLAG_1 | FLAG_2 | ...);
-var ACES_HIGH = 1, CAN_TURN_STOCK_OVER = 2;
-
-function CardGame(params) {
-  // for Klondike, Canfield and others, where when reaching the bottom of
-  // the stock, the entire waste pile is (can be) moved back to the stock
-  // checked in the common event handler, if true must implement dealFromStock()
-  this.canTurnStockOver = (params&CAN_TURN_STOCK_OVER)==CAN_TURN_STOCK_OVER;
-  // used when determining the result for card.number() calls (makes Aces 14's)
-  this.acesHigh = (params&ACES_HIGH)==ACES_HIGH;
-};
-
-var BaseCardGame = CardGame.prototype = {
-  // older games get these set by the CardGame() constructor.  newer games may want to override
+  // boolean flags that games might want to override
   canTurnStockOver: false,
   acesHigh: false,
-  useDragDrop: true, // if false we use "click to select, then click on target"
+  useDragDrop: true, // if false we use "click to select, then click on target" in the style of FreeCell
 
   // these are all automatically set up by initStacks()
   allstacks: [],   // array of piles of all times.  used for clearing the game
@@ -42,10 +18,15 @@ var BaseCardGame = CardGame.prototype = {
   foundation: null, // if the game has just one foundation this will be it
   reserve: null,
 
+  // array of piles to be examined after each move for cards to reveal
   thingsToReveal: null,
-  dragDropTargets: null, // list of elements which the DragDrop system should test if cards are being dropped on
+  // list of elements which the DragDrop system should test if cards are being dropped on
+  dragDropTargets: null,
+  // the piles to deal to when the stock is clicked.  ignored if the game has a waste pile,
+  // and if null this.stacks will be used instead.
+  stockDealTargets: null,
 
-
+  xulElement: null, // the container vbox/hbox for the game
 
 
   // === Start/Finish Playing =============================
@@ -56,39 +37,67 @@ var BaseCardGame = CardGame.prototype = {
   init: function() {
   },
 
+  start: function() {
+    if(!this.initialised) this.initialise();
+    // show
+    this.xulElement.hidden = false;
+    // creates the Difficulty level menu on the toolbar if necessary, and sets the Game.difficultyLevel param
+    this.initDifficultyLevel();
+    MouseHandler = this.useDragDrop ? MouseHandler1 : MouseHandler2;
+    MouseHandler.start();
+    // init stack arrays and stuff
+    this.newGame();
+  },
+
+  end: function() {
+    this.endGame();
+    this.clearGame();
+    // hide
+    this.xulElement.hidden = true;
+  },
+
+  initialise: function() {
+    this.initialised = true;
+
+    this.initStacks();
+
+    this.xulElement = document.getElementById(this.id);
+
+    this.init();
+  },
+
   // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
-  // Requires game to have a |shortname| param, and all piles of various types to have ids of
-  // the form {shortname}-{pile-type}-{int} in the XUL
+  // Requires game to have a |id| param, and all piles of various types to have ids of
+  // the form {id}-{pile-type}-{int} in the XUL
   initStacks: function() {
-    // We really really do have to set these all to empty arrays now, or every game ends
-    // up using the same arrays for |stacks| |foundations| etc, which means everything
-    // breaks horribly as soon as a the user switches to a new type of game.
-    // (Another example of why javascript really needs classes, not just prototypes)
+    // We have to set these all to empty arrays now, or every game ends up using the *same* arrays
+    // for |stacks|, |foundations|, etc., which means everything breaks horribly as soon as a the
+    // user switches to a new type of game.
     this.stacks = [];
     this.cells = [];
     this.reserves = [];
     this.foundations = [];
     this.allstacks = [];
 
-    var name = this.shortname;
-    this.stock = createCardPile(name+"-stock");
+    var id = this.id;
+    this.stock = createCardPile(id+"-stock");
     if(this.stock) {
       this.stock.isStock = true;
       this.allstacks.push(this.stock);
     }
-    this.waste = createCardPile(name+"-waste");
+    this.waste = createCardPile(id+"-waste");
     if(this.waste) {
       this.waste.isWaste = true;
       this.allstacks.push(this.waste);
     }
     // try for a single foundation or reserve pile
-    this.foundation = createCardPile(name+"-foundation");
+    this.foundation = createCardPile(id+"-foundation");
     if(this.foundation) {
       this.foundation.isFoundation = true;
       this.allstacks.push(this.foundation);
     }
-    this.reserve = createCardPile(name+"-reserve");
+    this.reserve = createCardPile(id+"-reserve");
     if(this.reserve) {
       this.reserve.isReserve = true;
       this.allstacks.push(this.reserve);
@@ -96,28 +105,28 @@ var BaseCardGame = CardGame.prototype = {
     // try for >1 piles, foundations, reserves and cells
     var i, node;
     for(i = 0; true; i++) {
-      node = createCardPile(name+"-pile-"+i);
+      node = createCardPile(id+"-pile-"+i);
       if(!node) break;
       node.isNormalPile = true;
       this.stacks.push(node);
       this.allstacks.push(node);
     }
     for(i = 0; true; i++) {
-      node = createCardPile(name+"-foundation-"+i);
+      node = createCardPile(id+"-foundation-"+i);
       if(!node) break;
       node.isFoundation = true;
       this.foundations.push(node);
       this.allstacks.push(node);
     }
     for(i = 0; true; i++) {
-      node = createCardPile(name+"-reserve-"+i);
+      node = createCardPile(id+"-reserve-"+i);
       if(!node) break;
       node.isReserve = true;
       this.reserves.push(node);
       this.allstacks.push(node);
     }
     for(i = 0; true; i++) {
-      node = createCardPile(name+"-cell-"+i);
+      node = createCardPile(id+"-cell-"+i);
       if(!node) break;
       node.isCell = true;
       this.cells.push(node);
@@ -132,25 +141,6 @@ var BaseCardGame = CardGame.prototype = {
     if(this.reserve) this.thingsToReveal.push(this.reserve);
   },
 
-  start: function() {
-    // creates the Difficulty level menu on tht toolbar if necessary, and sets the Game.difficultyLevel param
-    this.initDifficultyLevel();
-    MouseHandler = this.useDragDrop ? MouseHandler1 : MouseHandler2;
-    MouseHandler.start();
-    // init stack arrays and stuff
-    if(!this.initialised) {
-      this.initStacks();
-      this.init();
-      this.initialised = true;
-    }
-    this.newGame();
-  },
-
-  end: function() {
-    this.endGame();
-    this.clearGame();
-  },
-
 
 
   // === Difficulty Levels =======================================
@@ -162,7 +152,7 @@ var BaseCardGame = CardGame.prototype = {
     var menu = Cards.difficultyLevelPopup;
     while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
     // get levels.  if none then return (updateUI will ensure menu disabled)
-    var levels = document.getElementById(Cards.currentGame).getAttribute("difficultyLevels");
+    var levels = this.xulElement.getAttribute("difficultyLevels");
     if(!levels || levels=="") return;
     //
     Cards.enableDifficultyMenu();
@@ -170,7 +160,7 @@ var BaseCardGame = CardGame.prototype = {
     // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
     var currentLevel;
     try {
-      currentLevel = gPrefs.getIntPref(Cards.currentGame+".difficulty-level");
+      currentLevel = gPrefs.getIntPref(this.id+".difficulty-level");
     } catch(e) {
       currentLevel = Math.ceil(levels.length / 2);
     }
@@ -189,7 +179,7 @@ var BaseCardGame = CardGame.prototype = {
   // games can retrieve a integer >0 for the current difficulty level via Game.difficultyLevel;
   setDifficultyLevel: function(level) {
     level = parseInt(level);
-    gPrefs.setIntPref(Cards.currentGame + ".difficulty-level", level);
+    gPrefs.setIntPref(this.id+".difficulty-level", level);
     this.difficultyLevel = level;
     this.newGame();
   },
@@ -200,7 +190,6 @@ var BaseCardGame = CardGame.prototype = {
   newGame: function() {
     this.score = 0;
     this.undoHistory = [];
-//    Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
     this.updateScoreDisplay();
     this.clearGame();
     this.clearHints();
@@ -211,8 +200,10 @@ var BaseCardGame = CardGame.prototype = {
         this.stacks[i].fixLayout();
     //
     this.deal();
+
+    Cards.disableUndo();
+    Cards.disableRedeal();
     Cards.enableUI();
-    Cards.fixUI();
   },
   // should deal out the cards for a new game. newGame() will ensure all stacks are empty
   deal: function() {
@@ -325,9 +316,7 @@ var BaseCardGame = CardGame.prototype = {
     this.score += scorechange;
     this.updateScoreDisplay();
     // if this is the first undo added enable the command
-//    if(this.undoHistory.length==1) Cards.enableUndo();
-    // en/dis-able the Undo and Redeal buttons as required
-    Cards.fixUI();
+    if(this.undoHistory.length==1) Cards.doEnableUndo();
     // force hints to be regenerated
     this.clearHints();
   },
@@ -337,8 +326,9 @@ var BaseCardGame = CardGame.prototype = {
     this.undoHistory.push(move);
     this.score += scorechange;
     this.updateScoreDisplay();
-    // en/dis-able the Undo and Redeal buttons as required
-    Cards.fixUI();
+    // update UI if required
+    if(this.redealsRemaining==0) Cards.disableRedeal();
+    if(this.undoHistory.length==1) Cards.doEnableUndo();
     // force hints to be regenerated
     this.clearHints();
   },
@@ -355,10 +345,13 @@ var BaseCardGame = CardGame.prototype = {
 
   // === Scoring ==========================================
   // takes strings describing action and returns an integer for the score
-  getScoreForAction: function(action) {
+  getScoreForAction: function(action, card, source) {
+    if(action in this.scores) return this.scores[action];
     return 0;
   },
 
+  // a hashtable of scores (which individual games should provide
+  scores: {},
 
 
   // === Moving between stacks ============================

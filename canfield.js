@@ -1,9 +1,7 @@
-Games["Canfield"] = {
+Games["canfield"] = {
   __proto__: BaseCardGame,
 
-  shortname: "canfield",
-  name: "Canfield",
-
+  id: "canfield",
   acesHigh: true,
   canTurnStockOver: true,
 
@@ -133,12 +131,10 @@ Games["Canfield"] = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation"   ?  10 :
-      action=="move-from-waste"      ?   5 :
-      action=="card-revealed"        ?   5 :
-      action=="move-from-foundation" ? -15 :
-      0);
+  scores: {
+    "move-to-foundation"  :  10,
+    "move-from-waste"     :   5,
+    "card-revealed"       :   5,
+    "move-from-foundation": -15
   }
 }

@@ -3,12 +3,10 @@
    strict suits, and one set of aces is missing
    */
 
-Games["DoubleSol"] = {
+Games["doublesol"] = {
   __proto__: BaseCardGame,
 
-  shortname: "doublesol",
-  name: "DoubleSol",
-
+  id: "doublesol",
   canTurnStockOver: true,
 
 

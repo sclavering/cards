@@ -1,13 +1,17 @@
-var Regiment = new CardGame();
+var Regiment =
+Games["regiment"] = {
+  __proto__: BaseCardGame,
 
-Regiment.shortname = "regiment";
+  id: "regiment",
 
-Regiment.init = function() {
-  for(var i = 0; i < 8; i++) {
-    this.foundations[i].isAceFoundation = (i < 4);
-    this.reserves[i].col = i;
-    this.stacks[i].col = i;
-    this.stacks[i+8].col = i;
+
+  init: function() {
+    for(var i = 0; i < 8; i++) {
+      this.foundations[i].isAceFoundation = (i < 4);
+      this.reserves[i].col = i;
+      this.stacks[i].col = i;
+      this.stacks[i+8].col = i;
+    }
   }
 };
 
@@ -140,12 +144,8 @@ Regiment.hasBeenWon = function() {
       return false;
   return true;
 };
-Regiment.getScoreForAction = function(action) {
-  return (
-    action=="move-to-foundation"   ?  10 :
-    action=="card-revealed"        ?   5 :
-    action=="move-from-foundation" ? -15 :
-    0);
+Regiment.scores = {
+  "move-to-foundation"  :  10,
+  "card-revealed"       :   5,
+  "move-from-foundation": -15
 };
-
-Games["Regiment"] = Regiment;

@@ -1,18 +1,18 @@
-var Towers = {
+var Towers =
+Games["towers"] = {
   __proto__: FreeCellGame,
-  
-  shortname: "towers"
+
+  id: "towers",
+
+
+  ///////////////////////////////////////////////////////////
+  //// start game
+  deal: function() {
+    var cards = this.shuffleDecks(1);
+    for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
+    for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
+  }
 }
-
-
-
-///////////////////////////////////////////////////////////
-//// start game
-Towers.deal = function() {
-  var cards = this.shuffleDecks(1);
-  for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
-  for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
-};
 
 
 
@@ -116,6 +116,3 @@ Towers.hasBeenWon = function() {
     if(this.foundations[i].childNodes.length!=13) return false;
   return true;
 };
-
-
-Games["Towers"] = Towers;

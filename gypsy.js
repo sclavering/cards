@@ -1,17 +1,19 @@
-var Gypsy = new CardGame();
+var Gypsy =
+Games["gypsy"] = {
+  __proto__: BaseCardGame,
 
-Gypsy.shortname = "gypsy";
+  id: "gypsy",
 
 
-
-///////////////////////////////////////////////////////////
-//// start game
-Gypsy.deal = function() {
-  // 1==easy, 2==hard
-  var cards = this.difficultyLevel==2 ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],2,1);
-  this.dealToStack(cards,this.stock,cards.length,0);
-};
+  ///////////////////////////////////////////////////////////
+  //// start game
+  deal: function() {
+    // 1==easy, 2==hard
+    var cards = this.difficultyLevel==2 ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
+    for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],2,1);
+    this.dealToStack(cards,this.stock,cards.length,0);
+  }
+}
 
 
 
@@ -106,13 +108,8 @@ Gypsy.hasBeenWon = function() {
       return false;
   return true;
 };
-Gypsy.getScoreForAction = function(action) {
-  return (
-    action=="move-to-foundation"   ?  10 :
-    action=="card-revealed"        ?   5 :
-    action=="move-from-foundation" ? -15 :
-    0);
+Gypsy.scores = {
+  "move-to-foundation"  :  10,
+  "card-revealed"       :   5,
+  "move-from-foundation": -15
 };
-
-
-Games["Gypsy"] = Gypsy;

@@ -1,9 +1,7 @@
-Games["Grandfather"] = {
+Games["grandfather"] = {
   __proto__: BaseCardGame,
 
-  shortname: "grandfather",
-  name: "Grandfather",
-
+  id: "grandfather",
   redeals: 2,
 
 
@@ -108,11 +106,9 @@ Games["Grandfather"] = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation"   ?  10 :
-      action=="card-revealed"        ?   5 :
-      action=="move-from-foundation" ? -15 :
-      0);
+  scores: {
+    "move-to-foundation"  :  10,
+    "card-revealed"       :   5,
+    "move-from-foundation": -15
   }
 }

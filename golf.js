@@ -1,8 +1,7 @@
-Games["Golf"] = {
+Games["golf"] = {
   __proto__: BaseCardGame,
 
-  shortname: "golf",
-  name: "Golf",
+  id: "golf",
 
 
   init: function() {
@@ -101,8 +100,8 @@ Games["Golf"] = {
   hasBeenWon: function() {
     return (this.score == 0);
   },
-
-  getScoreForAction: function(action) {
-    return (action=="move-to-foundation" || action=="dealt-from-stock") ? -1 : 0;
+  scores: {
+    "move-to-foundation": -1,
+    "dealt-from-stock"  : -1
   }
 }

@@ -1,11 +1,10 @@
-Games["Pyramid"] = {
+Games["pyramid"] = {
   __proto__: BaseCardGame,
 
-  shortname: "pyramid",
-
+  id: "pyramid",
   useDragDrop: false,
-
   canTurnStockOver: true,
+
 
   init: function() {
     // set up a children array on each pile, which consists of the piles immediately covering it

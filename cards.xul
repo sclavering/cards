@@ -112,7 +112,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
 <stack id="games" flex="1">
   <!-- Aces Up -->
-  <vbox id="AcesUp" name="&acesup.name;" menukey="&acesup.menukey;"
+  <vbox id="acesup" name="&acesup.name;" menukey="&acesup.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox flex="1">
@@ -127,7 +127,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Canfield -->
-  <vbox id="Canfield" name="&canfield.name;" menukey="&canfield.menukey;"
+  <vbox id="canfield" name="&canfield.name;" menukey="&canfield.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -154,7 +154,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Double Solitaire -->
-  <vbox id="DoubleSol" name="&doublesol.name;" menukey="&doublesol.menukey;"
+  <vbox id="doublesol" name="&doublesol.name;" menukey="&doublesol.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -184,7 +184,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Fan -->
-  <vbox id="Fan" name="&fan.name;" menukey="&fan.menukey;"
+  <vbox id="fan" name="&fan.name;" menukey="&fan.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -229,7 +229,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- FreeCell -->
-  <vbox id="FreeCell" name="&freecell.name;" menukey="&freecell.menukey;"
+  <vbox id="freecell" name="&freecell.name;" menukey="&freecell.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -259,7 +259,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
 
   <!-- Golf -->
   <!-- flex allows bottom alignment of golf-stock-row -->
-  <vbox id="Golf" name="&golf.name;" menukey="&golf.menukey;"
+  <vbox id="golf" name="&golf.name;" menukey="&golf.menukey;"
       hidden="true" flex="1"
       difficultyLevels="&difficulty.easy-golf;|&difficulty.medium-1deck;|&difficulty.hard-2decks;">
     <rowspacer/>
@@ -283,7 +283,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Grandfather Solitaire -->
-  <vbox id="Grandfather" name="&grandfather.name;" menukey="&grandfather.menukey;"
+  <vbox id="grandfather" name="&grandfather.name;" menukey="&grandfather.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -306,7 +306,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Gypsy -->
-  <vbox id="Gypsy" name="&gypsy.name;" menukey="&gypsy.menukey;"
+  <vbox id="gypsy" name="&gypsy.name;" menukey="&gypsy.menukey;"
       hidden="true"
       difficultyLevels="&difficulty.easy-2suits;|&difficulty.hard-4suits;">
     <rowspacer/>
@@ -345,7 +345,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Klondike -->
-  <vbox id="Klondike" name="&klondike.name;" menukey="&klondike.menukey;"
+  <vbox id="klondike" name="&klondike.name;" menukey="&klondike.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -372,7 +372,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Maze -->
-  <vbox id="Maze" name="&maze.name;" menukey="&maze.menukey;"
+  <vbox id="maze" name="&maze.name;" menukey="&maze.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox id="maze-row1">
@@ -450,7 +450,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Mod 3 -->
-  <vbox id="Mod3" name="&mod3.name;" menukey="&mod3.menukey;"
+  <vbox id="mod3" name="&mod3.name;" menukey="&mod3.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox id="mod3-row1">
@@ -504,7 +504,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Montana -->
-  <vbox id="Montana" name="&montana.name;" menukey="&montana.menukey;"
+  <vbox id="montana" name="&montana.name;" menukey="&montana.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -574,7 +574,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="Pyramid" name="&pyramid.name;" menukey="&pyramid.menukey;"
+  <vbox id="pyramid" name="&pyramid.name;" menukey="&pyramid.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox flex="1">
@@ -658,7 +658,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="Regiment" name="&regiment.name;" menukey="&regiment.menukey;"
+  <vbox id="regiment" name="&regiment.name;" menukey="&regiment.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -709,7 +709,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Simple Simon -->
-  <vbox id="SimpleSimon" name="&simon.name;" menukey="&simon.menukey;"
+  <vbox id="simon" name="&simon.name;" menukey="&simon.menukey;"
       hidden="true" difficultyLevels="&difficulty.standard-levels;">
     <rowspacer/>
     <hbox>
@@ -735,7 +735,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Spider Solitaire -->
-  <vbox id="Spider" name="&spider.name;" menukey="&spider.menukey;"
+  <vbox id="spider" name="&spider.name;" menukey="&spider.menukey;"
       hidden="true" difficultyLevels="&difficulty.standard-levels;">
     <rowspacer/>
     <hbox>
@@ -774,7 +774,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Towers -->
-  <vbox id="Towers" name="&towers.name;" menukey="&towers.menukey;"
+  <vbox id="towers" name="&towers.name;" menukey="&towers.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>
@@ -805,7 +805,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
   </vbox>
 
   <!-- Yukon -->
-  <vbox id="Yukon" name="&yukon.name;" menukey="&yukon.menukey;"
+  <vbox id="yukon" name="&yukon.name;" menukey="&yukon.menukey;"
       hidden="true">
     <rowspacer/>
     <hbox>

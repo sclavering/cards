@@ -1,23 +1,27 @@
-var Spider = new CardGame();
+var Spider =
+Games["spider"] = {
+  __proto__: BaseCardGame,
 
-Spider.foundationsBox = null; // <vbox> containing <stack>s
-Spider.dealsLeftDisplay = null;
-Spider.dealsLeft = null; // number of times that player can deal out a set of ten cards
-Spider.completedSuits = null; // count of how many suits have been completed and removed
-
-Spider.shortname = "spider";
-
-Spider.init = function() {
-  this.foundationsBox = document.getElementById("spider-foundations");
-  this.dealsLeftDisplay = document.getElementById("spider-deals-left");
-  this.dragDropTargets = this.stacks.concat([this.foundationsBox]);
-};
+  id: "spider",
 
 
-// XXX hack. can probably remove once spider's foundations code is normalised
-Spider.sendToFoundations = function() {
-  return false;
-};
+  foundationsBox: null,   // <vbox> containing <stack>s
+  dealsLeftDisplay: null,
+  dealsLeft: 0,           // number of times that player can deal out a set of ten cards
+  completedSuits: 0,      // count of how many suits have been completed and removed
+
+  init: function() {
+    this.foundationsBox = document.getElementById("spider-foundations");
+    this.dealsLeftDisplay = document.getElementById("spider-deals-left");
+    this.dragDropTargets = this.stacks.concat([this.foundationsBox]);
+  },
+
+
+  // XXX hack. can probably remove once spider's foundations code is normalised
+  sendToFoundations: function() {
+    return false;
+  }
+}
 
 
 ///////////////////////////////////////////////////////////
@@ -170,11 +174,7 @@ Spider.hasBeenWon = function() {
     if(this.foundations[i].childNodes.length!=13) return false;
   return true;
 };
-Spider.getScoreForAction = function(action) {
-  return (
-    action=="suit-completed"     ? 100 :
-    action=="move-between-piles" ?  -1 :
-    0);
+Spider.scores = {
+  "suit-completed"    : 100,
+  "move-between-piles":  -1
 };
-
-Games["Spider"] = Spider;

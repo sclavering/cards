@@ -1,7 +1,8 @@
-var FreeCell = {
+var FreeCell =
+Games["freecell"] = {
   __proto__: FreeCellGame,
 
-  shortname: "freecell"
+  id: "freecell"
 }
 
 
@@ -124,12 +125,9 @@ FreeCell.canAutoplayCard = function(card) {
 
 
 ///////////////////////////////////////////////////////////
-//// winning,
+//// winning, scoring, undo
 FreeCell.hasBeenWon = function() {
   for(var i = 0; i < 4; i++)
     if(this.foundations[i].childNodes.length!=13) return false;
   return true;
 };
-
-
-Games["FreeCell"] = FreeCell;

@@ -1,8 +1,9 @@
-var Maze = {
+Games["maze"] = {
   __proto__: BaseCardGame,
-  
-  shortname: "maze",
-  
+
+  id: "maze",
+
+
   init: function() {
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
@@ -96,5 +97,3 @@ var Maze = {
     return true;
   }
 }
-
-Games["Maze"] = Maze;

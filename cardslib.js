@@ -67,7 +67,7 @@ var CardShuffler = {
   shuffleSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
     return this.shuffle(this.getCardSuits(numSpades, numHearts, numDiamonds, numClubs));
   },
-  
+
   // modifies argument and returns it as well (both are useful in some circumstances)
   shuffle: function(cards) {
     // shuffle several times, because Math.random() appears to be rather bad.
@@ -86,7 +86,7 @@ var CardShuffler = {
         cards[num] = temp;
       }
     }
-    
+
     return cards;
   },
 
@@ -164,6 +164,7 @@ var CardShuffler = {
     return c;
   }
 }
+
 
 
 
@@ -810,8 +811,6 @@ var Cards = {
   cardFaceDownHOffset: 5, // num pixels between *left* edges of two face down cards
   cardFaceUpHOffset: 10, // num pixels between *left* edges of two face up cards
 
-  currentGame: null,   // string holding the name of the game currently being played
-
   // refs to various <command> elements so they can be disabled
   cmdUndo: null,
   cmdHint: null,
@@ -840,12 +839,14 @@ var Cards = {
     this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
     this.gameSelector = document.getElementById("game-type-menu");
     this.gameDisplayStack = document.getElementById("games");
+
     // init other objects in cardslib.js
     MouseHandler1.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     CardMover.init(this.gameDisplayStack);       // contains all the card moving animation code
     HintHighlighter.init(this.gameDisplayStack); // shows hints by drawing boxes round source/destination
     MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
+
     // build the games menu
     var menu = document.getElementById("menupopup-gametypes");
     for(var game in Games) {
@@ -856,13 +857,30 @@ var Cards = {
       mi.value = game;
       menu.appendChild(mi);
     }
-    // retrieve current game
-    var currentGame = "Klondike";
+
+    // switch to last played game
+    game = "Klondike";
     try {
-      currentGame = gPrefs.getCharPref("current-game");
+      game = gPrefs.getCharPref("current-game");
     } catch(e) {}
-    if(!Games[currentGame]) currentGame = "Klondike"; // just in case pref gets corrupted
-    this.playGame(currentGame);
+    if(!(game in Games)) game = "Klondike"; // just in case pref gets corrupted
+    Game = Games[game];
+    Game.start();
+    // set window title. (setting window.title does not work as the app. is starting)
+    var title = document.getElementById(game).getAttribute("name");
+    document.documentElement.setAttribute("title",title);
+  },
+
+  // switches which game is currently being played
+  playGame: function(game) {
+    // end old game
+    if(Game) Game.end();
+    // store current game pref and start the game
+    gPrefs.setCharPref("current-game",game);
+    Game = Games[game];
+    Game.start();
+    // set the window title
+    window.title = document.getElementById(game).getAttribute("name");
   },
 
   // enable/disable the UI elements. this is done whenever any animation
@@ -871,10 +889,10 @@ var Cards = {
     this.cmdHint.removeAttribute("disabled");
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
-    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
     this.enableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
+    this.enableRedeal();
     MouseHandler.enable();
   },
   enablePartialUI: function() {
@@ -887,13 +905,14 @@ var Cards = {
     this.cmdHint.setAttribute("disabled","true");
     this.cmdNewGame.setAttribute("disabled","true");
     this.cmdRestartGame.setAttribute("disabled","true");
-    this.cmdRedeal.setAttribute("disabled","true");
     this.difficultyLevelMenu.setAttribute("disabled","true");
     this.gameSelector.setAttribute("disabled","true");
-    this.disableUndo();
+    this.cmdUndo.setAttribute("disabled","true");
+    this.cmdRedeal.setAttribute("disabled","true");
     MouseHandler.disable();
   },
   // en/dis-able the Undo and Redeal commands as required
+  // don't use this too much because it's slow (it always adjusts attributes)
   fixUI: function() {
     if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
     else this.cmdUndo.setAttribute("disabled","true");
@@ -901,13 +920,21 @@ var Cards = {
     else this.cmdRedeal.setAttribute("disabled","true");
   },
 
-  // enable/disable undo must be seperate as they are called from CardGame.trackMove() or something like that
+  // called from CardGame.trackMove()/trackRedeal() as well as above
+  enableUndo: function() {
+    if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
+  },
+  doEnableUndo: function() {
+    this.cmdUndo.removeAttribute("disabled");
+  },
   disableUndo: function() {
     this.cmdUndo.setAttribute("disabled","true");
   },
-  enableUndo: function() {
-    if(Game.canUndo())
-      this.cmdUndo.removeAttribute("disabled");
+  enableRedeal: function() {
+    if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
+  },
+  disableRedeal: function() {
+    this.cmdRedeal.setAttribute("disabled","true");
   },
 
   enableDifficultyMenu: function() {
@@ -934,24 +961,6 @@ var Cards = {
     var msg2 = document.documentElement.getAttribute("gameWonMessage");
     if(prompt.confirm(window,msg1,msg2)) Game.newGame();
     else this.enablePartialUI();
-  },
-
-  // switches which game is currently being played
-  playGame: function(strGameName) {
-    // end old game
-    if(this.currentGame) {
-      Game.end();
-      document.getElementById(this.currentGame).hidden = true;
-    }
-    // show new game
-    this.currentGame = strGameName;
-    document.getElementById(strGameName).hidden = false;
-    // store current game pref and start the game
-    gPrefs.setCharPref("current-game",strGameName);
-    Game = Games[strGameName];
-    Game.start();
-    // set the window title
-    window.title = document.getElementById(strGameName).getAttribute("name");
   }
 }
 
@@ -999,12 +1008,7 @@ function init() {
   useCardSet(cardset);
   document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
-
   Cards.init();
-
-  // fix window title. setting window.title at the end of Cards.playGame doesn't work the first time.
-  var title = document.getElementById(Cards.currentGame).getAttribute("name");
-  document.documentElement.setAttribute("title",title);
 }
 
 

@@ -1,7 +1,7 @@
-Games["Fan"] = {
+Games["fan"] = {
   __proto__: BaseCardGame,
 
-  shortname: "fan",
+  id: "fan",
 
 
   ///////////////////////////////////////////////////////////

@@ -1,9 +1,7 @@
-Games["Klondike"] = {
+Games["klondike"] = {
   __proto__: BaseCardGame,
 
-  shortname: "klondike",
-  name: "Klondike",
-
+  id: "klondike",
   canTurnStockOver: true,
 
 
@@ -107,13 +105,11 @@ Games["Klondike"] = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation"   ?   10 :
-      action=="move-from-waste"      ?    5 :
-      action=="card-revealed"        ?    5 :
-      action=="move-from-foundation" ?  -15 :
-      action=="stock-turned-over"    ? -100 :
-      0);
+  scores: {
+    "move-to-foundation"  :   10,
+    "move-from-waste"     :    5,
+    "card-revealed"       :    5,
+    "move-from-foundation":  -15,
+    "stock-turned-over"   : -100
   }
 };

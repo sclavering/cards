@@ -1,7 +1,7 @@
-var SimpleSimon = {
+Games["simon"] = {
   __proto__: BaseCardGame,
 
-  shortname: "simon",
+  id: "simon",
 
 
   ///////////////////////////////////////////////////////////
@@ -95,12 +95,8 @@ var SimpleSimon = {
         return false;
     return true;
   },
-  getScoreForAction: function(action) {
-    return (
-      action=="move-to-foundation" ? 100 :
-      action=="move-between-piles" ?  -1 :
-      0);
+  scores: {
+    "move-to-foundation": 100,
+    "move-between-piles":  -1
   }
 }
-
-Games["SimpleSimon"] = SimpleSimon;

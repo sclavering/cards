@@ -354,6 +354,7 @@ var basicPileProperties = {
   fixLayout: function() {},
 
   // transfers the card and all those that follow it
+  // Any replacement implementation *must* call first.parentNode's fixLayout() method
   addCards: function(first) {
     var next, card = first, source = first.parentNode.source;
     if(!this.offset) this.offset = source.offset;
@@ -363,6 +364,7 @@ var basicPileProperties = {
       card = next;
     }
     this.fixLayout();
+    source.fixLayout();
   },
 
   dealTo: function(cards, down, up) {

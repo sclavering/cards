@@ -56,24 +56,19 @@ AllGames.freecell = {
   // similar to Rules.getBestMoveForCard["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space
   getBestMoveForCard: function(card) {
-    /*
-    var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
+    const pr = card.parentNode, ps = pr.isNormalPile ? pr.surrounding : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; i++) {
-      p = ps[i];
+      var p = ps[i];
       if(p.hasChildNodes()) {
         if(p.mayAddCard(card)) return p;
       } else if(!empty) {
         empty = p;
       }
-    }*/
-    var p = this.getBestMoveForCard2(card);
-    if(p && p.hasChildNodes()) return p;  // p was a nonempty pile
-    if(p && p.mayAddCard(card)) return p; // p was an empty pile
-    return !card.nextSibling ? this.emptyCell : null;
+    }
+    return (!card.nextSibling && !card.parentNode.isCell && this.emptyCell)
+        || (empty && empty.mayAddCard(card) ? empty : null);
   },
-
-  getBestMoveForCard2: Rules.getBestMoveForCard["legal nonempty, or empty"],
 
   autoplayMove: "commonish",
 

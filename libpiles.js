@@ -1,3 +1,9 @@
+// xxx these need to become cardset dependent
+var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
+var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
+var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
+
+
 function initPileFromId(id, property, mayTakeCard, mayAddCard) {
   var elt = document.getElementById(id);
   if(!elt) return null;
@@ -14,8 +20,12 @@ function initPile(elt) {
   // for the floating pile |source| is set to the pile the cards originally came from.
   elt.source = elt;
 
-  var ms = PileTypes[elt.className] || basicPileProperties;
-  // make pile inherit from basic pile
+  // get properties and methods based on *the first value* in the class attribute
+  var classv = elt.className, pos = classv.indexOf(" ");
+  if(pos != -1) classv = classv.substring(0, pos);
+
+  var ms = PileTypes[classv] || basicPileProperties;
+  // make pile type inherit from basic pile
   if(ms!=basicPileProperties && ms.__proto__==Object.prototype)
     ms.__proto__ = basicPileProperties;
 

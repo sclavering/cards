@@ -20,11 +20,6 @@ var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 
 var gHintHighlighter = null;
 
-// xxx these need to become cardset dependent
-var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
-var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
-var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
-
 var gCardHeight = 0; // cards' heights in pixels (set in useCardSet)
 var gCardWidth = 0;
 

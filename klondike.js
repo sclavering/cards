@@ -99,7 +99,7 @@ Games["klondike-draw3"] = {
       var depth = ++Game.wasteDepth;
       this.appendChild(card);
       card.top = card._top = 0;
-      card.left = card._left = depth>0 ? depth * gVFanOffset : 0;
+      card.left = card._left = depth>0 ? depth * gHFanOffset : 0;
     };
     // only called after a card is removed from the waste pile
     w.fixLayout = function() {

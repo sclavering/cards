@@ -25,9 +25,6 @@
   >
   <!-- gameWon attrs read and passed to nsIPromptService call.  Should be a stringbundle really -->
 
-<!-- sets some var's needed for positioning of cards in javascript -->
-<script type="application/x-javascript" src="skin/skin.js"/>
-
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="cardgame.js"/>
 <script type="application/x-javascript" src="freecellmover.js"/>
@@ -82,7 +79,7 @@
   <toolbarbutton command="cmd:restart" label="&restart:label;" tooltiptext="&restart:tooltip;"/>
   <toolbarbutton command="cmd:undo"    label="&undo:label;"    tooltiptext="&undo:tooltip;"/>
   <toolbarbutton command="cmd:hint"    label="&hint:label;"    tooltiptext="&hint:tooltip;"/>
-  <spacer flex="1"/>
+  <flex/>
   <hbox id="score-panel">
     <description value="&statusbar-score-label;"/>
     <description id="score-display"/>
@@ -99,6 +96,10 @@ when starting to move a card, which looks abysmal
 Games must all have a name and menukey attribute on their main element, and the id
 must be the key used for that game in the Games hashtable.  the two attributes are
 used when building the game types menu
+
+pile, stock, waste, cell, reserve and foundation elements are all essenitally <stack/>s
+
+<flex/> is equivalent to <spacer flex="1"/>
 -->
 
 <stack id="current-game-display" flex="1">
@@ -107,13 +108,13 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stock id="acesup-stock"/><spacer flex="2"/>
-      <stack id="acesup-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="acesup-pile-3" class="card-fan-down"/><spacer flex="2"/>
-      <foundation id="acesup-foundation"/><spacer flex="1"/>
+      <flex/>
+      <stock id="acesup-stock"/><flex2/>
+      <pile class="fan-down" id="acesup-pile-0"/><flex/>
+      <pile class="fan-down" id="acesup-pile-1"/><flex/>
+      <pile class="fan-down" id="acesup-pile-2"/><flex/>
+      <pile class="fan-down" id="acesup-pile-3"/><flex2/>
+      <foundation id="acesup-foundation"/><flex/>
     </hbox>
   </vbox>
 
@@ -122,25 +123,25 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stock id="canfield-stock"/><spacer flex="1"/>
-      <waste id="canfield-waste"/><spacer flex="2"/>
-      <foundation id="canfield-foundation-0"/><spacer flex="1"/>
-      <foundation id="canfield-foundation-1"/><spacer flex="1"/>
-      <foundation id="canfield-foundation-2"/><spacer flex="1"/>
-      <foundation id="canfield-foundation-3"/><spacer flex="2"/>
-      <reserve id="canfield-reserve"/><spacer flex="1"/>
+      <flex/>
+      <stock id="canfield-stock"/><flex/>
+      <waste id="canfield-waste"/><flex2/>
+      <foundation id="canfield-foundation-0"/><flex/>
+      <foundation id="canfield-foundation-1"/><flex/>
+      <foundation id="canfield-foundation-2"/><flex/>
+      <foundation id="canfield-foundation-3"/><flex2/>
+      <reserve id="canfield-reserve"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <pilespacer/><spacer flex="1"/>
-      <pilespacer/><spacer flex="2"/>
-      <stack id="canfield-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="canfield-pile-3" class="card-fan-down"/><spacer flex="2"/>
-      <pilespacer/><spacer flex="1"/>
+      <flex/>
+      <pilespacer/><flex/>
+      <pilespacer/><flex2/>
+      <pile class="fan-down" id="canfield-pile-0"/><flex/>
+      <pile class="fan-down" id="canfield-pile-1"/><flex/>
+      <pile class="fan-down" id="canfield-pile-2"/><flex/>
+      <pile class="fan-down" id="canfield-pile-3"/><flex2/>
+      <pilespacer/><flex/>
     </hbox>
   </vbox>
 
@@ -149,28 +150,28 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stock id="doublesol-stock"/><spacer flex="1"/>
-      <waste id="doublesol-waste"/><spacer flex="1"/>
-      <pilespacer/><spacer flex="1"/>
-      <foundation id="doublesol-foundation-0"/><spacer flex="1"/>
-      <foundation id="doublesol-foundation-1"/><spacer flex="1"/>
-      <foundation id="doublesol-foundation-2"/><spacer flex="1"/>
-      <foundation id="doublesol-foundation-3"/><spacer flex="1"/>
+      <flex/>
+      <stock id="doublesol-stock"/><flex/>
+      <waste id="doublesol-waste"/><flex/>
+      <pilespacer/><flex/>
+      <foundation id="doublesol-foundation-0"/><flex/>
+      <foundation id="doublesol-foundation-1"/><flex/>
+      <foundation id="doublesol-foundation-2"/><flex/>
+      <foundation id="doublesol-foundation-3"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="doublesol-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="doublesol-pile-9" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="doublesol-pile-0"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-1"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-2"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-3"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-4"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-5"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-6"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-7"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-8"/><flex/>
+      <pile class="fan-down" id="doublesol-pile-9"/><flex/>
     </hbox>
   </vbox>
 
@@ -179,52 +180,50 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <cell id="freecell-cell-0"/><spacer flex="1"/>
-      <cell id="freecell-cell-1"/><spacer flex="1"/>
-      <cell id="freecell-cell-2"/><spacer flex="1"/>
-      <cell id="freecell-cell-3"/><spacer flex="3"/>
-      <foundation id="freecell-foundation-0"/><spacer flex="1"/>
-      <foundation id="freecell-foundation-1"/><spacer flex="1"/>
-      <foundation id="freecell-foundation-2"/><spacer flex="1"/>
-      <foundation id="freecell-foundation-3"/><spacer flex="1"/>
+      <flex/>
+      <cell id="freecell-cell-0"/><flex/>
+      <cell id="freecell-cell-1"/><flex/>
+      <cell id="freecell-cell-2"/><flex/>
+      <cell id="freecell-cell-3"/><flex3/>
+      <foundation id="freecell-foundation-0"/><flex/>
+      <foundation id="freecell-foundation-1"/><flex/>
+      <foundation id="freecell-foundation-2"/><flex/>
+      <foundation id="freecell-foundation-3"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>
-      <spacer flex="2"/>
-      <stack id="freecell-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="freecell-pile-7" class="card-fan-down"/><spacer flex="2"/>
+      <flex2/>
+      <pile class="fan-down" id="freecell-pile-0"/><flex/>
+      <pile class="fan-down" id="freecell-pile-1"/><flex/>
+      <pile class="fan-down" id="freecell-pile-2"/><flex/>
+      <pile class="fan-down" id="freecell-pile-3"/><flex/>
+      <pile class="fan-down" id="freecell-pile-4"/><flex/>
+      <pile class="fan-down" id="freecell-pile-5"/><flex/>
+      <pile class="fan-down" id="freecell-pile-6"/><flex/>
+      <pile class="fan-down" id="freecell-pile-7"/><flex2/>
     </hbox>
   </vbox>
 
   <!-- Golf -->
-  <!-- flex allow bottom alignment of golf-stack-row -->
+  <!-- flex allows bottom alignment of golf-stock-row -->
   <vbox id="Golf" name="&golf.name;" menukey="&golf.menukey;"
       hidden="true" flex="1" difficultyLevels="&difficulty:golf;">
     <rowspacer/>
     <hbox id="golf-tableau-row">
-      <spacer flex="1"/>
-      <stack id="golf-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="golf-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="golf-pile-0"/><flex/>
+      <pile class="fan-down" id="golf-pile-1"/><flex/>
+      <pile class="fan-down" id="golf-pile-2"/><flex/>
+      <pile class="fan-down" id="golf-pile-3"/><flex/>
+      <pile class="fan-down" id="golf-pile-4"/><flex/>
+      <pile class="fan-down" id="golf-pile-5"/><flex/>
+      <pile class="fan-down" id="golf-pile-6"/><flex/>
     </hbox>
-    <spacer flex="1"/>
+    <flex/>
     <hbox id="golf-stock-row">
-      <spacer flex="1"/>
-      <stock id="golf-stock" class="card-slide"/>
-      <spacer flex="2"/>
-      <foundation id="golf-foundation"/>
-      <spacer flex="1"/>
+      <flex/>
+      <stock class="slide" id="golf-stock"/><flex2/>
+      <foundation id="golf-foundation"/><flex/>
     </hbox>
     <rowspacer/>
   </vbox>
@@ -234,21 +233,21 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="grandfather-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="grandfather-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="grandfather-pile-0"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-1"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-2"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-3"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-4"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-5"/><flex/>
+      <pile class="fan-down" id="grandfather-pile-6"/><flex/>
       <vbox>
         <foundation id="grandfather-foundation-0"/><rowspacer/>
         <foundation id="grandfather-foundation-1"/><rowspacer/>
         <foundation id="grandfather-foundation-2"/><rowspacer/>
-        <foundation id="grandfather-foundation-3"/><spacer flex="1"/>
+        <foundation id="grandfather-foundation-3"/><flex/>
       </vbox>
-      <spacer flex="1"/>
+      <flex/>
     </hbox>
   </vbox>
 
@@ -257,15 +256,15 @@ used when building the game types menu
       hidden="true" difficultyLevels="&difficulty:easy-and-hard;">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="gypsy-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="gypsy-pile-7" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="gypsy-pile-0"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-1"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-2"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-3"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-4"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-5"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-6"/><flex/>
+      <pile class="fan-down" id="gypsy-pile-7"/><flex/>
       <vbox>
         <hbox>
           <foundation id="gypsy-foundation-0"/><colspacer/>
@@ -284,13 +283,11 @@ used when building the game types menu
           <foundation id="gypsy-foundation-7"/>
         </hbox><rowspacer/>
         <hbox>
-          <spacer flex="1"/>
-          <stock id="gypsy-stock"/>
-          <spacer flex="1"/>
+          <flex/><stock id="gypsy-stock"/><flex/>
         </hbox>
-        <spacer flex="1"/>
+        <flex/>
       </vbox>
-      <spacer flex="1"/>
+      <flex/>
     </hbox>
   </vbox>
 
@@ -299,25 +296,25 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stock id="klondike-stock"/><spacer flex="1"/>
-      <waste id="klondike-waste"/><spacer flex="1"/>
-      <pilespacer/><spacer flex="1"/>
-      <foundation id="klondike-foundation-0"/><spacer flex="1"/>
-      <foundation id="klondike-foundation-1"/><spacer flex="1"/>
-      <foundation id="klondike-foundation-2"/><spacer flex="1"/>
-      <foundation id="klondike-foundation-3"/><spacer flex="1"/>
+      <flex/>
+      <stock id="klondike-stock"/><flex/>
+      <waste id="klondike-waste"/><flex/>
+      <pilespacer/><flex/>
+      <foundation id="klondike-foundation-0"/><flex/>
+      <foundation id="klondike-foundation-1"/><flex/>
+      <foundation id="klondike-foundation-2"/><flex/>
+      <foundation id="klondike-foundation-3"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="klondike-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="klondike-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="klondike-pile-0"/><flex/>
+      <pile class="fan-down" id="klondike-pile-1"/><flex/>
+      <pile class="fan-down" id="klondike-pile-2"/><flex/>
+      <pile class="fan-down" id="klondike-pile-3"/><flex/>
+      <pile class="fan-down" id="klondike-pile-4"/><flex/>
+      <pile class="fan-down" id="klondike-pile-5"/><flex/>
+      <pile class="fan-down" id="klondike-pile-6"/><flex/>
     </hbox>
   </vbox>
 
@@ -326,76 +323,76 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox id="maze-row1">
-      <spacer flex="1"/>
-      <pile id="maze-pile-0"/><spacer flex="1"/>
-      <pile id="maze-pile-1"/><spacer flex="1"/>
-      <pile id="maze-pile-2"/><spacer flex="1"/>
-      <pile id="maze-pile-3"/><spacer flex="1"/>
-      <pile id="maze-pile-4"/><spacer flex="1"/>
-      <pile id="maze-pile-5"/><spacer flex="1"/>
-      <pile id="maze-pile-6"/><spacer flex="1"/>
-      <pile id="maze-pile-7"/><spacer flex="1"/>
-      <pile id="maze-pile-8"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-0"/><flex/>
+      <pile id="maze-pile-1"/><flex/>
+      <pile id="maze-pile-2"/><flex/>
+      <pile id="maze-pile-3"/><flex/>
+      <pile id="maze-pile-4"/><flex/>
+      <pile id="maze-pile-5"/><flex/>
+      <pile id="maze-pile-6"/><flex/>
+      <pile id="maze-pile-7"/><flex/>
+      <pile id="maze-pile-8"/><flex/>
     </hbox><rowspacer/>
     <hbox id="maze-row2">
-      <spacer flex="1"/>
-      <pile id="maze-pile-9"/><spacer flex="1"/>
-      <pile id="maze-pile-10"/><spacer flex="1"/>
-      <pile id="maze-pile-11"/><spacer flex="1"/>
-      <pile id="maze-pile-12"/><spacer flex="1"/>
-      <pile id="maze-pile-13"/><spacer flex="1"/>
-      <pile id="maze-pile-14"/><spacer flex="1"/>
-      <pile id="maze-pile-15"/><spacer flex="1"/>
-      <pile id="maze-pile-16"/><spacer flex="1"/>
-      <pile id="maze-pile-17"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-9"/><flex/>
+      <pile id="maze-pile-10"/><flex/>
+      <pile id="maze-pile-11"/><flex/>
+      <pile id="maze-pile-12"/><flex/>
+      <pile id="maze-pile-13"/><flex/>
+      <pile id="maze-pile-14"/><flex/>
+      <pile id="maze-pile-15"/><flex/>
+      <pile id="maze-pile-16"/><flex/>
+      <pile id="maze-pile-17"/><flex/>
     </hbox><rowspacer/>
     <hbox id="maze-row3">
-      <spacer flex="1"/>
-      <pile id="maze-pile-18"/><spacer flex="1"/>
-      <pile id="maze-pile-19"/><spacer flex="1"/>
-      <pile id="maze-pile-20"/><spacer flex="1"/>
-      <pile id="maze-pile-21"/><spacer flex="1"/>
-      <pile id="maze-pile-22"/><spacer flex="1"/>
-      <pile id="maze-pile-23"/><spacer flex="1"/>
-      <pile id="maze-pile-24"/><spacer flex="1"/>
-      <pile id="maze-pile-25"/><spacer flex="1"/>
-      <pile id="maze-pile-26"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-18"/><flex/>
+      <pile id="maze-pile-19"/><flex/>
+      <pile id="maze-pile-20"/><flex/>
+      <pile id="maze-pile-21"/><flex/>
+      <pile id="maze-pile-22"/><flex/>
+      <pile id="maze-pile-23"/><flex/>
+      <pile id="maze-pile-24"/><flex/>
+      <pile id="maze-pile-25"/><flex/>
+      <pile id="maze-pile-26"/><flex/>
     </hbox><rowspacer/>
     <hbox id="maze-row4">
-      <spacer flex="1"/>
-      <pile id="maze-pile-27"/><spacer flex="1"/>
-      <pile id="maze-pile-28"/><spacer flex="1"/>
-      <pile id="maze-pile-29"/><spacer flex="1"/>
-      <pile id="maze-pile-30"/><spacer flex="1"/>
-      <pile id="maze-pile-31"/><spacer flex="1"/>
-      <pile id="maze-pile-32"/><spacer flex="1"/>
-      <pile id="maze-pile-33"/><spacer flex="1"/>
-      <pile id="maze-pile-34"/><spacer flex="1"/>
-      <pile id="maze-pile-35"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-27"/><flex/>
+      <pile id="maze-pile-28"/><flex/>
+      <pile id="maze-pile-29"/><flex/>
+      <pile id="maze-pile-30"/><flex/>
+      <pile id="maze-pile-31"/><flex/>
+      <pile id="maze-pile-32"/><flex/>
+      <pile id="maze-pile-33"/><flex/>
+      <pile id="maze-pile-34"/><flex/>
+      <pile id="maze-pile-35"/><flex/>
     </hbox><rowspacer/>
     <hbox id="maze-row5">
-      <spacer flex="1"/>
-      <pile id="maze-pile-36"/><spacer flex="1"/>
-      <pile id="maze-pile-37"/><spacer flex="1"/>
-      <pile id="maze-pile-38"/><spacer flex="1"/>
-      <pile id="maze-pile-39"/><spacer flex="1"/>
-      <pile id="maze-pile-40"/><spacer flex="1"/>
-      <pile id="maze-pile-41"/><spacer flex="1"/>
-      <pile id="maze-pile-42"/><spacer flex="1"/>
-      <pile id="maze-pile-43"/><spacer flex="1"/>
-      <pile id="maze-pile-44"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-36"/><flex/>
+      <pile id="maze-pile-37"/><flex/>
+      <pile id="maze-pile-38"/><flex/>
+      <pile id="maze-pile-39"/><flex/>
+      <pile id="maze-pile-40"/><flex/>
+      <pile id="maze-pile-41"/><flex/>
+      <pile id="maze-pile-42"/><flex/>
+      <pile id="maze-pile-43"/><flex/>
+      <pile id="maze-pile-44"/><flex/>
     </hbox><rowspacer/>
     <hbox id="maze-row6">
-      <spacer flex="1"/>
-      <pile id="maze-pile-45"/><spacer flex="1"/>
-      <pile id="maze-pile-46"/><spacer flex="1"/>
-      <pile id="maze-pile-47"/><spacer flex="1"/>
-      <pile id="maze-pile-48"/><spacer flex="1"/>
-      <pile id="maze-pile-49"/><spacer flex="1"/>
-      <pile id="maze-pile-50"/><spacer flex="1"/>
-      <pile id="maze-pile-51"/><spacer flex="1"/>
-      <pile id="maze-pile-52"/><spacer flex="1"/>
-      <pile id="maze-pile-53"/><spacer flex="1"/>
+      <flex/>
+      <pile id="maze-pile-45"/><flex/>
+      <pile id="maze-pile-46"/><flex/>
+      <pile id="maze-pile-47"/><flex/>
+      <pile id="maze-pile-48"/><flex/>
+      <pile id="maze-pile-49"/><flex/>
+      <pile id="maze-pile-50"/><flex/>
+      <pile id="maze-pile-51"/><flex/>
+      <pile id="maze-pile-52"/><flex/>
+      <pile id="maze-pile-53"/><flex/>
     </hbox>
   </vbox>
 
@@ -404,52 +401,52 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox id="mod3-row1">
-      <spacer flex="1"/>
-      <stack id="mod3-foundation-0" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-1" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-2" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-3" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-4" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-5" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-6" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-7" class="card-slide"/><spacer flex="1"/>
-      <stack class="card-pile-spacer"/><spacer flex="1"/>
+      <flex/>
+      <pile class="slide" id="mod3-foundation-0"/><flex/>
+      <pile class="slide" id="mod3-foundation-1"/><flex/>
+      <pile class="slide" id="mod3-foundation-2"/><flex/>
+      <pile class="slide" id="mod3-foundation-3"/><flex/>
+      <pile class="slide" id="mod3-foundation-4"/><flex/>
+      <pile class="slide" id="mod3-foundation-5"/><flex/>
+      <pile class="slide" id="mod3-foundation-6"/><flex/>
+      <pile class="slide" id="mod3-foundation-7"/><flex/>
+      <pilespacer/><flex/>
     </hbox><rowspacer/>
     <hbox id="mod3-row2">
-      <spacer flex="1"/>
-      <stack id="mod3-foundation-8" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-9" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-10" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-11" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-12" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-13" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-14" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-15" class="card-slide"/><spacer flex="1"/>
-      <stack class="card-pile-spacer"/><spacer flex="1"/>
+      <flex/>
+      <pile class="slide" id="mod3-foundation-8"/><flex/>
+      <pile class="slide" id="mod3-foundation-9"/><flex/>
+      <pile class="slide" id="mod3-foundation-10"/><flex/>
+      <pile class="slide" id="mod3-foundation-11"/><flex/>
+      <pile class="slide" id="mod3-foundation-12"/><flex/>
+      <pile class="slide" id="mod3-foundation-13"/><flex/>
+      <pile class="slide" id="mod3-foundation-14"/><flex/>
+      <pile class="slide" id="mod3-foundation-15"/><flex/>
+      <pilespacer/><flex/>
     </hbox><rowspacer/>
     <hbox id="mod3-row3">
-      <spacer flex="1"/>
-      <stack id="mod3-foundation-16" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-17" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-18" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-19" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-20" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-21" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-22" class="card-slide"/><spacer flex="1"/>
-      <stack id="mod3-foundation-23" class="card-slide"/><spacer flex="1"/>
-      <stack class="card-pile-spacer"/><spacer flex="1"/>
+      <flex/>
+      <pile class="slide" id="mod3-foundation-16"/><flex/>
+      <pile class="slide" id="mod3-foundation-17"/><flex/>
+      <pile class="slide" id="mod3-foundation-18"/><flex/>
+      <pile class="slide" id="mod3-foundation-19"/><flex/>
+      <pile class="slide" id="mod3-foundation-20"/><flex/>
+      <pile class="slide" id="mod3-foundation-21"/><flex/>
+      <pile class="slide" id="mod3-foundation-22"/><flex/>
+      <pile class="slide" id="mod3-foundation-23"/><flex/>
+      <pilespacer/><flex/>
     </hbox><rowspacer/>
     <hbox id="mod3-row4">
-      <spacer flex="1"/>
-      <stack id="mod3-tableau-0-0" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-1" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-2" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-3" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-4" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-5" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-6" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-tableau-0-7" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stock id="mod3-stock"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="mod3-tableau-0-0"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-1"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-2"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-3"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-4"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-5"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-6"/><colspacer/><flex/>
+      <pile class="fan-down" id="mod3-tableau-0-7"/><colspacer/><flex/>
+      <stock id="mod3-stock"/><flex/>
     </hbox>
   </vbox>
 
@@ -457,47 +454,47 @@ used when building the game types menu
   <vbox id="Regiment" name="&regiment.name;" menukey="&regiment.menukey;"
       hidden="true">
     <rowspacer/>
-    <hbox id="regiment-foundations"><spacer flex="1"/>
+    <hbox id="regiment-foundations"><flex/>
       <!-- first 4 foundations are built up from Ace, last 4 down from King -->
-      <foundation id="regiment-foundation-0"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-1"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-2"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-3"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-4"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-5"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-6"/><spacer flex="1"/>
-      <foundation id="regiment-foundation-7"/><spacer flex="1"/>
+      <foundation id="regiment-foundation-0"/><flex/>
+      <foundation id="regiment-foundation-1"/><flex/>
+      <foundation id="regiment-foundation-2"/><flex/>
+      <foundation id="regiment-foundation-3"/><flex/>
+      <foundation id="regiment-foundation-4"/><flex/>
+      <foundation id="regiment-foundation-5"/><flex/>
+      <foundation id="regiment-foundation-6"/><flex/>
+      <foundation id="regiment-foundation-7"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="regiment-tableau-0"><spacer flex="1"/>
-      <stack id="regiment-tableau-0-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-0-7" class="card-pile"/><spacer flex="1"/>
+    <hbox id="regiment-tableau-0"><flex/>
+      <pile id="regiment-tableau-0-0"/><flex/>
+      <pile id="regiment-tableau-0-1"/><flex/>
+      <pile id="regiment-tableau-0-2"/><flex/>
+      <pile id="regiment-tableau-0-3"/><flex/>
+      <pile id="regiment-tableau-0-4"/><flex/>
+      <pile id="regiment-tableau-0-5"/><flex/>
+      <pile id="regiment-tableau-0-6"/><flex/>
+      <pile id="regiment-tableau-0-7"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="regiment-reserve"><spacer flex="1"/>
-      <reserve id="regiment-reserve-0"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-1"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-2"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-3"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-4"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-5"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-6"/><spacer flex="1"/>
-      <reserve id="regiment-reserve-7"/><spacer flex="1"/>
+    <hbox id="regiment-reserve"><flex/>
+      <reserve id="regiment-reserve-0"/><flex/>
+      <reserve id="regiment-reserve-1"/><flex/>
+      <reserve id="regiment-reserve-2"/><flex/>
+      <reserve id="regiment-reserve-3"/><flex/>
+      <reserve id="regiment-reserve-4"/><flex/>
+      <reserve id="regiment-reserve-5"/><flex/>
+      <reserve id="regiment-reserve-6"/><flex/>
+      <reserve id="regiment-reserve-7"/><flex/>
     </hbox><rowspacer/>
-    <hbox id="regiment-tableau-1"><spacer flex="1"/>
-      <stack id="regiment-tableau-1-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-tableau-1-7" class="card-pile"/><spacer flex="1"/>
-    </hbox><spacer flex="1"/>
+    <hbox id="regiment-tableau-1"><flex/>
+      <pile id="regiment-tableau-1-0"/><flex/>
+      <pile id="regiment-tableau-1-1"/><flex/>
+      <pile id="regiment-tableau-1-2"/><flex/>
+      <pile id="regiment-tableau-1-3"/><flex/>
+      <pile id="regiment-tableau-1-4"/><flex/>
+      <pile id="regiment-tableau-1-5"/><flex/>
+      <pile id="regiment-tableau-1-6"/><flex/>
+      <pile id="regiment-tableau-1-7"/><flex/>
+    </hbox><flex/>
   </vbox>
 
   <!-- Simple Simon -->
@@ -505,25 +502,25 @@ used when building the game types menu
       hidden="true" difficultyLevels="&difficulty:standard-levels;">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="simon-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="simon-pile-9" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="simon-pile-0"/><flex/>
+      <pile class="fan-down" id="simon-pile-1"/><flex/>
+      <pile class="fan-down" id="simon-pile-2"/><flex/>
+      <pile class="fan-down" id="simon-pile-3"/><flex/>
+      <pile class="fan-down" id="simon-pile-4"/><flex/>
+      <pile class="fan-down" id="simon-pile-5"/><flex/>
+      <pile class="fan-down" id="simon-pile-6"/><flex/>
+      <pile class="fan-down" id="simon-pile-7"/><flex/>
+      <pile class="fan-down" id="simon-pile-8"/><flex/>
+      <pile class="fan-down" id="simon-pile-9"/><flex/>
       <vbox id="simon-foundation">
         <foundation id="simon-foundation-0"/><rowspacer/>
         <foundation id="simon-foundation-1"/><rowspacer/>
         <foundation id="simon-foundation-2"/><rowspacer/>
         <foundation id="simon-foundation-3"/><rowspacer/>
-        <spacer flex="1"/>
+        <flex/>
       </vbox>
-      <spacer flex="1"/>
+      <flex/>
     </hbox>
   </vbox>
 
@@ -532,17 +529,17 @@ used when building the game types menu
       hidden="true" difficultyLevels="&difficulty:standard-levels;">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="spider-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="spider-pile-9" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="spider-pile-0"/><flex/>
+      <pile class="fan-down" id="spider-pile-1"/><flex/>
+      <pile class="fan-down" id="spider-pile-2"/><flex/>
+      <pile class="fan-down" id="spider-pile-3"/><flex/>
+      <pile class="fan-down" id="spider-pile-4"/><flex/>
+      <pile class="fan-down" id="spider-pile-5"/><flex/>
+      <pile class="fan-down" id="spider-pile-6"/><flex/>
+      <pile class="fan-down" id="spider-pile-7"/><flex/>
+      <pile class="fan-down" id="spider-pile-8"/><flex/>
+      <pile class="fan-down" id="spider-pile-9"/><flex/>
       <vbox id="spider-side-panel">
         <vbox id="spider-foundations" class="stack-of-card-stacks">
           <foundation id="spider-foundation-0"/>
@@ -560,9 +557,9 @@ used when building the game types menu
           <description id="spider-deals-left"/>
         </hbox>
         <stock id="spider-stock"/>
-        <spacer flex="1"/>
+        <flex/>
       </vbox>
-      <spacer flex="1"/>
+      <flex/>
     </hbox>
   </vbox>
 
@@ -571,29 +568,29 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <cell id="towers-cell-0"/><spacer flex="1"/>
-      <cell id="towers-cell-1"/><spacer flex="1"/>
-      <cell id="towers-cell-2"/><spacer flex="1"/>
+      <flex/>
+      <cell id="towers-cell-0"/><flex/>
+      <cell id="towers-cell-1"/><flex/>
+      <cell id="towers-cell-2"/><flex/>
       <cell id="towers-cell-3"/><spacer flex="5"/>
-      <foundation id="towers-foundation-0"/><spacer flex="1"/>
-      <foundation id="towers-foundation-1"/><spacer flex="1"/>
-      <foundation id="towers-foundation-2"/><spacer flex="1"/>
-      <foundation id="towers-foundation-3"/><spacer flex="1"/>
+      <foundation id="towers-foundation-0"/><flex/>
+      <foundation id="towers-foundation-1"/><flex/>
+      <foundation id="towers-foundation-2"/><flex/>
+      <foundation id="towers-foundation-3"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>
-      <spacer flex="2"/>
-      <stack id="towers-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-6" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-7" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-8" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="towers-pile-9" class="card-fan-down"/><spacer flex="2"/>
+      <flex2/>
+      <pile class="fan-down" id="towers-pile-0"/><flex/>
+      <pile class="fan-down" id="towers-pile-1"/><flex/>
+      <pile class="fan-down" id="towers-pile-2"/><flex/>
+      <pile class="fan-down" id="towers-pile-3"/><flex/>
+      <pile class="fan-down" id="towers-pile-4"/><flex/>
+      <pile class="fan-down" id="towers-pile-5"/><flex/>
+      <pile class="fan-down" id="towers-pile-6"/><flex/>
+      <pile class="fan-down" id="towers-pile-7"/><flex/>
+      <pile class="fan-down" id="towers-pile-8"/><flex/>
+      <pile class="fan-down" id="towers-pile-9"/><flex2/>
     </hbox>
   </vbox>
 
@@ -602,21 +599,21 @@ used when building the game types menu
       hidden="true">
     <rowspacer/>
     <hbox>
-      <spacer flex="1"/>
-      <stack id="yukon-pile-0" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-1" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-2" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-3" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-4" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-5" class="card-fan-down"/><spacer flex="1"/>
-      <stack id="yukon-pile-6" class="card-fan-down"/><spacer flex="1"/>
+      <flex/>
+      <pile class="fan-down" id="yukon-pile-0"/><flex/>
+      <pile class="fan-down" id="yukon-pile-1"/><flex/>
+      <pile class="fan-down" id="yukon-pile-2"/><flex/>
+      <pile class="fan-down" id="yukon-pile-3"/><flex/>
+      <pile class="fan-down" id="yukon-pile-4"/><flex/>
+      <pile class="fan-down" id="yukon-pile-5"/><flex/>
+      <pile class="fan-down" id="yukon-pile-6"/><flex/>
       <vbox id="yukon-foundation">
         <foundation id="yukon-foundation-0"/><rowspacer/>
         <foundation id="yukon-foundation-1"/><rowspacer/>
         <foundation id="yukon-foundation-2"/><rowspacer/>
-        <foundation id="yukon-foundation-3"/><spacer flex="1"/>
+        <foundation id="yukon-foundation-3"/><flex/>
       </vbox>
-      <spacer flex="1"/>
+      <flex/>
     </hbox>
   </vbox>
 </stack>

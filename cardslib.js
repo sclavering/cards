@@ -167,7 +167,7 @@ function _createCardPile(elt) {
   // is set to the pile the cards originally came from.
   elt.source = elt;
 
-  if(elt.className=="card-fan-down") {
+  if(elt.className=="fan-down") {
     elt.getNextCardLeft = function() { return 0; };
 
     elt.getNextCardTop = function() {
@@ -218,7 +218,7 @@ function _createCardPile(elt) {
       }
     };
 
-  } else if(elt.className=="card-slide") {
+  } else if(elt.className=="slide") {
     elt.getNextCardLeft = function() {
       if(!this.hasChildNodes()) return 0;
       return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? Cards.cardSlideOffset : 0);
@@ -394,8 +394,7 @@ var MouseHandler1 = {
   init: function(dragLayer) {
     this.dragLayer = dragLayer;
     this.cards = document.createElement("stack");
-    // doesn't need to be flexible for the moment
-    this.cards.className = "card-fan-down";
+    this.cards.className = "fan-down"; // doesn't need to be flexible for the moment
     this.cards.hidden = true;
     this.dragLayer.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
@@ -629,7 +628,7 @@ var CardMover = {
     this.cards.hidden = true;
     this.cards.id = "card-move-pile";
     // doesn't need to be flexible yet
-    this.cards.className = "card-fan-down";
+    this.cards.className = "fan-down";
     this.dragLayer.appendChild(this.cards);
     this.cards = _createCardPile(this.cards);
   },
@@ -767,9 +766,11 @@ var HintHighlighter = {
   * this mainly handles the behaviour of the chrome, especially switching between different card games
   */
 var Cards = {
-  cardFaceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
-  cardFaceUpOffset: SkinPrefs.offsetBetweenFaceUpCards, // num of pixels between tops of two faceup cards
-  cardSlideOffset: SkinPrefs.offsetBetweenSlidCards, // num of pixels between edges of two slid cards
+  cardFaceDownOffset: 5, // num of pixels between tops of two facedown cards
+  cardFaceUpOffset: 22, // num of pixels between tops of two faceup cards
+  cardSlideOffset: 2, // num of pixels between edges of two slid cards
+  cardFaceDownHOffset: 5, // num pixels between *left* edges of two face down cards
+  cardFaceUpHOffset: 10, // num pixels between *left* edges of two face up cards
 
   preferences : null,  // ref to xpcom object implementing nsIPrefBranch for the branch "games.cards"
   currentGame: null,   // string holding the name of the game currently being played

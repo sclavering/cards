@@ -640,12 +640,12 @@ CardGame.prototype = {
   // these rely on a row of stacks being sibing nodes, so XUL should be set up appropriately
   nextStackLeft: function(stack) {
     for(var n = stack.previousSibling; n; n = n.previousSibling)
-      if(n.nodeName=="stack") return n;
+      if(("isPile" in n) && n.isPile) return n;
     return null;
   },
   nextStackRight: function(stack) {
     for(var n = stack.nextSibling; n; n = n.nextSibling)
-      if(n.nodeName=="stack") return n;
+      if(("isPile" in n) && n.isPile) return n;
     return null;
   },
   // some functions to pass to searchAround

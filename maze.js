@@ -3,15 +3,11 @@ Games["maze"] = {
 
   id: "maze",
 
-
   init: function() {
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.getCardDecks(1);
     // remove kings and add 2 nulls
@@ -22,9 +18,6 @@ Games["maze"] = {
     for(var i = 0; i < 54; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
 
@@ -47,9 +40,6 @@ Games["maze"] = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     for(var i = 0; i < 54; i++) {
       var card = this.stacks[i].firstChild;
@@ -61,9 +51,6 @@ Games["maze"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
     for(var i = 0; i < 54; i++)
       if(this.canMoveTo(card, this.stacks[i]))
@@ -71,13 +58,8 @@ Games["maze"] = {
     return null;
   },
 
+  // Autoplay not used
 
-  ///////////////////////////////////////////////////////////
-  //// Autoplay -- NONE
-
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     for(var i = 0; i < 54; i++) {
       var left = this.stacks[i].firstChild;

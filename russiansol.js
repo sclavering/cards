@@ -2,25 +2,14 @@ Games["russiansol"] = {
   __proto__: BaseCardGame,
 
   id: "yukon", // shares layout
+  rule_canMoveToPile: "descending,in-suit",
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1);
     this.dealToStack(cards,this.stacks[0],0,1);
     for(var i = 1; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,5);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  // in KPatience only kings can go in spaces, but that makes the game rarely work
-  rule_canMoveToPile: "descending,in-suit",
-
-
-  ///////////////////////////////////////////////////////////
-  //// Hints
   getHints: function() {
     for(var i = 0; i < 7; i++) {
       this.getHintForCard(this.stacks[i].lastChild);
@@ -43,9 +32,6 @@ Games["russiansol"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
     var i, stack;
     // find card of same suit and one greater in number on top of stacks
@@ -63,9 +49,6 @@ Games["russiansol"] = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // automove cards to suit stacks
     for(var i = 0; i < this.stacks.length; i++) {
@@ -75,9 +58,6 @@ Games["russiansol"] = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 4 Foundations have 13 cards
     for(var i = 0; i < 4; i++)
@@ -85,6 +65,7 @@ Games["russiansol"] = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :  10,
     "card-revealed"       :   5,

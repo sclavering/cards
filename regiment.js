@@ -3,7 +3,7 @@ Games["regiment"] = {
   __proto__: BaseCardGame,
 
   id: "regiment",
-
+  rule_canMoveCard: "last-on-pile",
 
   init: function() {
     for(var i = 0; i < 8; i++) {
@@ -14,20 +14,12 @@ Games["regiment"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(2);
     var i;
     for(i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
     for(i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
   },
-
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveCard: "last-on-pile",
 
   // this is likely to be the standard format for games with a set of both Ace and King foundations
   canMoveToFoundation: function(card, target) {
@@ -39,7 +31,7 @@ Games["regiment"] = {
                    : (card.isAce() && this.canMakeFoundation(true,card.suit())) );
     } else {
       // can start a king foundation for the suit if we don't have one already,
-      // or can build the foundation doen in suit
+      // or can build the foundation down in suit
       return (last ? (last.isConsecutiveTo(card) && card.isSameSuit(last))
                    : (card.isKing() && this.canMakeFoundation(false,card.suit())) );
     }
@@ -79,9 +71,6 @@ Games["regiment"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Hints
   getHint: function() {
     for(var i = 0; i < 8; i++) {
       this.findHintsForCard(this.reserves[i].lastChild);
@@ -96,9 +85,6 @@ Games["regiment"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
     for(var i = 0; i < 16; i++) {
       var stack = this.stacks[i];
@@ -107,9 +93,6 @@ Games["regiment"] = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // fill empty spaces, but only from reserves in same column
     for(var i = 0; i < 8; i++) {
@@ -127,9 +110,6 @@ Games["regiment"] = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 8 Foundations have 13 cards
     for(var i = 0; i < 8; i++)
@@ -137,6 +117,7 @@ Games["regiment"] = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :  10,
     "card-revealed"       :   5,

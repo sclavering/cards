@@ -2,21 +2,14 @@ Games["towers"] = {
   __proto__: FreeCellGame,
 
   id: "towers",
+  rule_canMoveCard: "descending,in-suit",
+  rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1);
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
     for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
   },
-
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveCard: "descending,in-suit",
-  rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
 
   // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
   movePossible: function(card,target) {
@@ -26,9 +19,6 @@ Games["towers"] = {
     return numToMove<=numCanMove;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     var card, i;
     for(i = 0; i < 4; i++) {
@@ -52,9 +42,6 @@ Games["towers"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
     var i;
     // move to another stack which has cards on
@@ -80,9 +67,6 @@ Games["towers"] = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   // cards are always allowed to be autoplayed in Towers
   autoplayMove: function() {
     var i, last;
@@ -97,9 +81,6 @@ Games["towers"] = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning,
   hasBeenWon: function() {
     for(var i = 0; i < 4; i++)
       if(this.foundations[i].childNodes.length!=13) return false;

@@ -73,21 +73,16 @@ Games["doublesol"] = {
   ///////////////////////////////////////////////////////////
   //// smart move
   getBestMoveForCard: function(card) {
-    var i;
-    if(card.parentNode==this.waste) {
-      // hunt through tableau piles
-      for(i = 0; i < 10; i++)
-        if(this.canMoveToPile(card,this.stacks[i])) return this.stacks[i];
-    } else {
-      // find move to surrounding pile
-      var dest = this.searchAround(card,this.canMoveToPile);
-      if(dest) return dest;
-    }
-    // find move to foundation
-    for(i = 0; i < 4; i++) {
-      var stack = this.foundations[i];
-      if(stack==card.parentNode) continue;
-      if(this.canMoveToFoundation(card,stack)) return stack;
+    // to a non-foundation
+    var parent = card.parentNode;
+    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
+    for(var i = 0; i < piles.length; i++)
+      if(this.canMoveToPile(card,piles[i])) return piles[i];
+    // to a foundation
+    if(card.parentNode.isFoundation) return null;
+    for(var j = 0; j < this.foundations.length; j++) {
+      var pile = this.foundations[j];
+      if(this.canMoveToFoundation(card, pile)) return pile;
     }
     return null;
   },

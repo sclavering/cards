@@ -4,10 +4,9 @@ Games["gypsy"] = {
   id: "gypsy",
   difficultyLevels: ["easy-2suits","hard-4suits"],
   rule_dealFromStock: "to-stacks",
+  rule_canMoveCard: "descending,alt-colours",
+  rule_canMoveToPile: "descending,alt-colours",
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     // 1==easy, 2==hard
     var cards = this.difficultyLevel==2 ? this.shuffleDecks(2) : this.shuffleSuits(4,4,0,0);
@@ -15,15 +14,6 @@ Games["gypsy"] = {
     this.dealToStack(cards,this.stock,cards.length,0);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveCard: "descending,alt-colours",
-  rule_canMoveToPile: "descending,alt-colours",
-
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     for(var i = 0; i < 8; i++) {
       var card = this.getLowestMoveableCard_AltColours(this.stacks[i]);
@@ -43,11 +33,8 @@ Games["gypsy"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
-    var piles = this.getPilesRound(card.parentNode);
+    var piles = card.parentNode.isNormalPile ? this.getPilesRound(card.parentNode) : this.stacks;
     var i, pile;
     // find a move onto another nonempty pile
     for(i = 0; i < piles.length; i++) {
@@ -91,9 +78,6 @@ Games["gypsy"] = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // automove cards to suit stacks
     for(var i = 0; i < 8; i++) {
@@ -108,9 +92,6 @@ Games["gypsy"] = {
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 4);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 4 Foundations have 13 cards
     for(var i = 0; i < 8; i++)
@@ -118,6 +99,7 @@ Games["gypsy"] = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :  10,
     "card-revealed"       :   5,

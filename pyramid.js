@@ -5,7 +5,6 @@ Games["pyramid"] = {
   mouseHandling: "click-to-select",
   rule_dealFromStock: "to-waste,can-turn-stock-over",
 
-
   init: function() {
     // set up a children array on each pile, which consists of the piles immediately covering it
     for(var i = 0, row = 1, col = 1; i <= 20; i++) {
@@ -21,9 +20,6 @@ Games["pyramid"] = {
     for(i = 21; i < 28; i++) this.stacks[i].children = [];
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.getCardDecks(1);
     //xxx Remove the kings, because making them be moved to the foundation when clicked
@@ -35,9 +31,6 @@ Games["pyramid"] = {
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveCard: function(card) {
     if(card.parentNode.isFoundation || !card.isLastOnPile()) return false;
     if(card.parentNode.isWaste) return true;
@@ -68,29 +61,14 @@ Games["pyramid"] = {
     return true;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
+    // xxx write me!
   },
 
+  // this game has no smartMove
+  
+  // this game has no autoplay
 
-  ///////////////////////////////////////////////////////////
-  //// smartmove
-  getBestMoveForCard: function(card) {
-    return null;
-  },
-
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
-  autoplayMove: function() {
-    return false;
-  },
-
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     for(var i = 0; i < this.stacks.length; i++)
       if(this.stacks[i].hasChildNodes())
@@ -117,4 +95,3 @@ PyramidMoveAction.prototype = {
     Game.foundation.lastChild.transferTo(this.pile1);
   }
 }
-

@@ -3,29 +3,18 @@ Games["klondike"] = {
 
   id: "klondike",
   rule_dealFromStock: "to-waste,can-turn-stock-over",
-
+  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1);
     for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
-
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     this.getHintsForCard(this.waste.lastChild);
     for(var i = 0; i < 7; i++) {
@@ -48,9 +37,6 @@ Games["klondike"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
     var parent = card.parentNode;
     var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
@@ -67,9 +53,6 @@ Games["klondike"] = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // automove cards to suit stacks
     for(var i = 0; i < this.sourceStacks.length; i++) {
@@ -84,10 +67,6 @@ Games["klondike"] = {
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
   },
 
-
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 4 Foundations have 13 cards
     for(var i = 0; i < 4; i++)
@@ -95,6 +74,7 @@ Games["klondike"] = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :   10,
     "move-from-waste"     :    5,

@@ -5,14 +5,10 @@ Games["canfield"] = {
   acesHigh: true,
   rule_dealFromStock: "to-waste,can-turn-stock-over",
 
-
   init: function() {
     this.sourceStacks = [this.reserve,this.waste].concat(this.stacks);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1)
     this.dealToStack(cards,this.reserve,12,1);
@@ -22,9 +18,6 @@ Games["canfield"] = {
     this.dealToStack(cards,this.stock,cards.length,0);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveToFoundation: function(card, stack) {
     // only the top card on a stack can be moved to foundations
     if(!card.isLastOnPile()) return false;
@@ -34,15 +27,13 @@ Games["canfield"] = {
     return (last ? (card.isSameSuit(last) && card.isConsecutiveMod13To(last))
                  : (card.number()==this.foundationStartNumber));
   },
+
   canMoveToPile: function(card, stack) {
     // either the pile must be empty, or the top card must be consecutive (wrapping at king) and opposite colour
     var last = stack.lastChild;
     return (!last || (last.notSameColour(card) && last.isConsecutiveMod13To(card)));
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     this.getHintsForCard(this.reserve.lastChild);
     this.getHintsForCard(this.waste.lastChild);
@@ -66,36 +57,29 @@ Games["canfield"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
-  // picks the first stack from the left the card could go to, or failing that, the first foundation
   getBestMoveForCard: function(card) {
-    var i, stack;
-    // find moves to non empty stacks
-    for(i = 0; i < 4; i++) {
-      stack = this.stacks[i];
-      if(stack==card.parentNode) continue; // unnecessary?
-      if(stack.hasChildNodes() && this.canMoveToPile(card,stack)) return stack;
+    var i, pile;
+    var parent = card.parentNode;
+    var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
+    // move to non-empty pile
+    for(i = 0; i < piles.length; i++) {
+      pile = piles[i];
+      if(stack.hasChildNodes() && this.canMoveToPile(card,pile)) return pile;
     }
-    // find moves to empty stacks
-    for(i = 0; i < 4; i++) {
-      stack = this.stacks[i];
-      if(stack==card.parentNode) continue;
-      if(!stack.hasChildNodes() && this.canMoveToPile(card,stack)) return stack;
+    // move to an empty pile
+    for(i = 0; i < piles.length; i++) {
+      pile = piles[i];
+      if(!stack.hasChildNodes() && this.canMoveToPile(card,pile)) return pile;
     }
-    // find moves to foundations
+    // move to foundations
+    if(parent.isFoundation) return null;
     for(i = 0; i < 4; i++) {
-      stack = this.foundations[i];
-      if(stack==card.parentNode) continue;
-      if(this.canMoveToFoundation(card,stack)) return stack;
+      pile = this.foundations[i];
+      if(this.canMoveToFoundation(card,pile)) return pile;
     }
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // automove cards to suit stacks
     for(var i = 0; i < this.sourceStacks.length; i++) {
@@ -121,9 +105,6 @@ Games["canfield"] = {
     return (found==2);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all 4 Foundations have 13 cards
     for(var i = 0; i < 4; i++)
@@ -131,6 +112,7 @@ Games["canfield"] = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :  10,
     "move-from-waste"     :   5,

@@ -4,15 +4,17 @@ Games["acesup"] = {
   id: "acesup",
   acesHigh: true,
   rule_dealFromStock: "to-stacks",
+  rule_canMoveToPile: "isempty",
+  
+  init: function() {
+    for(var i = 0; i < 4; i++) this.stacks[i].num = i;
+  },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1);
     // If the four cards at the bottom of the stock are all different suits the
     // game is impossible. Check if this has happened and reshuffle if so
-    while(this.allDifferentSuits(cards)) cards = this.shuffleDecks(1);
+    while(this.allDifferentSuits(cards)) cards = this.shuffle(cards);
     // deal the cards
     for(var i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,1);
     this.dealToStack(cards,this.stock,cards.length,0);
@@ -25,15 +27,10 @@ Games["acesup"] = {
     return true;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveCard: function(card) {
     var p = card.parentNode;
     return (card.isLastOnPile() && !p.isFoundation && !p.isStock);
   },
-
-  rule_canMoveToPile: "isempty",
 
   canMoveToFoundation: function(card, foundation) {
     for(var i = 0; i < 4; i++) {
@@ -45,33 +42,21 @@ Games["acesup"] = {
     return false;
   },
 
+  // no hints for this game
 
-  ///////////////////////////////////////////////////////////
-  //// hints - NONE
-
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
     if(this.canMoveToFoundation(card)) return this.foundation;
-    return this.getNextEmptyStack(card.parentNode);
-  },
-  getNextEmptyStack: function(stack) {
-    var stacknum = parseInt(stack.id[stack.id.length-1]); // last char of id is the stack number
+    // find the next empty pile
+    var num = card.parentNode.num;
     for(var i = 1; i < 4; i++) {
-      var next = this.stacks[(i+stacknum) % 4];
+      var next = this.stacks[(i+num) % 4];
       if(!next.hasChildNodes()) return next;
     }
     return null;
   },
 
+  // no autoplay for this game
 
-  ///////////////////////////////////////////////////////////
-  //// Autoplay - NONE
-
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     if(this.stock.childNodes.length!=0) return false;
     for(var i = 0; i < 4; i++) {

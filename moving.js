@@ -75,8 +75,8 @@ var CardMover1 = {
         steps--;
       } else {
         // move is done
-        cards.left = tx;
-        cards.top = ty;
+        cards.left = cards._left = tx;
+        cards.top = cards._top = ty;
         clearInterval(interval);
         setTimeout(done, 0);
       }

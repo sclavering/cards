@@ -78,22 +78,23 @@ MouseHandlers["drag+drop"] = {
   },
 
   mouseMove: function(e) {
+    var cards = this.cards;
     if(this.dragInProgress) {
-      this.cards.left = e.pageX - this.tx;
-      this.cards.top = e.pageY - this.ty;
+      cards.top = cards._top = e.pageY - this.ty;
+      cards.left = cards._left = e.pageX - this.tx;
     } else if(this.nextCard) {
       var card = this.nextCard;
 //      this.cards.className = card.parentNode.className;
-      this.cards.left = card.boxObject.x - gGameStackLeft;
-      this.cards.top = card.boxObject.y - gGameStackTop;
+      cards.top = cards._top = card.boxObject.y - gGameStackTop;
+      cards.left = cards._left = card.boxObject.x - gGameStackLeft;
       // property to retrieve original source of cards. for most
       // piles |source| is a pointer back to the pile itself.
-      this.cards.source = card.parentNode.source;
-      this.cards.addCards(card);
+      cards.source = card.parentNode.source;
+      cards.addCards(card);
       // other stuff
       this.dragInProgress = true;
-      this.tx = e.pageX - this.cards.left;
-      this.ty = e.pageY - this.cards.top;
+      this.tx = e.pageX - cards._left;
+      this.ty = e.pageY - cards._top;
       this.nextCard = null;
     }
   },

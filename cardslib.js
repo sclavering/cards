@@ -20,10 +20,9 @@ var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 var gHintHighlighter = null;
 
 // xxx these need to become cardset dependent
-var gYOffsetFromFaceUpCard = 22;  // num pixels between top edges of two face up cards
-var gXOffsetFromFaceDownCard = 5; // num pixels between left edges of two face down cards
-var gXOffsetFromFaceUpCard = 12;  // num pixels between left edges of two face up cards
-var gOffsetForCardSlide = 2; // num picels between top+left edges of two cards in a slide
+var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
+var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
+var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 
 // <command/> elements
 var gCmdSetDifficulty = "cmd:setdifficulty";
@@ -248,7 +247,7 @@ var cardMethods = {
   turnFaceUp: function() {
     var card = this;
     disableUI();
-    var oldLeft = parseInt(card.left);
+    var oldLeft = card._left;
     var oldWidth = card.boxObject.width;
     var oldHalfWidth = oldWidth / 2;
     var stepNum = 7;
@@ -304,14 +303,14 @@ function initPile(elt) {
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.top - 0 + (this.offset || gYOffsetFromFaceUpCard);
+      return this.lastChild._top + (this.offset || gVFanOffset);
     };
 
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
-      card.top = prev ? prev.top - 0 + (this.offset || gYOffsetFromFaceUpCard) : 0;
-      card.left = 0;
+      card.top = card._top = prev ? prev._top + (this.offset || gVFanOffset) : 0;
+      card.left = card._left = 0;
     };
 
     elt.fixLayout = function() {
@@ -322,14 +321,14 @@ function initPile(elt) {
 
       const firstbox = this.firstChild.boxObject;
       var space = window.innerHeight - firstbox.y - firstbox.height;
-      var offset = Math.min(Math.floor(space / this.childNodes.length), gYOffsetFromFaceUpCard);
-      var old = this.offset || gYOffsetFromFaceUpCard;
+      var offset = Math.min(Math.floor(space / this.childNodes.length), gVFanOffset);
+      var old = this.offset || gVFanOffset;
       this.offset = offset;
       if(offset == old) return;
       var top = 0;
       var card = this.firstChild;
       while(card) {
-        card.top = top;
+        card.top = card._top = top;
         top += offset;
         card = card.nextSibling;
       }
@@ -338,69 +337,31 @@ function initPile(elt) {
   } else if(elt.className=="slide") {
     elt.getNextCardLeft = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? gOffsetForCardSlide : 0);
+      return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
     };
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      if(this.childNodes.length < 6)
-        return this.lastChild.top - 0 + gOffsetForCardSlide;
-      return this.lastChild.top;
+      return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
     };
 
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       if(!prev) {
-        card.top = 0;
-        card.left = 0;
+        card.top = card.left = card._top = card._left = 0;
         return;
       }
-      card.top = prev.top;
-      card.left = prev.left;
-      if(this.childNodes.length < 6) {
-        card.top = card.top - 0 + gOffsetForCardSlide;
-        card.left = card.left - 0 + gOffsetForCardSlide;
-      }
+      var offset = this.childNodes.length<6 ? gSlideOffset : 0;
+      card.top = card._top = prev._top + offset
+      card.left = card._left = prev._left + offset;
     };
 
-    elt.fixLayout = function() {
-      if(!this.hasChildNodes()) {
-        this.offset = 0;
-        return;
-      }
-      if(this.childNodes.length==1) {
-        this.offset = 0;
-        this.firstChild.top = 0;
-        this.firstChild.left = 0;
-        return;
-      }
-      var card;
-      // figure out how many we can shift in space allotted
-      const firstbox = this.firstChild.boxObject;
-      var maxYShifts = Math.floor((window.innerHeight - firstbox.y - firstbox.height)/gOffsetForCardSlide);
-      var maxXShifts = Math.floor((window.innerWidth - firstbox.x - firstbox.width)/gOffsetForCardSlide);
-      if(maxYShifts > 5) maxYShifts = 5;
-      if(maxXShifts > 5) maxXShifts = 5;
-      var offX = 0;
-      var offY = 0;
-      var count = this.childNodes.length;
-      card = this.firstChild;
-      while(card) {
-        card.top = offY;
-        card.left = offX;
-        if(count <= maxYShifts) offY += gOffsetForCardSlide;
-        if(count <= maxXShifts) offX += gOffsetForCardSlide;
-        card = card.nextSibling;
-        count--;
-      }
-    };
+    elt.fixLayout = function() {};
 
   } else if(elt.className=="fan-right") {
     elt.getNextCardLeft = function() {
-      var last = this.lastChild;
-      if(!last) return 0;
-      return last.left - 0 + (last.faceUp ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
+      return this.hasChildNodes() ? this.lastChild._left + gHFanOffset : 0;
     };
 
     elt.getNextCardTop = function() { return 0; };
@@ -408,11 +369,8 @@ function initPile(elt) {
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
-      if(prev)
-        card.left = prev.left - 0 + (prev.faceUp ? gXOffsetFromFaceUpCard : gXOffsetFromFaceDownCard);
-      else
-        card.left = 0;
-      card.top = 0;
+      card.left = card._left = prev ? prev._left + gHFanOffset : 0;
+      card.top = card._top = 0;
     };
 
     elt.fixLayout = function() { this.offset = 0; };
@@ -422,11 +380,9 @@ function initPile(elt) {
     elt.getNextCardTop = function() { return 0; };
     elt.addCard = function(card) {
       this.appendChild(card);
-      card.top = 0;
-      card.left = 0;
+      card.top = card.left = card._top = card._left = 0;
     };
-    // xxx: could reposition all cards to (0,0) here just to be sure?
-    elt.fixLayout = function() {this.offset = 0; };
+    elt.fixLayout = function() { this.offset = 0; };
   }
 
   // transfers the card and all those that follow it
@@ -456,10 +412,8 @@ function createFloatingPile(className) {
   initPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
-    this.width = 0;
-    this.height = 0;
-    this.top = -1000;
-    this.left = -1000;
+    this.width = this.height = 0;
+    this.top = this.left = this._top = this._left = -1000;
   };
   gGameStack.appendChild(pile);
   pile.hide();
@@ -474,16 +428,14 @@ function createHighlighter() {
   box.isHighlighter = true;
   gGameStack.appendChild(box);
   box.unhighlight = function() {
-    this.top = -1000;
-    this.left = -1000;
-    this.height = 0;
-    this.width = 0;
+    this.top = this.left = this._top = this._left = -1000;
+    this.width = this.height = 0;
   };
   box.highlight = function(card) {
     // card might be a pile really
     const cardbox = card.boxObject;
-    this.left = cardbox.x - gGameStackLeft;
-    this.top = cardbox.y - gGameStackTop;
+    this.top = this._top = cardbox.y - gGameStackTop;
+    this.left = this._left = cardbox.x - gGameStackLeft;
     this.width = cardbox.width;
     const lastbox = card.parentNode.lastChild.boxObject;
     if(card.isCard) this.height = lastbox.y + lastbox.height - cardbox.y;

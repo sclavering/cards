@@ -1,3 +1,9 @@
+// constants for colours and suits
+const RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
+// these are used in setting the class attribute of cards.
+const CLUBSTR = "club", SPADESTR = "spade", HEARTSTR = "heart", DIAMONDSTR = "diamond";
+
+
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
 var gGameStack = null;  // the <stack id="games"/>
@@ -70,19 +76,6 @@ window.addEventListener("load", init, false);
 
 
 
-
-// box is an element descended from XUL <box>, so it will have a boxObject property
-function getTop(box) { return box.boxObject.y; }
-function getLeft(box) { return box.boxObject.x; }
-function getRight(box) { return box.boxObject.x + box.boxObject.width; }
-function getBottom(box) { return box.boxObject.y + box.boxObject.height; }
-function getWidth(box) { return box.boxObject.width; }
-function getHeight(box) { return box.boxObject.height; }
-
-// constants for colours and suits
-var RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
-// these are used in setting the class attribute of cards.
-var CLUBSTR = "club", SPADESTR = "spade", HEARTSTR = "heart", DIAMONDSTR = "diamond";
 
 
 
@@ -273,7 +266,8 @@ function _createCardPile(elt) {
       }
       // card will still hold a pointer to the last face down card, or null.
       card = card ? card.nextSibling : this.firstChild
-      var space = window.innerHeight - getBottom(card);
+      const cardbox = card.boxObject;
+      var space = window.innerHeight - cardbox.y - cardbox.height;
       var offset = Math.min(Math.floor(space / numFaceUp), gYOffsetFromFaceUpCard);
       var old = this.offset || gYOffsetFromFaceUpCard;
       this.offset = offset;
@@ -316,11 +310,11 @@ function _createCardPile(elt) {
     };
 
     elt.fixLayout = function() {
-      if(!this.hasChildNodes() ) {
+      if(!this.hasChildNodes()) {
         this.offset = 0;
         return;
       }
-      if(this.childNodes.length==1 ) {
+      if(this.childNodes.length==1) {
         this.offset = 0;
         this.firstChild.top = 0;
         this.firstChild.left = 0;
@@ -328,12 +322,13 @@ function _createCardPile(elt) {
       }
       var card;
       // figure out how many we can shift in space allotted
-      var maxYShifts = Math.floor((window.innerHeight - getBottom(this.firstChild))/gOffsetForCardSlide);
-      var maxXShifts = Math.floor((window.innerWidth - getRight(this.firstChild))/gOffsetForCardSlide);
-      var offX = 0;
-      var offY = 0;
+      const firstbox = this.firstChild.boxObject;
+      var maxYShifts = Math.floor((window.innerHeight - firstbox.y - firstbox.height)/gOffsetForCardSlide);
+      var maxXShifts = Math.floor((window.innerWidth - firstbox.x - firstbox.width)/gOffsetForCardSlide);
       if(maxYShifts > 5) maxYShifts = 5;
       if(maxXShifts > 5) maxXShifts = 5;
+      var offX = 0;
+      var offY = 0;
       var count = this.childNodes.length;
       card = this.firstChild;
       while(card) {
@@ -431,10 +426,14 @@ function createHighlighter() {
   };
   box.highlight = function(card) {
     // card may in fact be a stack
-    this.left = getLeft(card) - gGameStackLeft;
-    this.top = getTop(card) - gGameStackTop;
-    this.width = getWidth(card);
-    this.height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
+    const cardbox = card.boxObject;
+    this.left = cardbox.x - gGameStackLeft;
+    this.top = cardbox.y - gGameStackTop;
+    this.width = card.boxObject.width;
+    const lastbox = card.parentNode.lastChild.boxObject;
+    if(card.isCard) this.height = lastbox.y + lastbox.height - cardbox.y;
+    else this.height = cardbox.height;
+    // xxx should use a highlight box the size of a card for an empty pile
   };
   box.unhighlight();
   return box;
@@ -463,7 +462,7 @@ var CardTurner = {
     this.card = card;
     this.angle = 0;
     this.oldLeft = parseInt(card.left);
-    this.oldWidth = getWidth(card);
+    this.oldWidth = card.boxObject.width;
     this.interval = setInterval(function(){CardTurner.turnFaceUpStep();}, 50);
     Cards.disableUI();
   },
@@ -525,19 +524,22 @@ var CardMover = {
   },
   move: function(firstCard, target) {
     Cards.disableUI();
-    // move firstCard and all card on top of it to the move stack
+    // move firstCard and all cards on top of it to the move stack
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
-    this.cards.left = getLeft(firstCard) - gGameStackLeft;
-    this.cards.top = getTop(firstCard) - gGameStackTop
+    const firstbox = firstCard.boxObject;
+    // _top and _left remain as numbers, whereas top and left get converted to strings
+    this.cards.left = this.cards._left = firstbox.x - gGameStackLeft;
+    this.cards.top = this.cards._top = firstbox.y - gGameStackTop
     firstCard.transferTo(this.cards);
     // set up conditions for animation stuff
     this.target = target;
-    this.targetLeft = getLeft(this.target) - gGameStackLeft + this.target.getNextCardLeft();
-    this.targetTop = getTop(this.target) - gGameStackTop + this.target.getNextCardTop();
+    const targetbox = target.boxObject;
+    this.targetLeft = targetbox.x - gGameStackLeft + target.getNextCardLeft();
+    this.targetTop = targetbox.y - gGameStackTop + target.getNextCardTop();
     this.interval = setInterval(function(){CardMover.step();}, 30);
-    // angle stays constant now that parseFloat is being used on top and left attrs
-    var xdistance = this.targetLeft - parseFloat(this.cards.left);
-    var ydistance = this.targetTop  - parseFloat(this.cards.top);
+    //
+    var xdistance = this.targetLeft - this.cards._left;
+    var ydistance = this.targetTop - this.cards._top;
     var angle = Math.atan2(ydistance,xdistance);
     this.xchange = Math.cos(angle) * 50;
     this.ychange = Math.sin(angle) * 50;
@@ -545,15 +547,16 @@ var CardMover = {
 
   step: function() {
     // returns the numerically smaller of the two values (ignoring sign)
-    function absMin(num1, num2) { return (Math.abs(num1) < Math.abs(num2)) ? num1 : num2; }
+//    function absMin(num1, num2) { return (Math.abs(num1) < Math.abs(num2)) ? num1 : num2; }
+    function absMin(n, m) { return (n<0 ? m<n : n<m) ? n : m; }
     // calculate how far the card has to move
-    var xdistance = this.targetLeft - parseFloat(this.cards.left);
-    var ydistance = this.targetTop  - parseFloat(this.cards.top);
-    // caluclate angle, then use to calculate the x and y "speed"s (from a known overall speed)
-    var xchange = absMin(this.xchange,xdistance)
-    var ychange = absMin(this.ychange,ydistance)
-    this.cards.left = parseFloat(this.cards.left) + xchange;
-    this.cards.top = parseFloat(this.cards.top) + ychange;
+    var xdistance = this.targetLeft - this.cards._left;
+    var ydistance = this.targetTop  - this.cards._top;
+    // 
+    var xchange = absMin(this.xchange,xdistance);
+    var ychange = absMin(this.ychange,ydistance);
+    this.cards.left = this.cards._left = this.cards._left + xchange;
+    this.cards.top = this.cards._top = this.cards._top + ychange;
     // if its reached the destination
     if(xchange==xdistance && ychange==ydistance) this.moveComplete();
   },
@@ -563,8 +566,8 @@ var CardMover = {
     this.transfer(this.cards.firstChild, this.target);
     this.cards.hide();
     // don't enable the UI till we're finished autoplaying
-    if(!FreeCellMover.step() && !Game.autoplay())
-      Cards.enableUI();
+    // xxx FreeCellMover should not be mentioned here
+    if(!FreeCellMover.step() && !Game.autoplay()) Cards.enableUI();
   },
 
   transfer: function(firstCard, target) {

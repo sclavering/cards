@@ -84,8 +84,8 @@ MouseHandlers["drag+drop"] = {
     } else if(this.nextCard) {
       var card = this.nextCard;
 //      this.cards.className = card.parentNode.className;
-      this.cards.left = getLeft(card) - gGameStackLeft;
-      this.cards.top = getTop(card) - gGameStackTop;
+      this.cards.left = card.boxObject.x - gGameStackLeft;
+      this.cards.top = card.boxObject.y - gGameStackTop;
       // property to retrieve original source of cards. for most
       // piles |source| is a pointer back to the pile itself.
       this.cards.source = card.parentNode.source;
@@ -103,19 +103,21 @@ MouseHandlers["drag+drop"] = {
     if(!this.dragInProgress) return;
     this.dragInProgress = false;
 
-    var l = getLeft(this.cards), r = getRight(this.cards), t = getTop(this.cards), b = getBottom(this.cards);
+    const cbox = this.cards.boxObject;
+    var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
 
     var card = this.cards.firstChild;
     var source = card.parentNode.source;
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
     var success = false;
-    for(var i = 0; !success && i<targets.length; i++) {
+    for(var i = 0; !success && i!=targets.length; i++) {
       var target = targets[i];
       if(target==source) continue;
 
-      var l2 = getLeft(target), r2 = getRight(target), t2 = getTop(target), b2 = getBottom(target);
-      var overlaps = (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
+      var tbox = target.boxObject;
+      var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
+      var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
       if(overlaps && Game.attemptMove(card,target)) success = true;
     }
 
@@ -136,7 +138,7 @@ MouseHandlers["drag+drop"] = {
     if(e.button==1) {
       if(t.isCard) Game.smartMove(t);
     // right click should show card ?
-    } else if(e.button==0) {
+    } else if(e.button===0) {
       if(t.isCard) {
         if(t.parentNode.isStock) Game.dealFromStock();
         else if(t.faceDown()) Game.revealCard(t);

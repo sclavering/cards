@@ -155,7 +155,8 @@ var BaseCardGame = {
   // === Start Game =======================================
   // Games should override deal(), and shuffleImpossible() if they need to
 
-  begin: function() {
+  // |cards| is only defined if we're trying to restart a game
+  begin: function(cards) {
     var pro = this.__proto__;
     // we only need to initialise once per game, not once per instance of the game.
     if(!pro.initialised) pro.initialise();
@@ -167,18 +168,34 @@ var BaseCardGame = {
     this.clearGame();
     this.redealsRemaining = this.redeals;
 
-    var cards = this.cards;
-    do cards = shuffle(cards);
-    while(this.shuffleImpossible(cards));
-    this.cardsAsDealt = cards;
+    if(!cards) {
+      cards = this.cards;
+      do cards = shuffle(cards);
+      while(this.shuffleImpossible(cards));
+    }
+    this.cardsAsDealt = cards.slice(0);
     this.deal(cards);
 
     if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
 
-    gCmdUndo.setAttribute("disabled","true");
-    gCmdRedo.setAttribute("disabled","true");
-    gCmdRedeal.setAttribute("disabled","true");
-    enableUI();
+    if(this.canRedeal()) gCmdRedeal.removeAttribute("disabled");
+    else gCmdRedeal.setAttribute("disabled", "true");
+  },
+
+  restore: function() {
+    this.mouseHandler.reset();
+    this.setScoreTo(0);
+    this.clearGame();
+    this.redealsRemaining = this.redeals;
+    this.deal(this.cardsAsDealt.slice(0));
+    if(this.stock && this.stock.counter) this.stock.counter.set(this.stockCounterStart);
+
+    var done = this.actionsDone;
+    for(var i = 0; i != done.length; i++) {
+      var d = done[i];
+      if("redo" in d) d.redo();
+      else d.perform();
+    }
   },
 
   clearGame: function() {
@@ -199,11 +216,6 @@ var BaseCardGame = {
   // The cards will be shuffled repeatedly until this returns false, after which they are passed to deal(..)
   shuffleImpossible: function(shuffledCards) {
     return false;
-  },
-
-  // xxx make this an undoable Action
-  restart: function() {
-    while(this.actionsDone.length!=0) this.undo();
   },
 
 
@@ -269,6 +281,10 @@ var BaseCardGame = {
     this.adjustScoreBy(action.score);
     this.hintsReady = false;
 
+    // xxx yuck
+    if(GameController.haveFutureGames)
+      GameController.haveFutureGames = false, GameController.futureGames = [];
+
     // asynch. (i.e. animated) actions will trigger autoplay themselves,
     // and autoplay will trigger a UI update if it actually does anything
     if(action.synchronous && !this.autoplay()) {
@@ -288,8 +304,6 @@ var BaseCardGame = {
 
     action.undo();
 
-    if(this.actionsDone.length==0) gCmdUndo.setAttribute("disabled","true");
-    if(this.actionsUndone.length==1) gCmdRedo.removeAttribute("disabled");
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
 
     if("undoNext" in action && action.undoNext) this.undo();
@@ -304,8 +318,6 @@ var BaseCardGame = {
     if("redo" in action) action.redo();
     else action.perform();
 
-    if(this.actionsDone.length==1) gCmdUndo.removeAttribute("disabled");
-    if(!this.actionsUndone.length) gCmdRedo.setAttribute("disabled","true");
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
 
     if("redoNext" in action && action.redoNext) this.redo();
@@ -520,9 +532,7 @@ var BaseCardGame = {
 
 
 function makeGameConstructor(proto) {
-  var f = function() {
-//    this.construct();
-  };
+  var f = function() {};
   f.prototype = proto;
   return f;
 }
@@ -532,35 +542,62 @@ function GameController(id, proto) {
   this.id = id;
   this.proto = proto;
   this.constructor = makeGameConstructor(proto);
-  this.instances = []; // arrays in prototypes are shared
-  this.instances.peek = function() {
-    return this[this.length-1];
-  };
+  this.pastGames = [];
+  this.futureGames = [];
 }
 GameController.prototype = {
   proto: null,
   constructor: null,
-  instances: [],
+  pastGames: [],
+  havePastGames: false,
+  currentGame: null,
+  futureGames: [],
+  haveFutureGames: false,
 
   switchTo: function(leaveDifficultyMenuAlone) {
     if(!leaveDifficultyMenuAlone) initDifficultyLevelMenu(null);
-    if(!this.instances.length) this.newInstance();
 
-    Game = this.instances.peek();
+    if(!this.currentGame) this.newGame();
+
     Game.show();
   },
 
   switchFrom: function() {
-    this.instances.peek().hide();
+    this.currentGame.hide();
   },
 
-  newInstance: function() {
-    // only remember 3 instances, since the user is unlikely to want to backtrack more than that
-    if(this.instances.length==3) this.instances.shift();
+  newGame: function(cards) {
+    if(this.currentGame) {
+      if(this.pastGames.length==2) this.pastGames.shift();
+      this.pastGames.push(this.currentGame);
+      this.havePastGames = true;
+    }
 
-    Game = new this.constructor();
-    this.instances.push(Game);
-    Game.begin();
+    Game = this.currentGame = new this.constructor();
+    Game.begin(cards);
+  },
+
+  restartGame: function() {
+    // we have to pass a copy of the array, or restoring the old game won't work
+    this.newGame(Game.cardsAsDealt.slice(0));
+  },
+
+  restorePastGame: function() {
+    if(this.futureGames.length == 2) this.futureGames.shift();
+    this.futureGames.push(this.currentGame);
+    this.haveFutureGames = true;
+    Game = this.currentGame = this.pastGames.pop();
+    this.havePastGames = this.pastGames.length!=0;
+    Game.restore();
+  },
+
+  restoreFutureGame: function() {
+    if(this.pastGames.length == 2) this.pastGames.shift();
+    this.pastGames.push(this.currentGame);
+    this.havePastGames = true;
+    Game = this.currentGame = this.futureGames.pop();
+    this.haveFutureGames = this.futureGames.length!=0;
+    Game.restore();
   }
 }
 
@@ -576,6 +613,15 @@ function DifficultyLevelsController(id, ids, names) {
   this.currentLevel = AllGames[ids[curr]];
 }
 DifficultyLevelsController.prototype = {
+  setDifficultyLevel: function(levelIndex) {
+    gPrefs.setIntPref(this.id+".currentdifficulty", levelIndex);
+
+    this.currentLevelIndex = levelIndex;
+    this.currentLevel.switchFrom();
+    this.currentLevel = AllGames[this.levelIds[levelIndex]];
+    this.currentLevel.switchTo(true);
+  },
+
   switchTo: function() {
     initDifficultyLevelMenu(this.levelNames, this.currentLevelIndex);
     this.currentLevel.switchTo(true);
@@ -585,16 +631,35 @@ DifficultyLevelsController.prototype = {
     this.currentLevel.switchFrom();
   },
 
-  newInstance: function() {
+  newGame: function() {
     this.currentLevel.newInstance();
   },
 
-  setDifficultyLevel: function(levelIndex) {
-    gPrefs.setIntPref(this.id+".currentdifficulty", levelIndex);
+  restartGame: function() {
+    this.currentLevel.restartGame();
+  },
 
-    this.currentLevelIndex = levelIndex;
-    this.currentLevel.switchFrom();
-    this.currentLevel = AllGames[this.levelIds[levelIndex]];
-    this.currentLevel.switchTo(true);
+  restorePastGame: function() {
+    this.currentLevel.restorePastGame();
+  },
+
+  restoreFutureGame: function() {
+    this.currentLevel.restoreFutureGame();
+  },
+
+  get havePastGames(val) {
+    return this.currentLevel.havePastGames;
+  },
+
+  get haveFutureGames() {
+    return this.currentLevel.haveFutureGames;
+  },
+
+  set haveFutureGames(val) {
+    this.currentLevel.haveFutureGames = val;
+  },
+
+  set futureGame(val) {
+    this.currentLevel.futureGames = val;
   }
 }

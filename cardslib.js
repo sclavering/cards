@@ -41,26 +41,21 @@ var gCmdHint = "cmd:hint";
 var gCmdRedeal = "cmd:redeal";
 
 // other bits of UI
-var gOptionsMenu = null;
-var gDifficultyLevelMenu = null;
-var gDifficultyLevelPopup = null; // the <menupopup> for gDifficultyLevelMenu
-var gGameSelector = null;
-var gGameWonMsg = null;
-var gScoreDisplay = null; // <label/> on toolbar where score is displayed
+var gOptionsMenu = "options-menu";
+var gDifficultyLevelMenu = "game-difficulty-menu";
+var gDifficultyLevelPopup = "game-difficulty-popup";
+var gGameSelector = "game-type-menu";
+var gGameWonMsg = "game-won-msg-box";
+var gScoreDisplay = "score-display";
 
 
 
 function init() {
-  var cmds = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint","gCmdRedeal"];
-  for(var c in cmds) window[cmds[c]] = document.getElementById(window[cmds[c]]);
+  var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint","gCmdRedeal",
+      "gOptionsMenu","gDifficultyLevelMenu","gDifficultyLevelPopup","gGameSelector","gGameWonMsg","gScoreDisplay"];
+  for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
 
-  gOptionsMenu = document.getElementById("options-menu");
-  gDifficultyLevelMenu = document.getElementById("game-difficulty-menu");
   gDifficultyLevelMenu.shouldBeEnabled = false;
-  gDifficultyLevelPopup = document.getElementById("game-difficulty-popup");
-  gGameSelector = document.getElementById("game-type-menu");
-  gGameWonMsg = document.getElementById("game-won-msg-box");
-  gScoreDisplay = document.getElementById("score-display");
 
   // init the pref branch
   gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
@@ -487,6 +482,7 @@ function playGame(game) {
   GameController.switchTo();
 }
 
+
 function initDifficultyLevelMenu(items, selectedItem) {
   gDifficultyLevelMenu.shouldBeEnabled = !!items;
   if(!items) {
@@ -510,6 +506,42 @@ function initDifficultyLevelMenu(items, selectedItem) {
 }
 
 
+function newGame() {
+  var couldUndo = Game.canUndo || GameController.havePastGames;
+  var couldRedo = Game.canRedo || GameController.haveFutureGames;
+  GameController.newGame();
+  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
+  if(couldRedo) gCmdRedo.setAttribute("disabled", "true");
+}
+
+
+function restartGame() {
+  var couldUndo = Game.canUndo || GameController.havePastGames;
+  var couldRedo = Game.canRedo || GameController.haveFutureGames;
+  GameController.restartGame();
+  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
+  if(couldRedo) gCmdRedo.setAttribute("disabled", "true");
+}
+
+
+function undo() {
+  var couldRedo = Game.canRedo || GameController.haveFutureGames;
+  if(Game.canUndo) Game.undo();
+  else GameController.restorePastGame();
+  if(!Game.canUndo && !GameController.havePastGames) gCmdUndo.setAttribute("disabled","true");
+  if(!couldRedo) gCmdRedo.removeAttribute("disabled");
+}
+
+
+function redo() {
+  var couldUndo = Game.canUndo || GameController.havePastGames;
+  if(Game.canRedo) Game.redo();
+  else GameController.restoreFutureGame();
+  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
+  if(!Game.canRedo && !GameController.haveFutureGames) gCmdRedo.setAttribute("disabled","true");
+}
+
+
 // enable/disable the UI elements. this is done whenever any animation
 // is taking place, as problems ensue otherwise.
 function enableUI() {
@@ -520,12 +552,14 @@ function enableUI() {
   gOptionsMenu.removeAttribute("disabled");
   if(gDifficultyLevelMenu.shouldBeEnabled) gDifficultyLevelMenu.removeAttribute("disabled");
   gGameSelector.removeAttribute("disabled");
-  if(Game.canUndo) gCmdUndo.removeAttribute("disabled");
-  if(Game.canRedo) gCmdRedo.removeAttribute("disabled");
+  if(Game.canUndo || GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
+  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
   if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
 }
 
+
 function disableUI() {
+  if(!gUIEnabled) return;
   gUIEnabled = false;
   gCmdHint.setAttribute("disabled","true");
   gCmdNewGame.setAttribute("disabled","true");
@@ -538,6 +572,7 @@ function disableUI() {
   gCmdRedeal.setAttribute("disabled","true");
 }
 
+
 // called from BaseCardGame.autoplay(), which is a function called after all significant
 // moves, so handles checking whether the game has been won and taking appropriate action.
 function showGameWon() {
@@ -547,9 +582,11 @@ function showGameWon() {
   window.onclick = function(e) {
     window.onclick = null;
     gGameWonMsg.hidden = true;
-    GameController.newInstance();
+    newGame();
+    enableUI();
   };
 }
+
 
 function useCardSet(set) {
   // XXX: Ideally the disabling of stylesheets would be based on their titles, but

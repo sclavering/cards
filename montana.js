@@ -103,7 +103,7 @@ MontanaRedealAction.prototype = {
       }
     }
     // shuffle
-    cards = Game.shuffle(cards);
+    cards = shuffle(cards);
     // deal
     // in easy games the spaces go at the start of rows. in hard games they occur randomly
     var easyGame = hardGame ? 0 : 1;

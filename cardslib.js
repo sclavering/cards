@@ -517,10 +517,9 @@ var MouseHandler1 = {
   },
   // item is the thing overlapping, object the thing overlapped, l=left etc, l2=left of the overlapped item
   overlaps: function(item, object) {
-    function ordered(x,y,z) { return (x<=y && y<=z); };
     var l = getLeft(item), r = getRight(item), t = getTop(item), b = getBottom(item);
     var l2 = getLeft(object), r2 = getRight(object), t2 = getTop(object), b2 = getBottom(object);
-    return ((ordered(l2,l,r2)||ordered(l2,r,r2)) && (ordered(t2,t,b2)||ordered(t2,b,b2)));
+    return (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
   },
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),

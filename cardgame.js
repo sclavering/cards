@@ -318,9 +318,9 @@ var BaseCardGame = {
 
   // would be called "do", but that's a language keyword
   doAction: function(action) {
-    action.perform();
-    action.score = this.getScoreFor(action);
     this.undoHistory.push(action);
+    action.score = this.getScoreFor(action);
+    action.perform();
     this.score += action.score;
     this.updateScoreDisplay();
     this.clearHints();

@@ -422,15 +422,22 @@ function initPile(elt) {
 
 
 
-// for CardMover1, MouseHandlers["drag+drop"], etc
 function createFloatingPile() {
   var pile = document.createElement("stack");
-  pile.className = "fan-down"; // xxx doesn't need to be changeable yet
   initPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;
     this.top = this.left = this._top = this._left = -1000;
+  };
+  pile.addCards = function(card) {
+    var left = card._left, top = card._top;
+    for(var next = card.nextSibling; card; card = next) {
+      next = card.nextSibling;
+      this.appendChild(card);
+      card.top = card._top -= top;
+      card.left = card._left -= left;
+    }
   };
   gGameStack.appendChild(pile);
   pile.hide();

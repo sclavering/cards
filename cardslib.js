@@ -20,7 +20,6 @@ var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 var gHintHighlighter = null;
 
 // xxx these need to become cardset dependent
-var gYOffsetFromFaceDownCard = 5; // num pixels between top edges of two face down cards
 var gYOffsetFromFaceUpCard = 22;  // num pixels between top edges of two face up cards
 var gXOffsetFromFaceDownCard = 5; // num pixels between left edges of two face down cards
 var gXOffsetFromFaceUpCard = 12;  // num pixels between left edges of two face up cards
@@ -311,14 +310,14 @@ function initPile(elt) {
 
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.top - 0 + (this.lastChild.faceUp ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
+      return this.lastChild.top - 0 + (this.offset || gYOffsetFromFaceUpCard);
     };
 
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
       if(prev)
-        card.top = prev.top - 0 + (prev.faceUp ? (this.offset || gYOffsetFromFaceUpCard) : gYOffsetFromFaceDownCard);
+        card.top = prev.top - 0 + (this.offset || gYOffsetFromFaceUpCard);
       else
         card.top = 0;
       card.left = 0;
@@ -329,24 +328,17 @@ function initPile(elt) {
         this.offset = 0;
         return;
       }
-      var card;
-      var numFaceUp = 0;
-      for(card = this.lastChild; card && card.faceUp; card = card.previousSibling) numFaceUp++;
-      if(numFaceUp <= 1) {
-        this.offset = 0;
-        return;
-      }
-      // card will still hold a pointer to the last face down card, or null.
-      card = card ? card.nextSibling : this.firstChild
-      const cardbox = card.boxObject;
-      var space = window.innerHeight - cardbox.y - cardbox.height;
-      var offset = Math.min(Math.floor(space / numFaceUp), gYOffsetFromFaceUpCard);
+
+      const firstbox = this.firstChild.boxObject;
+      var space = window.innerHeight - firstbox.y - firstbox.height;
+      var offset = Math.min(Math.floor(space / this.childNodes.length), gYOffsetFromFaceUpCard);
       var old = this.offset || gYOffsetFromFaceUpCard;
       this.offset = offset;
       if(offset == old) return;
-      var top = (this.childNodes.length - numFaceUp) * gYOffsetFromFaceDownCard;
+      var top = 0;
+      var card = this.firstChild;
       while(card) {
-        if(card.top != top) card.top = top;
+        card.top = top;
         top += offset;
         card = card.nextSibling;
       }

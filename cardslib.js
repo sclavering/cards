@@ -67,14 +67,27 @@ var CardShuffler = {
   shuffleSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
     return this.shuffle(this.getCardSuits(numSpades, numHearts, numDiamonds, numClubs));
   },
-  shuffle: function(allcards) {
-    var shuffledCards = [];
-    while(allcards.length) {
-      var cardnum = Math.floor(Math.random() * allcards.length);
-      if(cardnum == allcards.length) cardnum--;
-      shuffledCards.push(allcards.splice(cardnum,1)[0]);
+  
+  // modifies argument and returns it as well (both are useful in some circumstances)
+  shuffle: function(cards) {
+    // shuffle several times, because Math.random() appears to be rather bad.
+    for(var i = 0; i < 3; i++) {
+      // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
+      var n = cards.length;
+      while(n != 0) {
+        // get num from range [0..n)
+        var num = Math.random();
+        while(num==1.0) num = Math.random();
+        num = Math.floor(num * n);
+        // swap
+        n--;
+        var temp = cards[n];
+        cards[n] = cards[num];
+        cards[num] = temp;
+      }
     }
-    return shuffledCards;
+    
+    return cards;
   },
 
   getCardDecks: function(num) {
@@ -658,7 +671,7 @@ var CardMover = {
     this.cards = _createCardPile(this.cards);
   },
   move: function(firstCard, target) {
-    Cards.disableUI(); // disabling the UI as early as pos might help SimpleSimon bug
+    Cards.disableUI();
     // move firstCard and all card on top of it to the move stack
 //    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
     this.cards.left = getLeft(firstCard) - getLeft(this.dragLayer);
@@ -859,7 +872,7 @@ var Cards = {
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
     if(Game.canRedeal()) this.cmdRedeal.removeAttribute("disabled");
-    this.conditionalEnableDifficultyMenu();
+    this.enableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
     this.enableUndo();
     MouseHandler.enable();
@@ -867,7 +880,7 @@ var Cards = {
   enablePartialUI: function() {
     this.cmdNewGame.removeAttribute("disabled");
     this.cmdRestartGame.removeAttribute("disabled");
-    this.conditionalEnableDifficultyMenu();
+    this.enableDifficultyMenu();
     this.gameSelector.removeAttribute("disabled");
   },
   disableUI: function() {
@@ -897,13 +910,11 @@ var Cards = {
       this.cmdUndo.removeAttribute("disabled");
   },
 
-  conditionalEnableDifficultyMenu: function() {
+  enableDifficultyMenu: function() {
     // the popup for the menu is built when the game is started
     // and will be empty if difficulty levels are not supported
-    if(this.difficultyLevelPopup.hasChildNodes()) this.enableDifficultyMenu();
-  },
-  enableDifficultyMenu: function() {
-    this.difficultyLevelMenu.removeAttribute("disabled");
+    if(this.difficultyLevelPopup.hasChildNodes())
+      this.difficultyLevelMenu.removeAttribute("disabled");
   },
   disableDifficultyMenu: function() {
     this.difficultyLevelMenu.setAttribute("disabled","true");

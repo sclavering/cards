@@ -632,7 +632,7 @@ DifficultyLevelsController.prototype = {
   },
 
   newGame: function() {
-    this.currentLevel.newInstance();
+    this.currentLevel.newGame();
   },
 
   restartGame: function() {

@@ -1,19 +1,17 @@
-Games["gypsy"] = {
+Games.gypsy = {
+  names: ["easy-2suits", "hard-4suits"],
+  ids: ["gypsy-easy", "gypsy"]
+};
+
+
+var GypsyBase = {
   __proto__: BaseCardGame,
 
-  id: "gypsy",
-  difficultyLevels: ["easy-2suits","hard-4suits"],
+  layout: "gypsy",
   dealFromStock: "to piles",
   canMoveCard: "descending, alt colours",
   canMoveToPile: "descending, alt colours",
   getLowestMovableCard: "descending, alt colours",
-
-  init: function() {
-    this.cards = {
-      1: getCardSuits(4, 4, 0, 0), // easy games - spades and hearts only
-      2: getDecks(2)
-    };
-  },
 
   deal: function(cards) {
     for(var i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 2, 1);
@@ -74,4 +72,18 @@ Games["gypsy"] = {
     "card-revealed"       :   5,
     "move-from-foundation": -15
   }
-}
+};
+
+
+AllGames["gypsy-easy"] = {
+  __proto__: GypsyBase,
+  id: "gypsy-easy",
+  cards: [4, 4, 0, 0]
+};
+
+
+AllGames["gypsy"] = {
+  __proto__: GypsyBase,
+  id: "gypsy",
+  cards: 2
+};

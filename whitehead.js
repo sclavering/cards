@@ -1,4 +1,6 @@
-Games["whitehead"] = {
+Games.whitehead = true;
+
+AllGames.whitehead = {
   __proto__: BaseCardGame,
 
   id: "whitehead",

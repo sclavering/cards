@@ -1,4 +1,6 @@
-Games["acesup"] = {
+Games.acesup = true;
+
+AllGames.acesup = {
   __proto__: BaseCardGame,
 
   id: "acesup",

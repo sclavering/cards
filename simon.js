@@ -1,18 +1,16 @@
-Games["simon"] = {
+Games.simon = {
+  names: ["easy-1suit", "medium-2suits", "hard-4suits"],
+  ids: ["simon-easy", "simon-medium", "simon"]
+};
+
+
+var SimonBase = {
   __proto__: BaseCardGame,
 
-  id: "simon",
-  difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
+  layout: "simon",
   canMoveCard: "descending, in suit, not from foundation",
   canMoveToPile: "descending",
   getLowestMovableCard: "descending, in suit",
-
-  init: function() {
-    var cards = this.cards = [];
-    cards[1] = getCardSuits(4, 0, 0, 0); // for easy games
-    cards[2] = getCardSuits(2, 2, 0, 0); // medium games
-    cards[3] = getDecks(1);              // hard games
-  },
 
   deal: function(cards) {
     dealToPile(cards, this.piles[0], 0, 8);
@@ -48,4 +46,24 @@ Games["simon"] = {
     "move-to-foundation": 100,
     "move-between-piles":  -1
   }
-}
+};
+
+
+AllGames["simon-easy"] = {
+  __proto__: SimonBase,
+  id: "simon-easy",
+  cards: [4, 0, 0, 0]
+};
+
+
+AllGames["simon-medium"] = {
+  __proto__: SimonBase,
+  id: "simon-medium",
+  cards: [2, 2, 0, 0]
+};
+
+
+AllGames["simon"] = {
+  __proto__: SimonBase,
+  id: "simon"
+};

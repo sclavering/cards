@@ -1,4 +1,6 @@
-Games["pyramid"] = {
+Games.pyramid = true;
+
+AllGames.pyramid = {
   __proto__: BaseCardGame,
 
   id: "pyramid",

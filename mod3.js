@@ -2,7 +2,9 @@
 const MOD3_CARD_IN_PLACE = 10, MOD3_EMPTY_PILE = 5;
 const MOD3_MAX_SCORE = 1000; // (96*MOD3_CARD_IN_PLACE + 8*MOD3_EMPTY_PILE);
 
-Games["mod3"] = {
+Games.mod3 = true;
+
+AllGames.mod3 = {
   __proto__: BaseCardGame,
 
   id: "mod3",

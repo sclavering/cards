@@ -1,4 +1,6 @@
-Games.fan = {
+Games.fan = true;
+
+AllGames.fan = {
   __proto__: BaseCardGame,
 
   id: "fan",

@@ -1,5 +1,13 @@
 // Spider, Black Widow, Grounds for Divorce, and Wasp
 
+Games.blackwidow = Games.divorce = Games.wasp = true;
+
+Games.spider = {
+  names: ["easy-1suit", "medium-2suits", "hard-4suits"],
+  ids: ["spider-easy", "spider-medium", "spider"]
+};
+
+
 var SpiderBase = {
   __proto__: BaseCardGame,
 
@@ -32,7 +40,6 @@ var SpiderBase = {
 };
 
 
-
 // for games which use Spider's layout, where the foundations are compacted
 var SpiderLayoutBase = {
   __proto__: SpiderBase,
@@ -53,22 +60,16 @@ var SpiderLayoutBase = {
 };
 
 
-
-Games["spider"] = {
+var Spider =
+AllGames.spider = {
   __proto__: SpiderLayoutBase,
 
   id: "spider",
-  difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
+  cards: 2,
+
   canMoveCard: "descending, in suit, not from foundation",
   canMoveToFoundation: "13 cards",
   getLowestMovableCard: "descending, in suit",
-
-  init: function() {
-    var cards = this.cards = [];
-    cards[1] = getCardSuits(8, 0, 0, 0); // for easy games
-    cards[2] = getCardSuits(4, 4, 0, 0); // medium games
-    cards[3] = getDecks(2);              // hard games
-  },
 
   deal: function(cards) {
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
@@ -82,8 +83,21 @@ Games["spider"] = {
 };
 
 
+AllGames["spider-easy"] = {
+  __proto__: Spider,
+  id: "spider-easy",
+  cards: [8, 0, 0, 0]
+};
 
-Games["blackwidow"] = {
+
+AllGames["spider-medium"] = {
+  __proto__: Spider,
+  id: "spider-medium",
+  cards: [4, 4, 0, 0]
+};
+
+
+AllGames.blackwidow = {
   __proto__: SpiderLayoutBase,
 
   id: "blackwidow",
@@ -117,8 +131,7 @@ Games["blackwidow"] = {
 };
 
 
-
-Games["divorce"] = {
+AllGames.divorce = {
   __proto__: SpiderLayoutBase,
 
   id: "divorce",
@@ -140,8 +153,7 @@ Games["divorce"] = {
 };
 
 
-
-Games["wasp"] = {
+AllGames.wasp = {
   __proto__: SpiderBase,
 
   id: "wasp",

@@ -3,7 +3,9 @@
    strict suits, and one set of aces is missing
    */
 
-Games["doublesol"] = {
+Games.doublesol = true;
+
+AllGames.doublesol = {
   __proto__: BaseCardGame,
 
   id: "doublesol",

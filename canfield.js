@@ -1,4 +1,6 @@
-Games["canfield"] = {
+Games.canfield = true;
+
+AllGames.canfield = {
   __proto__: BaseCardGame,
 
   id: "canfield",

@@ -1,3 +1,5 @@
+document.window = window;
+
 // constants for colours and suits
 const RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
 // these are used in setting the class attribute of cards.
@@ -12,8 +14,13 @@ var gGameStackLeft = 0;
 
 var gStrings = []; // the contents of the stringbundle
 
+
 var Game = null;  // the current games
+var GameController = null;
+
+var AllGames = []; // aaa
 var Games = [];   // all the games, indexed by id
+
 
 var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 
@@ -36,7 +43,7 @@ var gCmdRedeal = "cmd:redeal";
 // other bits of UI
 var gOptionsMenu = null;
 var gDifficultyLevelMenu = null;
-var gDifficultyLevelPopup = null; // the <menupopup> for difficultyLevelMenu
+var gDifficultyLevelPopup = null; // the <menupopup> for gDifficultyLevelMenu
 var gGameSelector = null;
 var gGameWonMsg = null;
 var gScoreDisplay = null; // <label/> on toolbar where score is displayed
@@ -49,6 +56,7 @@ function init() {
 
   gOptionsMenu = document.getElementById("options-menu");
   gDifficultyLevelMenu = document.getElementById("game-difficulty-menu");
+  gDifficultyLevelMenu.shouldBeEnabled = false;
   gDifficultyLevelPopup = document.getElementById("game-difficulty-popup");
   gGameSelector = document.getElementById("game-type-menu");
   gGameWonMsg = document.getElementById("game-won-msg-box");
@@ -67,10 +75,8 @@ function init() {
   }
 
   // restore choice of cardset
-  var cardset = "normal";
-  try {
-    cardset = gPrefs.getCharPref("cardset");
-  } catch(e) {}
+  try { var cardset = gPrefs.getCharPref("cardset"); }
+  catch(e) { cardset = "normal"; }
   useCardSet(cardset);
   document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
@@ -115,23 +121,31 @@ function init() {
   for(var i in names) {
     name = names[i], game = lookup[name];
     var mi = document.createElement("menuitem");
-    mi.setAttribute("label",names[i]);
-    mi.setAttribute("accesskey",gStrings[game+".menukey"]);
+    mi.setAttribute("label", names[i]);
+    mi.setAttribute("accesskey", gStrings[game+".menukey"]);
     mi.value = game;
     menu.appendChild(mi);
   }
 
+  // make controllers for each game type
+  for(game in AllGames) AllGames[game] = new GameController(game, AllGames[game]);
+
+  for(game in Games) {
+    var gamee = Games[game];
+    if(typeof gamee == "boolean") Games[game] = AllGames[game];
+    else Games[game] = new DifficultyLevelsController(game, gamee.ids, gamee.names);
+  }
+
   // switch to last played game
-  game = "klondike";
-  try {
-    game = gPrefs.getCharPref("current-game");
-  } catch(e) {}
+  try { game = gPrefs.getCharPref("current-game"); }
+  catch(e) { game = "klondike"; }
   if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
-  Game = Games[game];
-  Game.start();
 
   // set window title. (setting window.title does not work while the app. is starting)
-  document.documentElement.setAttribute("title",gStrings[game+".name"]);
+  document.documentElement.setAttribute("title", gStrings[game+".name"]);
+
+  GameController = Games[game];
+  GameController.switchTo();
 }
 
 window.addEventListener("load", init, false);
@@ -168,6 +182,10 @@ function shuffle(cards) {
 
 function getDecks(num) {
   return getCardSuits(num, num, num, num);
+}
+
+function getSuits(arr) {
+  return getCardSuits(arr[0], arr[1], arr[2], arr[3]);
 }
 
 function getCardSuits(numSpades, numHearts, numDiamonds, numClubs) {
@@ -229,7 +247,7 @@ var cardMethods = {
     return (thisnum>=number);
   },
 
-  moveTo:     function(targetPile) { CardMover.move(this,targetPile); },
+  moveTo: function(targetPile) { CardMover.move(this, targetPile); },
 
   // card turning
   setFaceUp: function() {
@@ -460,16 +478,38 @@ function animatedActionFinished() {
   if(!Game.autoplay()) enableUI();
 }
 
-// switches which game is currently being played
 function playGame(game) {
-  if(Game) Game.end();
-  // store current game pref and start the game
+  if(GameController) GameController.switchFrom();
+
   gPrefs.setCharPref("current-game",game);
-  Game = Games[game];
-  Game.start();
-  // set the window title
   window.title = gStrings[game+".name"];
+
+  GameController = Games[game];
+  GameController.switchTo();
 }
+
+function initDifficultyLevelMenu(items, selectedItem) {
+  gDifficultyLevelMenu.shouldBeEnabled = !!items;
+  if(!items) {
+    gDifficultyLevelMenu.setAttribute("disabled", "true");
+    return;
+  }
+
+  gDifficultyLevelMenu.removeAttribute("disabled");
+
+  var menu = gDifficultyLevelPopup;
+  while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
+
+  for(var i = 0; i != items.length; i++) {
+    var mi = document.createElement("menuitem");
+    mi.setAttribute("label", gStrings["difficulty."+items[i]]);
+    mi.setAttribute("value", i);
+    mi.setAttribute("type", "radio");
+    if(i==selectedItem) mi.setAttribute("checked","true");
+    menu.appendChild(mi);
+  }
+}
+
 
 // enable/disable the UI elements. this is done whenever any animation
 // is taking place, as problems ensue otherwise.
@@ -479,10 +519,10 @@ function enableUI() {
   gCmdNewGame.removeAttribute("disabled");
   gCmdRestartGame.removeAttribute("disabled");
   gOptionsMenu.removeAttribute("disabled");
-  enableDifficultyMenu();
+  if(gDifficultyLevelMenu.shouldBeEnabled) gDifficultyLevelMenu.removeAttribute("disabled");
   gGameSelector.removeAttribute("disabled");
-  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
-  if(Game.canRedo()) gCmdRedo.removeAttribute("disabled");
+  if(Game.canUndo) gCmdUndo.removeAttribute("disabled");
+  if(Game.canRedo) gCmdRedo.removeAttribute("disabled");
   if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
 }
 
@@ -499,17 +539,6 @@ function disableUI() {
   gCmdRedeal.setAttribute("disabled","true");
 }
 
-function enableDifficultyMenu() {
-  // the popup for the menu is built when the game is started
-  // and will be empty if difficulty levels are not supported
-  if(gDifficultyLevelPopup.hasChildNodes())
-    gDifficultyLevelMenu.removeAttribute("disabled");
-}
-
-function disableDifficultyMenu() {
-  gDifficultyLevelMenu.setAttribute("disabled","true");
-}
-
 // called from BaseCardGame.autoplay(), which is a function called after all significant
 // moves, so handles checking whether the game has been won and taking appropriate action.
 function showGameWon() {
@@ -519,7 +548,7 @@ function showGameWon() {
   window.onclick = function(e) {
     window.onclick = null;
     gGameWonMsg.hidden = true;
-    Game.newGame();
+    GameController.newInstance();
   };
 }
 

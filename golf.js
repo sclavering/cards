@@ -1,22 +1,27 @@
-Games["golf"] = {
+Games.golf = {
+  names: ["easy-golf", "medium-1deck", "hard-2decks"],
+  ids: ["golf-easy", "golf", "golf-hard"]
+};
+
+
+var GolfBase =
+AllGames["golf"] = {
   __proto__: BaseCardGame,
 
   id: "golf",
-  difficultyLevels: ["easy-golf","medium-1deck","hard-2decks"],
+  layout: "golf",
   dealFromStock: "to foundation",
 
-  init: function() {
-    this.stockDealTargets = [this.foundation];
+//  init: function() {
+//    this.stockDealTargets = [this.foundation];
+//  },
 
-    var cards = this.cards = [];
-    cards[1] = cards[2] = getDecks(1); // for easy or medium games
-    cards[3] = getDecks(2); // for hard games
-  },
+  cardsPerColumn: 5,
+  initialScore: 51,
 
   deal: function(cards) {
-    var cardsPerColumn = [,5,5,8][this.difficultyLevel];
-    this.setScoreTo([,51,51,103][this.difficultyLevel]);
-    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, cardsPerColumn);
+    this.setScoreTo(this.initialScore);
+    for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, this.cardsPerColumn);
     dealToPile(cards, this.foundation, 0, 1);
     dealToPile(cards, this.stock, cards.length, 0);
   },
@@ -28,8 +33,6 @@ Games["golf"] = {
   canMoveTo: function(card, pile) {
     if(pile!=this.foundation) return false;
     var last = pile.lastChild;
-    // K->A or A->K allowed in Easy mode
-    if(this.difficultyLevel==1) return card.differsByOneMod13From(last);
     return card.differsByOneFrom(last);
   },
 
@@ -53,4 +56,30 @@ Games["golf"] = {
     "move-to-foundation": -1,
     "dealt-from-stock"  : -1
   }
-}
+};
+
+
+// K->A or A->K allowed in Easy mode
+AllGames["golf-easy"] = {
+  __proto__: GolfBase,
+
+  id: "golf-easy",
+
+  canMoveTo: function(card, pile) {
+    if(pile!=this.foundation) return false;
+    var last = pile.lastChild;
+    return card.differsByOneMod13From(last);
+  }
+};
+
+
+// 2 decks used
+AllGames["golf-hard"] = {
+  __proto__: GolfBase,
+
+  id: "golf-hard",
+  cards: 2,
+  cardsPerColumn: 8,
+  initialScore: 103
+};
+  

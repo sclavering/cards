@@ -1,8 +1,15 @@
-Games["montana"] = {
+Games.montana = {
+  names: ["easy", "hard"],
+  ids: ["montana", "montana-hard"]
+};
+
+
+var Montana =
+AllGames.montana = {
   __proto__: BaseCardGame,
 
   id: "montana",
-  difficultyLevels: ["easy","hard"],
+  layout: "montana",
 
   redeals: 2,
   redealsRemaining: 2,
@@ -50,7 +57,7 @@ Games["montana"] = {
   },
 
   redeal: function() {
-    this.doAction(new MontanaRedealAction());
+    this.doAction(new MontanaRedealAction(false));
   },
 
   canRedeal: function() {
@@ -77,17 +84,29 @@ Games["montana"] = {
     }
     return true;
   }
+};
+
+
+AllGames["montana-hard"] = {
+  __proto__: Montana,
+
+  id: "montana-hard",
+
+  redeal: function() {
+    this.doAction(new MontanaRedealAction(true));
+  }
+};
+
+
+function MontanaRedealAction(hardGame) {
+  this.isHardGame = hardGame;
 }
-
-
-
-function MontanaRedealAction() {}
 MontanaRedealAction.prototype = {
   action: "redeal",
   synchronous: true,
 
   perform: function() {
-    var hardGame = (Game.difficultyLevel==2);
+    var hardGame = this.isHardGame;
     Game.redealsRemaining--;
     var cards = [];
     var map = this.map = [[],[],[],[]];
@@ -145,7 +164,7 @@ MontanaRedealAction.prototype = {
     var map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
-    var easy = (Game.difficultyLevel==2) ? 0 : 1;
+    var easy = this.isHardGame ? 0 : 1;
     for(var r in rows)
       for(var c = 13 - map[r].length + easy; c != 13; c++)
         dealToPile(cards, rows[r][c], 0, 1);

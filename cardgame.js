@@ -4,16 +4,10 @@ var BaseCardGame = {
   layout: null, // id of a xul element.  if left null this.id will be used instead
   xulElement: null, // the container vbox/hbox for the game (set automatically)
 
-  // An array of strings, each of which is prefixed with "difficulty." then looked up in
-  // gStrings to build the difficulty level menu when switching to the current card game.
-  // Each gets assigned a number, *counting from 1* (to avoid js's 0==false), and the
-  // selected difficulty level is stored in |Game.difficultyLevel|
-  difficultyLevels: null,
-  difficultyLevel: 0,
-
-  // games should create all the cards they need the first time they are run.  if they set this field
+  // Games should create all the cards they need the first time they are run.  if they set this field
   // to a number then it will be replaced by an array holding the cards for that many decks (by the
-  // initialise() method below).  if they need something more complex they should set this in init()
+  // initialise() method below).  If they set it to an array of four numbers those nums will be passed
+  // to getCardSuits().  If they need something more complex they should set this in init()
   cards: 1,
 
   // boolean flags that games might want to override
@@ -47,16 +41,11 @@ var BaseCardGame = {
   init: function() {
   },
 
-  start: function() {
-    var initialised = this.initialised;
-    if(!initialised) this.initialise();
+  show: function() {
     this.xulElement.hidden = false;
-    this.initDifficultyLevel();
-    // xxx restore the game the user was playing in the previous session instead
-    if(!initialised) this.newGame();
   },
 
-  end: function() {
+  hide: function() {
     this.mouseHandler.reset();
     this.xulElement.hidden = true;
   },
@@ -76,6 +65,7 @@ var BaseCardGame = {
 
     // see comments above
     if(typeof this.cards == "number") this.cards = getDecks(this.cards);
+    else if(typeof this.cards[0] == "number") this.cards = getSuits(this.cards);
 
     // if the game doesn't specify something
     // xxx still required for init'ing stock.counter, but not for anything else!
@@ -145,7 +135,10 @@ var BaseCardGame = {
     if(this.stock) {
       // a <label/> for displaying the num. of deals left
       var counter = this.stock.counter = document.getElementById(id+"-stock-counter");
-      if(counter) counter.add = function(val) { this.value = parseInt(this.value)+val; };
+      if(counter) {
+        counter.set = function(val) { this.value = this._value = val; };
+        counter.add = function(val) { this.value = this._value += val; };
+      }
     }
 
     // autoplay sources
@@ -161,69 +154,25 @@ var BaseCardGame = {
 
 
 
-  // === Difficulty Levels =======================================
-
-  // checks if the current game has difficulty levels and inits the menu if so.
-  initDifficultyLevel: function() {
-    // clear the 'Difficulty' menu on the toolbar
-    // (menu being empty is used to indicate game does not have multiple difficulty levels)
-    var menu = gDifficultyLevelPopup;
-    while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
-    // get levels.  if none then return (updateUI will ensure menu disabled)
-    var levels = this.difficultyLevels;
-    if(!levels) return;
-    enableDifficultyMenu();
-    // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
-    var currentLevel;
-    try {
-      currentLevel = gPrefs.getIntPref(this.id+".difficulty-level");
-    } catch(e) {
-      currentLevel = Math.ceil(levels.length / 2);
-    }
-    this.difficultyLevel = currentLevel;
-    // add appropriate menu items
-    for(var i = 0; i != levels.length; i++) {
-      var mi = document.createElement("menuitem");
-      mi.setAttribute("label",gStrings["difficulty."+levels[i]]);
-      mi.setAttribute("value",i+1); // number from 1, to avoid js 0==false thing
-      mi.setAttribute("type","radio");
-      if(i+1==currentLevel) mi.setAttribute("checked","true");
-      menu.appendChild(mi);
-    }
-  },
-
-  // games can retrieve a integer >0 for the current difficulty level via Game.difficultyLevel;
-  setDifficultyLevel: function(level) {
-    level = parseInt(level);
-    gPrefs.setIntPref(this.id+".difficulty-level", level);
-    this.difficultyLevel = level;
-    this.newGame();
-  },
-
-
-
   // === Start Game =======================================
   // Games should override deal(), and shuffleImpossible() if they need to
 
-  newGame: function() {
+  begin: function() {
+    var pro = this.__proto__;
+    // we only need to initialise once per game, not once per instance of the game.
+    if(!pro.initialised) pro.initialise();
+
     this.mouseHandler.reset();
     this.setScoreTo(0);
     this.actionsDone = [];
     this.actionsUndone = [];
     this.clearGame();
-    this.hintsReady = false;
     this.redealsRemaining = this.redeals;
-    // reset offset used when stacking cards.
-    if(this.piles)
-      for(var i = 0; i != this.piles.length; i++)
-        this.piles[i].fixLayout();
 
-    // xxx hack! All games use this.cards, but sometimes it's an array of cards, and sometimes an
-    // array of arrays (for different difficulty levels, hence cards[0] might be undefined).
-    // Note that not all games with difficulty levels need different cards for them.
-    var cards = ("isCard" in this.cards[1]) ? this.cards : this.cards[this.difficultyLevel];
+    var cards = this.cards;
     do cards = shuffle(cards);
     while(this.shuffleImpossible(cards));
+    this.cardsAsDealt = cards;
     this.deal(cards);
 
     // xxx this should probably happen elsewhere
@@ -243,6 +192,10 @@ var BaseCardGame = {
     // remove all cards and set them all face down
     var s = this.allpiles;
     for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
+    // reset offset used when stacking cards.
+    if(this.piles)
+      for(i = 0; i != this.piles.length; i++)
+        this.piles[i].fixLayout();
   },
 
   // should deal out the provided shuffled cards for a new game.  piles will already be empty
@@ -304,11 +257,11 @@ var BaseCardGame = {
   actionsDone: [],
   actionsUndone: [],
 
-  canUndo: function() {
+  get canUndo() {
     return this.actionsDone.length!=0;
   },
 
-  canRedo: function() {
+  get canRedo() {
     return this.actionsUndone.length!=0;
   },
 
@@ -566,5 +519,94 @@ var BaseCardGame = {
   // call autoplay again on completion.)
   autoplayMove: function() {
     return false;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+function makeGameConstructor(proto) {
+  var f = function() {
+//    this.construct();
+  };
+  f.prototype = proto;
+  return f;
+}
+
+
+function GameController(id, proto) {
+  this.id = id;
+  this.proto = proto;
+  this.constructor = makeGameConstructor(proto);
+  this.instances = []; // arrays in prototypes are shared
+  this.instances.peek = function() {
+    return this[this.length-1];
+  };
+}
+GameController.prototype = {
+  proto: null,
+  constructor: null,
+  instances: [],
+
+  switchTo: function(leaveDifficultyMenuAlone) {
+    if(!leaveDifficultyMenuAlone) initDifficultyLevelMenu(null);
+    if(!this.instances.length) this.newInstance();
+
+    Game = this.instances.peek();
+    Game.show();
+  },
+
+  switchFrom: function() {
+    this.instances.peek().hide();
+  },
+
+  newInstance: function() {
+    // only remember 3 instances, since the user is unlikely to want to backtrack more than that
+    if(this.instances.length==3) this.instances.shift();
+
+    Game = new this.constructor();
+    this.instances.push(Game);
+    Game.begin();
+  }
+}
+
+
+function DifficultyLevelsController(id, ids, names) {
+  this.id = id;
+  this.levelIds = ids;
+  this.levelNames = names;
+
+  try { var curr = gPrefs.getIntPref(this.id+".currentdifficulty"); }
+  catch(e) { curr = Math.floor(ids.length/2); }
+  this.currentLevelIndex = curr;
+  this.currentLevel = AllGames[ids[curr]];
+}
+DifficultyLevelsController.prototype = {
+  switchTo: function() {
+    initDifficultyLevelMenu(this.levelNames, this.currentLevelIndex);
+    this.currentLevel.switchTo(true);
+  },
+
+  switchFrom: function() {
+    this.currentLevel.switchFrom();
+  },
+
+  newInstance: function() {
+    this.currentLevel.newInstance();
+  },
+
+  setDifficultyLevel: function(levelIndex) {
+    gPrefs.setIntPref(this.id+".currentdifficulty", levelIndex);
+
+    this.currentLevelIndex = levelIndex;
+    this.currentLevel.switchFrom();
+    this.currentLevel = AllGames[this.levelIds[levelIndex]];
+    this.currentLevel.switchTo(true);
   }
 }

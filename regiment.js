@@ -1,8 +1,10 @@
-Games["regiment"] = {
+Games.regiment = true;
+
+AllGames.regiment = {
   __proto__: BaseCardGame,
 
   id: "regiment",
-  cards: 2, // use 2 decks
+  cards: 2,
   canMoveCard: "last on pile",
 
   init: function() {

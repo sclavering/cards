@@ -29,7 +29,9 @@
 <script type="application/x-javascript" src="doublesol.js"/>
 <script type="application/x-javascript" src="fan.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
+<!--
 <script type="application/x-javascript" src="golf.js"/>
+-->
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
 <script type="application/x-javascript" src="maze.js"/>
@@ -46,13 +48,13 @@
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">
-  <command id="cmd:newgame" oncommand="Game.newGame();"/>
+  <command id="cmd:newgame" oncommand="GameController.newInstance();"/>
   <command id="cmd:hint"    oncommand="Game.hint();"/>
   <command id="cmd:undo"    oncommand="Game.undo();"/>
   <command id="cmd:redo"    oncommand="Game.redo();"/>
   <command id="cmd:restart" oncommand="Game.restart();"/>
   <command id="cmd:redeal"  oncommand="Game.redeal();"/>
-  <command id="cmd:setdifficulty" oncommand="Game.setDifficultyLevel(event.target.value);"/>
+  <command id="cmd:setdifficulty" oncommand="GameController.setDifficultyLevel(event.target.value);"/>
 </commandset>
 
 <keyset id="cards-keys">

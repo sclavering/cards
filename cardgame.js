@@ -365,7 +365,7 @@ var BaseCardGame = {
 
   mayAddCardToReserve: "no",
 
-  mayAddCardToCell: "if empty",
+  mayAddCardToCell: "single card, if empty",
 
   mayAddCardToFoundation: "single card, up in suit or ace in space",
 

@@ -23,6 +23,9 @@ mayAddCard:
   "no"
   "if empty"
 
+  // for cells
+  "single card, if empty"
+
   // for ordinary piles
   "onto .up"
   "onto .up, kings in spaces"
@@ -111,6 +114,15 @@ var Rules = {
     function(card) {
       return !card.nextSdibling && !this.hasChildNodes();
     },
+
+
+    // for cells
+
+    "single card, if empty":
+    function(card) {
+      return !this.hasChildNodes() && !card.nextSibling;
+    },
+
 
     // for ordinary piles
 

@@ -53,9 +53,7 @@ var YukonBase = {
     "card-revealed"       :   5,
     "move-from-foundation": -15
   }
-}
-
-
+};
 
 
 
@@ -84,8 +82,6 @@ Games["yukon"] = {
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
   }
 };
-
-
 
 
 
@@ -119,4 +115,4 @@ Games["sanibel"] = {
     if(card.isAce()) return true;
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 4);
   }
-}
+};

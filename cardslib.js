@@ -78,14 +78,14 @@ var CardShuffler = {
   },
   getCardSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
     var i, allcards = [];
-    for (i = 0; i < numSpades;   i++) this.addSuitSet(allcards, BLACK, SPADE, SPADESTR);
-    for (i = 0; i < numHearts;   i++) this.addSuitSet(allcards, RED, HEART, HEARTSTR);
-    for (i = 0; i < numDiamonds; i++) this.addSuitSet(allcards, RED, DIAMOND, DIAMONDSTR);
-    for (i = 0; i < numClubs;    i++) this.addSuitSet(allcards, BLACK, CLUB, CLUBSTR);
+    for(i = 0; i < numSpades;   i++) this.addSuitSet(allcards, BLACK, SPADE, SPADESTR);
+    for(i = 0; i < numHearts;   i++) this.addSuitSet(allcards, RED, HEART, HEARTSTR);
+    for(i = 0; i < numDiamonds; i++) this.addSuitSet(allcards, RED, DIAMOND, DIAMONDSTR);
+    for(i = 0; i < numClubs;    i++) this.addSuitSet(allcards, BLACK, CLUB, CLUBSTR);
     return allcards;
   },
   addSuitSet: function(cards, colour, suit, suitstr) {
-    for (var i = 1; i <= 13; i++) cards.push(this.createCard(colour, suit, suitstr, i));
+    for(var i = 1; i <= 13; i++) cards.push(this.createCard(colour, suit, suitstr, i));
   },
 
   createCard: function(colour, suit, suitstr, number) {
@@ -94,6 +94,7 @@ var CardShuffler = {
     c.number = function() { return (number==1 ? (Game.acesHigh ? 14 : 1) : number); };
     //c.trueNumber = function() { return number; }; // needed for isConsecMod13To, but for mo just using _num
     c.colour = function() { return colour; };
+    c.altcolour = function() { return (colour==RED ? BLACK : RED); };
     c.suit   = function() { return suit; };
     c.faceUp   = function() { return !this._facedown;};
     c.faceDown = function() { return this._facedown; };

@@ -99,6 +99,7 @@ var CardShuffler = {
     c.faceUp   = function() { return !this._facedown;};
     c.faceDown = function() { return this._facedown; };
     c.isAce  = function() { return number==1;  };
+    c.isQueen = function() { return number==12;};
     c.isKing = function() { return number==13; };
     c.isLastOnPile = function() { return !this.nextSibling; };
     // more queries (consecutive ones use number() to get 14 for Aces)

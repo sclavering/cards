@@ -1,19 +1,18 @@
 var Maze = {
   shortname: "maze",
-  
+
   // stuff the CardGame() constructor would initialise if we were using it
   stockCanTurnOver: false,
   acesHigh: false,
   usesMouseHandler2: false,
-  
+
   init: function() {
     this.initStacks(54,0,0,false,false);
     this.dragDropTargets = this.stacks;
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
   },
-  
-  
+
 
   ///////////////////////////////////////////////////////////
   //// start game
@@ -30,14 +29,13 @@ var Maze = {
       cards[i].setFaceUp();
     }
   },
-  
 
 
   ///////////////////////////////////////////////////////////
   //// Moving
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
-    
+
     var i = pile.pileNumber;
     // if pile to right contains consecutive card of same suit
     // or if card to right is any ace if this is a queen (note: this is a relaxation of the PySol rules)
@@ -56,12 +54,20 @@ var Maze = {
     }
     return false;
   },
-  
-  
-  
+
+
   ///////////////////////////////////////////////////////////
   //// hint
-  
+  getHints: function() {
+    for(var i = 0; i < 54; i++) {
+      var card = this.stacks[i].firstChild;
+      if(!card) continue;
+
+      for(var j = 0; j < 54; j++)
+        if(this.canMoveTo(card, this.stacks[j]))
+          this.addHint(card, this.stacks[j]);
+    }
+  },
 
 
   ///////////////////////////////////////////////////////////
@@ -74,17 +80,29 @@ var Maze = {
   },
 
 
-
   ///////////////////////////////////////////////////////////
   //// Autoplay -- NONE
-
 
 
   ///////////////////////////////////////////////////////////
   //// winning, scoring, undo
   hasBeenWon: function() {
-    // XXX IMPLEMENT ME!
-    return false;
+    for(var i = 0; i < 54; i++) {
+      var left = this.stacks[i].firstChild;
+      var right = this.stacks[(i+1) % 54].firstChild;
+      // the pair must be consecutive and same suit except for queens and aces,
+      // which can sit next to empty spaces, or next to one another ignoring suit
+      if(right) {
+        if(right.isAce()) {
+          if(left && !left.isQueen()) return false
+        } else {
+          if(!(left && right.isSameSuit(left) && right.isConsecutiveTo(left))) return false;
+        }
+      } else {
+        if(left && !left.isQueen()) return false;
+      }
+    }
+    return true;
   }
 }
 

@@ -23,12 +23,12 @@ toolbargrippy { display:none; } /* die grippies, die! */
   -moz-box-flex: 1;
 }
 .message-inner {
-  padding: 2em;
+  padding: 1.8em;
   background: -moz-dialog;
   border: 1px solid;
 }
 .message-1 {
-  font-size: 2em;
+  font-size: 1.3em;
   font-weight: bold;
 }
 .message-2 {

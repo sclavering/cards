@@ -401,7 +401,7 @@ var CardMover = {
     this.targetTop = getTop(this.target) - getTop(this.dragLayer) + CardPositioner.getNextCardTop(this.target);
     this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer); // just to be sure
     this.interval = setInterval("CardMover.step()",30);
-    // lets assume the angle stays constant (it actually drifts slightly sue to rounding of dist being moved)
+    // angle stays constant now that parseFloat is being used on top and left attrs
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
     var ydistance = this.targetTop  - parseFloat(this.cards.top);
     var angle = Math.atan2(ydistance,xdistance);
@@ -452,15 +452,6 @@ var CardMover = {
       if(source.id) CardPositioner.fixStack(source);
       firstCard.clearSource();
     }
-/*
-    var card, nextCard = firstCard;
-    while(nextCard) {
-      card = nextCard;
-      nextCard = card.nextSibling;
-      card.parentNode.removeChild(card);
-      target.appendChild(card);
-      card.position();
-    }*/
   }
 }
 
@@ -481,6 +472,8 @@ var CardMover = {
   *       call after moving a card to a new stack, but get via card.position()
   * getNextCardTop(stack) - works out the position for the next face up card in
   *       a stack so that move animations go to the right place
+  * fixStack - repositions all the (face up) cards in a stack so that they fit in the available space
+  *       called in CardMover.transfer, though this may change
   */
 var CardPositioner = {
   faceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
@@ -489,7 +482,6 @@ var CardPositioner = {
   position: function(card) {
     card.left = 0;
     if(card.parentNode.className=="card-fan-down" && card.previousSibling)
-      //card.top = card.previousSibling.top - 0 +(card.previousSibling.faceUp() ? this.faceUpOffset : this.faceDownOffset);
       card.top = card.previousSibling.top - 0 + (card.previousSibling.faceUp() ? (card.parentNode.offset || this.faceUpOffset) : this.faceDownOffset);
     else
       card.top = 0;
@@ -498,44 +490,35 @@ var CardPositioner = {
   getNextCardTop: function(stack) {
     if(stack.className!="card-fan-down") return 0;
     if(!stack.hasChildNodes()) return 0;
-    //return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? this.faceUpOffset : this.faceDownOffset);
     return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? (stack.offset || this.faceUpOffset) : this.faceDownOffset);
   },
 
-  // not yet in use
   fixStack: function(stack) {
+    var card; // for loops
     if(stack.className!="card-fan-down") return;
     if(!stack.hasChildNodes()) {
       stack.offset = 0;
       return;
     }
-    var faceUp = 0;
-    //for(var currentCard = stack.firstChild; currentCard; currentCard = currentCard.nextSibling)
-    //  if (currentCard.faceUp()) ++faceUp;
-    var current = stack.lastChild;
-    while(current && current.faceUp()) {
-      faceUp++;
-      current = current.previousSibling;
-    }
-    if(faceUp <= 1) {
+    var numFaceUp = 0;
+    for(card = stack.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
+    if(numFaceUp <= 1) {
       stack.offset = 0;
       return;
     }
     var space = window.innerHeight - getBottom(stack.firstChild) - stack.childNodes.length * this.faceDownOffset;
-    var offset = this.faceDownOffset + parseInt(space / faceUp);
-    if (offset > this.faceUpOffset) offset = this.faceUpOffset;
+    var offset = this.faceDownOffset + parseInt(space / numFaceUp);
+    if(offset > this.faceUpOffset) offset = this.faceUpOffset;
     var old = stack.offset || this.faceUpOffset;
     stack.offset = offset;
-    if (offset == old) return;
-    var top = 0;
-    for (currentCard = stack.firstChild; currentCard; currentCard = currentCard.nextSibling) {
-      if (currentCard.faceDown())
-        top += this.faceDownOffset;
-      else {
-        if (currentCard.top != top)
-          currentCard.top = top;
-        top += offset;
-      }
+    if(offset == old) return;
+    var top = (stack.childNodes.length - numFaceUp) * this.faceDownOffset;
+    // card will still hold a pointer to th last face down card, or null
+    card = card ? card.nextSibling : stack.firstChild
+    while(card) {
+      if(card.top != top) card.top = top;
+      top += offset;
+      card = card.nextSibling
     }
   }
 }

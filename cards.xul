@@ -29,7 +29,6 @@
 <script type="application/x-javascript" src="cardgame.js"/>
 <script type="application/x-javascript" src="freecellmover.js"/>
 
-
 <script type="application/x-javascript" src="acesup.js"/>
 <script type="application/x-javascript" src="canfield.js"/>
 <script type="application/x-javascript" src="doublesol.js"/>
@@ -82,14 +81,8 @@
   </toolbarbutton>
   <!-- difficulty level menu is show/hidden by removing/adding hidden="true" -->
   <toolbarbutton id="game-difficulty-menu" type="menu" label="&m-game-difficulty:label;"
-    tooltiptext="&m-game-difficulty:tooltip;" command="cmd:setdifficulty">
-    <menupopup id="game-difficulty-popup">
-    <!--
-      <menuitem label="&difficulty-easy:label;"   value="easy"/>
-      <menuitem label="&difficulty-medium:label;" value="medium"/>
-      <menuitem label="&difficulty-hard:label;"   value="hard"/>
-      -->
-    </menupopup>
+      tooltiptext="&m-game-difficulty:tooltip;" command="cmd:setdifficulty">
+    <menupopup id="game-difficulty-popup"/>
   </toolbarbutton>
   <!-- toolbarbutton command="command:options" label="&options:label;" tooltiptext="&options:tooltip;"/ -->
   <toolbarbutton command="cmd:newgame" label="&newgame:label;" tooltiptext="&newgame:tooltip;"/>

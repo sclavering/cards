@@ -49,7 +49,7 @@ AllGames.acesup = {
   hasBeenWon: function() {
     if(this.stock.hasChildNodes()) return false;
     for(var i = 0; i != 4; i++) {
-      var c = this.firstChild;
+      var c = this.piles[i].firstChild;
       if(!c.isAce || c.nextSibling) return false;
     }
     return true;

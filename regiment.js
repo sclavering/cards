@@ -9,18 +9,25 @@ AllGames.regiment = {
   init: function() {
     var cs = this.cards = makeDecks(2);
     const fs = this.foundations, ps = this.piles, rs = this.reserves;
+    var afs = this.aceFoundations = fs.slice(0,4);
+    var kfs = this.kingFoundations = fs.slice(4,8);
 
     for(var i = 0; i != 8; i++) {
-      fs[i].isAceFoundation = (i < 4);
-      rs[i].up = ps[i]; rs[i].down = ps[i+8]; rs[i].col = i;
+      rs[i].up = ps[i];
+      rs[i].down = ps[i+8];
+      rs[i].col = i;
     }
+
+    for(i = 0; i != 4; i++) {
+      afs[i].mayAddCard = this.mayAddCardToAceFoundation;
+      kfs[i].mayAddCard = this.mayAddCardToKingFoundation;
+    }
+
     for(i = 0; i != 16; i++) {
       var col = ps[i].col = i % 8;
       ps[i].reserve = rs[col];
       ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
     }
-    this.aceFoundations = fs.slice(0,4);
-    this.kingFoundations = fs.slice(4,8);
 
     const acepos = [0, 13, 26, 39, 52, 65, 78, 91];
     var as = this.aces = new Array(8);
@@ -35,15 +42,16 @@ AllGames.regiment = {
 
   mayTakeCardFromPile: "single card",
 
-  mayAddCardToFoundation: function(card) {
-    var last = this.lastChild, twinp = card.twin.parentNode;
-    if(this.isAceFoundation) {
-      // can't start a second ace foundation for a suit
-      if(card.isAce) return !last && !(twinp.isFoundation && twinp.isAceFoundation);
-      return last && card.number==last.upNumber && card.suit==last.suit;
-    }
+  mayAddCardToAceFoundation: function(card) {
+    var last = this.lastChild, twin = card.twin;
+    // must not start a second ace foundation for a suit
+    if(card.isAce) return !last && !(twin.parentNode.isFoundation && !twin.previousSibling);
+    return last && card.number==last.upNumber && card.suit==last.suit;
+  },
 
-    if(card.isKing) return !last && !(twinp.isFoundation && !twinp.isAceFoundation);
+  mayAddCardToKingFoundation: function(card) {
+    var last = this.lastChild, twin = card.twin;
+    if(card.isKing) return !last && !(twin.parentNode.isFoundation && !twin.previousSibling);
     return last && last.number==card.upNumber && card.suit==last.suit;
   },
 

@@ -162,6 +162,8 @@ function _createCardPile(elt) {
   elt.isReserve = false;
   elt.isStock = false;
   elt.isWaste = false;
+  
+  elt.offset = 0;
 
   // for the animated move stack and the drag stack |source|
   // is set to the pile the cards originally came from.
@@ -277,6 +279,26 @@ function _createCardPile(elt) {
       }
     };
 
+  } else if(elt.className=="fan-right") {
+    elt.getNextCardLeft = function() {
+      var last = this.lastChild;
+      if(!last) return 0;
+      return last.left - 0 + (last.faceUp() ? Cards.cardFaceUpHOffset : Cards.cardFaceDownHOffset);
+    };
+    
+    elt.getNextCardTop = function() { return 0; };
+    
+    elt.positionCard = function(card) {
+      var prev = card.previousSibling;
+      if(prev)
+        card.left = prev.left - 0 + (prev.faceUp() ? Cards.cardFaceUpHOffset : Cards.cardFaceDownHOffset);
+      else
+        card.left = 0;
+      card.top = 0;
+    };
+
+    elt.fixLayout = function(stack) { this.offset = 0; };
+
   } else {
     elt.getNextCardLeft = function() { return 0; };
     elt.getNextCardTop = function() { return 0; };
@@ -285,7 +307,7 @@ function _createCardPile(elt) {
       card.left = 0;
     };
     elt.fixLayout = function(stack) {
-      // xxx: could reposition all cards to (0,0) hre just to be sure?
+      // xxx: could reposition all cards to (0,0) here just to be sure?
       this.offset = 0;
     };
   }

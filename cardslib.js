@@ -546,8 +546,7 @@ var CardMover = {
   },
 
   step: function() {
-    // returns the numerically smaller of the two values (ignoring sign)
-//    function absMin(num1, num2) { return (Math.abs(num1) < Math.abs(num2)) ? num1 : num2; }
+    // return the shorter distance (if either both are negative or both are positive)
     function absMin(n, m) { return (n<0 ? m<n : n<m) ? n : m; }
     // calculate how far the card has to move
     var xdistance = this.targetLeft - this.cards._left;

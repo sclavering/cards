@@ -7,7 +7,6 @@ Games["montana"] = {
   redeals: 2,
   redealsRemaining: 2,
 
-
   init: function() {
     // label the piles for use by canMoveTo
     for(var i = 0; i < 52; i++) {
@@ -16,9 +15,6 @@ Games["montana"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.getCardDecks(1);
     // replace the aces with nulls
@@ -28,9 +24,6 @@ Games["montana"] = {
     for(var i = 0; i < 52; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveTo: function(card, pile) {
     if(pile.hasChildNodes()) return false;
     if(pile.col==0) return (card.number()==2);
@@ -40,9 +33,6 @@ Games["montana"] = {
     return (last && card.isSameSuit(last) && card.isConsecutiveTo(last));
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     for(var i = 0; i < 52; i++) {
       var card = this.stacks[i].firstChild;
@@ -54,9 +44,6 @@ Games["montana"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
     for(var i = 0; i < 52; i++)
       if(this.canMoveTo(card, this.stacks[i]))
@@ -64,19 +51,14 @@ Games["montana"] = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// redeal
   redeal: function() {
     this.doAction(new MontanaRedealAction());
   },
+  
   canRedeal: function() {
     return this.redealsRemaining != 0;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     var suit, prvcard;
     for(var i = 0; i < 52; i++) {

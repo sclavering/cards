@@ -87,7 +87,7 @@ Games["montana"] = {
     // shuffle
     cards = this.shuffle(cards);
     // deal
-    // in easy games the spaces go at the of rows. in hard games they occur randomly
+    // in easy games the spaces go at the start of rows. in hard games they occur randomly
     var easyGame = hardGame ? 0 : 1;
     for(r = 0, end = 13; r < 4; r++, end+=13) {
       var start = end - map[r].length + easyGame;

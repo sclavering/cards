@@ -38,7 +38,15 @@ Games["mod3"] = {
       cards[i].rowNum = Math.floor((cards[i].number()-2) / 3);
     }
 
-    cards = this.shuffle(cards);
+    // shuffle, and prevent games where that start with no cards in the correct place
+    // on the foundations (because such games are impossible)
+    var impossible = true;
+    while(impossible) {
+      cards = this.shuffle(cards);
+      for(i = 95; impossible && i != 87; i--)
+        if(cards[i].number()==2 || cards[i-8].number()==3 || cards[i-16].number()==4)
+          impossible = false;
+    }
 
     for(i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
     for(i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
@@ -133,9 +141,9 @@ Games["mod3"] = {
 
     if(action=="dealt-from-stock") {
       var score = 0;
-      // how many piles were empty before we dealed?
+      // how many empty piles are we going to fill?
       for(var j = 0; j < 8; j++)
-        if(this.stacks[j].childNodes.length==1) score -= MOD3_EMPTY_TABLEAU;
+        if(!this.stacks[j].hasChildNodes()) score -= MOD3_EMPTY_TABLEAU;
       return score;
     }
 
@@ -143,16 +151,24 @@ Games["mod3"] = {
     var card = actionObj.card, source = actionObj.source;
     switch(action) {
       case "move-to-foundation":
-        // have we created an empty space too?
-        return MOD3_CARD_IN_PLACE + (source.hasChildNodes() ? 0 : MOD3_EMPTY_TABLEAU);
+        // will we create an empty space?
+        // source==card.parentNode for smartMove, but not if the card was dragged.
+        var emptySpace = (source==card.parentNode ? !card.previousSibling : source.hasChildNodes());
+        return MOD3_CARD_IN_PLACE + (emptySpace ? MOD3_EMPTY_TABLEAU : 0);
       case "move-from-foundation":
-        // are we moving the card out of position too?
-        return -MOD3_EMPTY_TABLEAU - (this.canMoveTo(card,source) ? MOD3_CARD_IN_PLACE : 0);
+        // will we be moving the card out of position too?
+        return -MOD3_EMPTY_TABLEAU - (source.baseCardInPlace() ? MOD3_CARD_IN_PLACE : 0);
       case "move-between-piles":
-        // have we used up an empty space, or just moved the card from one to another?
-        if(source.isNormalPile) return source.hasChildNodes() ? -MOD3_EMPTY_TABLEAU : 0;
-        // was the card already in a good place?
-        return this.canMoveTo(card,source) ? 0 : MOD3_CARD_IN_PLACE;
+        if(source.isFoundation) {
+          // is the card in place already?
+          // again, we have to handle both drag+drop and smart move, so |card| might or might
+          // not still be a child of |source|
+          if((!source.hasChildNodes() && card.rowNum===0) || source.baseCardInPlace()) return 0;
+          return MOD3_CARD_IN_PLACE;
+        }
+        // have we used up an empty space, or just moved the card from one space to another?
+        if(source==card.parentNode ? !!card.previousSibling : !source.hasChildNodes()) return 0;
+        return -MOD3_EMPTY_TABLEAU;
     }
 
     // just in case

@@ -152,10 +152,10 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       <stock id="doublesol-stock"/><flex/>
       <waste id="doublesol-waste"/><flex/>
       <pilespacer/><flex/>
-      <foundation id="doublesol-foundation-0"/><flex/>
-      <foundation id="doublesol-foundation-1"/><flex/>
-      <foundation id="doublesol-foundation-2"/><flex/>
-      <foundation id="doublesol-foundation-3"/><flex/>
+      <foundation id="doublesol-foundation-0" class="doublesol-foundation"/><flex/>
+      <foundation id="doublesol-foundation-1" class="doublesol-foundation"/><flex/>
+      <foundation id="doublesol-foundation-2" class="doublesol-foundation"/><flex/>
+      <foundation id="doublesol-foundation-3" class="doublesol-foundation"/><flex/>
     </hbox>
     <rowspacer/>
     <hbox>

@@ -454,6 +454,30 @@ var pileProperties = {
         card = next;
       }
     }
+  },
+
+  // makes the top *two* cards visible, so you can tell if they have the same number
+  "doublesol-foundation": {
+    __proto__: basicPileProperties,
+
+    addCards: function(card) {
+      var l = this.lastChild;
+      if(l) l.left = l._left = 0;
+      while(card) {
+        var nxt = card.nextSibling;
+        this.appendChild(card);
+        card.top = card.left = card._top = card._left = 0;
+        card = nxt;
+      }
+      var n = this.lastChild;
+      n.left = n._left = l ? gVFanOffset : 0;
+      n.top = n._top = 0;
+    },
+
+    fixLayout: function() {
+      var l = this.lastChild;
+      if(l) l.left = l._left = gVFanOffset;
+    }
   }
 };
 
@@ -514,6 +538,14 @@ var pileGetters = {
 
     nextCardTop: function() {
       return this.hasChildNodes() ? this.lastChild._top + gVFanOffset : 0;
+    }
+  },
+
+  "doublesol-foundation": {
+    __proto__: basicPileGetters,
+
+    nextCardLeft: function() {
+      return this.hasChildNodes() ? gVFanOffset : 0;
     }
   }
 };

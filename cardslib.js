@@ -230,9 +230,7 @@ var cardMethods = {
     return (thisnum>=number);
   },
 
-  // other methods
   moveTo:     function(targetPile) { CardMover.move(this,targetPile); },
-  transferTo: function(targetPile) { targetPile.addCards(this); },
 
   // card turning
   setFaceUp: function() {

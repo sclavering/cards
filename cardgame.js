@@ -448,13 +448,13 @@ var BaseCardGame = {
   dealCardTo: function(destination) {
     var card = this.stock.lastChild;
     card.setFaceUp();
-    card.transferTo(destination);
+    destination.addCards(card);
   },
 
   undealCardFrom: function(source) {
     var card = source.lastChild;
     card.setFaceDown();
-    card.transferTo(this.stock);
+    this.stock.addCards(card);
   },
 
 

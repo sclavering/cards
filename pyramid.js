@@ -95,11 +95,11 @@ PyramidMoveAction.prototype = {
   synchronous: true,
 
   perform: function() {
-    this.c1.transferTo(Game.foundation);
-    if(this.c2) this.c2.transferTo(Game.foundation);
+    Game.foundation.addCards(this.c1);
+    if(this.c2) Game.foundation.addCards(this.c2);
   },
   undo: function(undo) {
-    if(this.c2) this.c2.transferTo(this.p2);
-    this.c1.transferTo(this.p1);
+    if(this.c2) this.p2.addCards(this.c2);
+    this.p1.addCards(this.c1);
   }
 }

@@ -132,9 +132,9 @@ MoveAction.prototype = {
     this.card.moveTo(this.destination);
   },
   undo: function() {
-    this.card.transferTo(this.source);
+    this.source.addCards(this.card);
   },
   redo: function() {
-    this.card.transferTo(this.destination);
+    this.destination.addCards(this.card);
   }
 }

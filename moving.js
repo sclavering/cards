@@ -102,7 +102,7 @@ var CardMover2 = {
     var highlighter = this.highlighter;
     highlighter.highlight(card);
     setTimeout(function() {
-      card.transferTo(to);
+      to.addCards(card);
       highlighter.highlight(card);
       setTimeout(function() {
         highlighter.unhighlight();

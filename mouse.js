@@ -89,7 +89,7 @@ MouseHandlers["drag+drop"] = {
       // property to retrieve original source of cards. for most
       // piles |source| is a pointer back to the pile itself.
       this.cards.source = card.parentNode.source;
-      card.transferTo(this.cards);
+      this.cards.addCards(card);
       // other stuff
       this.dragInProgress = true;
       this.tx = e.pageX - this.cards.left;
@@ -126,7 +126,7 @@ MouseHandlers["drag+drop"] = {
     this.cards.hide();
 
     // move cards back
-    if(!success) card.transferTo(source);
+    if(!success) source.addCards(card);
   },
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),

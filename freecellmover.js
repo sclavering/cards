@@ -105,7 +105,7 @@ FreeCellMoveAction.prototype = {
     FreeCellMover.move(this.card, this.destination, this.cells, this.spaces);
   },
   undo: function() {
-    this.card.transferTo(this.source);
+    this.source.addCards(this.card);
   }
 }
 

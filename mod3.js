@@ -1,5 +1,6 @@
 // Scoring constants:
-const CARD_IN_PLACE = 10, EMPTY_TABLEAU = 5;
+const MOD3_CARD_IN_PLACE = 10, MOD3_EMPTY_TABLEAU = 5;
+const MOD3_MAX_SCORE = (96*MOD3_CARD_IN_PLACE + 8*MOD3_EMPTY_TABLEAU);
 
 var Mod3 =
 Games["mod3"] = {
@@ -11,9 +12,15 @@ Games["mod3"] = {
   init: function() {
     this.stockDealTargets = this.stacks;
     var i;
-    for(i = 0;  i < 8;  i++) this.foundations[i].baseCard = 2;
-    for(i = 8;  i < 16; i++) this.foundations[i].baseCard = 3;
-    for(i = 16; i < 24; i++) this.foundations[i].baseCard = 4;
+    for(i = 0;  i < 8;  i++) this.foundations[i].baseNumber = 2;
+    for(i = 8;  i < 16; i++) this.foundations[i].baseNumber = 3;
+    for(i = 16; i < 24; i++) this.foundations[i].baseNumber = 4;
+    for(i = 0;  i < 8;  i++) this.foundations[i].row = 0;
+    for(i = 8;  i < 16; i++) this.foundations[i].row = 1;
+    for(i = 16; i < 24; i++) this.foundations[i].row = 2;
+    for(i = 0; i < 24; i++) this.foundations[i].baseCardInPlace = function() {
+      return (this.hasChildNodes() && this.firstChild.number()==this.baseNumber);
+    };
   }
 };
 
@@ -30,66 +37,41 @@ Mod3.deal = function() {
   cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
   cards.splice(13,1); cards.splice(0, 1);
 
-  this.clearGame();
-  var possible = false;
-  while( !possible ){ // Deal until we get came with at least a sporting chance
-    var cardindex = cards.length - 1;
-    cards = this.shuffle(cards);
-    this.score = 0;
-    var inplace = new Array(3); // three target rows
-    var inplay = new Array(3);
-    for(var targetRow = 0; targetRow <3; targetRow++ ){
-      inplace[targetRow] = Array(4); // four suits
-      inplay[targetRow] = Array(4);
-    }
-    for(var row = 0; row <3; row++){
-      for(i = 0; i < 8; i++){
-        var currCard = cards[cardindex--];
-        if( currCard.number() == row+2 ){
-          inplace[row][currCard.suit()-SPADE] = true;
-          this.score += CARD_IN_PLACE;
-        } else {
-          inplay[((currCard.number()-2)%3)][currCard.suit()-SPADE] = true;
-        }
-      }
-    }
-
-    // We have cards in place but still need cards to play on them
-    for(var base = 0; base<3; base++){
-      for(var suit = SPADE; suit <= CLUB; suit++){
-        // XXX js strict warnings here
-        if( inplace[base][suit] && inplay[base][suit] ){
-          possible = true; // yeah!
-          break;
-        }
-      }
-    }
+  for(i = 0; i < 96; i++) {
+    // the row this card should end up in
+    cards[i].row = i % 3;
+    // a renumbering of cards so that all foundations are built 0,1,2,3,
+    // i.e. 2==0, 5==1, 8==2, J==3 in row 0, and similar in the other rows
+    cards[i].rowNum = Math.floor((cards[i].number()-2) / 3);
   }
-  // Now that we have ok cards, deal them out
+
+  cards = this.shuffle(cards);
+
   for(i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
   for(i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
   this.dealToStack(cards,this.stock,cards.length,0);
-  this.updateScoreDisplay();
+
+  // set the initial score
+  for(i = 0; i < 24; i++) {
+    var f = this.foundations[i];
+    if(f.firstChild.number()==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
+  }
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// Moving
-Mod3.canMoveCard = function(card) {
-  if(card.parentNode.length == 4) return false; // Pile is done.
-  return (card.faceUp() && card.isLastOnPile());
-};
+Mod3.rule_canMoveCard = "last-on-pile";
+Mod3.rule_canMoveToPile = "isempty";
 
-Mod3.canMoveTo = function(card, stack) {
+Mod3.canMoveToFoundation = function(card, stack) {
   if(card.parentNode == stack) return false;
-  // anything may be moved into an empty space in 4th row (row 3)
-  if(!stack.isFoundation) return !stack.hasChildNodes();
   // row 2 has 2,5,8,J in it,  row 3 has 3,6,9,Q,  row 4 has 4,7,10,K
-  var row = stack.baseCard;
-  if(!stack.hasChildNodes()) return (card.number()==row);
-  return (card.isSameSuit(stack.lastChild) && card.number()==stack.lastChild.number()+3
-    && stack.firstChild.number()==row);
+  if(!stack.hasChildNodes()) return (card.row==stack.row && card.rowNum===0);
+//  if(!stack.hasChildNodes()) return (card.number()==stack.baseNumber);
+  var last = stack.lastChild;
+  return (card.isSameSuit(last) && card.number()==last.number()+3 && stack.baseCardInPlace());
 };
 
 
@@ -97,156 +79,128 @@ Mod3.canMoveTo = function(card, stack) {
 ///////////////////////////////////////////////////////////
 //// hint
 Mod3.getHints = function() {
-  for(var i = this.allstacks.length-1; i >=0; i--) {
-    if(this.allstacks[i]==this.stock) continue;
-    var card = this.allstacks[i].lastChild ;
-    var targets = this.findTargets(card);
-    for(var j = 0; j < targets.length; j++){
-      var onCard = targets[j].lastChild;
-      // cases where the hint would be useful are:
-      //  - the target is an empty stack in another row that isn't the tableau
-      //    (this applies for 2,3,4's, prevents us from hinting the card along the row)
-      if((!onCard && card.parentNode.parentNode!=targets[j].parentNode && targets[j].isFoundation)
-         || (onCard && // Moving to a card...
-            // From nothing..      or from a different card
-            (!card.previousSibling || card.previousSibling.className!=onCard.className))){
-        this.addHint(card, targets[j]);
+  for(var i = this.allstacks.length-1; i >= 0; i--) {
+    var pile = this.allstacks[i];
+    if(pile.isStock || !pile.hasChildNodes()) continue;
+
+    var card = pile.lastChild;
+    var rowStart = card.row * 8, rowEnd = rowStart + 8;
+
+    for(var j = rowStart; j < rowEnd; j++) {
+      var target = this.foundations[j];
+      // hints are useful if:
+      //  - the target is an empty pile in a *different* row of the foundations (so we don't suggest
+      //    moving a 2, 3, or 4 along a row) (this case covers the hints from the bottom row too)
+      //  - the target is nonempty, and the source is the only card in its pile
+      if(this.canMoveTo(card,target)
+          && (target.hasChildNodes() ? !card.previousSibling : pile.parentNode!=target.parentNode)) {
+        this.addHint(card, target);
       }
-      // Otherwise while legal, the move doesn't buy you a lot...
     }
   }
-};
-
-// searches the foundation (only!) for a place to put the card
-Mod3.findTargets = function(card) {
-  if(!card) return [];
-  var targets = [];
-  var row = (card.number() - 2) % 3;
-  for(var j = row*8; j < (row*8+8); j++) {
-    var stack = this.foundations[j];
-    if(this.canMoveTo(card,stack)) targets.push(stack);
-  }
-  return targets;
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// smart move
-Mod3.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
-  var targets = this.findTargets(card);
-  if(targets.length) {
-    this.moveTo(card,targets[0]);
-    return true;
-  } else {
-    // try and move to an empty space in the 4th row
-    for(var j = 0; j < 8; j++) {
-      if(!this.stacks[j].hasChildNodes()) {
-        this.moveTo(card,this.stacks[j]);
-        return true;
-      }
-    }
+Mod3.getBestMoveForCard = function(card) {
+  var i;
+  // to a foundation
+  var rowStart = card.row * 8, rowEnd = rowStart + 8;
+  for(i = rowStart; i < rowEnd; i++) {
+    var pile = this.foundations[i];
+    if(this.canMoveTo(card,pile)) return pile;
   }
-  return false;
+  // or to a space in the 4th row
+  var parent = card.parentNode;
+  var piles = parent.isNormalPile ? this.getPilesRound(parent) : this.stacks;
+  for(i = 0; i < piles.length; i++)
+    if(!piles[i].hasChildNodes())
+      return piles[i];
+  return null;
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// Autoplay
-// Try to automate some moves, but not all of them
-Mod3.autoplayMove = function (){
+Mod3.autoplayMove = function() {
   for(var i = 0; i < 8; i++) {
     var card = this.stacks[i].lastChild;
     if(!card) continue;
 
-    var targets = this.findTargets(card);
-    if(targets.length==0) continue;
+    var rowStart = card.row * 8, rowEnd = rowStart + 8;
+    var target = null;
+    var f, c, ok;
 
-    // It's a pain when stuff automoves and you have to undo, so
-    // to be conservative we'll limit ourselves to the patently obvious...
-    for(var j = 0; j < targets.length; j++) {
-      if(this.goodAutoMove(card, targets[j])) {
-        this.moveTo(card,targets[j]);
-        return true;
+    if(card.rowNum===0) {
+      // we want to move it to an empty space, but only if there are no stray cards in the row
+      // (otherwise we should leave the user to choose which specific cards to put in the spaces)
+      ok = true;
+      for(c = rowStart; ok && c < rowEnd; c++) {
+        f = this.foundations[c];
+        if(f.hasChildNodes()) { if(f.firstChild.number()!=f.baseNumber) ok = false; }
+        else if(!target) target = f;
+      }
+    } else {
+      // find where to move |card| to, and check that the other foundation on the row for the
+      // same suit has reached at least the same height
+      ok = false;
+      for(c = rowStart; !target && c < rowEnd; c++) {
+        f = this.foundations[c];
+        if(this.canMoveTo(card, f)) target = f;
+      }
+      for(c = rowStart; !ok && c < rowEnd; c++) {
+        f = this.foundations[c];
+        var last = f.lastChild;
+        if(f!=target && f.baseCardInPlace() && last.isSameSuit(card)
+            && last.rowNum>=card.rowNum-1) ok = true;
       }
     }
-  }
-  return false;
-};
 
-Mod3.goodAutoMove = function(card, target) {
-  var c;
-  var row = (target.baseCard-2)*8;
-  var targCard = target.lastChild;
-  if(!targCard) { // We are considering a move to an empty foundation pile
-    for(c = row + 7; c >= row; c--) {
-      if(this.foundations[c].lastChild && !this.isInPlace(this.foundations[c])) return false;
-    }
-    // Every slot was empty or in place
+    if(!ok || !target) continue;
+    this.moveTo(card, target);
     return true;
   }
-  // Moving on top of another card
-  // Allow move if there is an equal or larger target in the row already
-  for(c = row + 7; c >= row; c--) {
-    var compCard = this.foundations[c].lastChild;
-    // If are an
-    if(this.foundations[c]==target) continue; // Of course that one is there...
-    if(!compCard ||                   // if its empty or
-       !compCard.isSameSuit(card) ||  // different suit or
-       !this.isInPlace(compCard))     // out of order, we can't get an OK
-      continue;
-    // Same suit and in place
-    return (compCard.number()>=targCard.number());
-  }
   return false;
-};
-// True if there is a point scoring card in this spot
-Mod3.isInPlace = function(stack) {
-  if(stack.isCard) stack = stack.parentNode;
-  return (stack.isFoundation && stack.hasChildNodes() && stack.firstChild.number()==stack.baseCard);
 };
 
 
 
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
-
-// const CARD_IN_PLACE and EMPTY_TABLEAU defined at top
-
 Mod3.hasBeenWon = function() {
-  // Well, have we got all the points?
-  return (this.score==(96*CARD_IN_PLACE + 8*EMPTY_TABLEAU));
+  return (this.score==MOD3_MAX_SCORE);
 };
 
 Mod3.getScoreForAction = function(action, card, source) {
-  var score = 0;
-  if(action=="move-from-foundation") {
+  switch(action) {
+  case "move-from-foundation":
     // Moving out of position
-    if(this.canMoveTo(card, source)) return (0 - CARD_IN_PLACE - EMPTY_TABLEAU);
+    if(this.canMoveTo(card, source)) return (0 - MOD3_CARD_IN_PLACE - MOD3_EMPTY_TABLEAU);
     // Just taking up a slot
-    return (0 - EMPTY_TABLEAU);
-  }
-  if(action=="move-to-foundation") {
-    if(!source.firstChild) return CARD_IN_PLACE + EMPTY_TABLEAU; // Emptied a slot
-    return CARD_IN_PLACE; // Only put a card in position
-  }
-  if(action=="move-between-piles") {
+    return (0 - MOD3_EMPTY_TABLEAU);
+
+  case "move-to-foundation":
+    if(!source.firstChild) return MOD3_CARD_IN_PLACE + MOD3_EMPTY_TABLEAU; // Emptied a slot
+    return MOD3_CARD_IN_PLACE; // Only put a card in position
+
+  case "move-between-piles":
     if(source.isFoundation) {
       // Move from dealt postion to valid one
-      if(!this.canMoveTo(card, source)) return CARD_IN_PLACE;
+      if(!this.canMoveTo(card, source)) return MOD3_CARD_IN_PLACE;
       return 0;  // Moving from valid to valid foundation
     }
-    if(source.firstChild) return (0 - EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
+    if(source.firstChild) return (0 - MOD3_EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
     return 0; // Moving from one empty tableau to another
-  }
-  if(action=="dealt-from-stock") {
-    // This gets called after the deal - figure out how many piles were covered
-    for(var j = 0; j < 8; j++ ) {
-      // if this was filled
-      if(this.stacks[j].childNodes.length==1) score -= EMPTY_TABLEAU;
-    }
+
+  case "dealt-from-stock":
+    var score = 0;
+    // how many piles were empty before we dealed?
+    for(var j = 0; j < 8; j++)
+      if(this.stacks[j].childNodes.length==1)
+        score -= MOD3_EMPTY_TABLEAU;
     return score;
   }
   return 0;

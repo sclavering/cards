@@ -14,7 +14,11 @@ function initPile(elt) {
   // for the floating pile |source| is set to the pile the cards originally came from.
   elt.source = elt;
 
-  var ms = pileProperties[elt.className] || basicPileProperties;
+  var ms = PileTypes[elt.className] || basicPileProperties;
+  // make pile inherit from basic pile
+  if(ms!=basicPileProperties && ms.__proto__==Object.prototype)
+    ms.__proto__ = basicPileProperties;
+
   for(var m in ms) {
     var getter = ms.__lookupGetter__(m);
     if(getter) elt.__defineGetter__(m, getter);
@@ -98,7 +102,7 @@ var basicPileProperties = {
 };
 
 
-var pileProperties = {
+var PileTypes = {
   "fan-down": {
     addCard: function(card) {
       this.appendChild(card);
@@ -222,7 +226,7 @@ var pileProperties = {
 };
 
 
-for(var ppi in pileProperties) pileProperties[ppi].__proto__ = basicPileProperties
-pileProperties.foundation8 = pileProperties.foundation4;
+//for(var ppi in PileTypes) PileTypes[ppi].__proto__ = basicPileProperties
+PileTypes.foundation8 = PileTypes.foundation4;
 
 

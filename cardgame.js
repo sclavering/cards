@@ -397,10 +397,17 @@ var BaseCardGame = {
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
     if(!card.parentNode.mayTakeCard(card)) return false;
+    var f = this.getFoundationMoveFor(card);
+    if(!f) return false;
+    this.moveTo(card, f);
+    return true;
+  },
+
+  // xxx much better versions of this should be possible in most games
+  getFoundationMoveFor: function(card) {
     const fs = this.foundations, len = fs.length;
-    for(var i = 0; i != len; i++)
-      if(fs[i].mayAddCard(card)) return this.moveTo(card, fs[i])
-    return false;
+    for(var i = 0, f = fs[0]; i != len; f = fs[++i]) if(f.mayAddCard(card)) return f;
+    return null;
   },
 
 

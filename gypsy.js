@@ -14,7 +14,6 @@ var GypsyBase = {
   init: function() {
     const fs = this.foundations;
     for(var i = 0; i != 4; i++) fs[i].twin = fs[i+4], fs[i+4].twin = fs[i];
-    this.init2();
   },
 
   deal: function(cards) {
@@ -32,25 +31,24 @@ var GypsyBase = {
 
   getBestMoveForCard: "legal nonempty, or empty",
 
-  sendToFoundations: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return false;
-    if(card.isAce) return this.sendAceToFoundations(card);
-    const fs = this.foundations;
-    for(var i = 0; i != fs.length; i++)
-      if(fs[i].mayAddCard(card))
-        return this.moveTo(card, fs[i]);
-    return false;
-  },
-  sendAceToFoundations: function(ace) {
-    var twinp = ace.twin.parentNode;
-    var f = twinp.isFoundation && !twinp.twin.hasChildNodes() ? twinp.twin : this.firstEmptyFoundation;
-    this.moveTo(ace, f);
-    return true;
+  getFoundationMoveFor: function(card) {
+    if(card.isAce) {
+      var twinp = card.twin.parentNode;
+      return twinp.isFoundation && !twinp.twin.hasChildNodes() ? twinp.twin : this.firstEmptyFoundation;
+    }
+    var down = card.down, c = down;
+    do {
+      var p = c.parentNode;
+      if(p.isFoundation && !c.nextSibling) return p;
+      c = c.twin;
+    } while(c != down);
+    return null;
   },
 
   autoplayMove: function() {
+    const ps = this.piles;
     for(var i = 0; i != 8; i++) {
-      var last = this.piles[i].lastChild;
+      var last = ps[i].lastChild;
       if(last && last.mayAutoplay && this.sendToFoundations(last)) return true;
     }
     return false;
@@ -68,11 +66,13 @@ var GypsyBase = {
 
 AllGames["gypsy-easy"] = {
   __proto__: GypsyBase,
+
   id: "gypsy-easy",
-//  cards: [[SPADE, HEART], 4]
+
+  cards: [[SPADE, HEART], 4],
 
   init2: function() {
-    var cs = this.cards = makeCardSuits([SPADE, HEART], 4);
+    const cs = this.cards;
     for(var i = 0, n = 0; i != 8; i++) {
       n++;
       for(var j = 1; j != 13; j++, n++) {
@@ -94,11 +94,13 @@ AllGames["gypsy-easy"] = {
 
 AllGames["gypsy"] = {
   __proto__: GypsyBase,
+
   id: "gypsy",
-//  cards: 2
+
+  cards: 2,
 
   init2: function() {
-    var cs = this.cards = makeDecks(2);
+    const cs = this.cards;
 
     const off1 = [13, 26, 13, 26, 13, 26, 13, -78];
     const off2 = [26, 39, 26, 39, 26, -65, -78, -65];

@@ -41,6 +41,7 @@
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>
 <script type="application/x-javascript" src="tripeaks.js"/>
+<script type="application/x-javascript" src="unionsquare.js"/>
 <script type="application/x-javascript" src="whitehead.js"/>
 <script type="application/x-javascript" src="yukon.js"/>
 
@@ -949,6 +950,48 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       </vbox><flex2/>
     </hbox>
   </vbox>
+
+  <hbox id="unionsquare" hidden="true" class="game">
+      <flex2/>
+      <vbox>
+        <stock id="unionsquare-stock"/>
+        <rowspacer/>
+        <waste id="unionsquare-waste"/>
+      </vbox>
+      <flex2/>
+      <vbox>
+        <pile class="unionsquare" id="unionsquare-pile-0"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-4"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-8"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-12"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="unionsquare" id="unionsquare-pile-1"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-5"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-9"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-13"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="unionsquare" id="unionsquare-pile-2"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-6"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-10"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-14"/>
+      </vbox><flex/>
+      <vbox>
+        <pile class="unionsquare" id="unionsquare-pile-3"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-7"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-11"/><rowspacer/>
+        <pile class="unionsquare" id="unionsquare-pile-15"/>
+      </vbox>
+      <flex2/>
+      <vbox>
+        <foundation class="unionsquare-f" id="unionsquare-foundation-0"/><rowspacer/>
+        <foundation class="unionsquare-f" id="unionsquare-foundation-1"/><rowspacer/>
+        <foundation class="unionsquare-f" id="unionsquare-foundation-2"/><rowspacer/>
+        <foundation class="unionsquare-f" id="unionsquare-foundation-3"/>
+      </vbox>
+      <flex2/>
+  </hbox>
 
   <!-- Yukon, Russian Solitaire (formerly known as Grandfather) -->
   <vbox id="yukon" hidden="true" class="game">

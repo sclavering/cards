@@ -259,8 +259,15 @@ var Rules = {
   hasBeenWon: {
     "13 cards on each foundation":
     function() {
-      var fs = this.foundations;
-      for(var i = 0; i != fs.length; i++) if(fs[i].childNodes.length!=13) return false;
+      const fs = this.foundations, num = fs.length;
+      for(var i = 0; i != num; i++) if(fs[i].childNodes.length!=13) return false;
+      return true;
+    },
+
+    "26 cards on each foundation":
+    function() {
+      const fs = this.foundations, num = fs.length;
+      for(var i = 0; i != num; i++) if(fs[i].childNodes.length!=26) return false;
       return true;
     },
 

@@ -100,12 +100,7 @@ AllGames.doublesol = {
     return false;
   },
 
-  hasBeenWon: function() {
-    for(var i = 0; i != 4; i++)
-      if(this.foundations[i].childNodes.length!=26)
-        return false;
-    return true;
-  },
+  hasBeenWon: "26 cards on each foundation",
 
   scores: {
     "->foundation": 10,

@@ -35,7 +35,19 @@ AllGames.acesup = {
 
   mayAddCardToPile: "if empty",
 
-  // no hints for this game
+  getHints: function() {
+    const ps = this.piles, f = this.foundation;
+    for(var i = 0; i != 4; i++) {
+      var c = ps[i].lastChild;
+      if(c && f.mayAddCard(c)) this.addHint(c, f);
+    }
+    const p = this.firstEmptyPile;
+    if(!p) return;
+    for(i = 0; i != 4; i++) {
+      c = ps[i].lastChild;
+      if(c) this.addHint(c, p);
+    }
+  },
 
   getBestMoveForCard: function(card) {
     const f = this.foundation;

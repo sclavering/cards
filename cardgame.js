@@ -457,9 +457,9 @@ var BaseCardGame = {
     if(this.hintSources.length == 0) return;
     var src = this.hintSources[this.hintNum];
     var dest = this.hintDestinations[this.hintNum];
-    HintHighlighter.showHint(src,dest);
+    gHintHighlighter.showHint(src,dest);
     this.hintNum++;
-    this.hintNum %= this.hintSources.length;
+    if(this.hintNum==this.hintSources.length) this.hintNum = 0;
   },
 
   getHints: function() {

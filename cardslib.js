@@ -17,6 +17,7 @@ var Games = [];   // all the games, indexed by id
 
 var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
 
+var gHintHighlighter = null;
 
 // xxx these need to become cardset dependent
 var gYOffsetFromFaceDownCard = 5; // num pixels between top edges of two face down cards
@@ -58,7 +59,16 @@ function init() {
   // init other stuff
   initMouseHandlers();
   CardMover.init();
-  HintHighlighter.init();
+  
+  gHintHighlighter = createHighlighter();
+  gHintHighlighter.showHint = function(from, to) {
+    to = to.lastChild || to; // |to| could be a stack
+    Cards.disableUI();
+    this.highlight(from);
+    var thisthis = this; // because |this| within these functions would refer to the wrong thing
+    setTimeout(function(){thisthis.highlight(to);}, 400);
+    setTimeout(function(){thisthis.unhighlight();Cards.enableUI();}, 800);
+  };
 
   // build the games menu
   var menu = document.getElementById("menupopup-gametypes");
@@ -444,8 +454,6 @@ function createHighlighter() {
 
 
 
-
-
 /** CardTurner
   *
   * Handles the animated turning-face-up of cards.
@@ -491,12 +499,6 @@ var CardTurner = {
 
 
 
-
-
-
-
-
-
 /** CardMover
   *
   * handles moving cards between stacks
@@ -506,16 +508,13 @@ var CardTurner = {
   *
   * move(card,target) - animated move of card and all cards on top of it to target
   *   call via card.moveTo(target) instead
-  *
-  * init() - called by application onload handler,
   */
 var CardMover = {
-  cards: null, // object being moved by animatedMoveObject
+  cards: null, // a <stack/> to hold the cards being moved
   target: null, // where its going to
   interval: null, // ref to the window.setInterval triggering the animation
   targetTop: 0, // coords where the card should end up (incl offset into pile)
   targetLeft: 0,
-  moveStack: null, // a <stack/> element that holds cards during moves. used to be created+destroyed as needed
 
   init: function() {
     // class doesn't need to be flexible yet
@@ -585,47 +584,6 @@ var CardMover = {
     }
   }
 }
-
-
-
-
-
-
-/** HintHighlighter
-  *
-  * This is used to indicate the card to be moved and the destination for hints
-  * Hints are indicated by placing a translucent rectangle round the source, then the target
-  *
-  * showHint(from, to) - "from" is the card to move, "to" is a card or stack
-  */
-var HintHighlighter = {
-  highlighter: null,
-  destination: null,
-
-  init: function() {
-    this.highlighter = createHighlighter();
-  },
-
-  showHint: function(from, to) {
-    Cards.disableUI();
-    // for when hint destination is really a stack
-    this.destination = to.hasChildNodes() ? to.lastChild : to;
-    this.highlighter.highlight(from);
-    setTimeout(function(){HintHighlighter.highlightDestination();}, 400);
-  },
-
-  highlightDestination: function() {
-    this.highlighter.highlight(this.destination);
-    setTimeout(function(){HintHighlighter.highlightComplete();}, 400);
-  },
-
-  highlightComplete: function() {
-    this.highlighter.unhighlight();
-    Cards.enableUI();
-  }
-}
-
-
 
 
 

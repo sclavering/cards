@@ -17,6 +17,9 @@ Games["montana"] = {
       this.stacks[i].col = i % 13;
     }
     this.canMoveToPile = this.canMoveTo;
+
+    var p = this.stacks;
+    this.rows = [p.slice(0,13), p.slice(13,26), p.slice(26,39), p.slice(39,52)];
   },
 
   deal: function() {
@@ -87,61 +90,52 @@ MontanaRedealAction.prototype = {
     var hardGame = (Game.difficultyLevel==2);
     Game.redealsRemaining--;
     var cards = [];
-    var map = new Array(4);
-    var r, s, end; // r=row, s=stacknum
+    var map = this.map = [[],[],[],[]];
+    var rows = Game.rows;
+
     // remove cards
-    for(r = 0, s = 0; r < 4; r++, s = 13 * r) {
-      var c = 0;
-      while(this.isPileComplete(s) && c<13) s++, c++;
-      map[r] = new Array(13 - c);
-      for(var j = 0; j < 13 - c; j++) {
-        var card = Game.stacks[s+j].firstChild;
+    for(var r in rows) {
+      var row = rows[r];
+      var c = 0, pile = row[0], prv = null;
+      while(this.isPileComplete(pile, prv)) c++, prv = pile, pile = row[c];
+
+      for(; c != 13; c++) {
+        var card = row[c].lastChild;
         if(card) card.parentNode.removeChild(card);
         // in hard games we want the null's in the array too
         if(card || hardGame) cards.push(card);
-        map[r][j] = card;
+        map[r].push(card);
       }
     }
+
     // shuffle
     cards = shuffle(cards);
-    // deal
-    // in easy games the spaces go at the start of rows. in hard games they occur randomly
-    var easyGame = hardGame ? 0 : 1;
-    for(r = 0, end = 13; r < 4; r++, end+=13) {
-      var start = end - map[r].length + easyGame;
-      // dealToStack does the right thing when there are nulls in |cards|
-      for(s = start; s < end; s++) Game.dealToStack(cards, Game.stacks[s], 0, 1);
-    }
-    // track
-    this.map = map;
+
+    // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
+    var easy = hardGame ? 0 : 1;
+    for(r in rows)
+      for(c = 13 - map[r].length + easy; c != 13; c++)
+        Game.dealToStack(cards, rows[r][c], 0, 1);
   },
-  isPileComplete: function(num) {
-    var pile = Game.stacks[num];
+
+  isPileComplete: function(pile, prv) {
     var card = pile.lastChild;
     if(!card) return (pile.col==12);
     if(pile.col==0) return (card.number==2);
-    var prvcard = Game.stacks[num-1].lastChild;
+    var prvcard = prv.lastChild;
     return (card.isSameSuit(prvcard) && card.isConsecutiveTo(prvcard));
   },
 
   undo: function() {
-    var map = this.map;
+    var map = this.map, rows = Game.rows;
     Game.redealsRemaining++;
-    var r, j;
-    // remove whatever's there now
-    for(r = 0; r < 4; r++) {
-      var start = 13 * r;
-      for(j = 13 - map[r].length; j < 13; j++) {
-        var stack = Game.stacks[start+j];
-        if(stack.hasChildNodes()) stack.removeChild(stack.lastChild);
-      }
-    }
-    // restore layout from before the redeal
-    for(r = 0; r < 4; r++) {
-      var offset = 13 * (r + 1) - map[r].length;
-      for(j = 0; j < map[r].length; j++) {
-        if(map[r][j]) Game.stacks[offset+j].addCard(map[r][j]);
-      }
+
+    // the DOM spec. says that appendChild will remove the new child from its current parent if necessary,
+    // so we needn't bother clearing the current layout before starting to restore the old.
+    for(var r in rows) {
+      var co = 13 - map[r].length; // map[r][0..n] maps to row[r][(13-n)..13]
+      for(var c = 0; c != map[r].length; c++)
+        if(map[r][c]) rows[r][c+co].addCard(map[r][c]);
     }
   }
 }

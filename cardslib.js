@@ -526,15 +526,15 @@ var MouseHandler1 = {
 
     var t = e.target;
     if(e.button==1) {
-    if(e.target.isCard) Game.smartMove(e.target);
+      if(t.isCard) Game.smartMove(t);
     // right click should be showCard() ?
     } else if(e.button==0) {
       if(t.isCard) {
-        if(Game.stock && t.parentNode==Game.stock) Game.dealFromStock();
+        if(t.parentNode.isStock) Game.dealFromStock();
         else if(t.faceDown()) Game.revealCard(t);
         else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
       } else {
-         if(Game.stock && t==Game.stock) Game.dealFromStock();
+        if(t.isStock) Game.dealFromStock();
       }
     }
   }

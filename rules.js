@@ -19,6 +19,22 @@ mayTakeCard:
 
 mayAddCard:
 (used for mayAddCardToFoundation etc.)
+  "yes"
+  "no"
+  "if empty"
+
+  // for ordinary piles
+  "onto .up"
+  "onto .up, kings in spaces"
+  "down"
+  "down, opposite colour"
+  "down and different colour, king in space"
+
+  // for foundations
+  "single card, up in suit or ace in space"
+  "canfield/penguin"
+  "13 cards"
+  "king->ace flush"
 
 dealFromStock:
   "to waste"

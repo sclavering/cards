@@ -11,14 +11,15 @@ function filter(list, test) {
   return result;
 }
 
+// requires the row of piles to be sibling DOM nodes
 function getPilesRound(pile) {
   if("surroundingPiles" in pile) return pile.surroundingPiles;
 
   var piles = [];
   var left = pile, right = pile;
   while(true) {
-    left = nextStackLeft(left);
-    right = nextStackRight(right);
+    left = nextPileLeft(left);
+    right = nextPileRight(right);
     if(!left && !right) break;
     if(left) piles.push(left);
     if(right) piles.push(right);
@@ -26,14 +27,13 @@ function getPilesRound(pile) {
   pile.surroundingPiles = piles;
   return piles;
 }
-// these rely on a row of stacks being sibing nodes, so XUL should be set up appropriately
-function nextStackLeft(stack) {
+function nextPileLeft(stack) {
   if(!stack) return null;
   for(var n = stack.previousSibling; n; n = n.previousSibling)
     if(("isPile" in n) && n.isPile) return n;
   return null;
 }
-function nextStackRight(stack) {
+function nextPileRight(stack) {
   if(!stack) return null;
   for(var n = stack.nextSibling; n; n = n.nextSibling)
     if(("isPile" in n) && n.isPile) return n;

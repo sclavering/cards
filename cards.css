@@ -16,22 +16,22 @@ toolbargrippy { display:none; } /* die grippies, die! */
 #games { overflow: hidden; }
 
 
-.message {
+#message {
   -moz-box-orient: vertical;
   -moz-box-align: center;
   -moz-box-pack: center;
   -moz-box-flex: 1;
 }
-.message-inner {
+#message-inner {
   padding: 1.8em;
   background: -moz-dialog;
   border: 1px solid;
 }
-.message-1 {
+#message1 {
   font-size: 1.3em;
   font-weight: bold;
 }
-.message-2 {
+#message2 {
   margin-top: 1em;
   font-size: 1.2em;
 }

@@ -35,12 +35,13 @@ var gCmdHint = "cmd:hint";
 var gCmdRedeal = "cmd:redeal";
 
 // other bits of UI
+var gMessageBox = "message";
+var gMessageLine1 = "message1";
+var gMessageLine2 = "message2";
 var gOptionsMenu = "options-menu";
 var gDifficultyLevelMenu = "game-difficulty-menu";
 var gDifficultyLevelPopup = "game-difficulty-popup";
 var gGameSelector = "game-type-menu";
-var gGameWonMsg = "game-won-msg";
-var gInsufficientSpacesMsg = "insufficient-spaces-msg";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
@@ -52,7 +53,7 @@ var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
 
 function init() {
   var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
-      "gCmdRedeal","gOptionsMenu","gInsufficientSpacesMsg","gGameWonMsg","gDifficultyLevelMenu",
+      "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu","gDifficultyLevelMenu",
       "gDifficultyLevelPopup","gGameSelector","gScoreDisplay","gGameStack"];
   for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
 
@@ -582,11 +583,9 @@ function initDifficultyLevelMenu(items, selectedItem) {
 
 
 function newGame(cards) {
-  var couldUndo = Game.canUndo || GameController.havePastGames;
-  var couldRedo = Game.canRedo || GameController.haveFutureGames;
+  disableUI();
   GameController.newGame(cards);
-  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
-  if(couldRedo) gCmdRedo.setAttribute("disabled", "true");
+  enableUI();
 }
 
 
@@ -646,34 +645,28 @@ function disableUI() {
 }
 
 
-// called from BaseCardGame.autoplay(), which is a function called after all significant
-// moves, so handles checking whether the game has been won and taking appropriate action.
 function showGameWon() {
-  disableUI();
-  gGameWonMsg.hidden = false;
-  // will get click events before the other event handlers
-  window.onclick = function(e) {
-    window.onclick = null;
-    gGameWonMsg.hidden = true;
-    newGame();
-    enableUI();
-  };
+  showMessage("won", newGame);
 }
 
 
-// this gets called from FreeCellMover.attemptMove, which is called by the drag+drop handler's mouseUp
-// event listener.  the setTimeout is used to ensure the mouse event that triggered the call does not
-// immediately hide the message again
-function showInsufficientSpacesMsg() {
+var gMessageCallback = null;
+
+function showMessage(msg, fun) {
   disableUI();
-  gInsufficientSpacesMsg.hidden = false;
-  setTimeout(function() { window.onclick = doneShowingInsufficientSpacesMsg; }, 0);
+  gMessageCallback = fun;
+  gMessageLine1.value = gStrings["message."+msg];
+  gMessageLine2.value = gStrings["message2."+msg];
+  gMessageBox.hidden = false;
+  // the setTimeout is to ensure any mouse event that led to showMessage being called has gone away
+  setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
 }
 
-function doneShowingInsufficientSpacesMsg(e) {
+function doneShowingMessage() {
   window.onclick = null;
-  gInsufficientSpacesMsg.hidden = true;
-  enableUI();
+  gMessageBox.hidden = true;
+  if(gMessageCallback) gMessageCallback();
+  else enableUI();
 }
 
 

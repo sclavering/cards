@@ -534,12 +534,10 @@ var BaseCardGame = {
     }
 
     if(this.autoplayMove(pileWhichHasHadCardsRemoved)) return true;
+    if(!this.hasBeenWon()) return false;
 
-    if(this.hasBeenWon()) {
-      showGameWon();
-      return true;
-    }
-    return false;
+    showGameWon();
+    return true;
   },
 
   // Must carry out a single autoplay step, returning true if successful, false otherwise

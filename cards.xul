@@ -931,20 +931,12 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox>
   </vbox>
 
-  <vbox id="game-won-msg" class="message" hidden="true">
-    <vbox class="message-inner">
-      <description class="message-1" value="&game-won-msg1;"/>
-      <description class="message-2" value="&game-won-msg2;"/>
+  <vbox id="message" hidden="true">
+    <vbox id="message-inner">
+      <label id="message1"/>
+      <label id="message2"/>
     </vbox>
   </vbox>
-
-  <vbox id="insufficient-spaces-msg" class="message" hidden="true">
-    <vbox class="message-inner">
-      <description class="message-1" value="&insufficientSpacesMessage;"/>
-      <description class="message-2" value="&clickToContinuePlaying;"/>
-    </vbox>
-  </vbox>
-
 </stack>
 
 </window>

@@ -45,7 +45,7 @@ var FreeCellGame = {
   attemptMove: function(source, target) {
     var can = this.canMoveTo(source, target);
     if(can) return this.moveTo(source, target, true);
-    if(can===0) showInsufficientSpacesMsg();
+    if(can===0) showMessage("notEnoughSpaces");
     return false;
   },
 

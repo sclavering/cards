@@ -13,6 +13,7 @@ Games["montana"] = {
       this.stacks[i].row = Math.floor(i / 13);
       this.stacks[i].col = i % 13;
     }
+    this.canMoveToPile = this.canMoveTo;
   },
 
   deal: function() {
@@ -45,16 +46,13 @@ Games["montana"] = {
   },
 
   getBestMoveForCard: function(card) {
-    for(var i = 0; i < 52; i++)
-      if(this.canMoveTo(card, this.stacks[i]))
-        return this.stacks[i];
-    return null;
+  	return searchPiles(this.stacks, testCanMoveToPile(card));
   },
 
   redeal: function() {
     this.doAction(new MontanaRedealAction());
   },
-  
+
   canRedeal: function() {
     return this.redealsRemaining != 0;
   },

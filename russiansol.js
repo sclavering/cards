@@ -33,20 +33,9 @@ Games["russiansol"] = {
   },
 
   getBestMoveForCard: function(card) {
-    var i, stack;
-    // find card of same suit and one greater in number on top of stacks
-    for(i = 0; i < 7; i++) {
-      stack = this.stacks[i];
-      if(stack==card.parentNode) continue;
-      var lc = stack.lastChild;
-      if(lc && lc.isSameSuit(card) && lc.isConsecutiveTo(card)) return stack;
-    }
-    // find an empty stack
-    for(i = 0; i < 7; i++) {
-      stack = this.stacks[i];
-      if(!stack.hasChildNodes()) return stack;
-    }
-    return null;
+    var piles = getPilesRound(card.parentNode);
+    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
+        || searchPiles(piles, testPileIsEmpty);
   },
 
   autoplayMove: function() {

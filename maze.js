@@ -6,6 +6,7 @@ Games["maze"] = {
   init: function() {
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
+    this.canMoveToPile = this.canMoveTo;
   },
 
   deal: function() {
@@ -52,10 +53,7 @@ Games["maze"] = {
   },
 
   getBestMoveForCard: function(card) {
-    for(var i = 0; i < 54; i++)
-      if(this.canMoveTo(card, this.stacks[i]))
-        return this.stacks[i];
-    return null;
+  	return searchPiles(this.stacks, testCanMoveToPile(card));
   },
 
   // Autoplay not used

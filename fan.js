@@ -25,10 +25,7 @@ Games["fan"] = {
   },
 
   getBestMoveForCard: function(card) {
-    for(var i = 0; i < this.stacks.length; i++)
-      if(this.canMoveTo(card, this.stacks[i]))
-        return this.stacks[i];
-    return null;
+  	return searchPiles(this.stacks, testCanMoveToPile(card));
   },
 
   autoplayMove: function() {

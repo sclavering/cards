@@ -66,28 +66,12 @@ Games["freecell"] = {
   ///////////////////////////////////////////////////////////
   //// smartmove
   getBestMoveForCard: function(card) {
-    var i;
-    // move to another stack which has cards on
-    for(i = 0; i < 8; i++)
-      if(this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
-        return this.stacks[i];
-    // move to a space
-    for(i = 0; i < 8; i++)
-      if(!this.stacks[i].hasChildNodes() && this.canMoveTo(card,this.stacks[i]))
-        return this.stacks[i];
-    // save some needless calculation
-    if(card!=card.parentNode.lastChild)
-      return null;
-    // move to cell
-    for(i = 0; i < 4; i++)
-      if(this.canMoveTo(card,this.cells[i]))
-        return this.cells[i];
-    // move to foundations
-    for(i = 0; i < 4; i++)
-      if(this.canMoveTo(card,this.foundations[i]))
-        return this.foundations[i];
-    // failed
-    return null;
+    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
+    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
+        || searchPiles(piles, testCanMoveToEmptyPile(card))
+        || (!card.nextSibling && (
+             searchPiles(this.cells, testPileIsEmpty)
+          || searchPiles(this.foundations, testCanMoveToFoundation(card))));
   },
 
 

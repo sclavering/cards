@@ -608,15 +608,15 @@ var CardPositioner = {
       stack.offset = 0;
       return;
     }
-    var space = window.innerHeight - getBottom(stack.firstChild) - stack.childNodes.length * this.faceDownOffset;
-    var offset = this.faceDownOffset + parseInt(space / numFaceUp);
+    // card will still hold a pointer to the last face down card, or null.
+    card = card ? card.nextSibling : stack.firstChild
+    var space = window.innerHeight - getBottom(card);
+    var offset = parseInt(space / numFaceUp);
     if(offset > this.faceUpOffset) offset = this.faceUpOffset;
     var old = stack.offset || this.faceUpOffset;
     stack.offset = offset;
     if(offset == old) return;
     var top = (stack.childNodes.length - numFaceUp) * this.faceDownOffset;
-    // card will still hold a pointer to th last face down card, or null
-    card = card ? card.nextSibling : stack.firstChild
     while(card) {
       if(card.top != top) card.top = top;
       top += offset;
@@ -745,7 +745,7 @@ var Cards = {
       currentGame = "Klondike";
     }
     if(!Games[currentGame]) currentGame = "Klondike"; // just in case pref gets corrupted
-    this.playGame(currentGamePref);
+    this.playGame(currentGame);
   },
 
   // enable/disable the UI elements. this is done whenever any animation

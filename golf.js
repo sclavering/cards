@@ -4,17 +4,11 @@ Games.golf = {
 };
 
 
-var GolfBase =
-AllGames["golf"] = {
+var GolfBase = {
   __proto__: BaseCardGame,
 
-  id: "golf",
   layout: "golf",
   dealFromStock: "to foundation",
-
-//  init: function() {
-//    this.stockDealTargets = [this.foundation];
-//  },
 
   cardsPerColumn: 5,
   initialScore: 51,
@@ -62,7 +56,6 @@ AllGames["golf"] = {
 // K->A or A->K allowed in Easy mode
 AllGames["golf-easy"] = {
   __proto__: GolfBase,
-
   id: "golf-easy",
 
   canMoveTo: function(card, pile) {
@@ -73,10 +66,15 @@ AllGames["golf-easy"] = {
 };
 
 
+AllGames["golf"] = {
+  __proto__: GolfBase,
+  id: "golf"
+};
+
+
 // 2 decks used
 AllGames["golf-hard"] = {
   __proto__: GolfBase,
-
   id: "golf-hard",
   cards: 2,
   cardsPerColumn: 8,

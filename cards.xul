@@ -29,9 +29,7 @@
 <script type="application/x-javascript" src="doublesol.js"/>
 <script type="application/x-javascript" src="fan.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
-<!--
 <script type="application/x-javascript" src="golf.js"/>
--->
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
 <script type="application/x-javascript" src="maze.js"/>

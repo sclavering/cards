@@ -206,7 +206,7 @@ var BaseCardGame = {
         this.stacks[i].fixLayout();
     //
     this.deal();
-    this.initDealsLeft(); // must happen after deal because it counts the cards on the stock
+    if(this.stock) this.initDealsLeft(); // must happen after deal because it counts the cards on the stock
 
     Cards.disableUndo();
     Cards.disableRedeal();
@@ -327,6 +327,7 @@ var BaseCardGame = {
     // force hints to be regenerated
     this.clearHints();
   },
+
   trackRedeal: function(map) {
     var scorechange = this.getScoreForAction("redeal");
     var move = {action: "redeal", map: map, score: scorechange};
@@ -357,8 +358,9 @@ var BaseCardGame = {
     return 0;
   },
 
-  // a hashtable of scores (which individual games should provide
+  // a hashtable of scores (which individual games should provide)
   scores: {},
+
 
 
   // === Moving between stacks ============================

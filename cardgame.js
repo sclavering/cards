@@ -558,6 +558,7 @@ GameController.prototype = {
     if(!leaveDifficultyMenuAlone) initDifficultyLevelMenu(null);
 
     if(!this.currentGame) this.newGame();
+    else Game = this.currentGame;
 
     Game.show();
   },

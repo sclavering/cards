@@ -52,7 +52,7 @@ AllGames.penguin = {
         if(p) this.addHint(c, p);
       } else {
         var up = c.up, upp = up.parentNode;
-        if(!up.nextSibling && upp.isNormalPile) this.addHint(c, upp);
+        if(!up.nextSibling && upp.isPile) this.addHint(c, upp);
       }
       // remember cards
       if(i<7) cs[i] = c.nextSibling ? null : c;
@@ -77,11 +77,11 @@ AllGames.penguin = {
 
   getBestMoveForCard: function(card) {
     if(card.upNumber==Game.foundationStartNumber) {
-      var par = card.parentNode, p = par.isNormalPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
+      var par = card.parentNode, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
       if(p) return p;
     } else {
       var up = card.up, upp = up.parentNode;
-      if(upp.isNormalPile && !up.nextSibling) return upp;
+      if(upp.isPile && !up.nextSibling) return upp;
     }
     return card.nextSibling ? null : this.emptyCell;
   },

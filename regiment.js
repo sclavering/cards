@@ -86,7 +86,7 @@ AllGames.regiment = {
 
   getBestMoveForCard: function(card) {
     const parent = card.parentNode;
-    const ps = parent.isNormalPile ? parent.following : this.piles, num = ps.length;
+    const ps = parent.isPile ? parent.following : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
       if(p.hasChildNodes() && p.mayAddCard(card)) return p;
@@ -124,7 +124,7 @@ AllGames.regiment = {
     var i, pile, last, card;
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;
-      if(pile.isNormalPile && !pile.hasChildNodes() && this.reserves[pile.col].hasChildNodes())
+      if(pile.isPile && !pile.hasChildNodes() && this.reserves[pile.col].hasChildNodes())
         return this.moveTo(this.reserves[pile.col].lastChild, pile);
     }
 

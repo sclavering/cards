@@ -112,7 +112,7 @@ AllGames.mod3 = {
       if(p) return p;
     }
     var parent = card.parentNode;
-    return findEmpty(parent.isNormalPile ? parent.surrounding : this.piles);
+    return findEmpty(parent.isPile ? parent.surrounding : this.piles);
   },
 
   autoplayMove: function() {

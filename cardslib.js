@@ -258,7 +258,7 @@ function makeCard(number, suit) {
 
 var cardMethods = {
   isCard: true,
-  isPile: false,
+  isAnyPile: false,
 
   // pointers to next card up and down in the same suit
   // for Mod3 3C.up==6C etc.

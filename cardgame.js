@@ -131,7 +131,7 @@ var BaseCardGame = {
     }
 
     const items2 = ["reserve", "cell", "foundation", "pile"];
-    const props2 = ["isReserve", "isCell", "isFoundation", "isNormalPile"];
+    const props2 = ["isReserve", "isCell", "isFoundation", "isPile"];
     const takes2 = ["mayTakeCardFromReserve", "mayTakeCardFromCell", "mayTakeCardFromFoundation", "mayTakeCardFromPile"];
     const adds2 = ["mayAddCardToReserve", "mayAddCardToCell", "mayAddCardToFoundation", "mayAddCardToPile"];
 

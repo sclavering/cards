@@ -62,7 +62,7 @@ AllGames.freecell = {
   // similar to Rules.getBestMoveForCard["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space
   getBestMoveForCard: function(card) {
-    const pr = card.parentNode, ps = pr.isNormalPile ? pr.surrounding : this.piles, num = ps.length;
+    const pr = card.parentNode, ps = pr.isPile ? pr.surrounding : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; i++) {
       var p = ps[i];

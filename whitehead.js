@@ -47,11 +47,11 @@ AllGames.whitehead = {
     var up = card.up, on = card.on;
     if(up) {
       var p = up.parentNode;
-      if(p.isNormalPile && !up.nextSibling) return p;
+      if(p.isPile && !up.nextSibling) return p;
     }
     if(on) {
       p = on.parentNode;
-      if(p.isNormalPile && !on.nextSibling) return p;
+      if(p.isPile && !on.nextSibling) return p;
     }
     return this.firstEmptyPile;
   },

@@ -275,7 +275,7 @@ var Rules = {
     "to up or nearest space":
     function(card) {
       var up = card.up, upp = up && up.parentNode, p = card.parentNode;
-      if(up && up.faceUp && upp.isNormalPile && upp!=p && !up.nextSibling) return up.parentNode;
+      if(up && up.faceUp && upp.isPile && upp!=p && !up.nextSibling) return upp;
       return findEmpty(p.surrounding);
     },
 
@@ -298,7 +298,7 @@ var Rules = {
 
     "legal nonempty, or empty":
     function(card) {
-      var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
+      var p = card.parentNode, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];
@@ -313,7 +313,7 @@ var Rules = {
 
     "legal":
     function(card) {
-      var p = card.parentNode, ps = p.isNormalPile ? p.surrounding : this.piles, num = ps.length;
+      var p = card.parentNode, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];

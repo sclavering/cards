@@ -28,14 +28,14 @@ function initPile(elt) {
 // all piles get these
 var basicPileProperties = {
   isCard: false,
-  isPile: true,
+  isAnyPile: true,
   // one of these will be set to true by initPile(..)
   isFoundation: false,
   isCell: false,
   isReserve: false,
   isStock: false,
   isWaste: false,
-  isNormalPile: false,
+  isPile: false,
 
   // previous and next pile of the same type
   // BaseCardGame.initPiles() forms these into doubly-linked non-circular lists

@@ -42,7 +42,7 @@ var SpiderBase = {
     const ks = this.kings, num = ks.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
       var k = ks[i], p = k.parentNode;
-      if(p.isNormalPile && p.mayTakeCard(k) && f.mayAddCard(k))
+      if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k))
         return this.moveTo(k, f);
     }
     return false;
@@ -225,7 +225,7 @@ AllGames.wasp = {
       var last = pile.lastChild, down = last.down;
       if(!down || down.faceDown) continue;
       var downp = down.parentNode;
-      if(downp!=pile && downp.isNormalPile) this.addHint(down, pile);
+      if(downp!=pile && downp.isPile) this.addHint(down, pile);
     }
   }
 };

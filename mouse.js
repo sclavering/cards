@@ -159,23 +159,23 @@ MouseHandlers["pyramid"] = {
     var t = e.target, x = e.pageX, y = e.pageY;
     if(e.button!==0) return;
 
-    if((t.isCard && t.parentNode.isStock) || (t.isPile && t.isStock)) {
+    if((t.isCard && t.parentNode.isStock) || (t.isAnyPile && t.isStock)) {
       if(this.card) {
         this.highlighter.unhighlight();
         this.card = null;
       }
-      if(t.isPile) Game.turnStockOver();
+      if(t.isAnyPile) Game.turnStockOver();
       else Game.dealFromStock();
       return;
     }
 
     // a <flex/>, the highlighter, or something like that
     // quite why this doesn't cause js strict warnings I don't know
-    if(!t.isCard && !t.isPile) {
+    if(!t.isCard && !t.isAnyPile) {
       // if t is a spacer between two piles we change t to the pile on the row above
       t = t.previousSibling;
       var rpp = t ? t.rightParent : null;
-      if(t && t.isPile && rpp && (rpp.boxObject.y+rpp.boxObject.height > y)) {
+      if(t && t.isAnyPile && rpp && (rpp.boxObject.y+rpp.boxObject.height > y)) {
         t = rpp;
       } else {
         // user is probably trying to dismiss the selection
@@ -189,8 +189,8 @@ MouseHandlers["pyramid"] = {
 
     // With pyramid layouts click often end up targetted at empty piles;
     // here we work out which card the user was probably trying to click
-    if(t.isPile) {
-      if(!t.isNormalPile) return; // clicking on an empty foundation or waste pile should do nothing
+    if(t.isAnyPile) {
+      if(!t.isPile) return; // clicking on an empty foundation or waste pile should do nothing
 
       while(!t.hasChildNodes()) {
         var lp = t.leftParent, rp = t.rightParent;

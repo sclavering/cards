@@ -88,9 +88,9 @@ function moveCards2(card, to) {
 
 
 
-// precompute cosines
+// precompute cosines ("qxv" used to avoid accidentally not declaring loop vars in other scopes)
 var turnCardUpAnimatedCosines = new Array(7);
-for(var i = 0; i != 7; i++) turnCardUpAnimatedCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
+for(var qxv = 0; qxv != 7; qxv++) turnCardUpAnimatedCosines[qxv] = Math.abs(Math.cos((7-qxv) * Math.PI / 7));
 
 function turnCardUpAnimated(card) {
   disableUI();

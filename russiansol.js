@@ -6,7 +6,7 @@ Games["russiansol"] = {
   canMoveToPile: "descending, in suit",
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     this.dealToStack(cards,this.stacks[0],0,1);
     for(var i = 1; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,5);
   },

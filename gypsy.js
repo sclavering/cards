@@ -8,9 +8,17 @@ Games["gypsy"] = {
   canMoveToPile: "descending, alt colours",
   getLowestMovableCard: "descending, alt colours",
 
+  init: function() {
+    var cards = this.cards = [];
+    // cards for easy games
+    cards[1] = getDecks(2);
+    // cards for hard games - spades and hearts only
+    cards[2] = getCardSuits(4, 4, 0, 0);
+  },
+
   deal: function() {
     // 1==easy, 2==hard
-    var cards = this.difficultyLevel==2 ? getShuffledDecks(2) : getShuffledSuits(4,4,0,0);
+    var cards = shuffle(this.cards[this.difficultyLevel]);
     for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],2,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },

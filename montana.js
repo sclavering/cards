@@ -8,6 +8,9 @@ Games["montana"] = {
   redealsRemaining: 2,
 
   init: function() {
+    // get cards and replace Aces with nulls (so spaces will appear randomly)
+    var cards = this.cards = getDecks(1);
+    cards[0] = cards[13] = cards[26] = cards[39] = null;
     // label the piles for use by canMoveTo
     for(var i = 0; i < 52; i++) {
       this.stacks[i].row = Math.floor(i / 13);
@@ -17,11 +20,7 @@ Games["montana"] = {
   },
 
   deal: function() {
-    var cards = getDecks(1);
-    // replace the aces with nulls
-    cards[0] = null; cards[13] = null; cards[26] = null; cards[39] = null;
-    // shuffle and deal.  the nulls will result in empty spaces
-    cards = shuffle(cards);
+    var cards = shuffle(this.cards);
     for(var i = 0; i < 52; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 

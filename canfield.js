@@ -11,7 +11,7 @@ Games["canfield"] = {
   },
 
   deal: function() {
-    var cards = getShuffledDecks(1)
+    var cards = shuffle(this.cards);
     this.dealToStack(cards,this.reserve,12,1);
     this.dealToStack(cards,this.foundations[0],0,1);
     this.foundationStartNumber = this.foundations[0].firstChild.number;

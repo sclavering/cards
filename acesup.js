@@ -11,7 +11,7 @@ Games["acesup"] = {
   },
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     // If the four cards at the bottom of the stock are all different suits the
     // game is impossible. Check if this has happened and reshuffle if so
     while(this.allDifferentSuits(cards)) cards = shuffle(cards);

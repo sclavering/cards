@@ -39,7 +39,7 @@ Games["tripeaks"] = {
   },
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     for(var i = 0; i != 18; i++) this.dealToStack(cards, this.stacks[i], 1, 0);
     for(i = 18; i != 28; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
     this.dealToStack(cards, this.waste, 0, 1);

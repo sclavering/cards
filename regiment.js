@@ -3,6 +3,7 @@ Games["regiment"] = {
   __proto__: BaseCardGame,
 
   id: "regiment",
+  cards: 2, // use 2 decks
   canMoveCard: "last on pile",
 
   init: function() {
@@ -18,7 +19,7 @@ Games["regiment"] = {
   },
 
   deal: function() {
-    var cards = getShuffledDecks(2);
+    var cards = shuffle(this.cards);
     var i;
     for(i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
     for(i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);

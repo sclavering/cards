@@ -11,7 +11,7 @@ Games["klondike"] = {
   },
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },

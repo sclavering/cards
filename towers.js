@@ -7,7 +7,7 @@ Games["towers"] = {
   getLowestMovableCard: "descending, in suit",
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,5);
     for(var j = 1; j < 3; j++) this.dealToStack(cards,this.cells[j],0,1);
   },

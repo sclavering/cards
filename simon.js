@@ -7,11 +7,15 @@ Games["simon"] = {
   canMoveToPile: "descending",
   getLowestMovableCard: "descending, in suit",
 
+  init: function() {
+    var cards = this.cards = [];
+    cards[1] = getCardSuits(4, 0, 0, 0); // for easy games
+    cards[2] = getCardSuits(2, 2, 0, 0); // medium games
+    cards[3] = getDecks(1);              // hard games
+  },
+
   deal: function() {
-    var cards =
-      this.difficultyLevel==1 ? getShuffledSuits(4,0,0,0) :
-      this.difficultyLevel==2 ? getShuffledSuits(2,2,0,0) :
-      getShuffledDecks(1);
+    var cards = shuffle(this.cards[this.difficultyLevel]);
     this.dealToStack(cards,this.stacks[0],0,8);
     this.dealToStack(cards,this.stacks[1],0,8);
     for(var i = 2; i < 10; i++) this.dealToStack(cards,this.stacks[i],0,10-i);

@@ -6,7 +6,7 @@ Games["fan"] = {
   canMoveToPile: "descending, in suit, kings in spaces",
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     for(var i = 0; i < 17; i++) this.dealToStack(cards, this.stacks[i], 0, 3);
     this.dealToStack(cards, this.stacks[17], 0, 1);
   },

@@ -7,7 +7,7 @@ Games["freecell"] = {
   getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     var i;
     for(i = 0; i < 4; i++) this.dealToStack(cards,this.stacks[i],0,7);
     for(i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);

@@ -10,7 +10,7 @@ Games["maze"] = {
   },
 
   deal: function() {
-    var cards = getDecks(1);
+    var cards = shuffle(this.cards);
     // remove kings and add 2 nulls
     cards[12] = null; cards[25] = null; cards[38] = null; cards[51] = null;
     cards[52] = null; cards[53] = null;

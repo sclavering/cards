@@ -11,6 +11,22 @@ Games["mod3"] = {
   canMoveToPile: "isempty",
 
   init: function() {
+    // get 2 decks less the aces
+    var cards = this.cards = getDecks(2);
+    cards.splice(91,1); cards.splice(78,1); cards.splice(65,1);
+    cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
+    cards.splice(13,1); cards.splice(0, 1);
+
+    // add useful properties to the cards
+    for(i = 0; i < 96; i++) {
+      // the row this card should end up in
+      cards[i].row = i % 3;
+      // a renumbering of cards so that all foundations are built 0,1,2,3,
+      // i.e. 2==0, 5==1, 8==2, J==3 in row 0, and similar in the other rows
+      cards[i].rowNum = Math.floor((cards[i].number-2) / 3);
+    }
+
+    // other useful things
     var f = this.foundations;
     for(var i = 0; i < 24; i++) f[i].baseCardInPlace = function() {
       return (this.hasChildNodes() && this.firstChild.number==this.baseNumber);
@@ -22,27 +38,13 @@ Games["mod3"] = {
   },
 
   deal: function() {
-    var i;
-
-    // get 2 decks, remove the aces, shuffle
-    var cards = getDecks(2);
-    cards.splice(91,1); cards.splice(78,1); cards.splice(65,1);
-    cards.splice(52,1); cards.splice(39,1); cards.splice(26,1);
-    cards.splice(13,1); cards.splice(0, 1);
-
-    for(i = 0; i < 96; i++) {
-      // the row this card should end up in
-      cards[i].row = i % 3;
-      // a renumbering of cards so that all foundations are built 0,1,2,3,
-      // i.e. 2==0, 5==1, 8==2, J==3 in row 0, and similar in the other rows
-      cards[i].rowNum = Math.floor((cards[i].number-2) / 3);
-    }
+    var i, cards;
 
     // shuffle, and prevent games where that start with no cards in the correct place
     // on the foundations (because such games are impossible)
     var impossible = true;
     while(impossible) {
-      cards = shuffle(cards);
+      cards = shuffle(this.cards);
       for(i = 95; impossible && i != 87; i--)
         if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
           impossible = false;

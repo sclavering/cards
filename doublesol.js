@@ -13,14 +13,15 @@ Games["doublesol"] = {
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);
+
+    // get two packs less one set of aces
+    var cards = this.cards = getDecks(2);
+    cards.splice(78,1); cards.splice(52,1);
+    cards.splice(26,1); cards.splice(0,1);
   },
 
   deal: function() {
-    // get two packs less one set of aces
-    var cards = getDecks(2);
-    cards.splice(78,1); cards.splice(52,1);
-    cards.splice(26,1); cards.splice(0,1);
-    cards = shuffle(cards);
+    var cards = shuffle(this.cards);
     for(var i = 0; i < 10; i++) this.dealToStack(cards,this.stacks[i],i,1);
     this.dealToStack(cards,this.stock,cards.length,0);
   },

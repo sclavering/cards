@@ -147,10 +147,12 @@ window.addEventListener("load", init, false);
 
 
 
-// takes an array of cards, shuffles it in-place and returns it as well
+// takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
+  cards = cards.slice(0, cards.length); // get a copy of the array
+
   // shuffle several times, because Math.random() appears to be rather bad.
-  for(var i = 0; i != 3; i++) {
+  for(var i = 0; i != 5; i++) {
     // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
     var n = cards.length;
     while(n != 0) {
@@ -171,14 +173,6 @@ function shuffle(cards) {
 
 function getDecks(num) {
   return getCardSuits(num, num, num, num);
-}
-
-function getShuffledDecks(num) {
-  return shuffle(getCardSuits(num, num, num, num));
-}
-
-function getShuffledSuits(numSpades, numHearts, numDiamonds, numClubs) {
-  return shuffle(getCardSuits(numSpades, numHearts, numDiamonds, numClubs));
 }
 
 function getCardSuits(numSpades, numHearts, numDiamonds, numClubs) {

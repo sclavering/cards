@@ -11,6 +11,11 @@ var BaseCardGame = {
   difficultyLevels: null,
   difficultyLevel: 0,
 
+  // games should create all the cards they need the first time they are run.  if they set this field
+  // to a number then it will be replaced by an array holding the cards for that many decks (by the
+  // initialise() method below).  if they need something more complex they should set this in init()
+  cards: 1,
+
   // boolean flags that games might want to override
   acesHigh: false,
 
@@ -62,6 +67,9 @@ var BaseCardGame = {
     this.initPiles();
     this.xulElement = document.getElementById(this.layout || this.id);
     this.init(); // game specific stuff
+
+    // see comments above
+    if(typeof this.cards == "number") this.cards = getDecks(this.cards);
 
     // if the game doesn't specify something
     // xxx still required for init'ing stock.counter, but not for anything else!
@@ -225,9 +233,8 @@ var BaseCardGame = {
   // === Finish Game ======================================
   clearGame: function() {
     var s = this.allstacks; //this is an array of <stack>s provided by each game for this purpose
-    for(var i = 0; i < s.length; i++) {
-      while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild);
-    }
+    // remove all cards and set them all face down
+    for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
   },
 
   endGame: function() {

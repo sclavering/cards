@@ -67,13 +67,15 @@ Games["spider"] = {
   canMoveToFoundation: "13 cards",
   getLowestMovableCard: "descending, in suit",
 
+  init: function() {
+    var cards = this.cards = [];
+    cards[1] = getCardSuits(4, 0, 0, 0); // for easy games
+    cards[2] = getCardSuits(2, 2, 0, 0); // medium games
+    cards[3] = getDecks(1);              // hard games
+  },
+
   deal: function() {
-    var cards;
-    switch(this.difficultyLevel) {
-      case 1: cards = getShuffledSuits(8,0,0,0); break;
-      case 2: cards = getShuffledSuits(4,4,0,0); break;
-      default: cards = getShuffledSuits(2,2,2,2);
-    }
+    var cards = shuffle(this.cards[this.difficultyLevel]);
     var i;
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
@@ -91,11 +93,12 @@ Games["blackwidow"] = {
   __proto__: SpiderLayoutBase,
 
   id: "blackwidow",
+  cards: 2, // uses 2 decks
   canMoveCard: "descending, not from foundation",
   canMoveToFoundation: "king->ace flush",
 
   deal: function() {
-    var cards = getShuffledDecks(2);
+    var cards = shuffle(this.cards);
     var i;
     for(i = 0; i < 4;  i++) this.dealToStack(cards,this.stacks[i],5,1);
     for(i = 4; i < 10; i++) this.dealToStack(cards,this.stacks[i],4,1);
@@ -127,6 +130,7 @@ Games["divorce"] = {
   __proto__: SpiderLayoutBase,
 
   id: "divorce",
+  cards: 2,
   dealFromStock: "to nonempty piles",
   canMoveCard: "descending mod13, in suit, not from foundation",
   canMoveToPile: "descending mod13",
@@ -134,7 +138,7 @@ Games["divorce"] = {
   getLowestMovableCard: "descending mod13, in suit",
 
   deal: function() {
-    var cards = getShuffledDecks(2);
+    var cards = shuffle(this.cards);
     for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
     this.dealToStack(cards, this.stock, cards.length, 0);
   },
@@ -156,7 +160,7 @@ Games["wasp"] = {
   canMoveToFoundation: "king->ace flush",
 
   deal: function() {
-    var cards = getShuffledDecks(1);
+    var cards = shuffle(this.cards);
     for(var i = 0; i != 3; i++) this.dealToStack(cards, this.stacks[i], 3, 4);
     for(i = 3; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, 7);
     this.dealToStack(cards, this.stock, 3, 0);

@@ -7,17 +7,19 @@ Games["golf"] = {
 
   init: function() {
     this.stockDealTargets = [this.foundation];
+
+    var cards = this.cards = [];
+    cards[1] = cards[2] = getDecks(1); // for easy or medium games
+    cards[3] = getDecks(2); // for hard games
   },
 
   deal: function() {
-    var cards;
+    var cards = shuffle(this.cards[this.difficultyLevel]);
     var cardsPerColumn;
     if(this.difficultyLevel==3) {
-      cards = getShuffledDecks(2);
       cardsPerColumn = 8;
       this.score = 103;
     } else {
-      cards = getShuffledDecks(1);
       cardsPerColumn = 5;
       this.score = 51;
     }

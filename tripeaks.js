@@ -76,7 +76,7 @@ Games["tripeaks"] = {
     for(var i = 27; i >= 0; i--) {
       var p = this.stacks[i];
       if(!p.hasChildNodes() || p.lastChild.faceUp() || !p.free()) continue;
-      p.lastChild.turnFaceUp();
+      this.doAction(new RevealCardAction(p.lastChild));
       return true;
     }
     return false;

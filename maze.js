@@ -4,6 +4,10 @@ Games["maze"] = {
   id: "maze",
 
   init: function() {
+    // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces
+    var cards = this.cards = getDecks(1);
+    cards[12] = null; cards[25] = null; cards[38] = null; cards[51] = null;
+    cards[52] = null; cards[53] = null;
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
     this.canMoveToPile = this.canMoveTo;
@@ -11,12 +15,7 @@ Games["maze"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
-    // remove kings and add 2 nulls
-    cards[12] = null; cards[25] = null; cards[38] = null; cards[51] = null;
-    cards[52] = null; cards[53] = null;
-    // shuffle and deal.  the nulls will result in empty spaces
-    cards = shuffle(cards);
-    for(var i = 0; i < 54; i++) this.dealToStack(cards, this.stacks[i], 0, 1);
+    for(var i in this.stacks) this.dealToStack(cards, this.stacks[i], 0, 1);
   },
 
   canMoveTo: function(card, pile) {

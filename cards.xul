@@ -190,28 +190,27 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <hbox flex="1" equalsize="always">
       <vbox flex="1">
         <pile class="fan-right" id="fan-pile-0"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-5"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-10"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-15"/>
+      </vbox><vbox flex="1">
         <pile class="fan-right" id="fan-pile-1"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-2"/>
+        <pile class="fan-right" id="fan-pile-6"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-11"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-16"/>
+      </vbox><vbox flex="1">
+        <pile class="fan-right" id="fan-pile-2"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-7"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-12"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-17"/>
       </vbox><vbox flex="1">
         <pile class="fan-right" id="fan-pile-3"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-8"/><rowspacer/>
+        <pile class="fan-right" id="fan-pile-13"/>
+      </vbox><vbox flex="1">
         <pile class="fan-right" id="fan-pile-4"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-5"/>
-      </vbox><vbox flex="1">
-        <pile class="fan-right" id="fan-pile-6"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-7"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-8"/>
-      </vbox><vbox flex="1">
         <pile class="fan-right" id="fan-pile-9"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-10"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-11"/>
-      </vbox><vbox flex="1">
-        <pile class="fan-right" id="fan-pile-12"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-13"/><rowspacer/>
         <pile class="fan-right" id="fan-pile-14"/>
-      </vbox><vbox flex="1">
-        <pile class="fan-right" id="fan-pile-15"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-16"/><rowspacer/>
-        <pile class="fan-right" id="fan-pile-17"/>
       </vbox>
       </hbox>
       <colspacer/>

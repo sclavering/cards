@@ -6,8 +6,7 @@ var FreeCellGame = {
   mouseHandling: "click-to-select",
 
   get insufficientSpacesMessage() {
-    // this is called on instances of games, which are two levels up
-    var ths = this.__proto__.__proto__;
+    var ths = FreeCellGame;
     delete ths.insufficientSpacesMessage;
     return ths.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
   },
@@ -52,50 +51,52 @@ var FreeCellGame = {
 
   get emptyCells() {
     var freecells = [];
-    for(var i = 0; i != this.cells.length; i++)
-      if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
+    const cs = this.cells, num = cs.length;
+    for(var i = 0; i != num; i++)
+      if(!cs[i].hasChildNodes()) freecells.push(cs[i]);
     return freecells;
   },
 
   get numEmptyCells() {
     var cells = 0;
-    for(var i = 0; i != this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
+    const cs = this.cells, num = cs.length;
+    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) cells++;
     return cells;
   },
 
   get emptyCell() {
-    for(var i = 0; i != this.cells.length; i++) if(!this.cells[i].hasChildNodes()) return this.cells[i];
+    const cs = this.cells, num = cs.length;
+    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) return cs[i];
     return null;
   },
 
-  // the target of a move can't also be used as a space (I think)
+  // the target of a move can't also be used as a space
   getEmptyPiles: function(pileToIgnore) {
     var spaces = [];
-    for(var i = 0; i != this.piles.length; i++) {
-      var p = this.piles[i];
+    const ps = this.piles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
       if(p!=pileToIgnore && !p.hasChildNodes()) spaces.push(p);
     }
     return spaces;
   },
 
   countEmptyPiles: function(pileToIgnore) {
-    var num = 0
-    for(var i = 0; i != this.piles.length; i++) {
-      var p = this.piles[i];
-      if(p!=pileToIgnore && !p.hasChildNodes()) num++
+    var empty = 0;
+    const ps = this.piles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      if(p!=pileToIgnore && !p.hasChildNodes()) empty++
     }
-    return num;
+    return empty;
   },
 
   // overriden because we want to call FreeCellMover.step(), and don't need to reveal cards
   autoplay: function() {
-    if(FreeCellMover.step() || this.autoplayMove())
-      return true;
-    if(Game.hasBeenWon()) {
-      showGameWon();
-      return true;
-    }
-    return false;
+    if(FreeCellMover.step() || this.autoplayMove()) return true;
+    if(!Game.hasBeenWon()) return false;
+    showGameWon();
+    return true;
   }
 }
 
@@ -154,8 +155,7 @@ var FreeCellMover = {
       // just move each card to a cell then pull them off again
       this.queueSimpleMove(card, last, target, freeCells);
     } else if(numToMove <= groupsize+numSpaces) {
-      // when numToMove <= numSpaces+numFreeCells+1 it looks more natural to use the spaces just
-      // like cells, and apply the SimpleMove strategy
+      // when numToMove <= numSpaces+numFreeCells+1 it looks more natural to use the spaces just like cells
       this.queueSimpleMove(card, last, target, freeCells.concat(spaces));
     } else if(numToMove <= groupsize*(numSpaces+1)) {
       // move groups of (numFreeCells+1) through cells to each space, then pull back

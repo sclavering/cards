@@ -48,7 +48,7 @@ colspacer { width: 10px; }
 
 
 
-.card-highlight { background: black; -moz-opacity: 0.25; }
+.card-highlight { background: darkgray; -moz-opacity: 0.3; }
 
 .pyramid-row > pile {
   background-image: none;

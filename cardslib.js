@@ -495,13 +495,15 @@ function animatedActionFinished(pileWhichHasHadCardsRemoved) {
 
 
 function playGame(game) {
-  if(GameController) GameController.switchFrom();
+  disableUI();
+  GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
   window.title = gStrings[game+".name"];
 
   GameController = Games[game];
   GameController.switchTo();
+  enableUI();
 }
 
 

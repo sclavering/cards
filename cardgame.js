@@ -102,6 +102,8 @@ var BaseCardGame = {
     if(this.stock) {
       this.stock.isStock = true;
       this.allstacks.push(this.stock);
+      // a <label/> for displaying the num. of deals left
+      this.stock.counter = document.getElementById(id+"-stock-counter");
     }
     this.waste = createCardPile(id+"-waste");
     if(this.waste) {
@@ -156,8 +158,6 @@ var BaseCardGame = {
     // (some games have no use for this, but checking all these piles doesn't take very long so...)
     this.thingsToReveal = this.stacks.concat(this.reserves);
     if(this.reserve) this.thingsToReveal.push(this.reserve);
-
-    this.dealsLeftDisplay = document.getElementById(id+"-deals-left");
   },
 
 
@@ -217,8 +217,13 @@ var BaseCardGame = {
         this.stacks[i].fixLayout();
     //
     this.deal();
-    if(this.stock) this.initDealsLeft(); // must happen after deal because it counts the cards on the stock
-
+    
+    if(this.stock && this.stock.counter) {
+      var dealsLeft = this.stock.childNodes.length;
+      if(!this.waste) dealsLeft = Math.ceil(dealsLeft / this.stockDealTargets.length);
+      this.stock.counter.value = dealsLeft;
+    }
+    
     this.updateScoreDisplay(); // must do after deal(), because not all games start the score at 0
     Cards.disableUndo();
     Cards.disableRedeal();
@@ -558,32 +563,24 @@ var BaseCardGame = {
 
   // === Dealing from the stock ===========================
   // Dealing is to the waste pile if there is one, otherwise to each of stockDealTargets[],
-  // otherwise to each of stacks[].  Will update dealsLeftDisplay if present.
+  // which will be set to stacks[] if not specified
 
-  dealsLeft: 0,
-  dealsLeftDisplay: null, // set in initStacks
-
-  // note: only used in games without a waste pile
+  // only used in games without a waste pile
   // lets a game impose restrictions on dealing, e.g. in Spider dealing is not allowed if any pile is empty
   canDealFromStock: function() {
     return true;
   },
 
-  initDealsLeft: function() {
-    this.dealsLeft = this.stock.childNodes.length;
-    if(!this.waste) this.dealsLeft = Math.ceil(this.dealsLeft / this.stockDealTargets.length);
-    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
-  },
-
   dealFromStock: function() {
+    var counterChange = 0;
     if(this.waste) {
       if(this.stock.hasChildNodes()) {
         this.dealCardTo(this.waste);
         this.trackMove("dealt-from-stock", null, null);
-        this.dealsLeft--;
+        counterChange--;
       } else if(this.canTurnStockOver) {
         while(this.waste.hasChildNodes()) this.undealCardFrom(this.waste);
-        this.dealsLeft = this.stock.childNodes.length;
+        counterChange = this.stock.childNodes.length;
         this.trackMove("stock-turned-over", null, null);
       } else {
         return;
@@ -593,9 +590,12 @@ var BaseCardGame = {
       var stacks = this.stockDealTargets;
       for(var i = 0; i < stacks.length; i++) this.dealCardTo(stacks[i]);
       this.trackMove("dealt-from-stock", null, null);
-      this.dealsLeft--;
+      counterChange--;
     }
-    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+    
+    var counter = this.stock.counter;
+    if(counter) counter.value = parseInt(counter.value) + counterChange;
+
     this.autoplay();
   },
 
@@ -612,8 +612,8 @@ var BaseCardGame = {
       var stacks = this.stockDealTargets;
       for(var i = stacks.length-1; i >= 0; i--) this.undealCardFrom(stacks[i]);
     }
-    this.dealsLeft++;
-    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+    var counter = this.stock.counter;
+    if(counter) counter.value = parseInt(counter.value) + 1;
   },
 
   undealCardFrom: function(source) {
@@ -624,8 +624,9 @@ var BaseCardGame = {
 
   undoTurnStockOver: function() {
     while(this.stock.hasChildNodes()) this.dealCardTo(this.waste);
-    this.dealsLeft = 0;
-    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+    
+    var counter = this.stock.counter;
+    if(counter) counter.value = 0;
   },
 
 

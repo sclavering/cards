@@ -266,7 +266,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <stock id="golf-stock"/>
         <hbox>
           <label value="&deals-left;"/>
-          <label id="golf-deals-left"/>
+          <label id="golf-stock-counter"/>
         </hbox>
       </vbox>
       <flex/>
@@ -307,7 +307,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         </hbox><rowspacer/>
         <hbox>
           <label value="&deals-left;"/>
-          <label id="gypsy-deals-left"/>
+          <label id="gypsy-stock-counter"/>
         </hbox>
         <stock id="gypsy-stock"/>
         <flex/>
@@ -472,7 +472,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <stock id="mod3-stock"/>
         <hbox>
           <label value="&deals-left;"/>
-          <label id="mod3-deals-left"/>
+          <label id="mod3-stock-counter"/>
         </hbox>
       </vbox>
       <flex/>
@@ -767,7 +767,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <rowspacer/>
         <hbox>
           <label value="&deals-left;"/>
-          <label id="spider-deals-left"/>
+          <label id="spider-stock-counter"/>
         </hbox>
         <stock id="spider-stock"/>
         <flex/>

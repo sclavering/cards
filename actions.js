@@ -1,18 +1,35 @@
-// "perform" would be called "do", but for that pesky language keyword
+/*
+perform() would be do() but for that pesky language keyword
 
+perform() can be either synchronous or asynchronous (i.e use animation or not), but the action obj.
+should have a "synchronous" member to say which.
+
+undo() should always be synchronous.
+
+redo() should be synchronous if present.  if not present perform() is used instead, and should be synchronous
+
+the "action" member is used for scoring.
+*/
 
 function RevealCardAction(card) {
   this.card = card;
 }
 RevealCardAction.prototype = {
   action: "card-revealed",
+  synchronous: false,
+  undoNext: true,
 
   perform: function() {
     this.card.turnFaceUp();
+    // evil-ish hack to get this move redone when the preceding one is redone
+    var d = Game.actionsDone;
+    d[d.length-2].redoNext = true;
   },
   undo: function() {
     this.card.setFaceDown();
-    Game.undo();
+  },
+  redo: function() {
+    this.card.setFaceUp();
   }
 }
 
@@ -22,17 +39,15 @@ function DealFromStockToPileAction(pile) {
 }
 DealFromStockToPileAction.prototype = {
   action: "dealt-from-stock",
+  synchronous: true,
 
   perform: function() {
     Game.dealCardTo(this.to);
-    var c = Game.stock.counter;
-    if(c) c.value = parseInt(c.value) - 1;
-    Game.autoplay();
+    if(Game.stock.counter) Game.stock.counter.add(-1);
   },
   undo: function() {
     Game.undealCardFrom(this.to);
-    var c = Game.stock.counter;
-    if(c) c.value = parseInt(c.value) + 1;
+    if(Game.stock.counter) Game.stock.counter.add(1);
   }
 }
 
@@ -40,11 +55,11 @@ DealFromStockToPileAction.prototype = {
 function TurnStockOverAction() {}
 TurnStockOverAction.prototype = {
   action: "stock-turned-over",
+  synchronous: true,
 
   perform: function() {
     while(Game.waste.hasChildNodes()) Game.undealCardFrom(Game.waste);
     if(Game.stock.counter) Game.stock.counter.value = Game.stock.childNodes.length;
-    Game.autoplay();
   },
   undo: function() {
     while(Game.stock.hasChildNodes()) Game.dealCardTo(Game.waste);
@@ -57,6 +72,7 @@ TurnStockOverAction.prototype = {
 function DealToPilesAction() {}
 DealToPilesAction.prototype = {
   action: "dealt-from-stock",
+  synchronous: true,
   dealt: 0,
 
   perform: function() {
@@ -64,7 +80,6 @@ DealToPilesAction.prototype = {
     for(var i = 0; i != piles.length && Game.stock.hasChildNodes(); i++) Game.dealCardTo(piles[i]);
     this.dealt = i;
     if(Game.stock.counter) Game.stock.counter.add(-1);
-    Game.autoplay();
   },
   undo: function() {
     var piles = Game.piles;
@@ -77,6 +92,7 @@ DealToPilesAction.prototype = {
 function DealToNonEmptyPilesAction() {}
 DealToNonEmptyPilesAction.prototype = {
   action: "dealt-from-stock",
+  synchronous: true,
   last: 0, // the pile index we reached on the final deal before running out of cards
 
   perform: function() {
@@ -88,7 +104,6 @@ DealToNonEmptyPilesAction.prototype = {
       }
     }
     if(Game.stock.counter) Game.stock.counter.add(-1);
-    Game.autoplay();
   },
   undo: function() {
     var piles = Game.piles;
@@ -111,10 +126,15 @@ function MoveAction(card, source, destination) {
       "move-between-piles";
 }
 MoveAction.prototype = {
+  synchronous: false,
+
   perform: function() {
     this.card.moveTo(this.destination);
   },
   undo: function() {
     this.card.transferTo(this.source);
+  },
+  redo: function() {
+    this.card.transferTo(this.destination);
   }
 }

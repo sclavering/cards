@@ -85,6 +85,7 @@ Games["montana"] = {
 function MontanaRedealAction() {}
 MontanaRedealAction.prototype = {
   action: "redeal",
+  synchronous: true,
 
   perform: function() {
     var hardGame = (Game.difficultyLevel==2);
@@ -110,6 +111,7 @@ MontanaRedealAction.prototype = {
 
     // shuffle
     cards = shuffle(cards);
+    this.shuffled = cards.slice(0); // make copy for redo()
 
     // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = hardGame ? 0 : 1;
@@ -137,6 +139,16 @@ MontanaRedealAction.prototype = {
       for(var c = 0; c != map[r].length; c++)
         if(map[r][c]) rows[r][c+co].addCard(map[r][c]);
     }
+  },
+
+  redo: function() {
+    Game.redealsRemaining--;
+    var map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
+
+    // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
+    var easy = (Game.difficultyLevel==2) ? 0 : 1;
+    for(var r in rows)
+      for(var c = 13 - map[r].length + easy; c != 13; c++)
+        dealToPile(cards, rows[r][c], 0, 1);
   }
 }
-

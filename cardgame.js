@@ -208,9 +208,10 @@ var BaseCardGame = {
   newGame: function() {
     this.mouseHandler.reset();
     this.score = 0;
-    this.undoHistory = [];
+    this.actionsDone = [];
+    this.actionsUndone = [];
     this.clearGame();
-    this.clearHints();
+    this.hintsReady = false;
     this.redealsRemaining = this.redeals;
     // reset offset used when stacking cards.
     if(this.piles)
@@ -226,9 +227,11 @@ var BaseCardGame = {
       this.stock.counter.value = dealsLeft;
     }
 
-    this.updateScoreDisplay(); // must do after deal(), because not all games start the score at 0
-    disableUndo();
-    disableRedeal();
+    displayScore(this.score); // must do after deal(), because not all games start the score at 0
+
+    gCmdUndo.setAttribute("disabled","true");
+    gCmdRedo.setAttribute("disabled","true");
+    gCmdRedeal.setAttribute("disabled","true");
     enableUI();
   },
 
@@ -240,6 +243,11 @@ var BaseCardGame = {
 
   // should deal out the cards for a new game. newGame() will ensure all piles are empty
   deal: function() {
+  },
+
+  // xxx make this an undoable Action
+  restart: function() {
+    while(this.actionsDone.length!=0) this.undo();
   },
 
 
@@ -256,7 +264,9 @@ var BaseCardGame = {
   // games should override either |getScoreFor|, or |scores|
   score: 0,
 
-  updateScoreDisplay: function() {
+  adjustScoreBy: function(delta) {
+    if(!delta) return;
+    this.score += delta;
     displayScore(this.score);
   },
 
@@ -276,38 +286,68 @@ var BaseCardGame = {
   // All actions/moves that are undoable should be implemented as Action objects
   // (see actions.js), and passed to doAction.  Games should probably not override
   // any of these functions.
-  undoHistory: [],
+  actionsDone: [],
+  actionsUndone: [],
+
+  canUndo: function() {
+    return this.actionsDone.length!=0;
+  },
+
+  canRedo: function() {
+    return this.actionsUndone.length!=0;
+  },
 
   // would be called "do", but that's a language keyword
   doAction: function(action) {
-    this.undoHistory.push(action);
+    this.actionsDone.push(action);
+    var hadRedos = this.actionsUndone.length!=0;
+    if(hadRedos) this.actionsUndone = [];
     action.score = this.getScoreFor(action);
     action.perform();
-    this.score += action.score;
-    this.updateScoreDisplay();
-    this.clearHints();
-    // update UI
-    if(this.redealsRemaining==0) disableRedeal(); // yuck.  redeals should die.
-    if(this.undoHistory.length==1) doEnableUndo();
-  },
 
-  canUndo: function() {
-    return (this.undoHistory.length!=0);
+    this.adjustScoreBy(action.score);
+    this.hintsReady = false;
+
+    // asynch. (i.e. animated) actions will trigger autoplay themselves,
+    // and autoplay will trigger a UI update if it actually does anything
+    if(action.synchronous && !this.autoplay()) {
+      if(this.actionsDone.length==1) gCmdUndo.removeAttribute("disabled");
+      if(hadRedos) gCmdRedo.setAttribute("disabled","true");
+      if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true"); // yuck.
+    }
   },
 
   // Action objects (see actions.js) each implement an undo() method.
   // This just picks the right object, and adjusts the game score etc.
   undo: function() {
-    var undo = this.undoHistory.pop();
-    this.score -= undo.score;
-    this.updateScoreDisplay();
-    undo.undo();
-    // en/dis-able the Undo and Redeal buttons
-    fixUI();
+    var action = this.actionsDone.pop();
+    this.actionsUndone.push(action);
+    this.adjustScoreBy(-action.score);
+    this.hintsReady = false;
+
+    action.undo();
+
+    if(this.actionsDone.length==0) gCmdUndo.setAttribute("disabled","true");
+    if(this.actionsUndone.length==1) gCmdRedo.removeAttribute("disabled");
+    if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
+
+    if("undoNext" in action && action.undoNext) this.undo();
   },
 
-  restart: function() {
-    while(this.undoHistory.length!=0) this.undo();
+  redo: function() {
+    var action = this.actionsUndone.pop();
+    this.actionsDone.push(action);
+    this.adjustScoreBy(action.score);
+    this.hintsReady = false;
+
+    if("redo" in action) action.redo();
+    else action.perform();
+
+    if(this.actionsDone.length==1) gCmdUndo.removeAttribute("disabled");
+    if(!this.actionsUndone.length) gCmdRedo.setAttribute("disabled","true");
+    if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
+
+    if("redoNext" in action && action.redoNext) this.redo();
   },
 
 
@@ -348,13 +388,11 @@ var BaseCardGame = {
 
   // convenience function
   attemptMove: function(card, target) {
-    if(this.canMoveTo(card,target)) {
-      // *don't* change to calling doAction directly, as some
-      // games might be overriding moveTo but not this function
-      this.moveTo(card,target);
-      return true;
-    }
-    return false;
+    if(!this.canMoveTo(card,target)) return false;
+    // *don't* change to calling doAction directly, as some
+    // games might be overriding moveTo but not this function
+    this.moveTo(card,target);
+    return true;
   },
 
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
@@ -410,13 +448,16 @@ var BaseCardGame = {
   // Games should override getHints(); the implementation should call addHint[s]() repeatedly.
   hintSources: [],
   hintDestinations: [],
-  haveHints: false, // means hints have been calculated, though there may not be any.
+  hintsReady: false, // means hints have been calculated, though there may not be any.
   hintNum: 0,
 
   hint: function() {
-    if(!this.haveHints) {
+    if(!this.hintsReady) {
+      this.hintSources = [];
+      this.hintDestinations = [];
+      this.hintNum = 0;
       this.getHints();
-      this.haveHints = true;
+      this.hintsReady = true;
     }
     this.showHint();
   },
@@ -453,13 +494,6 @@ var BaseCardGame = {
     this.addHints(card, filter(this.piles, testCanMoveToNonEmptyPile(card)));
     var f = searchPiles(this.foundations, testCanMoveToFoundation(card));
     if(f) this.addHint(card, f);
-  },
-
-  clearHints: function() {
-    this.hintSources = [];
-    this.hintDestinations = [];
-    this.haveHints = false;
-    this.hintNum = 0;
   },
 
 

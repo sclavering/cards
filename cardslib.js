@@ -26,12 +26,13 @@ var gXOffsetFromFaceUpCard = 12;  // num pixels between left edges of two face u
 var gOffsetForCardSlide = 2; // num picels between top+left edges of two cards in a slide
 
 // <command/> elements
-var gCmdUndo = null;
-var gCmdHint = null;
-var gCmdNewGame = null;
-var gCmdRestartGame = null;
-var gCmdRedeal = null;
-var gCmdSetDifficulty = null;
+var gCmdSetDifficulty = "cmd:setdifficulty";
+var gCmdNewGame = "cmd:newgame";
+var gCmdRestartGame = "cmd:restart";
+var gCmdUndo = "cmd:undo";
+var gCmdRedo = "cmd:redo";
+var gCmdHint = "cmd:hint";
+var gCmdRedeal = "cmd:redeal";
 
 // other bits of UI
 var gOptionsMenu = null;
@@ -44,12 +45,8 @@ var gScoreDisplay = null; // <label/> on toolbar where score is displayed
 
 
 function init() {
-  gCmdUndo = document.getElementById("cmd:undo");
-  gCmdNewGame = document.getElementById("cmd:newgame");
-  gCmdRestartGame = document.getElementById("cmd:restart");
-  gCmdHint = document.getElementById("cmd:hint");
-  gCmdRedeal = document.getElementById("cmd:redeal");
-  gCmdSetDifficulty = document.getElementById("cmd:setdifficulty");
+  var cmds = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint","gCmdRedeal"];
+  for(var c in cmds) window[cmds[c]] = document.getElementById(window[cmds[c]]);
 
   gOptionsMenu = document.getElementById("options-menu");
   gDifficultyLevelMenu = document.getElementById("game-difficulty-menu");
@@ -148,7 +145,7 @@ window.addEventListener("load", init, false);
 
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
-  cards = cards.slice(0, cards.length); // get a copy of the array
+  cards = cards.slice(0); // get a copy of the array
 
   // shuffle several times, because Math.random() appears to be rather bad.
   for(var i = 0; i != 5; i++) {
@@ -532,10 +529,11 @@ function enableUI() {
   gCmdNewGame.removeAttribute("disabled");
   gCmdRestartGame.removeAttribute("disabled");
   gOptionsMenu.removeAttribute("disabled");
-  this.enableDifficultyMenu();
+  enableDifficultyMenu();
   gGameSelector.removeAttribute("disabled");
-  this.enableUndo();
-  this.enableRedeal();
+  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
+  if(Game.canRedo()) gCmdRedo.removeAttribute("disabled");
+  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
 }
 
 function disableUI() {
@@ -547,35 +545,7 @@ function disableUI() {
   gDifficultyLevelMenu.setAttribute("disabled","true");
   gGameSelector.setAttribute("disabled","true");
   gCmdUndo.setAttribute("disabled","true");
-  gCmdRedeal.setAttribute("disabled","true");
-}
-
-// en/dis-able the Undo and Redeal commands as required
-// don't use this too much because it's slow (it always adjusts attributes)
-function fixUI() {
-  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
-  else gCmdUndo.setAttribute("disabled","true");
-  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
-  else gCmdRedeal.setAttribute("disabled","true");
-}
-
-function enableUndo() {
-  if(Game.canUndo()) gCmdUndo.removeAttribute("disabled");
-}
-
-function doEnableUndo() {
-  gCmdUndo.removeAttribute("disabled");
-}
-
-function disableUndo() {
-  gCmdUndo.setAttribute("disabled","true");
-}
-
-function enableRedeal() {
-  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
-}
-
-function disableRedeal() {
+  gCmdRedo.setAttribute("disabled","true");
   gCmdRedeal.setAttribute("disabled","true");
 }
 
@@ -590,7 +560,6 @@ function disableDifficultyMenu() {
   gDifficultyLevelMenu.setAttribute("disabled","true");
 }
 
-// called by BaseCardGame.updateScoreDisplay()
 function displayScore(score) {
   gScoreDisplay.value = score;
 }

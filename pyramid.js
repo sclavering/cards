@@ -93,11 +93,11 @@ function PyramidMoveAction(card1, card2) {
 }
 PyramidMoveAction.prototype = {
   action: "pyramid-move",
+  synchronous: true,
 
   perform: function() {
     this.c1.transferTo(Game.foundation);
     if(this.c2) this.c2.transferTo(Game.foundation);
-    Game.autoplay();
   },
   undo: function(undo) {
     if(this.c2) this.c2.transferTo(this.p2);

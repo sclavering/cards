@@ -99,6 +99,7 @@ function FreeCellMoveAction(card, source, destination, cells, spaces) {
 }
 FreeCellMoveAction.prototype = {
   action: "move-between-piles",
+  synchronous: false,
 
   perform: function() {
     FreeCellMover.move(this.card, this.destination, this.cells, this.spaces);

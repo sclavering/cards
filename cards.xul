@@ -49,6 +49,7 @@
   <command id="cmd:newgame" oncommand="Game.newGame();"/>
   <command id="cmd:hint"    oncommand="Game.hint();"/>
   <command id="cmd:undo"    oncommand="Game.undo();"/>
+  <command id="cmd:redo"    oncommand="Game.redo();"/>
   <command id="cmd:restart" oncommand="Game.restart();"/>
   <command id="cmd:redeal"  oncommand="Game.redeal();"/>
   <command id="cmd:setdifficulty" oncommand="Game.setDifficultyLevel(event.target.value);"/>
@@ -58,6 +59,7 @@
   <key id="key:newgame" key="&key.newgame;" modifiers="accel" command="cmd:newgame"/>
   <key id="key:restart" key="&key.restart;" modifiers="accel" command="cmd:restart"/>
   <key id="key:undo"    key="&key.undo;"    modifiers="accel" command="cmd:undo"/>
+  <key id="key:redo"    key="&key.undo;"    modifiers="accel,shift" command="cmd:redo"/>
   <key id="key:hint"    key="&key.hint;"    modifiers="accel" command="cmd:hint"/>
 </keyset>
 
@@ -77,6 +79,7 @@
   <toolbarbutton command="cmd:newgame" label="&newgame.label;" tooltiptext="&newgame.tooltip;"/>
   <toolbarbutton command="cmd:restart" label="&restart.label;" tooltiptext="&restart.tooltip;"/>
   <toolbarbutton command="cmd:undo"    label="&undo.label;"    tooltiptext="&undo.tooltip;"/>
+  <toolbarbutton command="cmd:redo"    label="&redo.label;"    tooltiptext="&redo.tooltip;"/>
   <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
   <toolbarbutton command="cmd:redeal"  label="&redeal.label;"  tooltiptext="&redeal.tooltip;"/>
   <toolbarbutton id="options-menu" type="menu" label="&options.label;">

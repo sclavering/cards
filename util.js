@@ -21,8 +21,8 @@ function getPilesRound(pile) {
     left = nextPileLeft(left);
     right = nextPileRight(right);
     if(!left && !right) break;
-    if(left) piles.push(left);
     if(right) piles.push(right);
+    if(left) piles.push(left);
   }
   pile.surroundingPiles = piles;
   return piles;

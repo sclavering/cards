@@ -46,6 +46,7 @@
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>
 <script type="application/x-javascript" src="tripeaks.js"/>
+<script type="application/x-javascript" src="whitehead.js"/>
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">

@@ -21,6 +21,7 @@ rule_canMoveToPile:
   "descending,alt-colours,kings-in-spaces"
   "descending,in-suit,kings-in-spaces"
   "descending,alt-colours"
+  "descending, same colour"
   "descending, in suit"
   "isempty"
 
@@ -139,6 +140,12 @@ var Rules = {
     function(card, pile) {
       var last = pile.lastChild;
       return (!last || (last.faceUp() && last.isConsecutiveTo(card) && last.notSameColour(card)));
+    },
+
+    "descending, same colour":
+    function(card, pile) {
+      var last = pile.lastChild;
+      return (!last || (last.faceUp() && last.isConsecutiveTo(card) && last.isSameColour(card)));
     },
 
     "descending, in suit":

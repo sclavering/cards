@@ -2,10 +2,9 @@ Games["freecell"] = {
   __proto__: FreeCellGame,
 
   id: "freecell",
+  rule_canMoveCard: "descending,alt-colours",
+  rule_canMoveToPile: "descending,alt-colours",
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards = this.shuffleDecks(1);
     var i;
@@ -13,14 +12,8 @@ Games["freecell"] = {
     for(i = 4; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,6);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
-  rule_canMoveCard: "descending,alt-colours",
-  rule_canMoveToPile: "descending,alt-colours",
-
-  // this checks if there are enough spaces/cells to perform a move, not just is it is allowed.
-  movePossible: function(card,target) {
+  // test if there are enough spaces/cells to perform a move, not just is it is legal.
+  movePossible: function(card, target) {
     // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
     // count spaces, excluding the destination
     var spaces = 0;
@@ -36,9 +29,6 @@ Games["freecell"] = {
     return numToMove<=numCanMove;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     var card, i;
     for(i = 0; i < 4; i++) {
@@ -62,9 +52,6 @@ Games["freecell"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   getBestMoveForCard: function(card) {
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.stacks;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
@@ -74,9 +61,6 @@ Games["freecell"] = {
           || searchPiles(this.foundations, testCanMoveToFoundation(card))));
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     var i, last;
     for(i = 0; i < 4; i++) {
@@ -95,9 +79,6 @@ Games["freecell"] = {
     return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 2);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     for(var i = 0; i < 4; i++)
       if(this.foundations[i].childNodes.length!=13) return false;

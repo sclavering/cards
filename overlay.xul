@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE window [
-<!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
-%cardsDTD;
-]>
+<!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
 
 <overlay id="CardsOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

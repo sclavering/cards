@@ -15,12 +15,7 @@
   *   position() - correctly positions a card in the stack it is in (adjusts its top and left attributes)
   *   moveTo(target) - moves the card and all its nextSibling's to the specified target (a stack).  this is animated
   *   transferTo(target) - as moveTo() but not animated
-  * The following are used so that the source of any move can be tracked for "undo". Games should probably
-  * call card.getSource() at the start of there moveTo function and pass it to trackMove(...), the other
-  * two functions are intended for use within this file only.
-  *   getSource()
-  *   setSource()
-  *   clearSource()
+  *
   * the class attribute is set in setFaceUp() and setFaceDown() to give the correct appearance
   *
   *
@@ -133,11 +128,9 @@ var CardShuffler = {
       this._facedown = true;
       this.className = "card-facedown";
     };
-    // methods for setting/retrieving stack where card has come from.  parentNode cannot be used as that will
-    // often refer to the stack being used to move the cards round in
-    c.getSource = function() {return (this._source ? this._source : this.parentNode); };
-    c.setSource = function(node) { this._source = node; };
-    c.clearSource = function() { this._source = null; };
+    // hangover from when source was a property of the first card in the move/drag stacks
+    // (rather than of the stacks themselves as is now the case)
+    c.getSource = function() { return this.parentNode.source; };
     // other methods
     c.turnFaceUp = function() { CardTurner.turnFaceUp(this); };
     c.position   = function() { CardPositioner.position(this); };
@@ -149,7 +142,6 @@ var CardShuffler = {
     c._suit = suit; // used in the more complex queries.  may delete in future.
     c._colour = colour;
     c.setFaceDown();
-    c.clearSource(); // copied from Neil's code. not entirely sure why
     return c;
   }
 }
@@ -169,6 +161,10 @@ function _createCardPile(elt) {
   elt.isReserve = false;
   elt.isStock = false;
   elt.isWaste = false;
+  
+  // for the animated move stack and the drag stack |source|
+  // is set to the pile the cards originally came from.
+  elt.source = elt;
   
   // transfers the card and all those that follow it
   // xxx: not in use yet
@@ -318,7 +314,9 @@ var MouseHandler1 = {
       this.cards.className = card.parentNode.className;
       this.cards.left = getLeft(card) - getLeft(this.dragLayer);
       this.cards.top  = getTop(card) - getTop(this.dragLayer);
-      card.setSource(card.parentNode); // property to retrieve original source of cards
+      // property to retrieve original source of cards. for most
+      // piles |source| is a pointer back to the pile itself.
+      this.cards.source = card.parentNode.source;
       card.transferTo(this.cards);
       // other stuff
       this.dragInProgress = true;
@@ -337,7 +335,7 @@ var MouseHandler1 = {
     this.nextCard = null;
   },
   dropCards: function() {
-    var card = this.cards.firstChild, source = card.getSource();
+    var card = this.cards.firstChild, source = card.parentNode.source;
     // for each target, check if the cards were dropped on it (if cards overlaps it)
     var targets = Game.dragDropTargets;
     for(var i = 0; i < targets.length; i++) {
@@ -512,7 +510,7 @@ var CardMover = {
     // set up conditions for animation stuff
     this.target = target;
     this.targetTop = getTop(this.target) - getTop(this.dragLayer) + CardPositioner.getNextCardTop(this.target);
-    this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer); // just to be sure
+    this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer) + CardPositioner.getNextCardLeft(this.target);
     this.interval = setInterval(function(){CardMover.step();}, 30);
     // angle stays constant now that parseFloat is being used on top and left attrs
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
@@ -539,7 +537,6 @@ var CardMover = {
 
   moveComplete: function() {
     clearInterval(this.interval);
-    this.cards.firstChild.clearSource(); //??
     this.transfer(this.cards.firstChild, this.target);
     this.cards.hidden = true;
     // don't enable the UI till we're finished autoplaying
@@ -549,7 +546,7 @@ var CardMover = {
 
   transfer: function(firstCard, target) {
     var card = firstCard;
-    var source = card.getSource();
+    var source = card.parentNode.source;
     if(!target.offset) target.offset = source.offset;
     var nextCard;
     while(card) {
@@ -562,7 +559,6 @@ var CardMover = {
     if(target.id) {
       CardPositioner.fixStack(target);
       if(source.id) CardPositioner.fixStack(source);
-      firstCard.clearSource();
     }
   }
 }

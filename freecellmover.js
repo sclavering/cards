@@ -26,7 +26,6 @@ var FreeCellMover = {
   },
   
   move: function(card, target, freeCells, spaces) {
-//    alert("FreeCellMove.move(\n"+card+"\n"+target+"\n"+freeCells+"\n"+spaces+"\n);");
     // remove the target from the list of free cells
     // this is a workaround for the case where the card end up being moved onto the target,
     // but above other cards that should be below it.  this is not the ideal solution though

@@ -1,4 +1,3 @@
-GamesMenu.fan =
 Games.fan = {
   __proto__: BaseCardGame,
 

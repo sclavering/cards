@@ -1,7 +1,7 @@
-var CardMover = null;
+var moveCards = null; // holds a function
 
 function enableAnimation(enable) {
-  CardMover = enable ? CardMover1 : CardMover2;
+  moveCards = enable ? moveCards1 : moveCards2;
 }
 
 function toggleAnimation(menuitem) {
@@ -14,19 +14,11 @@ function toggleAnimation(menuitem) {
 
 
 
-var CardMover1 = {
-  cards: null, // a pile to hold the cards being moved
-
-  init: function() {
-    // class doesn't need to be flexible yet
-    this.cards = createFloatingPile("fan-down");
-    this.cards.id = "card-move-pile";
-  },
-
-  move: function(firstCard, target) {
+function moveCards1(firstCard, target) {
     disableUI();
 
-    var source = firstCard.parentNode.source;
+    var parent = firstCard.parentNode, source = parent.source;
+    var cards = gFloatingPile;
 
     // initial coords
     var sx = firstCard.boxObject.x - gGameStackLeft;
@@ -44,8 +36,10 @@ var CardMover1 = {
 //    var steps = (dx && dy) ? Math.round(Math.sqrt(dx*dx + dy*dy)) : (dx || dy);
 
     if(steps==1 || steps==0) {
+      // the cards don't look like they're being moved off screen then reappearing at the destination, even though that's what we're doing
+      if(parent==gFloatingPile) cards.hide();
       target.addCards(firstCard);
-      animatedActionFinished();
+      animatedActionFinished(source);
       return;
     }
 
@@ -53,12 +47,12 @@ var CardMover1 = {
     var stepY = dy / steps;
     steps--; // so it's 0 when the move is complete
 
-    // put cards in the temp pile. _top and _left properties remain as numbers, unlike top and left
-    var cards = this.cards; // so we can use it in the nested functions
-//    cards.className = firstCard.parentNode.className; // so cards layed out as in originating pile
-    cards.left = cards._left = sx;
-    cards.top = cards._top = sy;
-    cards.addCards(firstCard);
+    if(parent!=gFloatingPile) {
+  //    cards.className = parent.className; // so cards layed out as in originating pile // xxx not needed yet
+      cards.left = cards._left = sx;
+      cards.top = cards._top = sy;
+      cards.addCards(firstCard);
+    }
 
     var interval = null;
 
@@ -66,7 +60,7 @@ var CardMover1 = {
     // this function (called via a timer) that doesn't happen.
     function done() {
       target.addCards(firstCard);
-      cards.hide(); // must do this (even if it's about to be used for another move) to force repainting of area
+      gFloatingPileNeedsHiding = true;
       animatedActionFinished(source);
     };
 
@@ -76,27 +70,23 @@ var CardMover1 = {
         cards.top = cards._top += stepY;
         steps--;
       } else {
-        // move is done
+        clearInterval(interval);
         cards.left = cards._left = tx;
         cards.top = cards._top = ty;
-        clearInterval(interval);
         setTimeout(done, 0);
       }
     };
 
     interval = setInterval(step, 30);
-  }
-};
+}
 
 
 
 
 
-var CardMover2 = {
-  move: function(card, to) {
+function moveCards2(card, to) {
     disableUI();
     var source = card.parentNode.source;
     to.addCards(card);
     setTimeout(animatedActionFinished, 30, source);
-  }
-};
+}

@@ -8,9 +8,6 @@ const CLUBSTR = "C", SPADESTR = "S", HEARTSTR = "H", DIAMONDSTR = "D";
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
-var gGameStack = null;  // the <stack id="games"/>
-var gGameStackTop = 0;  // ... and its coords
-var gGameStackLeft = 0;
 
 var gStrings = []; // the contents of the stringbundle
 
@@ -48,16 +45,27 @@ var gGameSelector = "game-type-menu";
 var gGameWonMsg = "game-won-msg";
 var gInsufficientSpacesMsg = "insufficient-spaces-msg";
 var gScoreDisplay = "score-display";
+var gGameStack = "games"; // the main <stack>
+var gGameStackTop = 0;    // ... and its coords
+var gGameStackLeft = 0;
+
+var gFloatingPile = null;
+var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
 
 
 
 function init() {
   var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
-      "gCmdRedeal","gOptionsMenu","gInsufficientSpacesMsg","gDifficultyLevelMenu",
-      "gDifficultyLevelPopup","gGameSelector","gGameWonMsg","gScoreDisplay"];
+      "gCmdRedeal","gOptionsMenu","gInsufficientSpacesMsg","gGameWonMsg","gDifficultyLevelMenu",
+      "gDifficultyLevelPopup","gGameSelector","gScoreDisplay","gGameStack"];
   for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
 
   gDifficultyLevelMenu.shouldBeEnabled = false;
+
+  gGameStackTop = gGameStack.boxObject.y;
+  gGameStackLeft = gGameStack.boxObject.x;
+
+  gFloatingPile = createFloatingPile();
 
   // init the pref branch
   gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
@@ -77,10 +85,6 @@ function init() {
   useCardSet(cardset);
   document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
-  gGameStack = document.getElementById("games");
-  gGameStackTop = gGameStack.boxObject.y;
-  gGameStackLeft = gGameStack.boxObject.x;
-
   // restore animation pref
   var useAnimation = true;
   try { useAnimation = gPrefs.getBoolPref("use-animation"); } catch(e) {}
@@ -91,7 +95,6 @@ function init() {
 
   // init other stuff
   initMouseHandlers();
-  CardMover1.init();
 
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
@@ -243,7 +246,7 @@ var cardMethods = {
     return (thisnum>=number);
   },
 
-  moveTo: function(targetPile) { CardMover.move(this, targetPile); },
+  moveTo: function(targetPile) { moveCards(this, targetPile); },
 
   // card turning
   setFaceUp: function() {
@@ -420,9 +423,9 @@ function initPile(elt) {
 
 
 // for CardMover1, MouseHandlers["drag+drop"], etc
-function createFloatingPile(className) {
+function createFloatingPile() {
   var pile = document.createElement("stack");
-  pile.className = className;
+  pile.className = "fan-down"; // xxx doesn't need to be changeable yet
   initPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
@@ -471,7 +474,9 @@ function createHighlighter() {
 
 // we don't want to enable the UI between an animated move and any autoplay it triggers
 function animatedActionFinished(pileWhichHasHadCardsRemoved) {
-  if(!Game.autoplay(pileWhichHasHadCardsRemoved)) enableUI();
+  if(Game.autoplay(pileWhichHasHadCardsRemoved)) return;
+  enableUI();
+  if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 
 function playGame(game) {

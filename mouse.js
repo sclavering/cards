@@ -22,8 +22,6 @@ mouse handling.
 
 
 function initMouseHandlers() {
-  for(var m in MouseHandlers) MouseHandlers[m].init();
-  // mouse event listeners
   gGameStack.addEventListener("click", handleMouseClick, false);
   gGameStack.addEventListener("mousemove", handleMouseMove, false);
   gGameStack.addEventListener("mousedown", handleMouseDown, false);
@@ -53,23 +51,17 @@ var MouseHandlers = [];
 
 MouseHandlers["drag+drop"] = {
   nextCard: null, // set on mousedown, so that on mousemove it can be moved to |cards|
-  cards: null, // the pile holding the cards being dragged
   tx: 0, // used in positioning for drag+drop
   ty: 0,
   dragInProgress: false,
-
-  init: function() {
-    // class doesn't need to be flexible for the moment
-    this.cards = createFloatingPile("fan-down");
-  },
 
   reset: function() {
     this.nextCard = null;
     this.tx = 0;
     this.ty = 0;
     // just in case user manages to start a new game while dragging something
-    while(this.cards.hasChildNodes()) this.cards.removeChild(this.card.lastChild);
-    this.cards.hide();
+    while(gFloatingPile.hasChildNodes()) gFloatingPile.removeChild(this.card.lastChild);
+    gFloatingPile.hide();
   },
 
   mouseDown: function(e) {
@@ -78,13 +70,13 @@ MouseHandlers["drag+drop"] = {
   },
 
   mouseMove: function(e) {
-    var cards = this.cards;
+    var cards = gFloatingPile;
     if(this.dragInProgress) {
       cards.top = cards._top = e.pageY - this.ty;
       cards.left = cards._left = e.pageX - this.tx;
     } else if(this.nextCard) {
       var card = this.nextCard;
-//      this.cards.className = card.parentNode.className;
+//      cards.className = card.parentNode.className;
       cards.top = cards._top = card.boxObject.y - gGameStackTop;
       cards.left = cards._left = card.boxObject.x - gGameStackLeft;
       // property to retrieve original source of cards. for most
@@ -104,30 +96,26 @@ MouseHandlers["drag+drop"] = {
     if(!this.dragInProgress) return;
     this.dragInProgress = false;
 
-    const cbox = this.cards.boxObject;
+    const cbox = gFloatingPile.boxObject;
     var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
 
-    var card = this.cards.firstChild;
+    var card = gFloatingPile.firstChild;
     var source = card.parentNode.source;
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
-    var success = false;
-    for(var i = 0; !success && i!=targets.length; i++) {
+    for(var i = 0; i != targets.length; i++) {
       var target = targets[i];
       if(target==source) continue;
 
       var tbox = target.boxObject;
       var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
-      if(overlaps && Game.attemptMove(card,target)) success = true;
+      if(overlaps && Game.attemptMove(card,target)) return;
     }
 
-    // do this before moving back (if not successful) because otherwise we get repainting issues
-    // (bits of cards remain on the screen where this.cards was located)
-    this.cards.hide();
-
-    // move cards back
-    if(!success) source.addCards(card);
+    // ordering here may be important (not-repainting fun)
+    gFloatingPile.hide();
+    source.addCards(card);
   },
 
   // middle click calls smartMove(), left clicks reveal(), dealFromStock(),
@@ -155,10 +143,10 @@ MouseHandlers["drag+drop"] = {
 
 MouseHandlers["click-to-select"] = {
   source: null,
-  highlighter: null,
 
-  init: function() {
-    this.highlighter = createHighlighter();
+  get highlighter() {
+    delete this.highlighter;
+    return this.highlighter = createHighlighter();
   },
 
   reset: function() {
@@ -217,10 +205,10 @@ MouseHandlers["click-to-select"] = {
 
 MouseHandlers["pyramid"] = {
   card: null,
-  highlighter: null,
 
-  init: function() {
-    this.highlighter = createHighlighter();
+  get highlighter() {
+    delete this.highlighter;
+    return this.highlighter = createHighlighter();
   },
 
   reset: function() {

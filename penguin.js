@@ -7,6 +7,7 @@ AllGames.penguin = {
 
   init: function() {
     var cs = this.cards = makeDecksMod13(1);
+    this.pilesAndCells = this.piles.concat(this.cells);
   },
 
   deal: function(cards) {
@@ -40,7 +41,33 @@ AllGames.penguin = {
   },
 
   getHints: function() {
+    const ps = this.pilesAndCells;
+    const cs = new Array(7);
+    for(var i = 0; i != 14; i++) {
+      var c = this.getLowestMovableCard(ps[i]);
+      if(!c) continue;
+      // suggest moving to a pile
+      if(c.number==this.foundationStartNumber) {
+        var p = this.firstEmptyPile;
+        if(p) this.addHint(c, p);
+      } else {
+        var up = c.up, upp = up.parentNode;
+        if(!up.nextSibling && upp.isNormalPile) this.addHint(c, upp);
+      }
+      // remember cards
+      if(i<7) cs[i] = c;
+    }
+    // suggest moving things to cells
+    p = this.emptyCell;
+    if(!p) return;
+    for(i = 0; i != 7; i++) {
+      c = cs[i];
+      if(c.nextSibling) continue;
+      this.addHint(c, p);
+    }
   },
+
+  getLowestMovableCard: "descending, in suit",
 
   getBestMoveForCard: function(card) {
     if(card.upNumber==Game.foundationStartNumber) {

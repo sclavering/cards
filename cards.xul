@@ -13,6 +13,7 @@
   persist="screenX screenY width height sizemode"
   >
 
+<script type="application/x-javascript" src="libpiles.js"/>
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="moving.js"/>
 <script type="application/x-javascript" src="mouse.js"/>

@@ -11,8 +11,6 @@
   title  ="&cards-window-title;"
   id     ="cards-window"
   persist="screenX screenY width height sizemode"
-
-  insufficientSpacesMessage="&insufficientSpacesMessage;"
   >
 
 <script type="application/x-javascript" src="cardslib.js"/>
@@ -64,7 +62,6 @@
 </keyset>
 
 
-<!-- display -->
 <toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="&gamesMenu.label;">
@@ -934,13 +931,20 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     </hbox>
   </vbox>
 
-  <!-- game won message -->
-  <vbox id="game-won-msg-box" align="center" pack="center" flex="1" hidden="true">
-    <vbox id="game-won-msg">
-      <description id="game-won-msg1" value="&game-won-msg1;"/>
-      <description id="game-won-msg2" value="&game-won-msg2;"/>
+  <vbox id="game-won-msg" class="message" hidden="true">
+    <vbox class="message-inner">
+      <description class="message-1" value="&game-won-msg1;"/>
+      <description class="message-2" value="&game-won-msg2;"/>
     </vbox>
   </vbox>
+
+  <vbox id="insufficient-spaces-msg" class="message" hidden="true">
+    <vbox class="message-inner">
+      <description class="message-1" value="&insufficientSpacesMessage;"/>
+      <description class="message-2" value="&clickToContinuePlaying;"/>
+    </vbox>
+  </vbox>
+
 </stack>
 
 </window>

@@ -171,6 +171,9 @@ MouseHandlers["click-to-select"] = {
   mouseMove: function(e) {},
 
   mouseClick: function(e) {
+    // don't let the event end up hiding the insufficient-spaces-msg as soon as we show it
+    e.stopPropagation();
+
     var t = e.target;
     if(e.button==0) {
       if(e.detail==2) {

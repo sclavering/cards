@@ -3,7 +3,7 @@ document.window = window;
 // constants for colours and suits
 const RED = 1, BLACK = 2, SPADE = 3, HEART = 4, DIAMOND = 5, CLUB = 6;
 // these are used in setting the class attribute of cards.
-const CLUBSTR = "club", SPADESTR = "spade", HEARTSTR = "heart", DIAMONDSTR = "diamond";
+const CLUBSTR = "C", SPADESTR = "S", HEARTSTR = "H", DIAMONDSTR = "D";
 
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
@@ -45,14 +45,16 @@ var gOptionsMenu = "options-menu";
 var gDifficultyLevelMenu = "game-difficulty-menu";
 var gDifficultyLevelPopup = "game-difficulty-popup";
 var gGameSelector = "game-type-menu";
-var gGameWonMsg = "game-won-msg-box";
+var gGameWonMsg = "game-won-msg";
+var gInsufficientSpacesMsg = "insufficient-spaces-msg";
 var gScoreDisplay = "score-display";
 
 
 
 function init() {
-  var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint","gCmdRedeal",
-      "gOptionsMenu","gDifficultyLevelMenu","gDifficultyLevelPopup","gGameSelector","gGameWonMsg","gScoreDisplay"];
+  var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
+      "gCmdRedeal","gOptionsMenu","gInsufficientSpacesMsg","gDifficultyLevelMenu",
+      "gDifficultyLevelPopup","gGameSelector","gGameWonMsg","gScoreDisplay"];
   for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
 
   gDifficultyLevelMenu.shouldBeEnabled = false;
@@ -247,7 +249,7 @@ var cardMethods = {
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;
-    this.className = "card "+this.suitstr+"-"+this.realNumber;
+    this.className = "card "+this.suitstr+this.realNumber;
   },
 
   setFaceDown: function() {
@@ -583,6 +585,17 @@ function showGameWon() {
     window.onclick = null;
     gGameWonMsg.hidden = true;
     newGame();
+    enableUI();
+  };
+}
+
+
+function showInsufficientSpacesMsg() {
+  disableUI();
+  gInsufficientSpacesMsg.hidden = false;
+  window.onclick = function(e) {
+    window.onclick = null;
+    gInsufficientSpacesMsg.hidden = true;
     enableUI();
   };
 }

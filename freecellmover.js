@@ -42,14 +42,11 @@ var FreeCellGame = {
   },
 
   // must override global version to deal with oddities of canMoveTo in Freecell-like games
-  // (it returns 0 rather than false if the move is legal but not possible because of
-  // insufficient spaces)
+  // (it returns 0, not false, if the move is legal but there aren't enough spaces for it)
   attemptMove: function(source, target) {
     var can = Game.canMoveTo(source, target);
     if(can) return Game.moveTo(source,target);
-    // insufficient spaces
-    // xxx alerts suck
-    if(can===0) alert(this.insufficientSpacesMessage);
+    if(can===0) showInsufficientSpacesMsg();
     return false;
   },
 

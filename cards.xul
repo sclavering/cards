@@ -18,11 +18,8 @@
   persist="screenX screenY width height sizemode"
 
   insufficientSpacesMessage="&insufficientSpacesMessage;"
-
-  gameWonTitle="&game-won.title;"
-  gameWonMessage="&game-won.message;"
   >
-  <!-- gameWon attrs read and passed to nsIPromptService call.  Should be a stringbundle really -->
+
 
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="mouse.js"/>
@@ -837,6 +834,14 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       </vbox>
       <flex/>
     </hbox>
+  </vbox>
+
+  <!-- game won message -->
+  <vbox id="game-won-msg-box" align="center" pack="center" flex="1" hidden="true">
+    <vbox id="game-won-msg">
+      <description id="game-won-msg1" value="&game-won-msg1;"/>
+      <description id="game-won-msg2" value="&game-won-msg2;"/>
+    </vbox>
   </vbox>
 </stack>
 

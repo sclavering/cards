@@ -611,6 +611,7 @@ var Cards = {
   difficultyLevelMenu: null,
   difficultyLevelPopup: null, // the <menupopup> for difficultyLevelMenu
   gameSelector: null,
+  gameWonMsg: null,
 
   scoreDisplay: null,     // ref to label on toolbar where score displayed
 
@@ -626,6 +627,7 @@ var Cards = {
     this.difficultyLevelMenu = document.getElementById("game-difficulty-menu");
     this.difficultyLevelPopup = document.getElementById("game-difficulty-popup");
     this.gameSelector = document.getElementById("game-type-menu");
+    this.gameWonMsg = document.getElementById("game-won-msg-box");
 
     gGameStack = document.getElementById("games");
     gGameStackTop = gGameStack.boxObject.y;
@@ -684,12 +686,6 @@ var Cards = {
     this.enableUndo();
     this.enableRedeal();
   },
-  enablePartialUI: function() {
-    this.cmdNewGame.removeAttribute("disabled");
-    this.cmdRestartGame.removeAttribute("disabled");
-    this.enableDifficultyMenu();
-    this.gameSelector.removeAttribute("disabled");
-  },
   disableUI: function() {
     gUIEnabled = false;
     this.cmdHint.setAttribute("disabled","true");
@@ -739,17 +735,16 @@ var Cards = {
   // called by CardGame.trackMove() I think.
   displayScore: function(score) { this.scoreDisplay.value = score; },
 
-  // called from CardGame.autoplay(), which is a function called after all significant moves, so handles
-  // checking whether the game has been won and taking appropriate action.
-  // this could be replaced by a tacky fireworks animation, or by a bouncing cards type thing :)
+  // called from BaseCardGame.autoplay(), which is a function called after all significant
+  // moves, so handles checking whether the game has been won and taking appropriate action.
   showGameWon: function() {
-    // get a reference to the prompt service component.
-    var prompt = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                           .getService(Components.interfaces.nsIPromptService);
-    var msg1 = document.documentElement.getAttribute("gameWonTitle");
-    var msg2 = document.documentElement.getAttribute("gameWonMessage");
-    if(prompt.confirm(window,msg1,msg2)) Game.newGame();
-    else this.enablePartialUI();
+    this.gameWonMsg.hidden = false;
+    // will get click events before the other event handlers
+    window.onclick = function(e) {
+      window.onclick = null;
+      Cards.gameWonMsg.hidden = true;
+      Game.newGame();
+    };
   }
 }
 

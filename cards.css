@@ -20,9 +20,24 @@ slowdowns (dragging off bottom). then we apply a margin to each game to stop it 
 space
 */
 #games { margin: 0 -200px -1000px 0; }
-vbox[name], hbox[name] { margin: 0 200px 1000px 0; }
+vbox[name], hbox[name], #game-won-msg { margin: 0 200px 1000px 0; }
 
 #games { overflow: hidden; }
+
+
+#game-won-msg {
+  padding: 3em;
+  background: -moz-dialog;
+  border: 1px solid;
+}
+#game-won-msg1 {
+  font-size: 2.5em;
+  font-weight: bold;
+}
+#game-won-msg2 {
+  margin-top: 1em;
+  font-size: 1.5em;
+}
 
 
 #score-panel { margin-right: 10px; }

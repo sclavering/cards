@@ -97,54 +97,44 @@ Games["montana-hard"] = {
 
 function MontanaRedealAction(hardGame) {
   this.isHardGame = hardGame;
+  this.map = [[],[],[],[]];
 }
 MontanaRedealAction.prototype = {
   action: "redeal",
   synchronous: true,
 
   perform: function() {
-    var hardGame = this.isHardGame;
-    Game.redealsRemaining--;
-    var cards = [];
-    var map = this.map = [[],[],[],[]];
-    var rows = Game.rows;
+    const hard = this.isHardGame, map = this.map, rows = Game.rows, cards = [];
 
     // remove cards
     for(var r = 0; r != 4; r++) {
       var row = rows[r];
-      var c = 0, pile = row[0], prv = null;
-      while(this.isPileComplete(pile, prv)) c++, prv = pile, pile = row[c];
+      var suit = null;
 
+      // set c to the col index at which the first out-of-place card appears, or 12 if there aren't any
+      for(var c = 0; c != 12; ++c) {
+        var card = row[c].firstChild;
+        if(!card) break;
+        if(!suit) suit = card.suit;
+        if(suit != card.suit || card.number != c+2) break;
+      }
+
+      // record where cards were
       for(; c != 13; c++) {
-        var card = row[c].lastChild;
-        if(card) card.parentNode.removeChild(card);
-        // in hard games we want the null's in the array too
-        if(card || hardGame) cards.push(card);
+        card = row[c].lastChild;
         map[r].push(card);
+        // in hard games we want the null's in the array too (so that spaces are placed randomly)
+        if(card || hard) cards.push(card);
       }
     }
 
-    // shuffle
-    cards = shuffle(cards);
-    this.shuffled = cards.slice(0); // copy for redo()
-
-    // deal.  in easy games the spaces go at the start of rows, in hard games they occur randomly
-    var easy = hardGame ? 0 : 1;
-    for(r = 0; r != 4; r++)
-      for(c = 13 - map[r].length + easy; c != 13; c++)
-        rows[r][c].dealTo(cards, 0, 1);
-  },
-
-  isPileComplete: function(pile, prv) {
-    var card = pile.lastChild;
-    if(!card) return (pile.col==12);
-    if(pile.col==0) return (card.number==2);
-    var prvcard = prv.lastChild;
-    return card.suit==prvcard.suit && card.number==prvcard.upNumber;
+    // shuffle and deal
+    this.shuffled = shuffle(cards);
+    this.redo();
   },
 
   undo: function() {
-    var map = this.map, rows = Game.rows;
+    const map = this.map, rows = Game.rows;
     Game.redealsRemaining++;
 
     // appendChild(node) will remove node first (per DOM spec), so we needn't bother clearing the layout
@@ -157,7 +147,7 @@ MontanaRedealAction.prototype = {
 
   redo: function() {
     Game.redealsRemaining--;
-    var map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
+    const map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
 
     // in easy games the spaces go at the start of rows, in hard games they occur randomly
     var easy = this.isHardGame ? 0 : 1;

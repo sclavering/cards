@@ -117,6 +117,7 @@ function init() {
   for(var i in names) {
     name = names[i], game = lookup[name];
     var mi = document.createElement("menuitem");
+    mi.setAttribute("type", "radio");
     mi.setAttribute("label", names[i]);
     mi.value = game;
     menu.appendChild(mi);
@@ -138,6 +139,11 @@ function init() {
 
   // set window title. (setting window.title does not work while the app. is starting)
   document.documentElement.setAttribute("title", gStrings[game+".name"]);
+
+  // tick/check the menuitem for current game
+  mi = menu.firstChild;
+  while(mi.value != game) mi = mi.nextSibling;
+  mi.setAttribute("checked", "true");
 
   GameController = Games[game];
   GameController.switchTo();

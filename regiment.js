@@ -71,17 +71,16 @@ Games["regiment"] = {
     }
   },
 
-  getHint: function() {
-    for(var i = 0; i < 8; i++) {
-      this.findHintsForCard(this.reserves[i].lastChild);
-    }
+  getHints: function() {
+    for(var i = 0; i < 8; i++) this.findHintsForCard(this.reserves[i].lastChild);
+    for(i = 0; i < 16; i++) this.findHintsForCard(this.stacks[i].lastChild);
   },
   findHintsForCard: function(card) {
     if(!card) return;
     // look through the tableau for somewhere to put it
     for(var i = 0; i < 16; i++) {
       var stack = this.stacks[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
+      if(stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
     }
   },
 

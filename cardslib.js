@@ -583,21 +583,19 @@ function initDifficultyLevelMenu(items, selectedItem) {
 }
 
 
-function newGame() {
+function newGame(cards) {
   var couldUndo = Game.canUndo || GameController.havePastGames;
   var couldRedo = Game.canRedo || GameController.haveFutureGames;
-  GameController.newGame();
+  GameController.newGame(cards);
   if(!couldUndo) gCmdUndo.removeAttribute("disabled");
   if(couldRedo) gCmdRedo.setAttribute("disabled", "true");
 }
 
 
 function restartGame() {
-  var couldUndo = Game.canUndo || GameController.havePastGames;
-  var couldRedo = Game.canRedo || GameController.haveFutureGames;
-  GameController.restartGame();
-  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
-  if(couldRedo) gCmdRedo.setAttribute("disabled", "true");
+  // don't restart if nothing has been done yet
+  // xxx should disable the Restart button instead really
+  if(Game.canUndo) newGame(Game.cardsAsDealt.copy);
 }
 
 

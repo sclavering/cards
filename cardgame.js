@@ -619,11 +619,6 @@ GameController.prototype = {
     Game.begin(cards);
   },
 
-  restartGame: function() {
-    // we have to pass a copy of the array, or restoring the old game won't work
-    this.newGame(Game.cardsAsDealt.copy);
-  },
-
   restorePastGame: function() {
     if(this.futureGames.length == 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
@@ -680,10 +675,6 @@ DifficultyLevelsController.prototype = {
 
   newGame: function() {
     this.currentLevel.newGame();
-  },
-
-  restartGame: function() {
-    this.currentLevel.restartGame();
   },
 
   restorePastGame: function() {

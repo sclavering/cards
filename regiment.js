@@ -17,8 +17,7 @@ Games["regiment"] = {
     this.kingFoundations = this.foundations.slice(4,8);
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 16; i++) dealToPile(cards,this.piles[i],0,1);
     for(i = 0; i != 8; i++) dealToPile(cards,this.reserves[i],10,1);
   },

@@ -6,8 +6,7 @@ Games["klondike"] = {
   canMoveToPile: "descending, alt colours, kings in spaces",
   getLowestMovableCard: "face up",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 7; i++) dealToPile(cards,this.piles[i],i,1);
     dealToPile(cards,this.stock,cards.length,0);
   },

@@ -6,8 +6,7 @@ Games["freecell"] = {
   canMoveToPile: "descending, alt colours",
   getLowestMovableCard: "descending, alt colours",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 7);
     for(i = 4; i != 8; i++) dealToPile(cards, this.piles[i], 0, 6);
   },

@@ -5,16 +5,13 @@ Games["fan"] = {
   canMoveCard: "last on pile",
   canMoveToPile: "descending, in suit, kings in spaces",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
-    while(this.impossibleDeal(cards)) cards = shuffle(this.cards);
-
+  deal: function(cards) {
     for(var i = 0; i != 17; i++) dealToPile(cards, this.piles[i], 0, 3);
     dealToPile(cards, this.piles[17], 0, 1);
   },
 
   // games with piles such as 7,2,6H or 4,9,8C are impossible
-  impossibleDeal: function(cards) {
+  shuffleImpossible: function(cards) {
     for(var p = 49; p != 1; p -= 3) {
       // these will form a pile c,d,e with c at the bottom
       var c = cards[p+2], d = cards[p+1], e = cards[p];

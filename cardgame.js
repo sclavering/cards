@@ -203,7 +203,7 @@ var BaseCardGame = {
 
 
   // === Start Game =======================================
-  // Games should override deal()
+  // Games should override deal(), and shuffleImpossible() if they need to
 
   newGame: function() {
     this.mouseHandler.reset();
@@ -217,8 +217,14 @@ var BaseCardGame = {
     if(this.piles)
       for(var i = 0; i != this.piles.length; i++)
         this.piles[i].fixLayout();
-    //
-    this.deal();
+
+    // xxx hack! All games use this.cards, but sometimes it's an array of cards, and sometimes an
+    // array of arrays (for different difficulty levels, hence cards[0] might be undefined).
+    // Note that not all games with difficulty levels need different cards for them.
+    var cards = ("isCard" in this.cards[1]) ? this.cards : this.cards[this.difficultyLevel];
+    do cards = shuffle(cards);
+    while(this.shuffleImpossible(cards));
+    this.deal(cards);
 
     // xxx this should probably happen elsewhere
     if(this.stock && this.stock.counter) {
@@ -241,8 +247,14 @@ var BaseCardGame = {
     for(var i in s) while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild).setFaceDown();
   },
 
-  // should deal out the cards for a new game. newGame() will ensure all piles are empty
-  deal: function() {
+  // should deal out the provided shuffled cards for a new game.  piles will already be empty
+  deal: function(cards) {
+  },
+
+  // Games can override with a more interesting function if they wish to eliminate (some) impossible deals.
+  // The cards will be shuffled repeatedly until this returns false, after which they are passed to deal(..)
+  shuffleImpossible: function(shuffledCards) {
+    return false;
   },
 
   // xxx make this an undoable Action

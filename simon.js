@@ -14,8 +14,7 @@ Games["simon"] = {
     cards[3] = getDecks(1);              // hard games
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards[this.difficultyLevel]);
+  deal: function(cards) {
     dealToPile(cards, this.piles[0], 0, 8);
     dealToPile(cards, this.piles[1], 0, 8);
     for(var i = 2; i != 10; i++) dealToPile(cards, this.piles[i], 0, 10-i);

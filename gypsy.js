@@ -15,9 +15,7 @@ Games["gypsy"] = {
     };
   },
 
-  deal: function() {
-    // 1==easy, 2==hard
-    var cards = shuffle(this.cards[this.difficultyLevel]);
+  deal: function(cards) {
     for(var i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 2, 1);
     dealToPile(cards, this.stock, cards.length, 0);
   },

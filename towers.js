@@ -6,8 +6,7 @@ Games["towers"] = {
   canMoveToPile: "descending, in suit, kings in spaces",
   getLowestMovableCard: "descending, in suit",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
     for(i = 1; i != 3; i++) dealToPile(cards, this.cells[i], 0, 1);
   },

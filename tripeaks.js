@@ -38,8 +38,7 @@ Games["tripeaks"] = {
     this.waste.free = function() { return true; };
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 18; i++) dealToPile(cards, this.piles[i], 1, 0);
     for(i = 18; i != 28; i++) dealToPile(cards, this.piles[i], 0, 1);
     dealToPile(cards, this.waste, 0, 1);

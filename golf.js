@@ -13,8 +13,7 @@ Games["golf"] = {
     cards[3] = getDecks(2); // for hard games
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards[this.difficultyLevel]);
+  deal: function(cards) {
     var cardsPerColumn = [,5,5,8][this.difficultyLevel];
     this.score = [,51,51,103][this.difficultyLevel];
     for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, cardsPerColumn);

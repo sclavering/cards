@@ -22,8 +22,7 @@ Games["montana"] = {
     this.rows = [p.slice(0,13), p.slice(13,26), p.slice(26,39), p.slice(39,52)];
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 52; i++) dealToPile(cards, this.piles[i], 0, 1);
   },
 

@@ -5,8 +5,7 @@ Games["canfield"] = {
   dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     dealToPile(cards, this.reserve, 12, 1);
     dealToPile(cards, this.foundations[0], 0, 1);
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 0, 1);

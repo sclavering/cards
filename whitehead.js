@@ -8,8 +8,7 @@ Games["whitehead"] = {
   canMoveToPile: "descending, same colour",
   getLowestMovableCard: "descending, in suit",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 7; i++) dealToPile(cards, this.piles[i], 0, i+1);
     dealToPile(cards, this.stock, cards.length, 0);
   },

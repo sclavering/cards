@@ -12,8 +12,7 @@ Games["maze"] = {
     this.canMoveToPile = this.canMoveTo;
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i in this.piles) dealToPile(cards, this.piles[i], 0, 1);
   },
 

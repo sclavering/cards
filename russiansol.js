@@ -5,8 +5,7 @@ Games["russiansol"] = {
   layout: "yukon",
   canMoveToPile: "descending, in suit",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     dealToPile(cards, this.piles[0], 0, 1);
     for(var i = 1; i != 7; i++) dealToPile(cards, this.piles[i], i, 5);
   },

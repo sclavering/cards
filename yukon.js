@@ -54,8 +54,7 @@ Games["yukon"] = {
 
   id: "yukon",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     dealToPile(cards, this.piles[0], 0, 1);
     for(var i = 1; i != 7; i++) dealToPile(cards, this.piles[i], i, 5);
   },
@@ -80,8 +79,7 @@ Games["sanibel"] = {
   cards: 2, // use 2 decks
   dealFromStock: "to waste",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     dealToPile(cards, this.stock, 3, 0);
     dealToPile(cards, this.waste, 0, 1);
     for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 3, 7);

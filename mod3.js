@@ -37,20 +37,8 @@ Games["mod3"] = {
     }
   },
 
-  deal: function() {
-    var i, cards;
-
-    // shuffle, and prevent games where that start with no cards in the correct place
-    // on the foundations (because such games are impossible)
-    var impossible = true;
-    while(impossible) {
-      cards = shuffle(this.cards);
-      for(i = 95; impossible && i != 87; i--)
-        if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
-          impossible = false;
-    }
-
-    for(i = 0; i != 24; i++) dealToPile(cards, this.foundations[i], 0, 1);
+  deal: function(cards) {
+    for(var i = 0; i != 24; i++) dealToPile(cards, this.foundations[i], 0, 1);
     for(i = 0; i != 8; i++) dealToPile(cards, this.piles[i], 0, 1);
     dealToPile(cards, this.stock, cards.length, 0);
 
@@ -59,6 +47,14 @@ Games["mod3"] = {
       var f = this.foundations[i];
       if(f.firstChild.number==f.baseNumber) this.score += MOD3_CARD_IN_PLACE;
     }
+  },
+
+  // games that start with no cards in the correct place on the foundations are impossible
+  shuffleImpossible: function(cards) {
+    for(var i = 95; i != 87; i--)
+      if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
+        return false;
+    return true;
   },
 
   canMoveToFoundation: function(card, pile) {

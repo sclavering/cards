@@ -70,8 +70,7 @@ Games["spider"] = {
     cards[3] = getDecks(2);              // hard games
   },
 
-  deal: function() {
-    var cards = shuffle(this.cards[this.difficultyLevel]);
+  deal: function(cards) {
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
     for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
     dealToPile(cards, this.stock, 50, 0);
@@ -92,8 +91,7 @@ Games["blackwidow"] = {
   canMoveCard: "descending, not from foundation",
   canMoveToFoundation: "king->ace flush",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 4; i++) dealToPile(cards, this.piles[i], 5, 1);
     for(i = 4; i != 10; i++) dealToPile(cards, this.piles[i], 4, 1);
     dealToPile(cards, this.stock, 50, 0);
@@ -131,8 +129,7 @@ Games["divorce"] = {
   canMoveToFoundation: "13 cards",
   getLowestMovableCard: "descending mod13, in suit",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
     dealToPile(cards, this.stock, cards.length, 0);
   },
@@ -153,8 +150,7 @@ Games["wasp"] = {
   canMoveToPile: "descending, in suit",
   canMoveToFoundation: "king->ace flush",
 
-  deal: function() {
-    var cards = shuffle(this.cards);
+  deal: function(cards) {
     for(var i = 0; i != 3; i++) dealToPile(cards, this.piles[i], 3, 4);
     for(i = 3; i != 7; i++) dealToPile(cards, this.piles[i], 0, 7);
     dealToPile(cards, this.stock, 3, 0);

@@ -66,7 +66,7 @@ var CardShuffler = {
   shuffle: function(allcards) {
     var shuffledCards = [];
     while(allcards.length) {
-      var cardnum = parseInt(Math.random() * allcards.length);
+      var cardnum = Math.floor(Math.random() * allcards.length);
       if(cardnum == allcards.length) cardnum--;
       shuffledCards.push(allcards.splice(cardnum,1)[0]);
     }

@@ -20,6 +20,7 @@
 
 <script><![CDATA[
 var list = null;
+var gOldGame;
 
 function onload() {
   list = document.getElementById("games");
@@ -27,7 +28,11 @@ function onload() {
   var ids = window.arguments[0]; // array of game ids
   var names = window.arguments[1]; // array of corresponding names
   var tickedIds = window.arguments[2]; // an (unrelated) array of ids which should be ticked
-  var selectedId = window.arguments[3]; // id of game for which the listitem should start selected
+  // xxx We don't actually preselect the listitem at present (January 2005), because doing so (in
+  // Fx 1.0 on Ubuntu) doesn't set the selected="true" attribute, which mean that the item does not
+  // appear selected, even though it thinks it is.  Setting the attribute manually leads to very
+  // strange things happening
+  var selectedId = gOldGame = window.arguments[3]; // id of game for which the listitem should start selected
 
   var ticked = {}; // a hashtable version
   for(var i = 0; i != tickedIds.length; ++i) ticked[tickedIds[i]] = true;
@@ -44,11 +49,6 @@ function onload() {
     list.appendChild(li);
     if(id == selectedId) index = i, item = li;
   }
-
-  list.selectedItem = item;
-  // xxx setting selectedItem ought to have done this (via item.selected=true),
-  // but it wasn't doing so in Firefox 1.0 on Ubuntu Linux 4.10 (on 2005-01-07)
-  item.setAttribute("selected", "true");
 }
 
 function onaccept() {
@@ -58,7 +58,9 @@ function onaccept() {
     var item = items[i];
     if(item.checked) ticked.push(item.gameId);
   }
-  opener.gameSelectorClosing(list.selectedItem.gameId, ticked);
+  var selected = list.selectedItem;
+  selected = selected ? selected.gameId : gOldGame;
+  opener.gameSelectorClosing(selected, ticked);
 }
 ]]></script>
 

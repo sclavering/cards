@@ -154,7 +154,7 @@ CardGame.prototype = {
     //
     Cards.enableDifficultyMenu();
     levels = levels.split('|');
-    // read current level from prefs.  default to numLevls/2, which should generally end up being Medium 
+    // read current level from prefs.  default to numLevls/2, which should generally end up being Medium
     var currentLevel;
     try {
       currentLevel = Cards.preferences.getIntPref(Cards.currentGame+".difficulty-level");
@@ -194,7 +194,7 @@ CardGame.prototype = {
     // reset offset used when stacking cards.
     if(this.stacks)
       for(var i = 0; i < this.stacks.length; i++)
-        CardPositioner.fixStack(this.stacks[i]);
+        this.stacks[i].fixLayout();
     //
     this.deal();
     Cards.enableUI();
@@ -366,7 +366,7 @@ CardGame.prototype = {
     if(target.isFoundation) return this.canMoveToFoundation(card,target);
     return this.canMoveToPile(card,target);
   },
-  
+
   // this is the way foundations work in most games: built one card at a time, all the same suit, ascending
   // games (e.g. Spider, SimpleSimon) where only a complete suit can move to foundation will need to override
   canMoveToFoundation: function(card,target) {
@@ -376,12 +376,12 @@ CardGame.prototype = {
     var last = target.lastChild;
     return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
   },
-  
+
   // this should work for most games which have cells
   canMoveToCell: function(card, target) {
     return (!target.hasChildNodes() && card.isLastOnPile());
   },
-  
+
   // some standard forms for canMoveToPile
   canMoveTo_LastOnPile: function(card, target) {
     return (card.faceUp() && card.isLastOnPile());
@@ -653,8 +653,8 @@ CardGame.prototype = {
     for(var i = 0; i < stacks.length; i++) {
       var last = stacks[i].lastChild;
       if(last && last.faceDown()) {
-        this.revealCard(last); 
-        return true; 
+        this.revealCard(last);
+        return true;
       }
     }
     return false;

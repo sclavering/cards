@@ -160,39 +160,72 @@ function _createCardPile(elt) {
   elt.isReserve = false;
   elt.isStock = false;
   elt.isWaste = false;
-  
+
   // for the animated move stack and the drag stack |source|
   // is set to the pile the cards originally came from.
   elt.source = elt;
-  
+
   if(elt.className=="card-fan-down") {
     elt.getNextCardLeft = function() { return 0; };
-    
+
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
-      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || CardPositioner.faceUpOffset) : CardPositioner.faceDownOffset);
+      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || Cards.cardFaceUpOffset) : Cards.cardFaceDownOffset);
     };
-    
+
     elt.positionCard = function(card) {
       var prev = card.previousSibling;
       if(prev)
-        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || CardPositioner.faceUpOffset) : CardPositioner.faceDownOffset);
-      else 
+        card.top = prev.top - 0 + (prev.faceUp() ? (this.offset || Cards.cardFaceUpOffset) : Cards.cardFaceDownOffset);
+      else
         card.top = 0;
       card.left = 0;
     };
-    
+
+    elt.fixLayout = function() {
+      if(!this.hasChildNodes()) {
+        this.offset = 0;
+        return;
+      }
+      if(this.childNodes.length==1) {
+        this.offset = 0;
+        this.firstChild.top = 0;
+        this.firstChild.left = 0;
+        return;
+      }
+      var card;
+      var numFaceUp = 0;
+      for(card = this.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
+      if(numFaceUp <= 1) {
+        this.offset = 0;
+        return;
+      }
+      // card will still hold a pointer to the last face down card, or null.
+      card = card ? card.nextSibling : this.firstChild
+      var space = window.innerHeight - getBottom(card);
+      var offset = parseInt(space / numFaceUp);
+      if(offset > Cards.cardFaceUpOffset) offset = Cards.cardFaceUpOffset;
+      var old = this.offset || Cards.cardFaceUpOffset;
+      this.offset = offset;
+      if(offset == old) return;
+      var top = (this.childNodes.length - numFaceUp) * Cards.cardFaceDownOffset;
+      while(card) {
+        if(card.top != top) card.top = top;
+        top += offset;
+        card = card.nextSibling;
+      }
+    };
+
   } else if(elt.className=="card-slide") {
     elt.getNextCardLeft = function() {
       if(!this.hasChildNodes()) return 0;
-      // xxx: move slideOffset to |window| or |document|
-      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? CardPositioner.slideOffset : 0);
+      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? Cards.cardSlideOffset : 0);
     };
-    
+
     elt.getNextCardTop = function() {
       if(!this.hasChildNodes()) return 0;
       if(this.childNodes.length < 6)
-        return this.lastChild.top - 0 + CardPositioner.slideOffset;
+        return this.lastChild.top - 0 + Cards.cardSlideOffset;
       return this.lastChild.top;
     };
 
@@ -206,11 +239,42 @@ function _createCardPile(elt) {
       card.top = prev.top;
       card.left = prev.left;
       if(this.childNodes.length < 6) {
-        card.top = card.top - 0 + CardPositioner.slideOffset;
-        card.left = card.left - 0 + CardPositioner.slideOffset;
+        card.top = card.top - 0 + Cards.cardSlideOffset;
+        card.left = card.left - 0 + Cards.cardSlideOffset;
       }
     };
-  
+
+    elt.fixLayout = function() {
+      if(!this.hasChildNodes() ) {
+        this.offset = 0;
+        return;
+      }
+      if(this.childNodes.length==1 ) {
+        this.offset = 0;
+        this.firstChild.top = 0;
+        this.firstChild.left = 0;
+        return;
+      }
+      var card;
+      // figure out how many we can shift in space allotted
+      var maxYShifts = parseInt((window.innerHeight - getBottom(this.firstChild))/Cards.cardSlideOffset);
+      var maxXShifts = parseInt((window.innerWidth - getRight(this.firstChild))/Cards.cardSlideOffset);
+      var offX = 0;
+      var offY = 0;
+      if(maxYShifts > 5) maxYShifts = 5;
+      if(maxXShifts > 5) maxXShifts = 5;
+      var count = this.childNodes.length;
+      card = this.firstChild;
+      while(card) {
+        card.top = offY;
+        card.left = offX;
+        if(count <= maxYShifts) offY += Cards.cardSlideOffset;
+        if(count <= maxXShifts) offX += Cards.cardSlideOffset;
+        card = card.nextSibling;
+        count--;
+      }
+    };
+
   } else {
     elt.getNextCardLeft = function() { return 0; };
     elt.getNextCardTop = function() { return 0; };
@@ -218,13 +282,17 @@ function _createCardPile(elt) {
       card.top = 0;
       card.left = 0;
     };
+    elt.fixLayout = function(stack) {
+      // xxx: could reposition all cards to (0,0) hre just to be sure?
+      this.offset = 0;
+    };
   }
 
   elt.addCard = function(card) {
     this.appendChild(card);
     this.positionCard(card);
   };
-  
+
   // transfers the card and all those that follow it
   // xxx: not in use yet
   elt.transferCards = function(first) {
@@ -235,13 +303,13 @@ function _createCardPile(elt) {
       this.appendChild(card);
       card = next;
     }
-    CardPositioner.fixStack(this);
+    this.fixLayout();
   };
-  
+
   return elt;
 }
-    
-  
+
+
 
 
 
@@ -620,87 +688,8 @@ var CardMover = {
       card = nextCard;
     }
     if(target.id) {
-      CardPositioner.fixStack(target);
-      if(source.id) CardPositioner.fixStack(source);
-    }
-  }
-}
-
-
-
-
-
-
-/** CardPositioner
-  *
-  * Different piles require cards to be positioned differently. The class attribute is used to decide:
-  *
-  * card-pile:  cards are just piled up one on top of the other (like the foundations and stock in Klondike)
-  * card-fan-down:  cards are spread vertically with an offset between the top of consecutive cards
-  *                 offset is smaller between faceDown cards.   (e.g. tableau piles in Klondike)
-  * card-slide: cards are spread such that you have an idea how many are in the pile while only one
-  *                 card on top is visible
-  *
-  * fixStack - repositions all the (face up) cards in a stack so that they fit in the available space
-  *       called in CardMover.transfer, though this may change
-  */
-var CardPositioner = {
-  faceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
-  faceUpOffset: SkinPrefs.offsetBetweenFaceUpCards, // num of pixels between tops of two faceup cards
-  slideOffset: SkinPrefs.offsetBetweenSlidCards, // num of pixels between edges of two slid cards
-
-  fixStack: function(stack) {
-    if(!stack.hasChildNodes() ) {
-      stack.offset = 0;
-      return;
-    }
-    if(stack.childNodes.length==1 ) {
-      stack.offset = 0;
-      stack.firstChild.top = 0;
-      stack.firstChild.left = 0;
-      return;
-    }
-    var card;
-    if(stack.className=="card-slide") {// figure out how many we can shift in space allotted
-      var maxYShifts = parseInt((window.innerHeight - getBottom(stack.firstChild))/this.slideOffset);
-      var maxXShifts = parseInt((window.innerWidth - getRight(stack.firstChild))/this.slideOffset);
-      var offX = 0;
-      var offY = 0;
-      if(maxYShifts > 5) maxYShifts = 5;
-      if(maxXShifts > 5) maxXShifts = 5;
-      var count = stack.childNodes.length;
-      card = stack.firstChild;
-      while(card) {
-        card.top = offY;
-        card.left = offX;
-        if(count <= maxYShifts) offY += this.slideOffset;
-        if(count <= maxXShifts) offX += this.slideOffset;
-        card = card.nextSibling;
-        count--;
-      }
-      return;
-    }
-    if(stack.className!="card-fan-down") 
-      return;
-    var numFaceUp = 0;
-    for(card = stack.lastChild; card && card.faceUp(); card = card.previousSibling) numFaceUp++;
-    if(numFaceUp <= 1) {
-      stack.offset = 0;
-      return;
-    }
-    // card will still hold a pointer to the last face down card, or null.
-    card = card ? card.nextSibling : stack.firstChild
-    var space = window.innerHeight - getBottom(card);
-    var offset = parseInt(space / numFaceUp);
-    if(offset > this.faceUpOffset) offset = this.faceUpOffset;
-    var old = stack.offset || this.faceUpOffset;
-    stack.offset = offset;
-    if(offset == old) return;
-    var top = (stack.childNodes.length - numFaceUp) * this.faceDownOffset;
-    while(card) {
-      if(card.top != top) card.top = top;
-      top += offset;
-      card = card.nextSibling;
+      target.fixLayout();
+      if(source.id) source.fixLayout();
     }
   }
 }
@@ -776,6 +765,10 @@ var HintHighlighter = {
   * this mainly handles the behaviour of the chrome, especially switching between different card games
   */
 var Cards = {
+  cardFaceDownOffset: SkinPrefs.offsetBetweenFaceDownCards, // num of pixels between tops of two facedown cards
+  cardFaceUpOffset: SkinPrefs.offsetBetweenFaceUpCards, // num of pixels between tops of two faceup cards
+  cardSlideOffset: SkinPrefs.offsetBetweenSlidCards, // num of pixels between edges of two slid cards
+
   preferences : null,  // ref to xpcom object implementing nsIPrefBranch for the branch "games.cards"
   currentGame: null,   // string holding the name of the game currently being played
 
@@ -877,11 +870,11 @@ var Cards = {
     // and will be empty if difficulty levels are not supported
     if(this.difficultyLevelPopup.hasChildNodes()) this.enableDifficultyMenu();
   },
-  enableDifficultyMenu: function() { 
+  enableDifficultyMenu: function() {
     this.difficultyLevelMenu.removeAttribute("disabled");
   },
-  disableDifficultyMenu: function() { 
-    this.difficultyLevelMenu.setAttribute("disabled","true"); 
+  disableDifficultyMenu: function() {
+    this.difficultyLevelMenu.setAttribute("disabled","true");
   },
 
   // called by CardGame.trackMove() I think.

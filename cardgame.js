@@ -26,8 +26,9 @@ function CardGame(params) {
 };
 
 CardGame.prototype = {
-  foundations: null, // array of foundation stacks
-  stock: null,       // the stock <stack>, if the game has one
+  foundations: null, // array of foundation piles
+  stock: null,       // the stock pile if the game has one
+  waste: null,
   stacks: null,
   thingsToReveal: null,
 
@@ -41,14 +42,13 @@ CardGame.prototype = {
   // the game.  will only be called the first time a particular game is played
   // If the game has cards which can be revealed it should set up a thingsToReveal
   // array of <stack>s and the autoplay will handle them automatically.
-  // Ideally init() should tag stacks with isReserve=true and isFoundation=true as necessary,
-  // otherwise string comparisons on the stack id are used for canMoveTo() and others.
+  // Piles should be initialised by calling createCardPile(pile-id), which initStacks(...) will do.
   init: function() {
   },
-  // convenience function to init stacks[] foundations[], reserves[], and cells[] arrays
+  // convenience function to init stacks[], foundations[], reserves[], and cells[] arrays
   // (also creates .allstacks[] which is used when clearing the game layout for a new game)
   // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
-  // to use this game must init game.shortname first
+  // To use this function the game must init game.shortname first
   initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols, numCells) {
     var i, j;
     this.allstacks = [];

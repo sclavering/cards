@@ -35,14 +35,14 @@ AllGames.tripeaks = {
     for(i = 0; i != ps.length; i++) {
       var s = ps[i];
       s.isPeak = false;
-      s.leftFree = function() { return !(this.leftChild && this.leftChild.hasChildNodes()); };
-      s.rightFree = function() { return !(this.rightChild && this.rightChild.hasChildNodes()); };
-      s.free = function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
+      s.leftFree getter= function() { return !this.leftChild || !this.leftChild.hasChildNodes(); };
+      s.rightFree getter= function() { return !this.rightChild || !this.rightChild.hasChildNodes(); };
+      s.free getter= function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
     }
     ps[0].isPeak = ps[1].isPeak = ps[2].isPeak = true;
 
     // convenience
-    this.waste.free = function() { return true; };
+    this.waste.free = true;
   },
 
   deal: function(cards) {
@@ -54,7 +54,7 @@ AllGames.tripeaks = {
 
   canRemoveCard: function(card) {
     // can be called with waste.lastChild, but that won't matter
-    return card.differsByOneMod13From(this.waste.lastChild) && card.parentNode.free();
+    return card.differsByOneMod13From(this.waste.lastChild) && card.parentNode.free;
   },
 
   removeCard: function(card) {
@@ -77,14 +77,26 @@ AllGames.tripeaks = {
     // xxx write me!
   },
 
+  cardWaitingToBeRevealed: null,
+
   // This game has no autoplay, but does need special auto-revealing:
-  autoplayMove: function() {
-    for(var i = 27; i >= 0; i--) {
-      var p = this.piles[i];
-      if(!p.hasChildNodes() || p.lastChild.faceUp || !p.free()) continue;
-      this.doAction(new RevealCardAction(p.lastChild));
-      return true;
+  autoplayMove: function(pileWhichHasHadCardsRemoved) {
+    var card = this.cardWaitingToBeRevealed;
+    if(card) {
+      this.cardWaitingToBeRevealed = null;
+      return this.revealCard(card);
     }
+
+    if(!pileWhichHasHadCardsRemoved) return false;
+
+    var pile = pileWhichHasHadCardsRemoved;
+    var left = pile.leftParent, right = pile.rightParent;
+    if(left && left.leftFree) {
+      if(right && right.rightFree) this.cardWaitingToBeRevealed = right.lastChild;
+      return this.revealCard(left.lastChild);
+    }
+    if(right && right.rightFree) return this.revealCard(right.lastChild);
+
     return false;
   },
 

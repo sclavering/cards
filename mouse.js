@@ -129,7 +129,7 @@ MouseHandlers["drag+drop"] = {
     } else if(e.button===0) {
       if(t.isCard) {
         if(t.parentNode.isStock) Game.dealFromStock();
-        else if(t.faceDown) Game.revealCard(t);
+        else if(t.faceDown) Game.tryRevealCard(t);
         else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
       } else {
         if(t.isStock) Game.dealFromStock();

@@ -67,11 +67,11 @@ var BaseCardGame = {
       while(s.hasChildNodes()) s.removeChild(s.lastChild);
     }
 
-    this.init(); // game specific stuff
-
     // see comments above
     if(typeof this.cards == "number") this.cards = getDecks(this.cards);
     else if(typeof this.cards[0] == "number") this.cards = getSuits(this.cards);
+
+    this.init(); // game specific stuff
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function
@@ -282,8 +282,7 @@ var BaseCardGame = {
     this.hintsReady = false;
 
     // xxx yuck
-    if(GameController.haveFutureGames)
-      GameController.haveFutureGames = false, GameController.futureGames = [];
+    if(GameController.haveFutureGames) GameController.clearFutureGames();
 
     // asynch. (i.e. animated) actions will trigger autoplay themselves,
     // and autoplay will trigger a UI update if it actually does anything
@@ -393,9 +392,13 @@ var BaseCardGame = {
 
 
   // === Revealing Cards ==================================
+  tryRevealCard: function(card) {
+    if(card.faceDown && !card.nextSibling) this.doAction(new RevealCardAction(card));
+  },
+
   revealCard: function(card) {
-    if(card.faceDown && !card.nextSibling)
-      this.doAction(new RevealCardAction(card));
+    this.doAction(new RevealCardAction(card));
+    return true;
   },
 
 
@@ -499,13 +502,10 @@ var BaseCardGame = {
     // automatically reveal cards
     if(pileWhichHasHadCardsRemoved) {
       var card = pileWhichHasHadCardsRemoved.lastChild;
-      if(card && card.faceDown) {
-        this.revealCard(card);
-        return true;
-      }
+      if(card && card.faceDown) return this.revealCard(card);
     }
 
-    if(this.autoplayMove()) return true;
+    if(this.autoplayMove(pileWhichHasHadCardsRemoved)) return true;
 
     if(this.hasBeenWon()) {
       showGameWon();
@@ -598,6 +598,11 @@ GameController.prototype = {
     Game = this.currentGame = this.futureGames.pop();
     this.haveFutureGames = this.futureGames.length!=0;
     Game.restore();
+  },
+
+  clearFutureGames: function() {
+    this.futureGames = [];
+    this.haveFutureGames = false;
   }
 }
 
@@ -655,11 +660,7 @@ DifficultyLevelsController.prototype = {
     return this.currentLevel.haveFutureGames;
   },
 
-  set haveFutureGames(val) {
-    this.currentLevel.haveFutureGames = val;
-  },
-
-  set futureGame(val) {
-    this.currentLevel.futureGames = val;
+  clearFutureGames: function() {
+    this.currentLevel.clearFutureGames();
   }
 }

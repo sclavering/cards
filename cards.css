@@ -13,15 +13,6 @@ label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwa
 
 toolbargrippy { display:none; } /* die grippies, die! */
 
-/*
-negative margin on the <stack/> lets you drag cards out of the edge of the window without
-forcing the stack to expand, which pulls the whole content of the game right, or causes
-slowdowns (dragging off bottom). then we apply a margin to each game to stop it using the
-space
-*/
-#games { margin: 0 -200px -1000px 0; }
-#games > * { margin: 0 200px 1000px 0; }
-
 #games { overflow: hidden; }
 
 
@@ -45,7 +36,6 @@ toolbarbutton { padding-left: 6px; padding-right: 6px; margin-right: 5px;}
 
 rowspacer { height: 10px;}
 colspacer { width: 10px; }
-
 
 
 .card-highlight { background: darkgray; -moz-opacity: 0.3; }

@@ -6,13 +6,10 @@ Games["spider"] = {
 
 
   foundationsBox: null,   // <vbox> containing <stack>s
-  dealsLeftDisplay: null,
-  dealsLeft: 0,           // number of times that player can deal out a set of ten cards
   completedSuits: 0,      // count of how many suits have been completed and removed
 
   init: function() {
     this.foundationsBox = document.getElementById("spider-foundations");
-    this.dealsLeftDisplay = document.getElementById("spider-deals-left");
     this.dragDropTargets = this.stacks.concat([this.foundationsBox]);
   },
 
@@ -27,8 +24,6 @@ Games["spider"] = {
 ///////////////////////////////////////////////////////////
 //// start game
 Spider.deal = function() {
-  this.dealsLeft = 5;
-  this.updateDealsLeftDisplay();
   var cards;
   switch(this.difficultyLevel) {
     case 1: cards = this.shuffleSuits(8,0,0,0); break;
@@ -45,30 +40,10 @@ Spider.deal = function() {
 
 ///////////////////////////////////////////////////////////
 //// Dealing
-Spider.canDealSet = function() {
-  if(this.dealsLeft==0) return false;
+Spider.canDealFromStock = function() {
   // cannot deal when any of the 10 stacks are empty
-  for(var i = 0; i < 10; i++)
-    if(!this.stacks[i].hasChildNodes()) return false;
+  for(var i = 0; i < 10; i++) if(!this.stacks[i].hasChildNodes()) return false;
   return true;
-};
-Spider.dealFromStock = function() {
-  if(this.canDealSet()) {
-    for(var i = 0; i < 10; i++)
-      this.dealCardTo(this.stacks[i]);
-    this.dealsLeft--;
-    this.updateDealsLeftDisplay();
-    this.trackMove("dealt-from-stock", null, null);
-  }
-};
-Spider.undealFromStock = function() {
-  for(var i = 9; i >= 0; i--)
-    this.undealCardFrom(this.stacks[i]);
-  this.dealsLeft++;
-  this.updateDealsLeftDisplay();
-};
-Spider.updateDealsLeftDisplay = function() {
-  this.dealsLeftDisplay.value = this.dealsLeft;
 };
 
 

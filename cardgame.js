@@ -26,7 +26,7 @@ var BaseCardGame = {
   // list of elements which the DragDrop system should test if cards are being dropped on
   dragDropTargets: null,
   // the piles to deal to when the stock is clicked.  ignored if the game has a waste pile,
-  // and if null this.stacks will be used instead.
+  // and if left null this.stacks will be used instead.
   stockDealTargets: null,
 
   xulElement: null, // the container vbox/hbox for the game
@@ -60,14 +60,13 @@ var BaseCardGame = {
 
   initialise: function() {
     this.initialised = true;
-
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
-
     this.initStacks();
-
     this.xulElement = document.getElementById(this.id);
+    this.init(); // game specific stuff
 
-    this.init();
+    // if the game doesn't specify something
+    if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
   },
 
   // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
@@ -143,6 +142,8 @@ var BaseCardGame = {
     // (some games have no use for this, but checking all these piles doesn't take very long so...)
     this.thingsToReveal = this.stacks.concat(this.reserves);
     if(this.reserve) this.thingsToReveal.push(this.reserve);
+
+    this.dealsLeftDisplay = document.getElementById(id+"-deals-left");
   },
 
 
@@ -205,6 +206,7 @@ var BaseCardGame = {
         this.stacks[i].fixLayout();
     //
     this.deal();
+    this.initDealsLeft(); // must happen after deal because it counts the cards on the stock
 
     Cards.disableUndo();
     Cards.disableRedeal();
@@ -270,39 +272,39 @@ var BaseCardGame = {
   // will be handed off to undoMove(), which the game must then deal with.
   // undo() also makes sure the score for a move is subtracted from the current score
   undo: function() {
-    var undo = this.undoHistory.pop(); //the undo item
-    // disable undo if no possible undo's left
-//    if(this.undoHistory.length==0) Cards.disableUndo();
+    var undo = this.undoHistory.pop();
     this.score -= undo.score;
     this.updateScoreDisplay();
-    // undo the move of it is a basic action type, otherwise hand it to Game.undo to deal with
+    // undo the move of it is a basic action type, otherwise hand it to undoMove, which games can override
     switch(undo.action) {
       case "card-revealed":
-        // undo again after turning a card down because it looks odd having cards face down on top of pile
-        undo.card.setFaceDown(); this.undo(); break;
-      // string usd by all dealFromStock() functions, all relevant games must implement undealFromStock
-      case "dealt-from-stock": this.undealFromStock(true); break;
-      // the stock can only be turned over in games like Canfield and Klondike where it deals to a waste pile
-      // hence the hard coding of this.waste should be okay
+        undo.card.setFaceDown();
+        this.undo(); // it looks odd seeing blank cards on top of a pile
+        break;
+      case "dealt-from-stock":
+        this.undealFromStock();
+        break;
       case "stock-turned-over":
-        while(this.stock.hasChildNodes()) this.dealCardTo(this.waste); break;
-      // redeals/reshuffles require a full map of where cards were previously
-      case "redeal": this.undoRedeal(undo.map); break;
-      // Games should override undoMove to deal with undoing any nonstandard actions.
-      default: this.undoMove(undo);
+        this.undoTurnStockOver();
+        break;
+      case "redeal":
+        // redeals/reshuffles require a full map of where cards were previously
+        this.undoRedeal(undo.map);
+        break;
+      default:
+        this.undoMove(undo);
     }
     // en/dis-able the Undo and Redeal buttons
     Cards.fixUI();
   },
   // Is passed an object with source and card properties.  must move card back, turn over or whatever
-  // Should not handle "card-turned-up" or "dealt-from-stock", which are dealt with in undo() above
   // This version should be sufficient for most games
   undoMove: function(undo) {
     undo.card.transferTo(undo.source);
   },
 
   restart: function() {
-    while(this.undoHistory.length>0) this.undo();
+    while(this.undoHistory.length!=0) this.undo();
   },
 
   updateScoreDisplay: function() {
@@ -566,9 +568,7 @@ var BaseCardGame = {
 
 
   // === Revealing Cards ==================================
-  // some games may need to overridde these?  (seems unlikely on consideration)
-  // note, may be able to remove canReveal, faceDown() check in reveal() is already done in Cards.clickHandler()
-
+  // xxx is canRevealCard actually used?
   canRevealCard: function(card) {
     return card.isLastOnPile();
   },
@@ -581,56 +581,75 @@ var BaseCardGame = {
 
 
 
-  // === Stock stuff ======================================
-  // If a game has a stock it should make Game.stock a reference to it in its init() function
-  //
-  // For games which create a Game.waste ref, the default function below will deal cards there,
-  // otherwise it will deal one card to each of the game.stacks array, unless a stockDealTargets
-  // array is present, in which case one card will be dealt to each of those instead (this is for Mod3)
+  // === Dealing from the stock ===========================
+  // Dealing is to the waste pile if there is one, otherwise to each of stockDealTargets[],
+  // otherwise to each of stacks[].  Will update dealsLeftDisplay if present.
 
-  // Spider does not use this, because its dealing is rather weird at the moment
-  dealFromStock: function() {
-    if(this.stock.hasChildNodes()) {
-      // if it has a wate pile we'll deal to there,
-      if(Game.waste) {
-        this.dealCardTo(this.waste);
-      // otherwise we wil deal to everything in the stockDealTargets or Game.stacks array
-      } else {
-        var stacks = this.stockDealTargets || this.stacks;
-        for(var i = 0; i < stacks.length; i++)
-          this.dealCardTo(stacks[i]);
-      }
-      this.trackMove("dealt-from-stock", null, null);
-      Game.autoplay();
-    } else {
-      // in Klondike and Canfield you can go through the stock multiple times
-      if(this.canTurnStockOver) {
-        while(this.waste.hasChildNodes()) this.undealFromStock();
-        this.trackMove("stock-turned-over", null, null);
-      }
-    }
+  dealsLeft: 0,
+  dealsLeftDisplay: null, // set in initStacks
+
+  // note: only used in games without a waste pile
+  // lets a game impose restrictions on dealing, e.g. in Spider dealing is not allowed if any pile is empty
+  canDealFromStock: function() {
+    return true;
   },
+
+  initDealsLeft: function() {
+    this.dealsLeft = this.stock.childNodes.length;
+    if(!this.waste) this.dealsLeft = Math.ceil(this.dealsLeft / this.stockDealTargets.length);
+    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+  },
+
+  dealFromStock: function() {
+    if(this.waste) {
+      if(this.stock.hasChildNodes()) {
+        this.dealCardTo(this.waste);
+        this.trackMove("dealt-from-stock", null, null);
+        this.dealsLeft--;
+      } else if(this.canTurnStockOver) {
+        while(this.waste.hasChildNodes()) this.undealCardFrom(this.stock);
+        this.dealsLeft = this.stock.childNodes.length;
+        this.trackMove("stock-turned-over", null, null);
+      } else {
+        return;
+      }
+    } else {
+      if(!this.stock.hasChildNodes() || !this.canDealFromStock()) return;
+      var stacks = this.stockDealTargets;
+      for(var i = 0; i < stacks.length; i++) this.dealCardTo(stacks[i]);
+      this.trackMove("dealt-from-stock", null, null);
+      this.dealsLeft--;
+    }
+    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
+  },
+
   dealCardTo: function(destination) {
     var card = this.stock.lastChild;
     card.setFaceUp();
     card.transferTo(destination);
   },
-  // used by undo() (dealt-from-stock is one of the moves handled by undo() rather than by undoMove() )
+
   undealFromStock: function() {
-    // again, assume that games with a waste pile deal there, others deal to every tableau pile
     if(this.waste) {
       this.undealCardFrom(this.waste);
     } else {
-      var stacks = this.stockDealTargets || this.stacks;
-      for(var i = stacks.length-1; i >= 0; i--) {
-        this.undealCardFrom(stacks[i]);
-      }
+      var stacks = this.stockDealTargets;
+      for(var i = stacks.length-1; i >= 0; i--) this.undealCardFrom(stacks[i]);
     }
+    this.dealsLeft++;
+    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
   },
+
   undealCardFrom: function(source) {
     var card = source.lastChild;
     card.setFaceDown();
     card.transferTo(this.stock);
+  },
+
+  undoTurnStockOver: function() {
+    while(this.stock.hasChildNodes()) this.dealCardTo(this.waste);
+    this.dealsLeft = 0;
+    if(this.dealsLeftDisplay) this.dealsLeftDisplay.value = this.dealsLeft;
   },
 
 

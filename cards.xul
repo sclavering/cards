@@ -283,7 +283,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     <rowspacer/>
   </vbox>
 
-  <!-- Grandfather Solitaire -->
+  <!-- Grandfather -->
   <vbox id="grandfather" name="&grandfather.name;" menukey="&grandfather.menukey;"
       hidden="true">
     <rowspacer/>
@@ -338,6 +338,10 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
           <foundation id="gypsy-foundation-6"/><colspacer/>
           <foundation id="gypsy-foundation-7"/>
         </hbox><rowspacer/>
+        <hbox>
+          <label value="&deals-left-label;"/>
+          <label id="gypsy-deals-left"/>
+        </hbox>
         <stock id="gypsy-stock"/>
         <flex/>
       </vbox>
@@ -500,7 +504,14 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="mod3-pile-5"/><colspacer/><flex/>
       <pile class="fan-down" id="mod3-pile-6"/><colspacer/><flex/>
       <pile class="fan-down" id="mod3-pile-7"/><colspacer/><flex/>
-      <stock id="mod3-stock"/><flex/>
+      <vbox>
+        <stock id="mod3-stock"/>
+        <hbox>
+          <label value="&deals-left-label;"/>
+          <label id="mod3-deals-left"/>
+        </hbox>
+      </vbox>
+      <flex/>
     </hbox>
   </vbox>
 
@@ -764,8 +775,8 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         </vbox>
         <rowspacer/>
         <hbox>
-          <description value="&deals-left-label;"/>
-          <description id="spider-deals-left"/>
+          <label value="&deals-left-label;"/>
+          <label id="spider-deals-left"/>
         </hbox>
         <stock id="spider-stock"/>
         <flex/>

@@ -9,6 +9,8 @@ flex4 { -moz-box-flex: 4; }
 flex5 { -moz-box-flex: 5; }
 
 
+label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwanted margins */
+
 toolbargrippy { display:none; } /* die grippies, die! */
 
 /*

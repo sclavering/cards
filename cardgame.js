@@ -687,7 +687,7 @@ DifficultyLevelsController.prototype = {
     this.currentLevel.restoreFutureGame();
   },
 
-  get havePastGames(val) {
+  get havePastGames() {
     return this.currentLevel.havePastGames;
   },
 

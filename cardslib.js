@@ -553,48 +553,31 @@ var CardMover = {
   * This is used to indicate the card to be moved and the destination for hints
   * Hints are indicated by placing a translucent rectangle round the source, then the target
   *
-  * showHint(from, to) - indicate a suggested move to the user. "from" is the card to move
-  *   "to" is an array of stacks and/or other cards where the "from" card should be moved to
+  * showHint(from, to) - "from" is the card to move, "to" is a card or stack
   */
 var HintHighlighter = {
-  highlightBox: null, // a bunch of boxes that get positioned round cards to highlight them
-  destination: null, // where the hint should show the card moving to
+  highlighter: null,
+  destination: null,
 
-  init: function(stack) {
-    var box = document.createElement("box");
-    box.className = "card-highlight";
-    box.hidden = true;
-    // must position it or it will fill its parent, blocking click events
-    box.top = 0;
-    box.left = 0;
-    gGameStack.appendChild(box);
-    this.highlightBox = box;
+  init: function() {
+    this.highlighter = createHighlighter();
   },
 
   showHint: function(from, to) {
     Cards.disableUI();
     // for when hint destination is really a stack
     this.destination = to.hasChildNodes() ? to.lastChild : to;
-    this.highlight(from);
-    setTimeout(function(){HintHighlighter.highlightDestination();}, 300);
+    this.highlighter.highlight(from);
+    setTimeout(function(){HintHighlighter.highlightDestination();}, 400);
   },
-  highlight: function(card) {
-    // hide it while we move it
-    this.highlightBox.hidden = true;
-    // card may be a stack if hint suggests moving to an empty stack
-    var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
-    this.highlightBox.height = height;
-    this.highlightBox.width = getWidth(card);
-    this.highlightBox.left = getLeft(card) - gGameStackLeft;
-    this.highlightBox.top = getTop(card) - gGameStackTop;
-    this.highlightBox.hidden = false;
-  },
+
   highlightDestination: function() {
-    this.highlight(this.destination);
-    setTimeout(function(){HintHighlighter.highlightComplete();}, 300);
+    this.highlighter.highlight(this.destination);
+    setTimeout(function(){HintHighlighter.highlightComplete();}, 400);
   },
+
   highlightComplete: function() {
-    this.highlightBox.hidden = true;
+    this.highlighter.unhighlight();
     Cards.enableUI();
   }
 }

@@ -624,20 +624,19 @@ var Cards = {
     this.gameWonMsg = document.getElementById("game-won-msg-box");
 
     // switch to last played game
-    game = "Klondike";
+    var game = "klondike";
     try {
       game = gPrefs.getCharPref("current-game");
     } catch(e) {}
-    if(!(game in Games)) game = "Klondike"; // just in case pref gets corrupted
+    if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
     Game = Games[game];
     Game.start();
-    // set window title. (setting window.title does not work as the app. is starting)
+    // set window title. (setting window.title does not work while the app. is starting)
     document.documentElement.setAttribute("title",gStrings[game+".name"]);
   },
 
   // switches which game is currently being played
   playGame: function(game) {
-    // end old game
     if(Game) Game.end();
     // store current game pref and start the game
     gPrefs.setCharPref("current-game",game);

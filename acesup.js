@@ -32,12 +32,12 @@ Games["acesup"] = {
     return (card.isLastOnPile() && p!=this.foundation && p!=this.stock);
   },
 
-  // the |foundation| arg is irrelevant, because there is only one foundation
   canMoveToFoundation: function(card, foundation) {
     for(var i = 0; i < 4; i++) {
       var stack = this.stacks[i];
       var top = stack.lastChild;
-      if(stack!=card.parentNode && top && card.isSameSuit(top) && card.number()<top.number()) return true;
+      if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
+      if(top && card.isSameSuit(top) && card.number()<top.number()) return true;
     }
     return false;
   },

@@ -689,7 +689,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     <hbox>
       <flex/>
       <stock id="sanibel-stock"/><flex/>
-      <waste id="sanibel-waste"/><flex/>
+      <waste id="sanibel-waste"/><flex3/>
       <foundation id="sanibel-foundation-0"/><flex/>
       <foundation id="sanibel-foundation-1"/><flex/>
       <foundation id="sanibel-foundation-2"/><flex/>

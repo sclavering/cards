@@ -90,7 +90,7 @@ var CardShuffler = {
     return this.getCardSuits(num,num,num,num);
   },
   getCardSuits: function(numSpades, numHearts, numDiamonds, numClubs) {
-    var allcards = []; var i;
+    var i, allcards = [];
     for (i = 0; i < numSpades;   i++) this.addSuitSet(allcards, BLACK, SPADE, SPADESTR);
     for (i = 0; i < numHearts;   i++) this.addSuitSet(allcards, RED, HEART, HEARTSTR);
     for (i = 0; i < numDiamonds; i++) this.addSuitSet(allcards, RED, DIAMOND, DIAMONDSTR);

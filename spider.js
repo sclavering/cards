@@ -3,8 +3,8 @@
 var SpiderBase = {
   __proto__: BaseCardGame,
 
-  rule_dealFromStock: "to-piles,if-none-empty",
-  rule_canMoveToPile: "descending",
+  dealFromStock: "to piles, if none empty",
+  canMoveToPile: "descending",
 
   getBestMoveForCard: function(card) {
     var piles = getPilesRound(card.parentNode);
@@ -63,9 +63,9 @@ Games["spider"] = {
 
   id: "spider",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
-  rule_canMoveCard: "descending, in suit, not from foundation",
-  rule_canMoveToFoundation: "13 cards",
-  rule_getLowestMovableCard: "descending, in suit",
+  canMoveCard: "descending, in suit, not from foundation",
+  canMoveToFoundation: "13 cards",
+  getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards;
@@ -91,8 +91,8 @@ Games["blackwidow"] = {
   __proto__: SpiderLayoutBase,
 
   id: "blackwidow",
-  rule_canMoveCard: "descending, not from foundation",
-  rule_canMoveToFoundation: "king->ace flush",
+  canMoveCard: "descending, not from foundation",
+  canMoveToFoundation: "king->ace flush",
 
   deal: function() {
     var cards = getShuffledDecks(2);
@@ -127,11 +127,11 @@ Games["divorce"] = {
   __proto__: SpiderLayoutBase,
 
   id: "divorce",
-  rule_dealFromStock: "to-nonempty-piles",
-  rule_canMoveCard: "descending mod13, in suit, not from foundation",
-  rule_canMoveToPile: "descending mod13",
-  rule_canMoveToFoundation: "13 cards",
-  rule_getLowestMovableCard: "descending mod13, in suit",
+  dealFromStock: "to nonempty piles",
+  canMoveCard: "descending mod13, in suit, not from foundation",
+  canMoveToPile: "descending mod13",
+  canMoveToFoundation: "13 cards",
+  getLowestMovableCard: "descending mod13, in suit",
 
   deal: function() {
     var cards = getShuffledDecks(2);
@@ -150,10 +150,10 @@ Games["wasp"] = {
   __proto__: SpiderBase,
 
   id: "wasp",
-  rule_dealFromStock: "to-piles",
-  rule_canMoveCard: "not from foundation",
-  rule_canMoveToPile: "descending, in suit",
-  rule_canMoveToFoundation: "king->ace flush",
+  dealFromStock: "to piles",
+  canMoveCard: "not from foundation",
+  canMoveToPile: "descending, in suit",
+  canMoveToFoundation: "king->ace flush",
 
   deal: function() {
     var cards = getShuffledDecks(1);

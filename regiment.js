@@ -3,7 +3,7 @@ Games["regiment"] = {
   __proto__: BaseCardGame,
 
   id: "regiment",
-  rule_canMoveCard: "last-on-pile",
+  canMoveCard: "last on pile",
 
   init: function() {
     for(var i = 0; i < 8; i++) {

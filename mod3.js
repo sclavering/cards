@@ -6,9 +6,9 @@ Games["mod3"] = {
   __proto__: BaseCardGame,
 
   id: "mod3",
-  rule_dealFromStock: "to-piles",
-  rule_canMoveCard: "last-on-pile",
-  rule_canMoveToPile: "isempty",
+  dealFromStock: "to piles",
+  canMoveCard: "last on pile",
+  canMoveToPile: "isempty",
 
   init: function() {
     var f = this.foundations;

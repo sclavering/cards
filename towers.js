@@ -2,9 +2,9 @@ Games["towers"] = {
   __proto__: FreeCellGame,
 
   id: "towers",
-  rule_canMoveCard: "descending, in suit",
-  rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
-  rule_getLowestMovableCard: "descending, in suit",
+  canMoveCard: "descending, in suit",
+  canMoveToPile: "descending, in suit, kings in spaces",
+  getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards = getShuffledDecks(1);
@@ -55,4 +55,3 @@ Games["towers"] = {
     return true;
   }
 };
-

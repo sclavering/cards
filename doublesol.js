@@ -7,9 +7,9 @@ Games["doublesol"] = {
   __proto__: BaseCardGame,
 
   id: "doublesol",
-  rule_dealFromStock: "to-waste,can-turn-stock-over",
-  rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
-  rule_getLowestMovableCard: "face up",
+  dealFromStock: "to waste, can turn stock over",
+  canMoveToPile: "descending, alt colours, kings in spaces",
+  getLowestMovableCard: "face up",
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);

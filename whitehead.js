@@ -3,10 +3,10 @@ Games["whitehead"] = {
 
   id: "whitehead",
   layout: "klondike",
-  rule_dealFromStock: "to-waste",
-  rule_canMoveCard: "descending, in suit",
-  rule_canMoveToPile: "descending, same colour",
-  rule_getLowestMovableCard: "descending, in suit",
+  dealFromStock: "to waste",
+  canMoveCard: "descending, in suit",
+  canMoveToPile: "descending, same colour",
+  getLowestMovableCard: "descending, in suit",
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);

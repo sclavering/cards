@@ -3,7 +3,7 @@ Games["golf"] = {
 
   id: "golf",
   difficultyLevels: ["easy-golf","medium-1deck","hard-2decks"],
-  rule_dealFromStock: "to-foundation",
+  dealFromStock: "to foundation",
 
   init: function() {
     this.stockDealTargets = [this.foundation];

@@ -3,8 +3,8 @@ Games["canfield"] = {
 
   id: "canfield",
   acesHigh: true,
-  rule_dealFromStock: "to-waste,can-turn-stock-over",
-  rule_getLowestMovableCard: "face up",
+  dealFromStock: "to waste, can turn stock over",
+  getLowestMovableCard: "face up",
 
   init: function() {
     this.sourceStacks = [this.reserve,this.waste].concat(this.stacks);

@@ -2,8 +2,8 @@ Games["fan"] = {
   __proto__: BaseCardGame,
 
   id: "fan",
-  rule_canMoveCard: "last-on-pile",
-  rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
+  canMoveCard: "last on pile",
+  canMoveToPile: "descending, in suit, kings in spaces",
 
   deal: function() {
     var cards = getShuffledDecks(1);

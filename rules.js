@@ -1,44 +1,46 @@
 /*
-Standard forms for the various functions that games need to provide.
-To use a standard form for canMoveCard set the game's rule_canMoveCard var, and similar
-for other functions.
+Standard forms for the various member functions that games need to provide.
+
+Set the member to one of the strings below and BaseCardGame.initialise() will replace it with the
+relevant function in this file.  e.g. set canMoveCard to "descending".
+
 
 Current choices:
 
-rule_canMoveCard:
+canMoveCard:
   "descending"
   "descending, not from foundation"
-  "descending,alt-colours"
+  "descending, alt colours"
   "descending, in suit"
   "descending mod13, in suit, not from foundation":
   "descending, in suit, not from foundation"
   "not from foundation"
-  "last-on-pile"
+  "last on pile"
 
-rule_canMoveToPile:
+canMoveToPile:
   "descending"
   "descending mod13"
-  "descending,alt-colours,kings-in-spaces"
-  "descending,in-suit,kings-in-spaces"
-  "descending,alt-colours"
+  "descending, alt colours, kings in spaces"
+  "descending, in suit, kings in spaces"
+  "descending, alt colours"
   "descending, same colour"
   "descending, in suit"
   "isempty"
 
-rule_canMoveToFoundation:
+canMoveToFoundation:
   "king->ace flush"
   "13 cards"  (any set of 13 card. canMoveCard will ensure they're a running flush, or whatever)
 
-rule_dealFromStock:
-  "to-waste"
-  "to-waste,can-turn-stock-over"
-  "to-foundation"
-  "to-piles"
-  "to-piles,if-none-empty"
-  "to-nonempty-piles"
+dealFromStock:
+  "to waste"
+  "to waste, can turn stock over"
+  "to foundation"
+  "to piles"
+  "to piles, if none empty"
+  "to nonempty piles"
 
-xxx these (c|sh)ould just use the rule_canMoveCard value
-rule_getLowestMovableCard:
+xxx these (c|sh)ould just use the canMoveCard value
+getLowestMovableCard:
   "descending, in suit"
   "descending mod13, in suit"
   "descending, alt colours"
@@ -64,7 +66,7 @@ var Rules = {
       return true;
     },
 
-    "descending,alt-colours":
+    "descending, alt colours":
     function(card) {
       if(card.faceDown) return false;
       // ensure we have a run in alternating colours
@@ -104,7 +106,7 @@ var Rules = {
       return (card.faceUp && !card.parentNode.isFoundation);
     },
 
-    "last-on-pile":
+    "last on pile":
     function(card, target) {
       return (card.faceUp && !card.nextSibling);
     }
@@ -124,19 +126,19 @@ var Rules = {
       return (!last || (last.faceUp && last.isConsecutiveMod13To(card)));
     },
 
-    "descending,alt-colours,kings-in-spaces":
+    "descending, alt colours, kings in spaces":
     function(card, pile) {
       var last = pile.lastChild;
       return (last ? last.faceUp && last.isConsecutiveTo(card) && !last.isSameColour(card) : card.isKing);
     },
 
-    "descending,in-suit,kings-in-spaces":
+    "descending, in suit, kings in spaces":
     function(card, pile) {
       var last = pile.lastChild;
       return (last ? last.faceUp && last.isConsecutiveTo(card) && last.isSameSuit(card) : card.isKing);
     },
 
-    "descending,alt-colours":
+    "descending, alt colours":
     function(card, pile) {
       var last = pile.lastChild;
       return (!last || (last.faceUp && last.isConsecutiveTo(card) && !last.isSameColour(card)));
@@ -180,31 +182,31 @@ var Rules = {
 
 
   dealFromStock: {
-    "to-waste": function() {
+    "to waste": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
     },
 
-    "to-waste,can-turn-stock-over": function() {
+    "to waste, can turn stock over": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
       else this.doAction(new TurnStockOverAction());
     },
 
-    "to-foundation": function() {
+    "to foundation": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.foundation));
     },
 
-    "to-piles": function() {
+    "to piles": function() {
       if(!this.stock.hasChildNodes()) return;
       this.doAction(new DealToPilesAction(this.stacks));
     },
 
-    "to-piles,if-none-empty": function() {
+    "to piles, if none empty": function() {
       if(!this.stock.hasChildNodes()) return;
       for(var i = 0; i < Game.stacks.length; i++) if(!Game.stacks[i].hasChildNodes()) return;
       this.doAction(new DealToPilesAction(this.stacks));
     },
 
-    "to-nonempty-piles": function() {
+    "to nonempty piles": function() {
       this.doAction(new DealToNonEmptyPilesAction());
     }
   },

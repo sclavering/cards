@@ -3,8 +3,8 @@ Games["acesup"] = {
 
   id: "acesup",
   acesHigh: true,
-  rule_dealFromStock: "to-piles",
-  rule_canMoveToPile: "isempty",
+  dealFromStock: "to piles",
+  canMoveToPile: "isempty",
 
   init: function() {
     for(var i = 0; i < 4; i++) this.stacks[i].num = i;

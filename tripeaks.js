@@ -3,7 +3,7 @@ Games["tripeaks"] = {
 
   id: "tripeaks",
   mouseHandling: "pyramid",
-  rule_dealFromStock: "to-waste",
+  dealFromStock: "to waste",
 
   init: function() {
     // The numbers of the piles that should be the leftChild of piles 0 to 17.

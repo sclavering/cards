@@ -3,10 +3,10 @@ Games["gypsy"] = {
 
   id: "gypsy",
   difficultyLevels: ["easy-2suits","hard-4suits"],
-  rule_dealFromStock: "to-piles",
-  rule_canMoveCard: "descending,alt-colours",
-  rule_canMoveToPile: "descending,alt-colours",
-  rule_getLowestMovableCard: "descending, alt colours",
+  dealFromStock: "to piles",
+  canMoveCard: "descending, alt colours",
+  canMoveToPile: "descending, alt colours",
+  getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
     // 1==easy, 2==hard

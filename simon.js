@@ -3,9 +3,9 @@ Games["simon"] = {
 
   id: "simon",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
-  rule_canMoveCard: "descending, in suit, not from foundation",
-  rule_canMoveToPile: "descending",
-  rule_getLowestMovableCard: "descending, in suit",
+  canMoveCard: "descending, in suit, not from foundation",
+  canMoveToPile: "descending",
+  getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards =

@@ -1,7 +1,7 @@
 var YukonBase = {
   __proto__: BaseCardGame,
 
-  rule_canMoveToPile: "descending,alt-colours",
+  canMoveToPile: "descending, alt colours",
 
   // take a card a find another card on a different stack of opposite colour and one less in rank
   getHintsForCard: function(card) {
@@ -87,7 +87,7 @@ Games["sanibel"] = {
   __proto__: YukonBase,
 
   id: "sanibel",
-  rule_dealFromStock: "to-waste",
+  dealFromStock: "to waste",
 
   deal: function() {
     var cards = getShuffledDecks(2);

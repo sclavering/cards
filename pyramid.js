@@ -3,7 +3,7 @@ Games["pyramid"] = {
 
   id: "pyramid",
   mouseHandling: "pyramid",
-  rule_dealFromStock: "to-waste,can-turn-stock-over",
+  dealFromStock: "to waste, can turn stock over",
 
   init: function() {
     var i, row, col;

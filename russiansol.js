@@ -3,7 +3,7 @@ Games["russiansol"] = {
 
   id: "russiansol",
   layout: "yukon",
-  rule_canMoveToPile: "descending, in suit",
+  canMoveToPile: "descending, in suit",
 
   deal: function() {
     var cards = getShuffledDecks(1);

@@ -14,14 +14,6 @@ var BaseCardGame = {
   // boolean flags that games might want to override
   acesHigh: false,
 
-  // rule vars that can be set rather than a Game providing the corresponding function
-  // see rules.js for the possible values
-  rule_canMoveCard: null,
-  rule_canMoveToPile: null,
-  rule_canMoveToFoundation: null,
-  rule_dealFromStock: null,
-  rule_getLowestMovableCard: null,
-
   // see mouse.js
   mouseHandling: "drag+drop",
   mouseHandler: null,
@@ -36,13 +28,9 @@ var BaseCardGame = {
   waste: null,
   foundation: null, // if the game has just one foundation this will be it
   reserve: null,
+  thingsToReveal: null, // piles to automatically turn the top card of up.  consists of normal and reserve piles
+  dragDropTargets: null, // piles where cards can potentially be dropped.  consists of normal and foundation piles
 
-  // array of piles to be examined after each move for cards to reveal
-  // in most cases this will be set automatically, but games can probably override
-  thingsToReveal: null,
-  // list of elements which the DragDrop system should test if cards are being dropped on
-  // xxx is this still used??
-  dragDropTargets: null,
 
 
   // === Start/Finish Playing =============================
@@ -79,12 +67,13 @@ var BaseCardGame = {
     // xxx still required for init'ing stock.counter, but not for anything else!
     if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
 
-    // xxx replace with a rules object, so a loop could be used?
-    if(this.rule_canMoveCard) this.canMoveCard = Rules.canMoveCard[this.rule_canMoveCard];
-    if(this.rule_canMoveToPile) this.canMoveToPile = Rules.canMoveToPile[this.rule_canMoveToPile];
-    if(this.rule_canMoveToFoundation) this.canMoveToFoundation = Rules.canMoveToFoundation[this.rule_canMoveToFoundation];
-    if(this.rule_dealFromStock) this.dealFromStock = Rules.dealFromStock[this.rule_dealFromStock];
-    if(this.rule_getLowestMovableCard) this.getLowestMovableCard = Rules.getLowestMovableCard[this.rule_getLowestMovableCard];
+    // see rules.js
+    // if any of various members that should be functions are instead strings then substitute appropriate function
+    var rules = ["canMoveCard","canMoveToPile","canMoveToFoundation","dealFromStock","getLowestMovableCard"];
+    for(var r in rules) {
+      r = rules[r];
+      if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
+    }
   },
 
   // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
@@ -235,6 +224,7 @@ var BaseCardGame = {
     disableRedeal();
     enableUI();
   },
+
   // should deal out the cards for a new game. newGame() will ensure all stacks are empty
   deal: function() {
   },
@@ -258,6 +248,7 @@ var BaseCardGame = {
       while(s[i].hasChildNodes()) s[i].removeChild(s[i].lastChild);
     }
   },
+
   endGame: function() {
     disableUI();
   },
@@ -287,7 +278,7 @@ var BaseCardGame = {
     return 0;
   },
 
-  // a hashtable of scores
+  // a string->number mapping of scores
   scores: {},
 
 
@@ -410,7 +401,7 @@ var BaseCardGame = {
 
 
   // === Dealing from the stock ===========================
-  // Games with a stock should provide dealFromStock(), or set rule_dealFromStock.
+  // Games with a stock should provide dealFromStock(), probably via a form in rules.js
   // These functions are used to implement the standard rules and their *Action's
   dealCardTo: function(destination) {
     var card = this.stock.lastChild;
@@ -494,6 +485,7 @@ var BaseCardGame = {
     var target = this.getBestMoveForCard(card);
     if(target) this.moveTo(card,target);
   },
+
   getBestMoveForCard: function(card) {
     return null;
   },

@@ -2,9 +2,9 @@ Games["freecell"] = {
   __proto__: FreeCellGame,
 
   id: "freecell",
-  rule_canMoveCard: "descending,alt-colours",
-  rule_canMoveToPile: "descending,alt-colours",
-  rule_getLowestMovableCard: "descending, alt colours",
+  canMoveCard: "descending, alt colours",
+  canMoveToPile: "descending, alt colours",
+  getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
     var cards = getShuffledDecks(1);

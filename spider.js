@@ -7,6 +7,14 @@ Games.spider = {
   ids: ["spider-easy", "spider-medium", "spider"]
 };
 
+Games.simon = {
+  names: ["easy-1suit", "medium-2suits", "hard-4suits"],
+  ids: ["simon-easy", "simon-medium", "simon"]
+};
+
+
+
+
 
 var SpiderBase = {
   __proto__: BaseCardGame,
@@ -54,6 +62,9 @@ var SpiderBase = {
 };
 
 
+
+
+
 var Spider = {
   __proto__: SpiderBase,
 
@@ -96,6 +107,9 @@ AllGames.spider = {
 };
 
 
+
+
+
 AllGames.blackwidow = {
   __proto__: SpiderBase,
 
@@ -130,6 +144,9 @@ AllGames.blackwidow = {
     }
   }
 };
+
+
+
 
 
 AllGames.divorce = {
@@ -175,6 +192,9 @@ AllGames.divorce = {
 };
 
 
+
+
+
 AllGames.wasp = {
   __proto__: SpiderBase,
 
@@ -208,4 +228,54 @@ AllGames.wasp = {
       if(downp!=pile && downp.isNormalPile) this.addHint(down, pile);
     }
   }
+};
+
+
+
+
+
+var SimonBase = {
+  __proto__: SpiderBase,
+
+  layout: "simon",
+
+  // see SpiderBase.init2
+  kings: [12, 25, 38, 51],
+
+  deal: function(cards) {
+    const ps = this.piles;
+    ps[0].dealTo(cards, 0, 8);
+    ps[1].dealTo(cards, 0, 8);
+    for(var i = 2; i != 10; i++) ps[i].dealTo(cards, 0, 10-i);
+  },
+
+  mayTakeCardFromPile: "run down, same suit",
+
+  mayAddCardToFoundation: "13 cards",
+
+  getHints: function() {
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+  },
+
+  getLowestMovableCard: "descending, in suit"
+};
+
+
+AllGames["simon-easy"] = {
+  __proto__: SimonBase,
+  id: "simon-easy",
+  cards: [[SPADE], 4]
+};
+
+
+AllGames["simon-medium"] = {
+  __proto__: SimonBase,
+  id: "simon-medium",
+  cards: [[SPADE, HEART], 2]
+};
+
+
+AllGames["simon"] = {
+  __proto__: SimonBase,
+  id: "simon"
 };

@@ -107,7 +107,7 @@ used when building the game types menu
     <rowspacer/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="acesup-stock" class="card-pile"/><spacer flex="2"/>
+      <stock id="acesup-stock"/><spacer flex="2"/>
       <stack id="acesup-pile-0" class="card-fan-down"/><spacer flex="1"/>
       <stack id="acesup-pile-1" class="card-fan-down"/><spacer flex="1"/>
       <stack id="acesup-pile-2" class="card-fan-down"/><spacer flex="1"/>
@@ -122,24 +122,24 @@ used when building the game types menu
     <rowspacer/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="canfield-stock" class="card-pile"/><spacer flex="1"/>
-      <stack id="canfield-waste" class="card-pile"/><spacer flex="2"/>
+      <stock id="canfield-stock"/><spacer flex="1"/>
+      <waste id="canfield-waste"/><spacer flex="2"/>
       <foundation id="canfield-foundation-0"/><spacer flex="1"/>
       <foundation id="canfield-foundation-1"/><spacer flex="1"/>
       <foundation id="canfield-foundation-2"/><spacer flex="1"/>
       <foundation id="canfield-foundation-3"/><spacer flex="2"/>
-      <stack id="canfield-reserve" class="card-pile"/><spacer flex="1"/>
+      <reserve id="canfield-reserve"/><spacer flex="1"/>
     </hbox>
     <rowspacer/>
     <hbox>
       <spacer flex="1"/>
-      <spacer class="card-pile-spacer"/><spacer flex="1"/>
-      <spacer class="card-pile-spacer"/><spacer flex="2"/>
+      <pilespacer/><spacer flex="1"/>
+      <pilespacer/><spacer flex="2"/>
       <stack id="canfield-pile-0" class="card-fan-down"/><spacer flex="1"/>
       <stack id="canfield-pile-1" class="card-fan-down"/><spacer flex="1"/>
       <stack id="canfield-pile-2" class="card-fan-down"/><spacer flex="1"/>
       <stack id="canfield-pile-3" class="card-fan-down"/><spacer flex="2"/>
-      <spacer class="card-pile-spacer"/><spacer flex="1"/>
+      <pilespacer/><spacer flex="1"/>
     </hbox>
   </vbox>
 
@@ -149,9 +149,9 @@ used when building the game types menu
     <rowspacer/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="doublesol-stock" class="card-pile"/><spacer flex="1"/>
-      <stack id="doublesol-waste" class="card-pile"/><spacer flex="1"/>
-      <spacer class="card-pile-spacer"/><spacer flex="1"/>
+      <stock id="doublesol-stock"/><spacer flex="1"/>
+      <waste id="doublesol-waste"/><spacer flex="1"/>
+      <pilespacer/><spacer flex="1"/>
       <foundation id="doublesol-foundation-0"/><spacer flex="1"/>
       <foundation id="doublesol-foundation-1"/><spacer flex="1"/>
       <foundation id="doublesol-foundation-2"/><spacer flex="1"/>
@@ -220,7 +220,7 @@ used when building the game types menu
     <spacer flex="1"/>
     <hbox id="golf-stock-row">
       <spacer flex="1"/>
-      <stack id="golf-stock" class="card-slide"/>
+      <stock id="golf-stock" class="card-slide"/>
       <spacer flex="2"/>
       <foundation id="golf-foundation"/>
       <spacer flex="1"/>
@@ -284,7 +284,7 @@ used when building the game types menu
         </hbox><rowspacer/>
         <hbox>
           <spacer flex="1"/>
-          <stack id="gypsy-stock" class="card-pile"/>
+          <stock id="gypsy-stock"/>
           <spacer flex="1"/>
         </hbox>
         <spacer flex="1"/>
@@ -299,9 +299,9 @@ used when building the game types menu
     <rowspacer/>
     <hbox>
       <spacer flex="1"/>
-      <stack id="klondike-stock" class="card-pile"/><spacer flex="1"/>
-      <stack id="klondike-waste" class="card-pile"/><spacer flex="1"/>
-      <spacer class="card-pile-spacer"/><spacer flex="1"/>
+      <stock id="klondike-stock"/><spacer flex="1"/>
+      <waste id="klondike-waste"/><spacer flex="1"/>
+      <pilespacer/><spacer flex="1"/>
       <foundation id="klondike-foundation-0"/><spacer flex="1"/>
       <foundation id="klondike-foundation-1"/><spacer flex="1"/>
       <foundation id="klondike-foundation-2"/><spacer flex="1"/>
@@ -370,7 +370,7 @@ used when building the game types menu
       <stack id="mod3-tableau-0-5" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
       <stack id="mod3-tableau-0-6" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
       <stack id="mod3-tableau-0-7" class="card-fan-down"/><stack class="col-spacer"/><spacer flex="1"/>
-      <stack id="mod3-stock"  class="card-pile"/><spacer flex="1"/>
+      <stock id="mod3-stock"/><spacer flex="1"/>
     </hbox>
   </vbox>
 
@@ -400,14 +400,14 @@ used when building the game types menu
       <stack id="regiment-tableau-0-7" class="card-pile"/><spacer flex="1"/>
     </hbox><rowspacer/>
     <hbox id="regiment-reserve"><spacer flex="1"/>
-      <stack id="regiment-reserve-0" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-1" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-2" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-3" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-4" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-5" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-6" class="card-pile"/><spacer flex="1"/>
-      <stack id="regiment-reserve-7" class="card-pile"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-0"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-1"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-2"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-3"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-4"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-5"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-6"/><spacer flex="1"/>
+      <reserve id="regiment-reserve-7"/><spacer flex="1"/>
     </hbox><rowspacer/>
     <hbox id="regiment-tableau-1"><spacer flex="1"/>
       <stack id="regiment-tableau-1-0" class="card-pile"/><spacer flex="1"/>
@@ -480,7 +480,7 @@ used when building the game types menu
           <description value="&deals-left-label;"/>
           <description id="spider-deals-left"/>
         </hbox>
-        <stack id="spider-stock" class="card-pile"/>
+        <stock id="spider-stock"/>
         <spacer flex="1"/>
       </vbox>
       <spacer flex="1"/>

@@ -7,8 +7,23 @@ Games["fan"] = {
 
   deal: function() {
     var cards = shuffle(this.cards);
+    while(this.impossibleDeal(cards)) cards = shuffle(this.cards);
+
     for(var i = 0; i < 17; i++) this.dealToStack(cards, this.stacks[i], 0, 3);
     this.dealToStack(cards, this.stacks[17], 0, 1);
+  },
+
+  // games with piles such as 7,2,6H or 4,9,8C are impossible
+  impossibleDeal: function(cards) {
+    for(var p = 49; p != 1; p -= 3) {
+      // these will form a pile c,d,e with c at the bottom
+      var c = cards[p+2], d = cards[p+1], e = cards[p];
+      if(c.isSameSuit(d) && c.isSameSuit(e)
+          && ((c.isConsecutiveTo(e) && d.number<e.number)
+            ||(d.isConsecutiveTo(e) && c.number<e.number)))
+        return true;
+    }
+    return false;
   },
 
   getHints: function() {

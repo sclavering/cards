@@ -61,7 +61,7 @@ Games["gypsy"] = {
   // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
     if(card.isAce || card.number==2) return true;
-    return (this.numCardsOnFoundations(card.altcolour,card.number-1) == 4);
+    return (countCardsOnFoundations(card.altcolour,card.number-1) == 4);
   },
 
   hasBeenWon: function() {

@@ -59,7 +59,7 @@ var BaseCardGame = {
   initialise: function() {
     this.initialised = true;
     if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
-    this.initStacks();
+    this.initPiles();
     this.xulElement = document.getElementById(this.layout || this.id);
     this.init(); // game specific stuff
 
@@ -78,71 +78,52 @@ var BaseCardGame = {
 
   // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
-  // Requires game to have a |id| param, and all piles of various types to have ids of
-  // the form {id}-{pile-type}-{int} in the XUL
-  initStacks: function() {
+  // Requires relevant XUL elements to have ids of the form {this.layout||this.id}-{pile-type}[-{int}]
+  initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
     this.stacks = [];
-    this.cells = [];
-    this.reserves = [];
     this.foundations = [];
-    this.allstacks = [];
+    this.reserves = [];
+    this.cells = [];
+    var allpiles = this.allstacks = [];
 
     var id = this.layout || this.id;
-    this.stock = createCardPile(id+"-stock");
+    var thiss = this; // so it can be referred to in nested functions
+
+    function initPileOfType(type, property, field) {
+      var pile = initPileFromId(id+type);
+      if(!pile) return;
+      pile[property] = true;
+      thiss[field] = pile;
+      allpiles.push(pile);
+    }
+
+    function initPilesOfType(type, property, array) {
+      for(var i = 0; true; i++) {
+        var node = initPileFromId(id+type+i);
+        if(!node) break;
+        node[property] = true;
+        array.push(node);
+        allpiles.push(node);
+      }
+    }
+
+    initPileOfType("-stock", "isStock", "stock");
+    initPileOfType("-waste", "isWaste", "waste");
+    initPileOfType("-foundation", "isFoundation", "foundation");
+    initPileOfType("-reserve", "isReserve", "reserve");
+
+    initPilesOfType("-pile-", "isNormalPile", this.stacks);
+    initPilesOfType("-foundation-", "isFoundation", this.foundations);
+    initPilesOfType("-reserve-", "isReserve", this.reserves);
+    initPilesOfType("-cell-", "isCell", this.cells);
+
     if(this.stock) {
-      this.stock.isStock = true;
-      this.allstacks.push(this.stock);
       // a <label/> for displaying the num. of deals left
       var counter = this.stock.counter = document.getElementById(id+"-stock-counter");
       if(counter) counter.add = function(val) { this.value = parseInt(this.value)+val; };
     }
-    this.waste = createCardPile(id+"-waste");
-    if(this.waste) {
-      this.waste.isWaste = true;
-      this.allstacks.push(this.waste);
-    }
-    // try for a single foundation or reserve pile
-    this.foundation = createCardPile(id+"-foundation");
-    if(this.foundation) {
-      this.foundation.isFoundation = true;
-      this.allstacks.push(this.foundation);
-    }
-    this.reserve = createCardPile(id+"-reserve");
-    if(this.reserve) {
-      this.reserve.isReserve = true;
-      this.allstacks.push(this.reserve);
-    }
-    // try for >1 piles, foundations, reserves and cells
-    var i, node;
-    for(i = 0; true; i++) {
-      node = createCardPile(id+"-pile-"+i);
-      if(!node) break;
-      node.isNormalPile = true;
-      this.stacks.push(node);
-      this.allstacks.push(node);
-    }
-    for(i = 0; true; i++) {
-      node = createCardPile(id+"-foundation-"+i);
-      if(!node) break;
-      node.isFoundation = true;
-      this.foundations.push(node);
-      this.allstacks.push(node);
-    }
-    for(i = 0; true; i++) {
-      node = createCardPile(id+"-reserve-"+i);
-      if(!node) break;
-      node.isReserve = true;
-      this.reserves.push(node);
-      this.allstacks.push(node);
-    }
-    for(i = 0; true; i++) {
-      node = createCardPile(id+"-cell-"+i);
-      if(!node) break;
-      node.isCell = true;
-      this.cells.push(node);
-      this.allstacks.push(node);
-    }
+
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
     this.dragDropTargets = this.stacks.concat(this.foundations);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
@@ -529,18 +510,5 @@ var BaseCardGame = {
   // call autoplay again on completion.)
   autoplayMove: function() {
     return false;
-  },
-
-  // This gets used in lots of games, so we put it here to save duplication
-  // It assumes foundations are built in ascending order within a single colour, which is often true
-  // Typical usage (Klondike) is:
-  //   if(numCardsOnFoundations(RED,4)==2) ... can autoplay black fives ...
-  numCardsOnFoundations: function(colour, number) {
-    var found = 0;
-    for(var i = 0; i < this.foundations.length; i++) {
-      var top = this.foundations[i].lastChild;
-      if(top && top.number>=number && top.colour==colour) found++;
-    }
-    return found;
   }
 }

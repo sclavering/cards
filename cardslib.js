@@ -214,53 +214,89 @@ function createCard(colour, suit, suitstr, number) {
 
 var cardMethods = {
   isConsecutiveTo: function(card) { return (this.number==card.number+1); },
+
   isSameSuit: function(card) { return this.suit==card.suit; },
+
   isSameColour: function(card) { return this.colour==card.colour; },
+
   differsByOneFrom: function(card) {
     var diff = this.number-card.number;
     return (diff==1 || diff==-1);
   },
+
   differsByOneMod13From: function(card) {
     var diff = this.number-card.number;
     return (diff==1 || diff==-1 || diff==12 || diff==-12);
   },
+
   // returns true if card is one less than this, or card is King and this is Ace
   isConsecutiveMod13To: function(card) {
     return ((this.realNumber==card.realNumber+1) || (this.realNumber-1==card.realNumber%13));
   },
+
   isAtLeastCountingFrom: function(number, from_num) {
     var thisnum = this.realNumber;
     if(thisnum<from_num) thisnum+=13;
     if(number<from_num) number+=13;
     return (thisnum>=number);
   },
-  // simple card turning
+
+  // other methods
+  moveTo:     function(targetPile) { CardMover.move(this,targetPile); },
+  transferTo: function(targetPile) { targetPile.addCards(this); },
+
+  // card turning
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;
     this.className = "card "+this.suitstr+"-"+this.realNumber;
   },
+
   setFaceDown: function() {
     this.faceUp = false;
     this.faceDown = true;
     this.className = "card facedown";
   },
-  // other methods
-  turnFaceUp: function() { turnCardFaceUp(this); },
-  moveTo:     function(targetPile) { CardMover.move(this,targetPile); },
-  transferTo: function(targetPile) { targetPile.addCards(this); }
+
+  turnFaceUp: function() {
+    var card = this;
+    disableUI();
+    var oldLeft = parseInt(card.left);
+    var oldWidth = card.boxObject.width;
+    var oldHalfWidth = oldWidth / 2;
+    var stepNum = 7;
+    var interval = setInterval(function() {
+      stepNum--;
+      if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
+        clearInterval(interval);
+        card.left = oldLeft;
+        card.width = oldWidth;
+        if(!Game.autoplay()) enableUI();
+        return;
+      }
+      var newHalfWidth = cardTurnFaceUpCosines[stepNum] * oldHalfWidth;
+      card.width = 2 * newHalfWidth;
+      card.left = oldLeft + oldHalfWidth - newHalfWidth;
+      if(stepNum==3) card.setFaceUp();  // gone past pi/2
+    }, 45);
+  }
 };
 
+// precompute cosines for cardMethods.turnFaceUp
+var cardTurnFaceUpCosines = new Array(7);
+for(var i = 0; i != 7; i++) cardTurnFaceUpCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
 
 
-// give it a <stack> element or the id for one. adds some expando properties
-// (tried doing this in XBL, but it was unbearably slow)
-function createCardPile(id) {
+
+
+
+function initPileFromId(id) {
   var elt = document.getElementById(id);
   if(!elt) return null;
-  return _createCardPile(elt);
+  return initPile(elt);
 }
-function _createCardPile(elt) {
+
+function initPile(elt) {
   elt.isCard = false;
   elt.isPile = true;
   elt.isFoundation = false;
@@ -442,7 +478,7 @@ function _createCardPile(elt) {
 function createFloatingPile(className) {
   var pile = document.createElement("stack");
   pile.className = className;
-  _createCardPile(pile);
+  initPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = 0;
@@ -486,30 +522,6 @@ function createHighlighter() {
 
 
 
-var turnCardFaceUpCosines = new Array(7);
-for(var i = 0; i != 7; i++) turnCardFaceUpCosines[i] = Math.abs(Math.cos((7-i) * Math.PI / 7));
-
-function turnCardFaceUp(card) {
-  disableUI();
-  var oldLeft = parseInt(card.left);
-  var oldWidth = card.boxObject.width;
-  var oldHalfWidth = oldWidth / 2;
-  var stepNum = 7;
-  var interval = setInterval(function() {
-    stepNum--;
-    if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
-      clearInterval(interval);
-      card.left = oldLeft;
-      card.width = oldWidth;
-      if(!Game.autoplay()) enableUI();
-      return;
-    }
-    var newHalfWidth = turnCardFaceUpCosines[stepNum] * oldHalfWidth;
-    card.width = 2 * newHalfWidth;
-    card.left = oldLeft + oldHalfWidth - newHalfWidth;
-    if(stepNum==3) card.setFaceUp();  // gone past pi/2
-  }, 45);
-}
 
 
 

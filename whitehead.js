@@ -40,7 +40,7 @@ Games["whitehead"] = {
   },
   canAutoplayCard: function(card) {
     if(card.isAce || card.number==2) return true;
-    return (this.numCardsOnFoundations(card.colour,card.number-1) == 2);
+    return (countCardsOnFoundations(card.colour,card.number-1) == 2);
   },
 
   hasBeenWon: function() {

@@ -5,11 +5,12 @@ var FreeCellGame = {
 
   mouseHandling: "click-to-select",
 
-  init: function() {
-    // insufficient spaces message
-    this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
+  get insufficientSpacesMessage() {
+    // this is called on instances of games, which are two levels up
+    var ths = this.__proto__.__proto__;
+    delete ths.insufficientSpacesMessage;
+    return ths.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
   },
-
 
   // unlike in other games where this function returns a boolean, here we sometimes return an int.
   // false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
@@ -30,9 +31,8 @@ var FreeCellGame = {
 
   moveTo: function(card, target) {
     var source = card.parentNode;
-    if(target.isNormalPile) {
-      this.doAction(new FreeCellMoveAction(card, source, target,
-                        this.getEmptyCells(), this.getEmptyPiles()));
+    if(target.isNormalPile && card.nextSibling) {
+      this.doAction(new FreeCellMoveAction(card, source, target, this.emptyCells, this.getEmptyPiles(target)));
     } else {
       var action = new MoveAction(card,source,target);
       action.action = target.isCell ? "card-moved-to-cell" : "cards-moved-to-foundation";
@@ -45,37 +45,57 @@ var FreeCellGame = {
   // (it returns 0 rather than false if the move is legal but not possible because of
   // insufficient spaces)
   attemptMove: function(source, target) {
-    var can = Game.canMoveTo(source,target)
+    var can = Game.canMoveTo(source, target);
     if(can) return Game.moveTo(source,target);
     // insufficient spaces
-    if(can===0) {
-      // XXX: use prompt service, or thing of some completely different way
-      // of informing the user (e.g. status bar, but we don't have one)
-      alert(this.insufficientSpacesMessage);
-    }
+    // xxx alerts suck
+    if(can===0) alert(this.insufficientSpacesMessage);
     return false;
   },
 
-
-  getEmptyCells: function() {
+  get emptyCells() {
     var freecells = [];
     for(var i = 0; i != this.cells.length; i++)
       if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
     return freecells;
   },
-  countEmptyCells: function() {
+
+  get numEmptyCells() {
     var cells = 0;
     for(var i = 0; i != this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
     return cells;
   },
-  getEmptyPiles: function() {
+
+  get emptyCell() {
+    for(var i = 0; i != this.cells.length; i++) if(!this.cells[i].hasChildNodes()) return this.cells[i];
+    return null;
+  },
+
+  // the target of a move can't also be used as a space (I think)
+  getEmptyPiles: function(pileToIgnore) {
     var spaces = [];
-    for(var i = 0; i != this.piles.length; i++)
-      if(!this.piles[i].hasChildNodes()) spaces.push(this.piles[i]);
+    for(var i = 0; i != this.piles.length; i++) {
+      var p = this.piles[i];
+      if(p!=pileToIgnore && !p.hasChildNodes()) spaces.push(p);
+    }
     return spaces;
   },
 
-  // calls FreeCellMover.step()
+  countEmptyPiles: function(pileToIgnore) {
+    var num = 0
+    for(var i = 0; i != this.piles.length; i++) {
+      var p = this.piles[i];
+      if(p!=pileToIgnore && !p.hasChildNodes()) num++
+    }
+    return num;
+  },
+
+  get emptyPile() {
+    for(var i = 0; i != this.piles.length; i++) if(!this.piles[i].hasChildNodes()) return this.piles[i];
+    return null;
+  },
+
+  // overriden because we want to call FreeCellMover.step(), and don't need to reveal cards
   autoplay: function() {
     if(FreeCellMover.step() || this.autoplayMove())
       return true;
@@ -105,45 +125,29 @@ FreeCellMoveAction.prototype = {
   },
   undo: function() {
     this.source.addCards(this.card);
+  },
+  redo: function() {
+    this.destination.addCards(this.card);
   }
 }
 
 
 
-/** FreeCellMover
-  *
-  * handles the complex series of moves required to move a run of cards in games
-  * like FreeCell, where only one card can be moved at once.
-  *
-  * move(card, destination, freeCells, spaces)
-  *   will work out the sequence of single-card moves required, and stores them in
-  *   |moveQueue|.  the first of these moves is then performed
-  *
-  * step()
-  *   called at the end of CardMover.step() (or whatever the function is called)
-  *   performs the next single-card move in |moveQueue|
-  */
+
+// Carries out the sequences of single-card moves necessary to move a run of cards in games like FreeCell
 var FreeCellMover = {
-  moveQueue: null, // an array (queue) of single card moves to be performed
-                   // this will be null rather than an empty array
+  cards: [], // a queue of the remaining cards to move
+  tos: [],   // their destinations
 
+  // perform the next move in the current sequence (if any)
   step: function() {
-    if(!this.moveQueue) return false;
-
-    var move = this.moveQueue.shift();
-    move.card.moveTo(move.target);
-
-    if(this.moveQueue.length==0) this.moveQueue = null;
+    if(!this.cards.length) return false;
+    this.cards.shift().moveTo(this.tos.shift());
     return true;
   },
 
+  // enqueue and start a move
   move: function(card, target, freeCells, spaces) {
-    // remove the target from the list of free cells
-    // this is a workaround for the case where the card end up being moved onto the target,
-    // but above other cards that should be below it.  this is not the ideal solution though
-    // because complex moves should be able to use the target as a space if it is one (I think)
-    for(var i = 0; i != spaces.length; i++)
-      if(spaces[i]==target) spaces.splice(i,1);
     // groupsize is the number of cards which can be moved without filling spaces
     var groupsize = freeCells.length+1;
     var numSpaces = spaces.length;
@@ -151,8 +155,8 @@ var FreeCellMover = {
     // work out how many cards are to move
     var numToMove = 0;
     for(var next = card; next; next = next.nextSibling) numToMove++;
+
     // decide which move strategy to employ dependent on number of cards, free cells, and spaces
-    this.moveQueue = [];
     var last = card.parentNode.lastChild;
     if(numToMove <= groupsize) {
       // just move each card to a cell then pull them off again
@@ -165,13 +169,18 @@ var FreeCellMover = {
       // move groups of (numFreeCells+1) through cells to each space, then pull back
       // complexMove would most likely work, but would look odd as unnecessary work would be done
       this.queueMediumMove(card, last, target, freeCells, spaces, numToMove);
-    } else if(numToMove <= groupsize*(sumToNumSpaces+1)) {
+    } else { // if(numToMove <= groupsize*(sumToNumSpaces+1))
       // run the last type of move, then consolidate all into one pile,
       // then run this kind again, until all but |card| have been moved
       this.queueComplexMove(card, last, target, freeCells, spaces, numToMove);
     }
 
     this.step();
+  },
+
+  queueStep: function(card, to) {
+    this.cards.push(card);
+    this.tos.push(to);
   },
 
   // append to |moves| the seq of moves that uses only the |cells| as intermediate storage
@@ -181,12 +190,12 @@ var FreeCellMover = {
     var current, i = 0;
     // move cards on top of |first| (up to |last|) to cells
     for(current = last; current!=first; current = current.previousSibling)
-      this.moveQueue.push({card: current, target: cells[i++]});
+      this.queueStep(current, cells[i++]);
     // move |first| to |target|
-    this.moveQueue.push({card: first, target: target});
+    this.queueStep(first, target);
     // move cards back from cells
     for(current = first.nextSibling; current!=last.nextSibling; current = current.nextSibling)
-      this.moveQueue.push({card: current, target: target});
+      this.queueStep(current, target);
   },
 
   // create a queue of moves that uses the cells to fill each space with c+1 cards
@@ -236,7 +245,7 @@ var FreeCellMover = {
       numLeft -= num;
       i++;
     }
-    // move final few cards (<c+1 of them
+    // move the <c+1 remaining cards
     this.queueSimpleMove(first, current, target, cells);
     // empty spaces
     for(i = i-1; i >= 0; i--) {

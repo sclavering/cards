@@ -15,12 +15,8 @@ AllGames.freecell = {
 
   // test if there are enough spaces/cells to perform a move, not just is it is legal.
   movePossible: function(card, target) {
-    // XXX destinaton should be usable in moves, but the moving algorithms are slightly broken
-    // count spaces, excluding the destination
-    var spaces = 0;
-    for(var i = 0; i != 8; i++)
-      if(!this.piles[i].hasChildNodes() && this.piles[i]!=target) spaces++;
-    var cells = this.countEmptyCells();
+    var spaces = this.countEmptyPiles(target);
+    var cells = this.numEmptyCells;
     // this is the number we can move using the most complex algorithm
     var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
     // count number of cards to move
@@ -40,8 +36,7 @@ AllGames.freecell = {
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
     return searchPiles(piles, testCanMoveToNonEmptyPile(card))
         || searchPiles(piles, testCanMoveToEmptyPile(card))
-        || (!card.nextSibling && (
-             searchPiles(this.cells, testPileIsEmpty)
+        || (!card.nextSibling && (this.emptyCell
           || searchPiles(this.foundations, testCanMoveToFoundation(card))));
   },
 

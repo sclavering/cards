@@ -316,10 +316,7 @@ function initPile(elt) {
     elt.addCard = function(card) {
       this.appendChild(card);
       var prev = card.previousSibling;
-      if(prev)
-        card.top = prev.top - 0 + (this.offset || gYOffsetFromFaceUpCard);
-      else
-        card.top = 0;
+      card.top = prev ? prev.top - 0 + (this.offset || gYOffsetFromFaceUpCard) : 0;
       card.left = 0;
     };
 

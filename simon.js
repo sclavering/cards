@@ -75,7 +75,7 @@ var SimpleSimon = {
       if(length < 13) continue;
       var card = stack.childNodes[length-13];
       for(var j = 0; j < 4; j++) {
-        if(this.canMoveTo(card, this.foundations[j])) {
+        if(this.canMoveCard(card) && this.canMoveTo(card, this.foundations[j])) {
           this.moveTo(card, this.foundations[j]);
           return true;
         }

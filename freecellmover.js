@@ -4,166 +4,29 @@
   * like FreeCell, where only one card can be moved at once.
   *
   * move(card, destination, freeCells, spaces)
-  *   will work out which of the move algorithms to apply and use it
-  *   if the move is not possible it will alert() the user to this
+  *   will work out the sequence of single-card moves required, and stores them in
+  *   |moveQueue|.  the first of these moves is then performed
   *
   * step()
-  *   called at the end of CardMover.step() (or whatever the function is called :)
-  *   calculates which move algorithms are currently in use (each one is called by
-  *   the next level up of complexity), and preforms a single step for that.
-  *   You should probably not call this function from outside CardMover
+  *   called at the end of CardMover.step() (or whatever the function is called)
+  *   performs the next single-card move in |moveQueue|
   */
 var FreeCellMover = {
-  // for Simple/Medium/ComplexMover, state=0 means that this mover is currently inactive
-  SimpleMover: {
-    state: 0, // 1 = moving cards to cells, 2 = moving card, 3 = bringing cards back from cells
-
-    freeCells: [],
-    card: null,
-    source: null,
-    target: null,
-    numToMove: 0,
-    cellNum: 0, // counted up to numToMove when moving to cells, then counted back down again
-
-    start: function(card, target, freeCells, numToMove) {
-      // state==1||3 parts of step must be able to run at least once.
-      if(numToMove==1) {
-        card.moveTo(target);
-      } else {
-        this.card = card;
-        this.source = card.parentNode;
-        this.target = target;
-        this.freeCells = freeCells;
-        this.numToMove = numToMove;
-        this.cellNum = 0;
-        this.state = 1;
-        this.step();
-      }
-    },
-    step: function() {
-      if(this.state==1) {
-        // move to cell
-        this.source.lastChild.moveTo(this.freeCells[this.cellNum]);
-        this.cellNum++;
-        if(this.cellNum==this.numToMove-1) this.state = 2;
-      } else if(this.state==2) {
-        // move |card| itslef
-        this.card.moveTo(this.target);
-        this.state = 3;
-      } else if(this.state==3) {
-        // take card back from cell
-        this.cellNum--;
-        this.freeCells[this.cellNum].lastChild.moveTo(this.target);
-        if(this.cellNum==0) this.state = 0;
-      }
-    }
+  moveQueue: null, // an array (queue) of single card moves to be performed
+                   // this will be null rather than an empty array
+  
+  step: function() {
+    if(!this.moveQueue) return false;
+    
+    var move = this.moveQueue.shift();
+    move.card.moveTo(move.target);
+    
+    if(this.moveQueue.length==0) this.moveQueue = null;
+    return true;
   },
-
-  MediumMover: {
-    state: 0, // 1 = moving groups to spaces, 2 = moving card to dest, 3 = moving groups back from spaces
-    freeCells: [],
-    card: null,
-    source: null,
-    siblings: null, // of card
-    target: null,
-    numToMove: 0,
-    spaces: null,
-    spaceNum: 0,
-    groupSize: 0,
-    start: function(card, target, freeCells, spaces, numToMove) {
-      this.groupSize = freeCells.length+1;
-      // if ComplexMover calls this to move <=groupSize cards it would cause errors, because the
-      // state==1||3 sections of step() are desinged to run at least once
-      if(numToMove <= this.groupSize) {
-        FreeCellMover.SimpleMover.start(card,target,freeCells,numToMove);
-      } else {
-        this.card = card;
-        this.source = card.parentNode;
-        this.target = target;
-        this.freeCells = freeCells;
-        this.spaces = spaces;
-        this.numToMove = numToMove;
-        this.spaceNum = 0;
-        this.state = 1;
-        this.step();
-      }
-    },
-    step: function() {
-      if(this.state==1) {
-        // move a group to a space
-        var children = this.source.childNodes;
-        var grouptop = children[children.length - this.groupSize];
-        FreeCellMover.SimpleMover.start(grouptop,this.spaces[this.spaceNum],this.freeCells,this.groupSize);
-        this.spaceNum++;
-        this.numToMove -= this.groupSize;
-        if(this.numToMove <= this.groupSize) this.state = 2;
-      } else if(this.state==2) {
-        // move last few cards (must be less than groupSize of them)
-        FreeCellMover.SimpleMover.start(this.card,this.target,this.freeCells,this.numToMove);
-        this.state = 3;
-      } else if(this.state==3) {
-        // get next space filled and move a group to destination
-        this.spaceNum--;
-        FreeCellMover.SimpleMover.start(this.spaces[this.spaceNum].firstChild,
-          this.target,this.freeCells,this.groupSize);
-        if(this.spaceNum==0) this.state = 0;
-      }
-    }
-  },
-
-  ComplexMover: {
-    state: 0, // 1 = moving sets to spaces, 2 = moving card to dest, 3 = moving sets back from spaces
-    freeCells: [],
-    card: null,
-    source: null,
-    siblings: null, // of card
-    target: null,
-    numToMove: 0,
-    spaces: null,
-    filled: null,
-    groupSize: 0,
-    start: function(card, target, freeCells, spaces, numToMove) {
-      this.card = card;
-      this.source = card.parentNode;
-      //this.siblings = card.parentNode.childNodes; // childNodes better be live!
-      this.target = target;
-      this.freeCells = freeCells;
-      this.groupSize = freeCells.length+1;
-      // want to reverse spaces, so that MedMovr builds piles nicely
-      this.spaces = spaces.reverse();
-      this.filled = [];
-      this.numToMove = numToMove;
-      this.spaceNum = 0;
-      this.state = 1;
-      this.step();
-    },
-    step: function() {
-      if(this.state==1) {
-        // move a set of groups out to fill all spaces then consolidate into first space
-        var numcards = this.groupSize*this.spaces.length;
-        var children = this.source.childNodes;
-        var settop = children[children.length-numcards];
-        // we remove a stack from spaces because after MediumMove call it will have been filled
-        var stack = this.spaces.pop();
-        FreeCellMover.MediumMover.start(settop,stack,this.freeCells,this.spaces,numcards);
-        this.filled.push(stack);
-        this.numToMove -= numcards;
-        if(this.numToMove <= this.groupSize*this.spaces.length) this.state = 2;
-      } else if(this.state==2) {
-        FreeCellMover.MediumMover.start(this.card,this.target,this.freeCells,this.spaces,this.numToMove);
-        this.state = 3;
-      } else if(this.state==3) {
-        // move smallest set to target
-        var stack = this.filled.pop();
-        FreeCellMover.MediumMover.start(stack.firstChild,this.target,this.freeCells,
-          this.spaces,stack.childNodes.length);
-        this.spaces.push(stack);
-        if(this.filled.length==0) this.state = 0;
-      }
-    }
-  },
-
+  
   move: function(card, target, freeCells, spaces) {
+//    alert("FreeCellMove.move(\n"+card+"\n"+target+"\n"+freeCells+"\n"+spaces+"\n);");
     // remove the target from the list of free cells
     // this is a workaround for the case where the card end up being moved onto the target,
     // but above other cards that should be below it.  this is not the ideal solution though
@@ -173,40 +36,104 @@ var FreeCellMover = {
     // groupsize is the number of cards which can be moved without filling spaces
     var groupsize = freeCells.length+1;
     var numSpaces = spaces.length;
-    var sumToNumSpaces = parseInt(numSpaces * (numSpaces + 1) / 2);
+    var sumToNumSpaces = numSpaces * (numSpaces + 1) / 2;
     // work out how many cards are to move
     var numToMove = 0;
     for(var next = card; next; next = next.nextSibling) numToMove++;
     // decide which move strategy to employ dependent on number of cards, free cells, and spaces
+    this.moveQueue = [];
+    var last = card.parentNode.lastChild;
     if(numToMove <= groupsize) {
       // just move each card to a cell then pull them off again
-      this.SimpleMover.start(card,target,freeCells,numToMove);
-    } else if(numToMove <= numSpaces+groupsize) {
+      this.queueSimpleMove(card, last, target, freeCells);
+    } else if(numToMove <= groupsize+numSpaces) {
       // when numToMove <= numSpaces+numFreeCells+1 it looks more natural to use the spaces just
       // like cells, and apply the SimpleMove strategy
-      this.SimpleMover.start(card,target,freeCells.concat(spaces),numToMove);
+      this.queueSimpleMove(card, last, target, freeCells.concat(spaces));
     } else if(numToMove <= groupsize*(numSpaces+1)) {
       // move groups of (numFreeCells+1) through cells to each space, then pull back
       // complexMove would most likely work, but would look odd as unnecessary work would be done
-      this.MediumMover.start(card,target,freeCells,spaces,numToMove);
-    } else if(numToMove <= groupsize*sumToNumSpaces) { // could be made grpsz*(sumTo.. +1)
+      this.queueMediumMove(card, last, target, freeCells, spaces, numToMove);
+    } else if(numToMove <= groupsize*(sumToNumSpaces+1)) { 
       // run the last type of move, then consolidate all into one pile,
       // then run this kind again, until all but |card| have been moved
-      this.ComplexMover.start(card,target,freeCells,spaces,numToMove);
+      this.queueComplexMove(card, last, target, freeCells, spaces, numToMove);
     }
+    
+    this.step();
   },
-  // returns true to CardMover so that UI en/disabling is done well (no momentary enabling of UI)
-  step: function() {
-    if(this.SimpleMover.state) {
-      this.SimpleMover.step();
-      return true;
-    } else if(this.MediumMover.state) {
-      this.MediumMover.step();
-      return true;
-    } else if(this.ComplexMover.state) {
-      this.ComplexMover.step();
-      return true;
+  
+  // append to |moves| the seq of moves that uses only the |cells| as intermediate storage
+  // (which might includes some spaces as well as cells), and moves the cards between
+  // |first| and |last| inclusive to |target|
+  queueSimpleMove: function(first, last, target, cells) {
+    var current, i = 0;
+    // move cards on top of |first| (up to |last|) to cells
+    for(current = last; current!=first; current = current.previousSibling)
+      this.moveQueue.push({card: current, target: cells[i++]});
+    // move |first| to |target|
+    this.moveQueue.push({card: first, target: target});
+    // move cards back from cells
+    for(current = first.nextSibling; current!=last.nextSibling; current = current.nextSibling)
+      this.moveQueue.push({card: current, target: target});
+  },
+  
+  // create a queue of moves that uses the cells to fill each space with c+1 cards
+  queueMediumMove: function(first, last, target, cells, spaces, numToMove) {
+    // the first and last cards of each set of #cells+1 cards put into a different space
+    var firsts = new Array(spaces.length);
+    var lasts = new Array(spaces.length);
+    // move #cells+1 cards to successive space for as long as necessary
+    var numLeft = numToMove;
+    var s = 0; // num sets moved
+    var current = last;
+    while(numLeft > cells.length+1) {
+      lasts[s] = current;
+      for(var t = 0; t < cells.length; t++) current = current.previousSibling;
+      firsts[s] = current;
+      this.queueSimpleMove(current, lasts[s], spaces[s], cells);
+      current = current.previousSibling
+      numLeft -= cells.length+1;
+      s++;
     }
-    return false;
+    // move the last few cards (<c+1 of them, so a simple move is sufficient)
+    this.queueSimpleMove(first, current, target, cells);
+    // move each of the piles of cards previously put into spaces to the real destination
+    for(s = s-1; s >= 0; s--) 
+      this.queueSimpleMove(firsts[s], lasts[s], target, cells);
+  },
+  
+  queueComplexMove: function(first, last, target, cells, spaces, numToMove) {
+    var numLeft = numToMove;
+    var firsts = new Array(spaces.length);
+    var lasts = new Array(spaces.length);
+    var nums = new Array(spaces.length);  // nums[i] = #[firsts[i]..lasts[i]]
+    // fill the spaces
+    var i = 0;
+    var remainingSpaces = spaces;
+    var usedSpaces = [];
+    var current = last;
+    while(numLeft > cells.length+1) {
+      var space = remainingSpaces.shift();
+      usedSpaces.push(space);
+      var num = nums[i] = remainingSpaces.length*(cells.length+1)+1; // the num of cards to move to the next space
+      lasts[i] = current;
+      for(var j = 1; j < num; j++) current = current.previousSibling;
+      firsts[i] = current;
+      this.queueMediumMove(firsts[i], lasts[i], space, cells, remainingSpaces, num);
+      current = current.previousSibling;
+      numLeft -= num;
+      i++;
+    }
+    // move final few cards (<c+1 of them
+    this.queueSimpleMove(first, current, target, cells);
+    // empty spaces
+    for(i = i-1; i >= 0; i--) {
+      this.queueMediumMove(firsts[i], lasts[i], target, cells, remainingSpaces, nums[i]);
+      remainingSpaces.unshift(usedSpaces.pop());
+    }
   }
 }
+
+
+

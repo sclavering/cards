@@ -27,9 +27,8 @@
 
 <script type="application/x-javascript" src="acesup.js"/>
 <script type="application/x-javascript" src="canfield.js"/>
-
+<script type="application/x-javascript" src="doublesol.js"/>
 <script type="application/x-javascript" src="freecell.js"/>
-
 <script type="application/x-javascript" src="grandfather.js"/>
 <script type="application/x-javascript" src="gypsy.js"/>
 <script type="application/x-javascript" src="klondike.js"/>
@@ -62,6 +61,7 @@
     <menupopup id="menupopup-gametypes" oncommand="Cards.playGame(event.target.value);">
       <menuitem label="&acesup-name;"      accesskey="&mi-acesup:accesskey;"      value="AcesUp"     />
       <menuitem label="&canfield-name;"    accesskey="&mi-canfield:accesskey;"    value="Canfield"   />
+      <menuitem label="&doublesol-name;"   accesskey="&mi-doublesol:accesskey;"   value="DoubleSol"  />
       <menuitem label="&freecell-name;"    accesskey="&mi-freecell:accesskey;"    value="FreeCell"   />
       <menuitem label="&grandfather-name;" accesskey="&mi-grandfather:accesskey;" value="Grandfather"/>
       <menuitem label="&gypsy-name;"       accesskey="&mi-gypsy:accesskey;"       value="Gypsy"      />
@@ -144,6 +144,35 @@ using those 100px :)  thanks Neil.
       <stack id="canfield-stack-2" class="card-fan-down"/><spacer flex="1"/>
       <stack id="canfield-stack-3" class="card-fan-down"/><spacer flex="2"/>
       <spacer class="card-pile-spacer"/><spacer flex="1"/>
+    </hbox>
+  </vbox>
+
+  <!-- Double Solitaire -->
+  <vbox id="DoubleSol" style="display:none" name="&doublesol-name;">
+    <spacer class="row-spacer"/>
+    <hbox>
+      <spacer flex="1"/>
+      <stack id="doublesol-stock" class="card-pile"/><spacer flex="1"/>
+      <stack id="doublesol-waste" class="card-pile"/><spacer flex="1"/>
+      <spacer class="card-pile-spacer"/><spacer flex="1"/>
+      <stack id="doublesol-foundation-0" class="card-pile"/><spacer flex="1"/>
+      <stack id="doublesol-foundation-1" class="card-pile"/><spacer flex="1"/>
+      <stack id="doublesol-foundation-2" class="card-pile"/><spacer flex="1"/>
+      <stack id="doublesol-foundation-3" class="card-pile"/><spacer flex="1"/>
+    </hbox>
+    <spacer class="row-spacer"/>
+    <hbox>
+      <spacer flex="1"/>
+      <stack id="doublesol-stack-0" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-1" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-2" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-3" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-4" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-5" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-6" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-7" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-8" class="card-fan-down"/><spacer flex="1"/>
+      <stack id="doublesol-stack-9" class="card-fan-down"/><spacer flex="1"/>
     </hbox>
   </vbox>
 

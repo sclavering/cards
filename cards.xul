@@ -73,7 +73,7 @@
       <menuitem label="&yukon-name;"       accesskey="&mi-yukon:accesskey;"       value="Yukon"      />
     </menupopup>
   </toolbarbutton>
-  <!-- difficulty level menu is show/hidden by removing/adding style="display:none" -->
+  <!-- difficulty level menu is show/hidden by removing/adding hidden="true" -->
   <toolbarbutton id="game-difficulty-menu" type="menu" label="&m-game-difficulty:label;"
     tooltiptext="&m-game-difficulty:tooltip;" command="cmd:setdifficulty">
     <menupopup>
@@ -108,7 +108,7 @@ using those 100px :)  thanks Neil.
 
 <stack id="current-game-display" style="margin: 0 -100px -1000px 0; padding: 0 100px 0 0;">
   <!-- Aces Up -->
-  <vbox id="AcesUp" style="display:none" name="&acesup-name;">
+  <vbox id="AcesUp" hidden="true" name="&acesup-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -122,7 +122,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Canfield -->
-  <vbox id="Canfield" style="display:none" name="&canfield-name;">
+  <vbox id="Canfield" hidden="true" name="&canfield-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -148,7 +148,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Double Solitaire -->
-  <vbox id="DoubleSol" style="display:none" name="&doublesol-name;">
+  <vbox id="DoubleSol" hidden="true" name="&doublesol-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -177,7 +177,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- FreeCell -->
-  <vbox id="FreeCell" style="display:none" name="&freecell-name;">
+  <vbox id="FreeCell" hidden="true" name="&freecell-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -205,7 +205,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Grandfather Solitaire -->
-  <vbox id="Grandfather" style="display:none" name="&grandfather-name;">
+  <vbox id="Grandfather" hidden="true" name="&grandfather-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -227,7 +227,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Gypsy -->
-  <vbox id="Gypsy" style="display:none" name="&gypsy-name;">
+  <vbox id="Gypsy" hidden="true" name="&gypsy-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -268,7 +268,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Klondike -->
-  <vbox id="Klondike" style="display:none" name="&klondike-name;">
+  <vbox id="Klondike" hidden="true" name="&klondike-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -294,7 +294,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Mod 3 -->
-  <vbox id="Mod3" style="display:none" name="&mod3-name;">
+  <vbox id="Mod3" hidden="true" name="&mod3-name;">
     <spacer class="row-spacer"/>
     <hbox id="mod3-row1">
       <spacer flex="1"/>
@@ -347,7 +347,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Regiment (also known as Heads or Tails) -->
-  <vbox id="Regiment" style="display:none" name="&regiment-name;">
+  <vbox id="Regiment" hidden="true" name="&regiment-name;">
     <spacer class="row-spacer"/>
     <hbox id="regiment-foundations"><spacer flex="1"/>
       <!-- first 4 foundations are built up from Ace, last 4 down from King -->
@@ -393,7 +393,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Simple Simon -->
-  <vbox id="SimpleSimon" style="display:none" name="&simon-name;">
+  <vbox id="SimpleSimon" hidden="true" name="&simon-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -419,7 +419,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Spider Solitaire -->
-  <vbox id="Spider" style="display:none" name="&spider-name;">
+  <vbox id="Spider" hidden="true" name="&spider-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>
@@ -457,7 +457,7 @@ using those 100px :)  thanks Neil.
   </vbox>
 
   <!-- Yukon -->
-  <vbox id="Yukon" style="display:none" name="&yukon-name;">
+  <vbox id="Yukon" hidden="true" name="&yukon-name;">
     <spacer class="row-spacer"/>
     <hbox>
       <spacer flex="1"/>

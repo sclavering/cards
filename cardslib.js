@@ -246,7 +246,7 @@ var MouseHandler1 = {
   init: function(dragLayer) {
     this.dragLayer = dragLayer;
     this.cards = document.createElement("stack");
-    this.cards.setAttribute("style","display:none");
+    this.cards.hidden = true;
     this.dragLayer.appendChild(this.cards);
     // have to position the <stack/> or it fills its parent, blocking all mouse clicks!
     this.cards.top = 0; this.cards.left = 0;
@@ -292,7 +292,7 @@ var MouseHandler1 = {
     } else if(this.nextCard) {
       var card = this.nextCard;
       // move the cards to the drag box (this.cards)
-      this.cards.removeAttribute("style"); //unhide
+      this.cards.hidden = false;
       this.cards.className = card.parentNode.className;
       this.cards.left = getLeft(card) - getLeft(this.dragLayer);
       this.cards.top  = getTop(card) - getTop(this.dragLayer);
@@ -309,7 +309,7 @@ var MouseHandler1 = {
   mouseUp: function(e) {
     if(this.dragInProgress) {
       this.dropCards();
-      this.cards.setAttribute("style","display:none");
+      this.cards.hidden = true;
       this.dragInProgress = false;
     }
     this.nextCard = null;
@@ -485,7 +485,7 @@ var CardMover = {
     this.dragLayer = stack;
     this.cards = document.createElement("stack");
     this.cards.top = 0; this.cards.left = 0; // so it doesn't fill parent and block clicks
-    this.cards.setAttribute("style","display:none");
+    this.cards.hidden = true;
     this.cards.id = "card-move-pile";
     this.dragLayer.appendChild(this.cards);
   },
@@ -496,7 +496,7 @@ var CardMover = {
     this.cards.left = getLeft(firstCard) - getLeft(this.dragLayer);
     this.cards.top  = getTop(firstCard) - getTop(this.dragLayer); // fudge for margin
     firstCard.transferTo(this.cards);
-    this.cards.removeAttribute("style");
+    this.cards.hidden = false;
     // set up conditions for animation stuff
     this.target = target;
     this.targetTop = getTop(this.target) - getTop(this.dragLayer) + CardPositioner.getNextCardTop(this.target);
@@ -531,7 +531,7 @@ var CardMover = {
     clearInterval(this.interval);
     this.cards.firstChild.clearSource(); //??
     this.transfer(this.cards.firstChild, this.target);
-    this.cards.setAttribute("style","display:none");
+    this.cards.hidden = true;
     // don't enable the UI till we're finished autoplaying
     if(!FreeCellMover.step() && !Game.autoplay())
       Cards.enableUI();
@@ -652,7 +652,7 @@ var HintHighlighter = {
     for(var i = 0; i < 10; i++) {
       this.highlightBoxes[i] = document.createElement("box");
       this.highlightBoxes[i].className = "card-highlight";
-      this.highlightBoxes[i].setAttribute("style","display:none");
+      this.highlightBoxes[i].hidden = true;
       // must position it or it will fill its parent
       this.highlightBoxes[i].top = 0;
       this.highlightBoxes[i].left = 0;
@@ -668,14 +668,14 @@ var HintHighlighter = {
   },
   highlight: function(card, i) {
     // hide it while we move it
-    this.highlightBoxes[i].setAttribute("style","display:none");
+    this.highlightBoxes[i].hidden = true;
     // card may be a stack if hint suggests moving to an empty stack
     var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
     this.highlightBoxes[i].height = height;
     this.highlightBoxes[i].width = getWidth(card);
     this.highlightBoxes[i].top  = getTop(card)  - getTop(this.positioningLayer);
     this.highlightBoxes[i].left = getLeft(card) - getLeft(this.positioningLayer);
-    this.highlightBoxes[i].removeAttribute("style");
+    this.highlightBoxes[i].hidden = false;
   },
   highlightDestinations: function() {
     for(var i = 0; i < this.destinations.length; i++)
@@ -684,7 +684,7 @@ var HintHighlighter = {
   },
   highlightComplete: function() {
     for(var i = 0; i < this.destinations.length; i++)
-      this.highlightBoxes[i].setAttribute("style","display:none");
+      this.highlightBoxes[i].hidden = true;
     Cards.enableUI();
   }
 }
@@ -808,11 +808,11 @@ var Cards = {
     // end old game
     if(this.currentGame) {
       Game.end();
-      document.getElementById(this.currentGame).setAttribute("style","display:none");
+      document.getElementById(this.currentGame).hidden = true;
     }
     // show new game
     this.currentGame = strGameName;
-    document.getElementById(strGameName).removeAttribute("style");
+    document.getElementById(strGameName).hidden = false;
     // store current game pref and start the game
     this.preferences.setCharPref("current-game",strGameName);
     Game = Games[strGameName];

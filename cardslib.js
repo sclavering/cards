@@ -486,7 +486,7 @@ var pileGetters = {
     }
   },
 
-  "fan-left": {
+  "fan-right": {
     __proto__: basicPileGetters,
 
     nextCardLeft: function() {

@@ -12,7 +12,6 @@ canMoveCard:
   "descending, not from foundation"
   "descending, alt colours"
   "descending, in suit"
-  "descending mod13, in suit, not from foundation":
   "descending, in suit, not from foundation"
   "not from foundation"
   "last on pile"
@@ -20,7 +19,6 @@ canMoveCard:
 canMoveToPile:
   "onto up, any in spaces"
   "descending"
-  "descending mod13"
   "descending, alt colours, kings in spaces"
   "descending, in suit, kings in spaces"
   "descending, alt colours"
@@ -44,7 +42,6 @@ dealFromStock:
 xxx these (c|sh)ould just use the canMoveCard value
 getLowestMovableCard:
   "descending, in suit"
-  "descending mod13, in suit"
   "descending, alt colours"
   "face up":
 
@@ -94,14 +91,6 @@ var Rules = {
       return true;
     },
 
-    "descending mod13, in suit, not from foundation":
-    function(card) {
-      if(card.faceDown || card.parentNode.isFoundation) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.suit!=next.suit || !card.isConsecutiveMod13To(next)) return false;
-      return true;
-    },
-
     "descending, in suit, not from foundation":
     function(card) {
       if(card.faceDown || card.parentNode.isFoundation) return false;
@@ -133,12 +122,6 @@ var Rules = {
     function(card, pile) {
       var last = pile.lastChild;
       return !last || (last.faceUp && last.number==card.upNumber);
-    },
-
-    "descending mod13":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return (!last || (last.faceUp && last.isConsecutiveMod13To(card)));
     },
 
     "descending, alt colours, kings in spaces":
@@ -240,16 +223,6 @@ var Rules = {
       if(!pile.hasChildNodes()) return null;
       var card = pile.lastChild, prv = card.previousSibling;
       while(prv && prv.faceUp && prv.number==card.upNumber && prv.suit==card.suit) {
-        card = prv; prv = card.previousSibling;
-      }
-      return card;
-    },
-
-    "descending mod13, in suit":
-    function(pile) {
-      if(!pile.hasChildNodes()) return null;
-      var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.isConsecutiveMod13To(card) && prv.suit==card.suit) {
         card = prv; prv = card.previousSibling;
       }
       return card;

@@ -8,9 +8,7 @@ AllGames.canfield = {
   getLowestMovableCard: "face up",
 
   init: function() {
-    var cs = this.cards = makeDecks(1);
-    var i, j, k;
-    for(i = 0, j = 0; i != 4; i++, j+=13) cs[j].down = cs[j+12], cs[j+12].up = cs[j];
+    var cs = this.cards = makeDecksMod13(1);
 
     function mayAutoplay() {
       var base = Game.foundationStartNumber;
@@ -19,8 +17,8 @@ AllGames.canfield = {
     };
 
     const off = [13, -13, -26, -26, 26, 26, 13, -13];
-    for(i = 0, k = 0; i != 4; i++) {
-      for(j = 0; j != 13; j++, k++) {
+    for(var i = 0, k = 0; i != 4; i++) {
+      for(var j = 0; j != 13; j++, k++) {
         var card = cs[k], offf = j==0 ? 13 : 0;
         card.autoplayAfterA = cs[k+off[i]+offf-1];
         card.autoplayAfterB = cs[k+off[i+4]+offf-1];
@@ -47,10 +45,7 @@ AllGames.canfield = {
     return pile.hasChildNodes() ? pile.lastChild.up==card : card.number==this.foundationStartNumber;
   },
 
-  canMoveToPile: function(card, pile) {
-    var last = pile.lastChild;
-    return !last || (last.colour!=card.colour && last.isConsecutiveMod13To(card));
-  },
+  canMoveToPile: "descending, alt colours",
 
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);

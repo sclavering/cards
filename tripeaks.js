@@ -8,6 +8,8 @@ AllGames.tripeaks = {
   dealFromStock: "to waste",
 
   init: function() {
+    this.cards = makeDecksMod13(1);
+
     // The numbers of the piles that should be the leftChild of piles 0-17, rightChilds are all 1 greater.
     // Piles 18-27 have no children.
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
@@ -52,7 +54,7 @@ AllGames.tripeaks = {
 
   canRemoveCard: function(card) {
     // can be called with waste.lastChild, but that won't matter
-    return card.differsByOneMod13From(this.waste.lastChild) && card.parentNode.free;
+    return card.differsByOneFrom(this.waste.lastChild) && card.parentNode.free;
   },
 
   removeCard: function(card) {

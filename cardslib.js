@@ -181,6 +181,16 @@ function makeDecks(num) {
 }
 
 
+function makeDecksMod13(num) {
+  var cs = makeDecks(num);
+  for(var i = 0; i != cs.length; i+=13) {
+    var a = cs[i], k = cs[i+12];
+    a.down = k; k.up = a; k.upNumber = 1;
+  }
+  return cs;
+}
+
+
 function makeCardSuits(suits, repeat) {
   return makeCardRuns(1, 13, suits, repeat);
 }
@@ -226,12 +236,12 @@ function makeCard(number, suit) {
   for(var m in cardMethods) c[m] = cardMethods[m]; // add standard methods
   c.number = number;
   c.upNumber = number+1; // card.number==other.number+1 used to be very common
-  c.realNumber = number==14 ? 1 : number;
+  var realNum = c.realNumber = number==14 ? 1 : number;
   c.colour = [,BLACK, RED, RED, BLACK][suit];
   c.altcolour = c.colour==RED ? BLACK : RED;
   c.suit = suit;
   c.suitstr = [,"S", "H", "D", "C"][suit];
-  c.isAce = realNumber==1;
+  c.isAce = realNum==1;
   c.isQueen = number==12;
   c.isKing = number==13;
   c.setFaceDown(); // sets faceUp, faceDown and className
@@ -257,17 +267,7 @@ var cardMethods = {
   toString: function() { return this.number+this.suitstr; },
 
   differsByOneFrom: function(card) {
-    var diff = this.number-card.number;
-    return (diff==1 || diff==-1);
-  },
-
-  differsByOneMod13From: function(card) {
-    var diff = this.number-card.number;
-    return (diff==1 || diff==-1 || diff==12 || diff==-12);
-  },
-
-  isConsecutiveMod13To: function(card) {
-    return this.isAce ? card.isKing : this.realNumber==card.realNumber+1;
+    return this.number==card.upNumber || card.number==this.upNumber;
   },
 
   isAtLeastCountingFrom: function(number, from_num) {

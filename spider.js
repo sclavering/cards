@@ -163,20 +163,26 @@ AllGames.divorce = {
   __proto__: SpiderLayoutBase,
 
   id: "divorce",
-  cards: 2,
 
   get stockCounterStart() { return this.stock.childNodes.length; },
 
   dealFromStock: "to nonempty piles",
-  canMoveCard: "descending mod13, in suit, not from foundation",
-  canMoveToPile: "descending mod13",
   canMoveToFoundation: "13 cards",
-  getLowestMovableCard: "descending mod13, in suit",
+
+  init: function() {
+    this.cards = makeDecksMod13(2);
+  },
 
   deal: function(cards) {
     for(var i = 0; i != 10; i++) dealToPile(cards, this.piles[i], 0, 5);
     dealToPile(cards, this.stock, cards.length, 0);
   },
+
+  canMoveCard: "descending, in suit, not from foundation",
+
+  canMoveToPile: "descending",
+
+  getLowestMovableCard: "descending, in suit",
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));

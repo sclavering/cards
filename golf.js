@@ -60,10 +60,8 @@ AllGames["golf-easy"] = {
   __proto__: GolfBase,
   id: "golf-easy",
 
-  canMoveTo: function(card, pile) {
-    if(pile!=this.foundation) return false;
-    var last = pile.lastChild;
-    return card.differsByOneMod13From(last);
+  init: function() {
+    this.cards = makeDecksMod13(1);
   }
 };
 

@@ -225,8 +225,4 @@ var PileTypes = {
   }
 };
 
-
-//for(var ppi in PileTypes) PileTypes[ppi].__proto__ = basicPileProperties
 PileTypes.foundation8 = PileTypes.foundation4;
-
-

@@ -3,6 +3,8 @@ var FreeCell = new CardGame(NO_DRAG_DROP);
 FreeCell.init = function() {
   this.shortname = "freecell";
   this.initStacks(8,4,0,false,false,0,0,4);
+  // insufficient spaces message
+  this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
 };
 
 
@@ -22,8 +24,10 @@ FreeCell.deal = function() {
 FreeCell.canMoveCard = FreeCell.canMoveCard_DescendingAltColours;
 
 
-// this only checks if it is actually legal to make the move, not whether there are enough
-// free cells and/or spaces to execute it
+// unlike in other games where this function returns a boolean, here we sometimes return an int.
+// false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
+// (using 0 means the overall behaviour will match other games, but callers which do want to 
+// know about an insufficent spaces result can test if the result ===0)
 FreeCell.canMoveTo = function(card, target) {
   if(target.isCell) return (!target.hasChildNodes() && !card.nextSibling);
   var last = target.lastChild;
@@ -31,8 +35,7 @@ FreeCell.canMoveTo = function(card, target) {
     return this.canMoveToFoundation(card, target); // inherited method
   if(!last || (last.isConsecutiveTo(card) && last.notSameColour(card))) {
     if(this.movePossible(card,target)) return true;
-    // XXX this obviously needs to be made localisable, and moved elsewhere.
-    else alert("Insufficient free cells and/or spaces to perform the move.");
+    return 0;
   }
   return false;
 };
@@ -55,6 +58,21 @@ FreeCell.movePossible = function(card,target) {
   return numToMove<=numCanMove;
 }
 
+// must override global version to deal with oddities of canMoveTo in Freecell
+FreeCell.attemptMove = function(source, target) {
+  var can = Game.canMoveTo(source,target)
+  if(can) {
+    Game.moveTo(source,target);
+    return true;
+  }
+  // insufficient spaces
+  if(can===0) {
+    // XXX: use prompt service, or thing of some completely different way
+    // of informing the user (e.g. status bar, but we don't have one)
+    alert(this.insufficientSpacesMessage);
+  }
+  return false;
+}
 
 FreeCell.moveTo = function(card, target) {
   var source = card.parentNode;

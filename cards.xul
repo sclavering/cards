@@ -18,6 +18,8 @@
   id     ="cards-window"
   persist="screenX screenY width height sizemode"
 
+  insufficientSpacesMessage="&insufficientSpacesMessage;"
+
   gameWonTitle="&game-won:title;"
   gameWonMessage="&game-won:message;"
   >

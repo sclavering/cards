@@ -14,21 +14,7 @@ var SpiderBase = {
   dealFromStock: "to piles, if none empty",
   canMoveToPile: "descending",
 
-  getBestMoveForCard: function(card) {
-    const ps = getPilesRound(card.parentNode), num = ps.length;
-    var maybe = null, empty = null;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i], last = p.lastChild;
-      if(!last) {
-        if(!empty) empty = p;
-        continue;
-      }
-      if(!this.canMoveToPile(card, p)) continue;
-      if(card.suit==p.lastChild.suit) return p;
-      if(!maybe) maybe = p;
-    }
-    return maybe || empty;
-  },
+  getBestMoveForCard: "down and same suit, or down, or empty",
 
   autoplayMove: function() {
     for(var i = 0; i != this.piles.length; i++) {

@@ -42,23 +42,17 @@ AllGames.klondike = {
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
       if(card.previousSibling || card.parentNode.isWaste) {
-        var pile = searchPiles(this.piles, testPileIsEmpty);
+        var pile = this.firstEmptyPile;
         if(pile) this.addHint(card, pile);
       }
-      // to foundation
-      pile = searchPiles(this.foundations, testCanMoveToFoundation(card));
-      if(pile) this.addHint(card, pile);
+      this.addFoundationHintsFor(card);
     } else {
       // only looks at foundations and *nonempty* spaces
       this.addHintsFor(card);
     }
   },
 
-  getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return searchPiles(piles, testCanMoveToPile(card))
-        || (!card.nextSibling && searchPiles(this.foundations, testCanMoveToFoundation(card)));
-  },
+  getBestMoveForCard: "legal",
 
   autoplayMove: "commonish",
 

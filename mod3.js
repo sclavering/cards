@@ -102,11 +102,12 @@ AllGames.mod3 = {
       var d1 = card.down, d2 = card.twin.down;
       if(d1.inPlace && !d1.nextSibling) return d1.parentNode;
       if(d2.inPlace && !d2.nextSibling) return d2.parentNode;
+    } else {
+      var p = findEmpty(this.rows[card.row]);
+      if(p) return p;
     }
-
     var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    if(!card.down) return searchPiles(this.rows[card.row], testPileIsEmpty) || searchPiles(piles, testPileIsEmpty);
-    return searchPiles(piles, testPileIsEmpty);
+    return findEmpty(piles);
   },
 
   autoplayMove: function() {

@@ -15,82 +15,35 @@ function searchPiles(piles, test) {
   return null;
 }
 
-function filter(list, test) {
-  var result = [];
-  for(var i = 0; i != list.length; i++) if(test(list[i])) result.push(list[i]);
-  return result;
+function findEmpty(piles) {
+  const num = piles.length;
+  for(var i = 0; i != num; i++) {
+    var p = piles[i];
+    if(!p.hasChildNodes()) return p;
+  }
+  return null;
 }
 
-// requires the row of piles to be sibling DOM nodes
 function getPilesRound(pile) {
   if("surroundingPiles" in pile) return pile.surroundingPiles;
 
-  var piles = [];
-  var left = pile, right = pile;
-  while(true) {
-    left = nextPileLeft(left);
-    right = nextPileRight(right);
-    if(!left && !right) break;
-    if(right) piles.push(right);
-    if(left) piles.push(left);
+  var ps = pile.surroundingPiles = [];
+  var prev = pile.prev, next = pile.next;
+  while(prev && next) {
+    ps.push(next); ps.push(prev);
+    next = next.next; prev = prev.prev;
   }
-  pile.surroundingPiles = piles;
-  return piles;
-}
-function nextPileLeft(pile) {
-  if(!pile) return null;
-  for(var n = pile.previousSibling; n; n = n.previousSibling)
-    if(("isPile" in n) && n.isPile) return n;
-  return null;
-}
-function nextPileRight(pile) {
-  if(!pile) return null;
-  for(var n = pile.nextSibling; n; n = n.nextSibling)
-    if(("isPile" in n) && n.isPile) return n;
-  return null;
+  while(next) { ps.push(next); next = next.next; }
+  while(prev) { ps.push(prev); prev = prev.prev; }
+  return ps;
 }
 
+
 // Some functions (and functions to get functions) to pass to searchPiles
-function testLastIsConsecutiveAndSameSuit(card) {
-  return function(pile) {
-    var last = pile.lastChild;
-    return last && last.suit==card.suit && last.number==card.upNumber;
-  };
-}
-function testLastIsConsecutive(card) {
-  return function(pile) {
-    var last = pile.lastChild;
-    return last && last.number==card.upNumber;
-  };
-}
-function testLastIsSuit(suit) {
-  return function(pile) {
-    var last = pile.lastChild;
-    return last && last.suit==suit;
-  };
-}
-function testCanMoveToNonEmptyPile(card) {
-  return function(pile) {
-    return pile.hasChildNodes() && Game.canMoveTo(card,pile);
-  };
-}
 function testCanMoveToEmptyPile(card) {
   return function(pile) {
     return !pile.hasChildNodes() && Game.canMoveTo(card,pile);
   };
-}
-function testCanMoveToFoundation(card) {
-  return function(pile) {
-    return Game.canMoveToFoundation(card,pile);
-  };
-}
-function testCanMoveToPile(card) {
-  return function(pile) {
-    return Game.canMoveToPile(card,pile);
-  };
-}
-function testPileIsEmpty(pile) {
-  return !pile.hasChildNodes();
 }
 
 

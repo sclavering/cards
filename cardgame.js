@@ -92,10 +92,6 @@ var BaseCardGame = {
   // Requires relevant XUL elements to have ids of the form {this.id}-{pile-type}[-{int}]
   initPiles: function() {
     // Unless these are set explicitly then all games share the same arrays (breaking everything)
-    this.piles = [];
-    this.foundations = [];
-    this.reserves = [];
-    this.cells = [];
     var allpiles = this.allpiles = [];
 
     var id = this.id;
@@ -109,14 +105,20 @@ var BaseCardGame = {
       allpiles.push(pile);
     }
 
-    function initPilesOfType(type, property, array) {
+    function initPilesOfType(type, property) {
+      type = id + type;
+      var ps = [];
       for(var i = 0; true; i++) {
-        var node = initPileFromId(id+type+i);
+        var node = initPileFromId(type+i);
         if(!node) break;
         node[property] = true;
-        array.push(node);
+        ps.push(node);
         allpiles.push(node);
       }
+      if(!i) return ps;
+      var max = i - 1;
+      for(i = 0; i != max; i++) ps[i].next = ps[i+1], ps[i+1].prev = ps[i];
+      return ps;
     }
 
     initPileOfType("-stock", "isStock", "stock");
@@ -124,10 +126,10 @@ var BaseCardGame = {
     initPileOfType("-foundation", "isFoundation", "foundation");
     initPileOfType("-reserve", "isReserve", "reserve");
 
-    initPilesOfType("-pile-", "isNormalPile", this.piles);
-    initPilesOfType("-foundation-", "isFoundation", this.foundations);
-    initPilesOfType("-reserve-", "isReserve", this.reserves);
-    initPilesOfType("-cell-", "isCell", this.cells);
+    this.piles = initPilesOfType("-pile-", "isNormalPile");
+    this.foundations = initPilesOfType("-foundation-", "isFoundation");
+    this.reserves = initPilesOfType("-reserve-", "isReserve");
+    this.cells = initPilesOfType("-cell-", "isCell");
 
     if(this.stock) {
       // a <label/> for displaying the num. of deals left
@@ -138,9 +140,8 @@ var BaseCardGame = {
       }
     }
 
-    // autoplay sources
-    this.sourcePiles = this.waste ? [this.waste].concat(this.piles) : this.piles;
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
+    // xxx kill this
     this.dragDropTargets = this.piles.concat(this.foundations);
     if(this.foundation) this.dragDropTargets.push(this.foundation);
   },
@@ -336,10 +337,10 @@ var BaseCardGame = {
   // this function follows the pattern needed by all games seen so far, leaving
   // them just to implement canMoveToPile and canMoveToFoundation
   canMoveTo: function(card,target) {
-    // can never move TO a reserve pile
-    if(target.isReserve) return false;
     if(target.isFoundation) return this.canMoveToFoundation(card,target);
-    return this.canMoveToPile(card,target);
+    if(target.isNormalPile) return this.canMoveToPile(card,target);
+    // should never move to reserves, stock, or waste piles. (for cells see FreeCellGame)
+    return false;
   },
 
   // this is the way foundations work in most games: built one card at a time, all the same suit, ascending
@@ -456,7 +457,7 @@ var BaseCardGame = {
     this.hintDestinations.push(dest);
   },
 
-  // takes multiple destinations for a single source
+  // one source, many destinations
   addHints: function(source, dests) {
     for(var i = 0; i != dests.length; i++) {
       this.hintSources.push(source);
@@ -464,12 +465,36 @@ var BaseCardGame = {
     }
   },
 
+  // many sources, one destination
+  addHints2: function(cards, dest) {
+    for(var i = 0; i != cards.length; i++) {
+      this.hintSources.push(cards[i]);
+      this.hintDestinations.push(dest);
+    }
+  },
+
   // a common pattern.  xxx doesn't quite fit Klondike and Double Solitaire
   addHintsFor: function(card) {
     if(!card) return;
-    this.addHints(card, filter(this.piles, testCanMoveToNonEmptyPile(card)));
-    var f = searchPiles(this.foundations, testCanMoveToFoundation(card));
-    if(f) this.addHint(card, f);
+    var ds = [];
+    const ps = this.piles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      // xxx would use canMoveToPile() but that bypasses FreeCell/Towers's movePossible(...)
+      if(p.hasChildNodes() && this.canMoveTo(card, p)) ds.push(p);
+    }
+    if(ds.length) this.addHints(card, ds);
+    this.addFoundationHintsFor(card);
+  },
+
+  addFoundationHintsFor: function(card) {
+    if(!card) return;
+    const fs = this.foundations, num = fs.length;
+    var ds = [];
+    for(var i = 0; i != num; i++) {
+      var f = fs[i];
+      if(this.canMoveToFoundation(card, f)) this.addHint(card, f);
+    }
   },
 
 
@@ -528,6 +553,12 @@ var BaseCardGame = {
     var fs = this.foundations, len = fs.length;
     for(var i = 0; i != len; i++) if(!fs[i].hasChildNodes()) return fs[i];
     return null; // xxx throw an exception instead?
+  },
+
+  get firstEmptyPile() {
+    var ps = this.piles, len = ps.length;
+    for(var i = 0; i != len; i++) if(!ps[i].hasChildNodes()) return ps[i];
+    return null;
   }
 }
 

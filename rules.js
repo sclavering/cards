@@ -18,11 +18,11 @@ canMoveCard:
 
 canMoveToPile:
   "onto up, any in spaces"
+  "onto 'up', kings in spaces"
   "descending"
   "descending, alt colours, kings in spaces"
   "descending, in suit, kings in spaces"
   "descending, alt colours"
-  "descending, same colour"
   "descending, in suit"
   "isempty"
 
@@ -43,13 +43,14 @@ xxx these (c|sh)ould just use the canMoveCard value
 getLowestMovableCard:
   "descending, in suit"
   "descending, alt colours"
-  "face up":
+  "face up"
 
 hasBeenWon:
-  "13 cards on each foundation":
+  "13 cards on each foundation"
 
 getBestMoveForCard
   "to up or nearest space"
+  "down and same suit, or down, or empty"
 
 autoplayMove
   "commonish"
@@ -118,6 +119,11 @@ var Rules = {
       return !pile.hasChildNodes() || pile.lastChild==card.up;
     },
 
+    "onto 'up', kings in spaces":
+    function(card, pile) {
+      return pile.hasChildNodes ? pile.lastChild==card.up : card.isKing;
+    },
+
     "descending":
     function(card, pile) {
       var last = pile.lastChild;
@@ -140,12 +146,6 @@ var Rules = {
     function(card, pile) {
       var last = pile.lastChild;
       return !last || (last.faceUp && last.number==card.upNumber && last.colour!=card.colour);
-    },
-
-    "descending, same colour":
-    function(card, pile) {
-      var last = pile.lastChild;
-      return !last || (last.faceUp && last.number==card.upNumber && last.colour==card.colour);
     },
 
     "descending, in suit":
@@ -263,7 +263,50 @@ var Rules = {
     function(card) {
       var up = card.up;
       if(up && up.faceUp && up.parentNode.isNormalPile && !up.nextSibling) return up.parentNode;
-      return searchPiles(getPilesRound(card.parentNode), testPileIsEmpty);
+      return findEmpty(getPilesRound(card.parentNode));
+    },
+
+    "down and same suit, or down, or empty":
+    function(card) {
+      const ps = getPilesRound(card.parentNode), num = ps.length;
+      var maybe = null, empty = null;
+      for(var i = 0; i != num; i++) {
+        var p = ps[i], last = p.lastChild;
+        if(!last) {
+          if(!empty) empty = p;
+          continue;
+        }
+        if(!this.canMoveToPile(card, p)) continue;
+        if(card.suit==p.lastChild.suit) return p;
+        if(!maybe) maybe = p;
+      }
+      return maybe || empty;
+    },
+
+    "legal nonempty, or empty":
+    function(card) {
+      var ps = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles, num = ps.length;
+      var empty = null;
+      for(var i = 0; i != ps.length; i++) {
+        var p = ps[i];
+        if(p.hasChildNodes()) {
+          if(this.canMoveToPile(card, p)) return p;
+        } else if(!empty) {
+          empty = p;
+        }
+      }
+      return empty;
+    },
+
+    "legal":
+    function(card) {
+      var ps = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles, num = ps.length;
+      var empty = null;
+      for(var i = 0; i != ps.length; i++) {
+        var p = ps[i];
+        if(this.canMoveToPile(card, p)) return p;
+      }
+      return null;
     }
   },
 

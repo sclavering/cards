@@ -26,21 +26,7 @@ var YukonBase = {
     }
   },
 
-  getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
-        || searchPiles(piles, testPileIsEmpty)
-        || searchPiles(this.foundations, testCanMoveToFoundation(card));
-  },
-
-  autoplayMove: function() {
-    const ps = this.sourcePiles, numPs = ps.length;
-    for(var i = 0; i != numPs; i++) {
-      var last = ps[i].lastChild;
-      if(last && last.mayAutoplay && this.sendToFoundations(last)) return true;
-    }
-    return false;
-  },
+  getBestMoveForCard:  "legal nonempty, or empty",
 
   hasBeenWon: "13 cards on each foundation",
 
@@ -59,6 +45,7 @@ AllGames.yukon = {
 
   init: function() {
     var cs = this.cards = makeDecks(1);
+    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
 
     const off = [13, -13, -26, -26, 26, 26, 13, -13];
     for(var i = 0, n = 0; i != 4; i++) {
@@ -81,7 +68,9 @@ AllGames.yukon = {
     // hints in Yukon are weird.  we look at the last card on each pile for targets, then find
     // cards which could be moved there. (this is because any faceUp card can be moved in Yukon)
     for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastChild);
-  }
+  },
+
+  autoplayMove: "commonish"
 };
 
 
@@ -107,6 +96,8 @@ AllGames.sanibel = {
         c.__defineGetter__("mayAutoplay", mayAutoplayAfterFourOthers);
       }
     }
+
+    this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
 
   deal: function(cards) {
@@ -123,5 +114,31 @@ AllGames.sanibel = {
         if(this.canMoveTo(card, this.piles[i])) this.addHint(card, this.piles[i]);
     }
     for(i = 0; i != 10; i++) this.getHintsForCard(this.piles[i].lastChild);
+  },
+
+  autoplayMove: function() {
+    const fs = this.foundations, as = this.aces;
+    var lookedForAces = false;
+    for(var i = 0; i != 8; i++) {
+      var f = fs[i], last = f.lastChild;
+      if(last) {
+        if(last.isKing) continue;
+        var c = last.up, cp = c.parentNode;
+        if((cp.isNormalPile || cp.isWaste) && !c.nextSibling) {
+          if(c.mayAutoplay) return this.moveTo(c, f);
+          continue; // mayAutoplay will also be false for the twin
+        } else {
+          c = c.twin, cp = c.parentNode;
+          if((cp.isNormalPile || cp.isWaste) && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+        }
+      } else if(!lookedForAces) {
+        lookedForAces = true;
+        for(var j = 0; j != 8; j++) {
+          var a = as[j], ap = a.parentNode;
+          if((ap.isNormalPile || ap.isWaste) && !a.nextSibling) return this.moveTo(a, f);
+        }
+      }
+    }
+    return false;
   }
 };

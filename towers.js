@@ -37,11 +37,10 @@ AllGames.towers = {
       var upp = up.parentNode;
       if(upp.isNormalPile && !up.nextSibling && this.movePossible(card, upp)) return upp;
     } else {
-      var pile = this.emptyPile;
+      var pile = this.firstEmptyPile;
       if(pile) return pile;
     }
-    return card.nextSibling ? null :
-           (this.emptyCell || searchPiles(this.foundations, testCanMoveToFoundation(card)));
+    return card.nextSibling ? null : this.emptyCell;
   },
 
   autoplayMove: "commonish",

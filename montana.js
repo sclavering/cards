@@ -60,7 +60,7 @@ var Montana = {
   },
 
   getBestMoveForCard: function(card) {
-    if(!card.down) return searchPiles(this.rowStarts, testPileIsEmpty);
+    if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.parentNode.rightp;
     return pile && !pile.hasChildNodes() ? pile : null;
   },

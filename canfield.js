@@ -53,12 +53,7 @@ AllGames.canfield = {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
-  getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
-        || searchPiles(piles, testPileIsEmpty)
-        || searchPiles(this.foundations, testCanMoveToFoundation(card));
-  },
+  getBestMoveForCard: "legal nonempty, or empty",
 
   autoplayMove: "commonish",
 

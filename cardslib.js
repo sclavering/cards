@@ -321,6 +321,11 @@ var basicPileProperties = {
   isWaste: false,
   isNormalPile: false,
 
+  // previous and next pile of the same type
+  // BaseCardGame.initPiles() forms these into doubly-linked non-circular lists
+  prev: null,
+  next: null,
+
   getNextCardLeft: function() { return 0; },
 
   getNextCardTop: function() { return 0; },

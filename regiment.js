@@ -13,7 +13,11 @@ AllGames.regiment = {
 
     for(var i = 0; i != 8; i++) {
       fs[i].isAceFoundation = (i < 4);
-      ps[i].col = ps[i+8].col = rs[i].col = i;
+      rs[i].up = ps[i]; rs[i].down = ps[i+8]; rs[i].col = i;
+    }
+    for(i = 0; i != 16; i++) {
+      ps[i].col = i % 8;
+      ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
     }
     this.aceFoundations = fs.slice(0,4);
     this.kingFoundations = fs.slice(4,8);
@@ -42,12 +46,11 @@ AllGames.regiment = {
   },
 
   canMoveToPile: function(card, target) {
-    var last = target.lastChild;
-
     // piles are built up or down (or both) within suit
+    var last = target.lastChild;
     if(last) return card.suit==last.suit && card.differsByOneFrom(last);
 
-    // can only move to an empty pile from the closest reserve pile(s)
+    // empty piles must be filled from the closest reserve pile
     var source = card.parentNode.source;
     if(!source.isReserve) return false;
 
@@ -68,8 +71,15 @@ AllGames.regiment = {
   },
 
   getBestMoveForCard: function(card) {
-    return searchPiles(this.piles, testCanMoveToNonEmptyPile(card))
-        || searchPiles(this.piles, testCanMoveToEmptyPile(card));
+    const parent = card.parentNode;
+    const ps = parent.isNormalPile ? parent.following : this.piles, num = ps.length;
+    for(var i = 0; i != num; i++) {
+      var p = ps[i];
+      if(p.hasChildNodes() && this.canMoveToPile(card, p)) return p;
+    }
+    // xxx
+    if(parent.isReserve) return searchPiles(this.piles, testCanMoveToEmptyPile(card));
+    return null;
   },
 
   autoplayMove: function(pileWhichHasHadCardsRemoved) {

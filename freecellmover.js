@@ -87,11 +87,6 @@ var FreeCellGame = {
     return num;
   },
 
-  get emptyPile() {
-    for(var i = 0; i != this.piles.length; i++) if(!this.piles[i].hasChildNodes()) return this.piles[i];
-    return null;
-  },
-
   // overriden because we want to call FreeCellMover.step(), and don't need to reveal cards
   autoplay: function() {
     if(FreeCellMover.step() || this.autoplayMove())

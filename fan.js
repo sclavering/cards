@@ -4,8 +4,6 @@ AllGames.fan = {
   __proto__: BaseCardGame,
 
   id: "fan",
-  canMoveCard: "last on pile",
-  canMoveToPile: "descending, in suit, kings in spaces",
 
   init: function() {
     var cs = this.cards = makeDecks(1);
@@ -28,6 +26,10 @@ AllGames.fan = {
     return false;
   },
 
+  canMoveCard: "last on pile",
+
+  canMoveToPile: "onto 'up', kings in spaces",
+
   getHints: function() {
     for(var i = 0; i != this.piles.length; i++) {
       var card = this.piles[i].lastChild;
@@ -36,7 +38,7 @@ AllGames.fan = {
       if(up) { // not a King
         if(!up.nextSibling) this.addHint(card, up.parentNode);
       } else if(card.previousSibling) { // is a King, not in a space already
-        var pile = searchPiles(this.piles, testPileIsEmpty);
+        var pile = this.firstEmptyPile;
         if(pile) this.addHint(card, pile);
       }
     }
@@ -44,8 +46,7 @@ AllGames.fan = {
 
   getBestMoveForCard: function(card) {
     var up = card.up;
-    if(!up) return searchPiles(this.piles, testPileIsEmpty);
-    return up.nextSibling ? null : up.parentNode;
+    return up ? (up.nextSibling ? null : up.parentNode) : this.firstEmptyPile;
   },
 
   autoplayMove: "commonish",

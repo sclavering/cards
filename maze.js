@@ -11,8 +11,7 @@ AllGames.maze = {
     cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null;
 
     var ps = this.piles;
-    for(i = 0; i != 53; i++) ps[i].next = ps[i+1], ps[i+1].prev = ps[i];
-    ps[53].next = ps[0]; ps[0].prev = ps[53];
+    ps[53].next = ps[0]; ps[0].prev = ps[53]; // prev/next are not usually circular
 
     this.canMoveToPile = this.canMoveTo;
     this.aces = [cs[0], cs[12], cs[24], cs[36]];
@@ -35,11 +34,19 @@ AllGames.maze = {
 
   getHints: function() {
     for(var i = 0; i != 54; i++) {
-      var card = this.piles[i].firstChild;
-      if(!card) continue;
-
-      var piles = filter(this.piles, testCanMoveToPile(card));
-      if(piles.length) this.addHints(card, piles);
+      var p = this.piles[i];
+      if(p.hasChildNodes()) continue;
+      var c1 = null, p2, c2;
+      if(p.prev.hasChildNodes()) {
+        p2 = p.prev; c1 = p2.lastChild.up;
+        if(c1) this.addHint(c1, p);
+        else this.addHints2(this.aces, p);
+      }
+      if(p.next.hasChildNodes()) {
+        p2 = p.next; c2 = p2.lastChild.down;
+        if(c2) { if(c2!=c1) this.addHint(c2, p); }
+        else this.addHints2(this.queens, p);
+      }
     }
   },
 

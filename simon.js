@@ -29,12 +29,7 @@ var SimonBase = {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
-  getBestMoveForCard: function(card) {
-    var piles = getPilesRound(card.parentNode);
-    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
-        || searchPiles(piles, testLastIsConsecutive(card))
-        || searchPiles(piles, testPileIsEmpty);
-  },
+  getBestMoveForCard: "down and same suit, or down, or empty",
 
   autoplayMove: function() {
     for(var i = 0; i != 4; i++) {

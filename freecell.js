@@ -14,7 +14,7 @@ AllGames.freecell = {
     // black sixes may be autoplayed after both red fives are on foundations, etc.
     // Aces and twos may always be autoplayed
     var off = [12, -14, -27, -27, 25, 25, 12, -14];
-    for(i = 0; i != 4; i++) {
+    for(var i = 0; i != 4; i++) {
       for(var j = 2, k = 2 + i*13; j != 13; j++, k++) {
         var card = cards[k];
         card.autoplayAfterA = cards[k+off[i]];
@@ -50,12 +50,11 @@ AllGames.freecell = {
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
+  getBestMoveForCard2: Rules.getBestMoveForCard["legal nonempty, or empty"],
+
   getBestMoveForCard: function(card) {
-    var piles = card.parentNode.isNormalPile ? getPilesRound(card.parentNode) : this.piles;
-    return searchPiles(piles, testCanMoveToNonEmptyPile(card))
-        || searchPiles(piles, testCanMoveToEmptyPile(card))
-        || (!card.nextSibling && (this.emptyCell
-          || searchPiles(this.foundations, testCanMoveToFoundation(card))));
+    var p = this.getBestMoveForCard2(card);
+    return p && (p.hasChildNodes() || this.movePossible(card, p)) ? p : !card.nextSibling && this.emptyCell;
   },
 
   autoplayMove: "commonish",

@@ -166,6 +166,33 @@ function _createCardPile(elt) {
   // is set to the pile the cards originally came from.
   elt.source = elt;
   
+  if(elt.className=="card-fan-down") {
+    elt.getNextCardLeft = function() { return 0; };
+    
+    elt.getNextCardTop = function() {
+      if(!this.hasChildNodes()) return 0;
+      return this.lastChild.top - 0 + (this.lastChild.faceUp() ? (this.offset || CardPositioner.faceUpOffset) : CardPositioner.faceDownOffset);
+    };
+    
+  } else if(elt.className=="card-slide") {
+    elt.getNextCardLeft = function() {
+      if(!this.hasChildNodes()) return 0;
+      // xxx: move slideOffset to |window| or |document|
+      return this.lastChild.left - 0 + ((this.childNodes.length < 6) ? CardPositioner.slideOffset : 0);
+    };
+    
+    elt.getNextCardTop = function() {
+      if(!this.hasChildNodes()) return 0;
+      if(this.childNodes.length < 6)
+        return this.lastChild.top - 0 + CardPositioner.slideOffset;
+      return this.lastChild.top;
+    };
+
+  } else {
+    elt.getNextCardLeft = function() { return 0; };
+    elt.getNextCardTop = function() { return 0; };
+  }
+  
   // transfers the card and all those that follow it
   // xxx: not in use yet
   elt.transferCards = function(first) {
@@ -183,6 +210,7 @@ function _createCardPile(elt) {
 }
     
   
+
 
 
 
@@ -509,8 +537,8 @@ var CardMover = {
     this.cards.hidden = false;
     // set up conditions for animation stuff
     this.target = target;
-    this.targetTop = getTop(this.target) - getTop(this.dragLayer) + CardPositioner.getNextCardTop(this.target);
-    this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer) + CardPositioner.getNextCardLeft(this.target);
+    this.targetTop = getTop(this.target) - getTop(this.dragLayer) + this.target.getNextCardTop();
+    this.targetLeft = getLeft(this.target) - getLeft(this.dragLayer) + this.target.getNextCardLeft();
     this.interval = setInterval(function(){CardMover.step();}, 30);
     // angle stays constant now that parseFloat is being used on top and left attrs
     var xdistance = this.targetLeft - parseFloat(this.cards.left);
@@ -580,8 +608,6 @@ var CardMover = {
   *
   * position(card) - positions the card by looking at all its previousSibling's,
   *       call after moving a card to a new stack, but get via card.position()
-  * getNextCardTop(stack) - works out the position for the next face up card in
-  *       a stack so that move animations go to the right place
   * fixStack - repositions all the (face up) cards in a stack so that they fit in the available space
   *       called in CardMover.transfer, though this may change
   */
@@ -611,26 +637,6 @@ var CardPositioner = {
     }
     card.top = 0;
     card.left = 0;
-  },
-
-  getNextCardTop: function(stack) {
-    if(!stack.hasChildNodes()) 
-      return 0;
-    if(stack.className=="card-fan-down") 
-      return stack.lastChild.top - 0 + (stack.lastChild.faceUp() ? (stack.offset || this.faceUpOffset) : this.faceDownOffset);
-    if(stack.className=="card-slide") { 
-      if(stack.childNodes.length < 6) {
-        return stack.lastChild.top - 0 + this.slideOffset;
-      }
-      return stack.lastChild.top;
-    }
-    return 0;
-  },
-
-  getNextCardLeft: function(stack) {
-    if(!stack.hasChildNodes() || stack.className!="card-slide") 
-      return 0;
-    return stack.lastChild.left - 0 + ((stack.childNodes.length < 6) ? this.slideOffset : 0);
   },
 
   fixStack: function(stack) {

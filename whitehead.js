@@ -8,10 +8,6 @@ Games["whitehead"] = {
   canMoveToPile: "descending, same colour",
   getLowestMovableCard: "descending, in suit",
 
-  init: function() {
-    this.sourceStacks = [this.waste].concat(this.stacks);
-  },
-
   deal: function() {
     var cards = shuffle(this.cards);
     for(var i = 0; i != 7; i++) this.dealToStack(cards, this.stacks[i], 0, i+1);
@@ -32,8 +28,8 @@ Games["whitehead"] = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i != this.sourceStacks.length; i++) {
-      var last = this.sourceStacks[i].lastChild;
+    for(var i in this.sourcePiles) {
+      var last = this.sourcePiles[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;

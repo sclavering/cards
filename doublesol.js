@@ -12,8 +12,6 @@ Games["doublesol"] = {
   getLowestMovableCard: "face up",
 
   init: function() {
-    this.sourceStacks = [this.waste].concat(this.stacks);
-
     // get two packs less one set of aces
     var cards = this.cards = getDecks(2);
     cards.splice(78,1); cards.splice(52,1);
@@ -66,14 +64,12 @@ Games["doublesol"] = {
   },
 
   autoplayMove: function() {
-    // automove cards to suit stacks
-    for(var i = 0; i < this.sourceStacks.length; i++) {
-      var last = this.sourceStacks[i].lastChild;
+    for(var i in this.sourcePiles) {
+      var last = this.sourcePiles[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;
   },
-  // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
   canAutoplayCard: function(card) {
     if(card.isAce || card.number==2) return true;
     return (countCardsOnFoundations(card.altcolour,card.number-1) == 2);

@@ -5,10 +5,6 @@ Games["canfield"] = {
   dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 
-  init: function() {
-    this.sourceStacks = [this.reserve,this.waste].concat(this.stacks);
-  },
-
   deal: function() {
     var cards = shuffle(this.cards);
     this.dealToStack(cards,this.reserve,12,1);
@@ -48,15 +44,13 @@ Games["canfield"] = {
   },
 
   autoplayMove: function() {
-    // automove cards to suit stacks
-    for(var i = 0; i < this.sourceStacks.length; i++) {
-      var last = this.sourceStacks[i].lastChild;
-      if(last && this.canAutoSendCardToFoundations(last) && this.sendToFoundations(last))
-        return true;
+    for(var i in this.sourcePiles) {
+      var last = this.sourcePiles[i].lastChild;
+      if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;
   },
-  canAutoSendCardToFoundations: function(card) {
+  canAutoplayCard: function(card) {
     // can always move card of the same num as the one which was initially dealt to foundations
     if(card.number==this.foundationStartNumber) return true;
     // can move any other card there as long as the two one less in number and of the same colour are already there

@@ -31,8 +31,8 @@ var YukonBase = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i < this.stacks.length; i++) {
-      var last = this.stacks[i].lastChild;
+    for(var i in this.sourcePiles) {
+      var last = this.sourcePiles[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;

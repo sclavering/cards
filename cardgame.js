@@ -152,6 +152,8 @@ var BaseCardGame = {
       if(counter) counter.add = function(val) { this.value = parseInt(this.value)+val; };
     }
 
+    // autoplay sources
+    this.sourcePiles = this.waste ? [this.waste].concat(this.stacks) : this.stacks;
     // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
     this.dragDropTargets = this.stacks.concat(this.foundations);
     if(this.foundation) this.dragDropTargets.push(this.foundation);

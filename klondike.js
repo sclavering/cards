@@ -6,10 +6,6 @@ Games["klondike"] = {
   canMoveToPile: "descending, alt colours, kings in spaces",
   getLowestMovableCard: "face up",
 
-  init: function() {
-    this.sourceStacks = [this.waste].concat(this.stacks);
-  },
-
   deal: function() {
     var cards = shuffle(this.cards);
     for(var i = 0; i < 7; i++) this.dealToStack(cards,this.stacks[i],i,1);
@@ -44,8 +40,8 @@ Games["klondike"] = {
   },
 
   autoplayMove: function() {
-    for(var i = 0; i < this.sourceStacks.length; i++) {
-      var last = this.sourceStacks[i].lastChild;
+    for(var i in this.sourcePiles) {
+      var last = this.sourcePiles[i].lastChild;
       if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;

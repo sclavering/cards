@@ -80,10 +80,7 @@ Games["spider"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i < 10; i++) {
-      var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
-      if(card) this.addHintsFor(card);
-    }
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMoveableCard_Suit(this.stacks[i]));
   }
 };
 

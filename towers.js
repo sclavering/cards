@@ -20,26 +20,9 @@ Games["towers"] = {
   },
 
   getHints: function() {
-    var card, i;
-    for(i = 0; i < 4; i++) {
-      this.getHintsForCard(this.cells[i].firstChild);
-    }
-    for(i = 0; i < 10; i++) {
-      card = this.getLowestMoveableCard_Suit(this.stacks[i]);
-      this.getHintsForCard(card);
-    }
-  },
-  getHintsForCard: function(card) {
-    if(!card) return;
-    var stack, i;
-    for(i = 0; i < 10; i++) {
-      stack = this.stacks[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
-    for(i = 0; i < 4; i++) {
-      stack = this.foundations[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
+    var i;
+    for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
+    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMoveableCard_Suit(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

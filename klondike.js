@@ -16,24 +16,23 @@ Games["klondike"] = {
   },
 
   getHints: function() {
-    this.getHintsForCard(this.waste.lastChild);
-    for(var i = 0; i < 7; i++) {
-      this.getHintsForCard(this.getLowestMoveableCard_AltColours(this.stacks[i]));
-    }
+    this.getHintsFor(this.waste.lastChild);
+    for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
   },
-  getHintsForCard: function(card) {
+  getHintsFor: function(card) {
     if(!card) return;
-    var i, stack;
-    for(i = 0; i < 7; i++) {
-      stack = this.stacks[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
-    for(i = 0; i < 4; i++) {
-      stack = this.foundations[i];
-      if(this.canMoveTo(card,stack)) {
-        this.addHint(card,stack);
-        return; // no need to suggest more than one move to a foundation
+    if(card.isKing()) {
+      // suggest just one move to an empty pile, and only if the king is on something else
+      if(card.previousSibling || card.parentNode.isWaste) {
+        var pile = searchPiles(this.stacks, testPileIsEmpty);
+        if(pile) this.addHint(card, pile);
       }
+      // to foundation
+      pile = searchPiles(this.foundations, testCanMoveToFoundation(card));
+      if(pile) this.addHint(card, pile);
+    } else {
+      // only looks at foundations and *nonempty* spaces
+      this.addHintsFor(card);
     }
   },
 

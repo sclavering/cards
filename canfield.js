@@ -35,26 +35,9 @@ Games["canfield"] = {
   },
 
   getHints: function() {
-    this.getHintsForCard(this.reserve.lastChild);
-    this.getHintsForCard(this.waste.lastChild);
-    for(var i = 0; i < 4; i++) {
-      this.getHintsForCard(this.getLowestMoveableCard_AltColours(this.stacks[i]));
-    }
-  },
-  getHintsForCard: function(card) {
-    if(!card) return;
-    var i, stack;
-    for(i = 0; i < 4; i++) {
-      stack = this.stacks[i];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
-    for(i = 0; i < 4; i++) {
-      stack = this.foundations[i];
-      if(this.canMoveTo(card,stack)) {
-        this.addHint(card,stack);
-        return; // don't hint more than one move to a foundation
-      }
-    }
+    this.addHintsFor(this.reserve.lastChild);
+    this.addHintsFor(this.waste.lastChild);
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

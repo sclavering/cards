@@ -39,9 +39,8 @@ Games["montana"] = {
       var card = this.stacks[i].firstChild;
       if(!card) continue;
 
-      for(var j = 0; j < 52; j++)
-        if(this.canMoveTo(card, this.stacks[j]))
-          this.addHint(card, this.stacks[j]);
+      var piles = filter(this.stacks, testCanMoveToPile(card));
+      if(piles.length) this.addHints(card, piles);
     }
   },
 

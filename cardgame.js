@@ -483,9 +483,12 @@ var BaseCardGame = {
     }
   },
 
-  // a common pattern
+  // a common pattern.  xxx doesn't quite fit Klondike and Double Solitaire
   addHintsFor: function(card) {
+    if(!card) return;
     this.addHints(card, filter(this.stacks, testCanMoveToNonEmptyPile(card)));
+    var f = searchPiles(this.foundations, testCanMoveToFoundation(card));
+    if(f) this.addHint(card, f);
   },
 
   clearHints: function() {

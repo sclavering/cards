@@ -15,22 +15,7 @@ Games["gypsy"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i < 8; i++) {
-      var card = this.getLowestMoveableCard_AltColours(this.stacks[i]);
-      this.getHintsForCard(card);
-    }
-  },
-  getHintsForCard: function(card) {
-    if(!card) return;
-    var i, stack;
-    for(i = 0; i < 8; i++) {
-      stack = this.stacks[i];
-      if(stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
-    for(i = 0; i < 8; i++) {
-      stack = this.stacks[i];
-      if(!stack.hasChildNodes() && this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
+    for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

@@ -12,15 +12,12 @@ Games["fan"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i < this.stacks.length; i++) {
+    for(var i = 0; i != this.stacks.length; i++) {
       var card = this.stacks[i].lastChild;
-      if(!card) continue;
-      for(var j = 0; j < this.stacks.length; j++) {
-        // don't suggest moving a king unless it's on top of something else
-        if(card.isKing() && !card.previousSibling) continue;
-        if(this.canMoveTo(card, this.stacks[j]))
-          this.addHint(card, this.stacks[j]);
-      }
+      // don't suggest moving kings that are not on top of anything
+      if(!card || (card.isKing() && !card.previousSibling)) continue;
+      var pile = searchPiles(this.stacks, testCanMoveToPile(card));
+      if(pile) this.addHint(card, pile);
     }
   },
 

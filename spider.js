@@ -1,41 +1,24 @@
-// Spider, BlackWidow, Wasp, and Grounds for Divorce
+// Spider, Black Widow, Grounds for Divorce, and Wasp
 
-var BaseSpiderGame = {
+var SpiderBase = {
   __proto__: BaseCardGame,
 
   rule_dealFromStock: "to-piles,if-none-empty",
   rule_canMoveToPile: "descending",
 
-  moveTo: function(card, target) {
-    if(target.isFoundation) target = this.getFirstEmptyFoundation();
-    BaseCardGame.moveTo.call(this,card,target);
-    return true;
-  },
-  getFirstEmptyFoundation: function() {
-    for(var i = 0; i < this.foundations.length; i++)
-      if(!this.foundations[i].hasChildNodes()) return this.foundations[i];
-    return null;
-  },
-
   getBestMoveForCard: function(card) {
     var piles = getPilesRound(card.parentNode);
-    return searchPiles(piles, testLastIsConsecutiveAndSameSuit(card))
-        || searchPiles(piles, testLastIsConsecutive(card))
+    var nonempty = filter(piles, testCanMoveToNonEmptyPile(card));
+    return searchPiles(nonempty, testLastIsSuit(card.suit()))
+        || (nonempty.length && nonempty[0])
         || searchPiles(piles, testPileIsEmpty);
   },
 
   autoplayMove: function() {
-    // remove completed suits
     for(var i = 0; i != this.stacks.length; i++) {
-      var stack = this.stacks[i];
-      var length = stack.childNodes.length;
-      if(length>=13) {
-        var card = stack.childNodes[length-13];
-        // note that it's irrelevant which foundation we try to move to, moveTo will pick the right one
-        if(card.isKing() && this.canMoveCard(card) && this.canMoveToFoundation(card,null)) {
-          return this.moveTo(card,this.foundations[0]);
-        }
-      }
+      var pile = this.stacks[i];
+      var n = pile.childNodes.length - 13;
+      if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
     }
     return false;
   },
@@ -54,18 +37,39 @@ var BaseSpiderGame = {
 
 
 
+// for games which use Spider's layout, where the foundations are compacted
+var SpiderLayoutBase = {
+  __proto__: SpiderBase,
+  layout: "spider",
+
+  moveTo: function(card, target) {
+    if(target.isFoundation) target = searchPiles(this.foundations, testPileIsEmpty);
+    BaseCardGame.moveTo.call(this,card,target);
+    return true;
+  },
+
+  sendToFoundations: function(card) {
+    // don't try and use attemptMove here, because it will break for Black Widow
+    // (because we need |null| to be passed to canMoveToFoundation)
+    return this.canMoveCard(card) && this.canMoveToFoundation(card, null)
+        && this.moveTo(card, this.foundations[0]);
+  }
+};
+
+
+
 Games["spider"] = {
-  __proto__: BaseSpiderGame,
+  __proto__: SpiderLayoutBase,
 
   id: "spider",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
-  rule_canMoveCard: "descending, in suit",
-  rule_canMoveToFoundation: "king->ace flush, quick",
+  rule_canMoveCard: "descending, in suit, not from foundation",
+  rule_canMoveToFoundation: "13 cards",
 
   deal: function() {
     var cards;
     switch(this.difficultyLevel) {
-      case 1: cards = this.shuffleSuits(8,0,0,0); break;
+     case 1: cards = this.shuffleSuits(8,0,0,0); break;
       case 2: cards = this.shuffleSuits(4,4,0,0); break;
       default: cards = this.shuffleSuits(2,2,2,2);
     }
@@ -78,12 +82,7 @@ Games["spider"] = {
   getHints: function() {
     for(var i = 0; i < 10; i++) {
       var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
-      if(!card) continue;
-      for(var j = 0; j < 10; j++) {
-        var stack = this.stacks[j];
-        if(stack.hasChildNodes() && this.canMoveTo(card,stack))
-          this.addHint(card,stack);
-      }
+      if(card) this.addHintsFor(card);
     }
   }
 };
@@ -91,11 +90,10 @@ Games["spider"] = {
 
 
 Games["blackwidow"] = {
-  __proto__: BaseSpiderGame,
+  __proto__: SpiderLayoutBase,
 
   id: "blackwidow",
-  layout: "spider",
-  rule_canMoveCard: "descending",
+  rule_canMoveCard: "descending, not from foundation",
   rule_canMoveToFoundation: "king->ace flush",
 
   deal: function() {
@@ -112,22 +110,44 @@ Games["blackwidow"] = {
       while(card && card.faceUp()) {
         var prv = card.previousSibling;
         if(!prv || !prv.faceUp()) {
-          this.getHintsFor(card);
+          this.addHintsFor(card);
         } else if(!prv.isConsecutiveTo(card)) {
-          this.getHintsFor(card);
+          this.addHintsFor(card);
           break;
         } else if(!prv.isSameSuit(card)) {
-          this.getHintsFor(card);
+          this.addHintsFor(card);
         } // otherwise it's from the same suit, so don't suggest moving
         card = prv;
       }
     }
+  }
+};
+
+
+
+Games["divorce"] = {
+  __proto__: SpiderLayoutBase,
+
+  id: "divorce",
+  rule_dealFromStock: "to-nonempty-piles",
+  rule_canMoveCard: "descending mod13, in suit, not from foundation",
+  rule_canMoveToPile: "descending mod13",
+  rule_canMoveToFoundation: "13 cards",
+
+  deal: function() {
+    var cards = this.shuffleDecks(2);
+    for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
+    this.dealToStack(cards, this.stock, cards.length, 0);
   },
 
-  getHintsFor: function(card) {
-    for(var i = 0; i < 10; i++) {
-      var pile = this.stacks[i];
-      if(pile.hasChildNodes() && this.canMoveTo(card,pile)) this.addHint(card,pile);
+  getHints: function() {
+    for(var i = 0; i != 10; i++) {
+      var card = this.stacks[i].lastChild;
+      if(!card) continue;
+      var prv = card.previousSibling;
+      while(prv && prv.isSameSuit(card) && prv.isConsecutiveMod13To(card))
+        card = prv, prv = prv.previousSibling;
+      this.addHintsFor(card);
     }
   }
 };
@@ -135,10 +155,11 @@ Games["blackwidow"] = {
 
 
 Games["wasp"] = {
-  __proto__: BaseSpiderGame,
+  __proto__: SpiderBase,
 
   id: "wasp",
   rule_dealFromStock: "to-piles",
+  rule_canMoveCard: "not from foundation",
   rule_canMoveToPile: "descending, in suit",
   rule_canMoveToFoundation: "king->ace flush",
 
@@ -171,34 +192,5 @@ Games["wasp"] = {
         return;
       }
     }
-  }
-};
-
-
-
-Games["divorce"] = {
-  __proto__: BaseSpiderGame,
-
-  id: "divorce",
-  layout: "spider",
-  rule_dealFromStock: "to-nonempty-piles",
-  rule_canMoveCard: "descending mod13, in suit",
-  rule_canMoveToPile: "descending mod13",
-
-  deal: function() {
-    var cards = this.shuffleDecks(2);
-    for(var i = 0; i != 10; i++) this.dealToStack(cards, this.stacks[i], 0, 5);
-    this.dealToStack(cards, this.stock, cards.length, 0);
-  },
-
-  canMoveToFoundation: function(card, pile) {
-    return card.parentNode.lastChild.isConsecutiveMod13To(card);
-  },
-
-//  getBestMoveForCard: function(card) {
-//    return null;
-//  },
-
-  getHints: function() {
   }
 };

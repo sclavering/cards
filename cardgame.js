@@ -443,7 +443,7 @@ var BaseCardGame = {
 
 
   // === Hints ============================================
-  // Games should override getHints(); the implementation should call addHint() repeatedly.
+  // Games should override getHints(); the implementation should call addHint[s]() repeatedly.
   hintSources: [],
   hintDestinations: [],
   haveHints: false, // means hints have been calculated, though there may not be any.
@@ -473,6 +473,19 @@ var BaseCardGame = {
   addHint: function(source, dest) {
     this.hintSources.push(source);
     this.hintDestinations.push(dest);
+  },
+
+  // takes multiple destinations for a single source
+  addHints: function(source, dests) {
+    for(var i = 0; i != dests.length; i++) {
+      this.hintSources.push(source);
+      this.hintDestinations.push(dests[i]);
+    }
+  },
+
+  // a common pattern
+  addHintsFor: function(card) {
+    this.addHints(card, filter(this.stacks, testCanMoveToNonEmptyPile(card)));
   },
 
   clearHints: function() {

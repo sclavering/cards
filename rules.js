@@ -7,10 +7,12 @@ Current choices:
 
 rule_canMoveCard:
   "descending"
+  "descending, not from foundation"
   "descending,alt-colours"
   "descending, in suit"
-  "descending mod13, in suit"
-  "descending,in-suit,not-from-foundation"
+  "descending mod13, in suit, not from foundation":
+  "descending, in suit, not from foundation"
+  "not from foundation"
   "last-on-pile"
 
 rule_canMoveToPile:
@@ -23,9 +25,8 @@ rule_canMoveToPile:
   "isempty"
 
 rule_canMoveToFoundation:
-  (these are for spider-like games, and ignore the specific foundation being moved to)
   "king->ace flush"
-  "king->ace flush, quick" (only checks the first and last card of the run)
+  "13 cards"  (any set of 13 card. canMoveCard will ensure they're a running flush, or whatever)
 
 rule_dealFromStock:
   "to-waste"
@@ -42,6 +43,14 @@ var Rules = {
     "descending":
     function(card) {
       if(card.faceDown()) return false;
+      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
+        if(card.notConsecutiveTo(next)) return false;
+      return true;
+    },
+
+    "descending, not from foundation":
+    function(card) {
+      if(card.faceDown() || card.parentNode.isFoundation) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notConsecutiveTo(next)) return false;
       return true;
@@ -65,22 +74,26 @@ var Rules = {
       return true;
     },
 
-    "descending mod13, in suit":
+    "descending mod13, in suit, not from foundation":
     function(card) {
-      if(card.faceDown()) return false;
+      if(card.faceDown() || card.parentNode.isFoundation) return false;
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notSameSuit(next) || !card.isConsecutiveMod13To(next)) return false;
       return true;
     },
 
-    "descending,in-suit,not-from-foundation":
+    "descending, in suit, not from foundation":
     function(card) {
-      if(card.faceDown()) return false;
-      if(card.parentNode.isFoundation) return false;
+      if(card.faceDown() || card.parentNode.isFoundation) return false;
       // ensure we have a running flush from top card on stack to |card|
       for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
         if(card.notSameSuit(next) || card.notConsecutiveTo(next)) return false;
       return true;
+    },
+
+    "not from foundation":
+    function(card) {
+      return (card.faceUp() && !card.parentNode.isFoundation);
     },
 
     "last-on-pile":
@@ -137,15 +150,17 @@ var Rules = {
   canMoveToFoundation: {
     "king->ace flush":
     function(card, pile) {
-      if(!(card.isKing() && card.parentNode.lastChild.isAce())) return false;
+      if(pile && pile.hasChildNodes()) return false; // pile==null for Black Widow
+      if(!card.isKing() || !card.parentNode.lastChild.isAce()) return false;
       var next = card.nextSibling;
       while(next && card.isSameSuit(next) && card.isConsecutiveTo(next)) card = next, next = next.nextSibling;
       return !next; // all cards should be part of the run
     },
 
-    "king->ace flush, quick":
+    "13 cards":
     function(card, pile) {
-      return(card.isKing() && card.parentNode.lastChild.isAce());
+      var i = card.parentNode.childNodes.length - 13;
+      return (i >= 0 && card.parentNode.childNodes[i]==card);
     }
   },
 

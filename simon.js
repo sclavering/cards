@@ -3,7 +3,7 @@ Games["simon"] = {
 
   id: "simon",
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
-  rule_canMoveCard: "descending,in-suit,not-from-foundation",
+  rule_canMoveCard: "descending, in suit, not from foundation",
   rule_canMoveToPile: "descending",
 
   deal: function() {
@@ -23,14 +23,9 @@ Games["simon"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i < 10; i++)
-      this.getHintsForCards(this.getLowestMoveableCard_Suit(this.stacks[i]));
-  },
-  getHintsForCards: function(card) {
-    if(!card) return;
     for(var i = 0; i < 10; i++) {
-      var stack = this.stacks[i];
-      if(this.canMoveTo(card,stack) && stack.hasChildNodes()) this.addHint(card,stack);
+      var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
+      if(card) this.addHintsFor(card);
     }
   },
 
@@ -43,13 +38,9 @@ Games["simon"] = {
 
   autoplayMove: function() {
     for(var i = 0; i < 10; i++) {
-      var stack = this.stacks[i];
-      var length = stack.childNodes.length;
-      if(length < 13) continue;
-      var card = stack.childNodes[length-13];
-      if(!this.canMoveCard(card)) continue;
-      for(var j = 0; j < 4; j++)
-        if(this.attemptMove(card, this.foundations[j])) return true;
+      var pile = this.stacks[i];
+      var n = pile.childNodes.length - 13;
+      if(n>=0 && this.sendToFoundations(pile.childNodes[n])) return true;
     }
     return false;
   },

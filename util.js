@@ -1,8 +1,14 @@
-// some useful functions for implementing smartMove/getBestMoveForCard
+// some useful functions for implementing smartMove/getBestMoveForCard and getHints
 
 function searchPiles(piles, test) {
-  for(var i = 0; i < piles.length; i++) if(test(piles[i])) return piles[i];
+  for(var i = 0; i != piles.length; i++) if(test(piles[i])) return piles[i];
   return null;
+}
+
+function filter(list, test) {
+  var result = [];
+  for(var i = 0; i != list.length; i++) if(test(list[i])) result.push(list[i]);
+  return result;
 }
 
 function getPilesRound(pile) {

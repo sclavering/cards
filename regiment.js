@@ -8,7 +8,7 @@ Regiment.init = function() {
   for(var i = 5; i < 8; i++) this.foundations[i].isKingFoundation = true;
   //
   this.thingsToReveal = this.reserves;
-  this.dragDropTargets = this.stacks[0].concat(this.stacks[1],this.foundations);
+  this.dragDropTargets = this.tableau[0].concat(this.tableau[1],this.foundations);
 };
 
 
@@ -17,8 +17,8 @@ Regiment.init = function() {
 //// start game
 Regiment.deal = function() {
   var cards = this.shuffleDecks(2);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[0][i],0,1);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[1][i],0,1);
+  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.tableau[0][i],0,1);
+  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.tableau[1][i],0,1);
   for(var i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
 };
 
@@ -99,15 +99,30 @@ Regiment.findTargets = function(card) {
   // look through the tableau for somewhere to put it
   for(var j = 0; j < 8; j++)
     for(var k = 0; k < 2; k++)
-      if(this.canMoveTo(card,this.stacks[k][j]))
-        targets.push(this.stacks[k][j]);
+      if(this.canMoveTo(card,this.tableau[k][j]))
+        targets.push(this.tableau[k][j]);
   return (targets.length!=0 ? targets : null);
 };
 
 
 
 ///////////////////////////////////////////////////////////
-//// smart move
+//// smartmove (moves cards clicked with middle button to best possible destination
+Regiment.smartMove = function(card) {
+  if(!this.canMoveCard(card)) return false;
+  var destination = this.findBestMoveForCard(card);
+  if(destination) this.moveTo(card,destination);
+};
+Regiment.findBestMoveForCard = function(card) {
+  for(var i = 0; i < 2; i++) {
+    for(var j = 0; j < 8; j++) {
+      var stack = this.tableau[i][j];
+      if(stack == card.parentNode) continue;
+      if(this.canMoveTo(card,stack)) return stack;
+    }
+  }
+  return null;
+};
 
 
 
@@ -117,7 +132,7 @@ Regiment.autoplayMove = function() {
   // fill empty spaces, but only from reserves in same column
   for(var j = 0; j < 8; j++) {
     for(var i = 0; i < 2; i++) {
-      var stack = this.stacks[i][j];
+      var stack = this.tableau[i][j];
       if(!stack.hasChildNodes()) {
         var last = this.reserves[j].lastChild;
         if(last) { this.moveTo(last,stack); return true; }

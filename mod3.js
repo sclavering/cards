@@ -4,11 +4,11 @@ var Mod3 = new CardGame();
 Mod3.init = function() {
   this.shortname = "mod3";
   this.initStacks(0,0,0,true,false,4,8);
-  this.stockDealTargets = this.stacks[3]; // this is for the dealFromStock() functions in CardGame.js
+  this.stockDealTargets = this.tableau[3]; // this is for the dealFromStock() functions in CardGame.js
   //
   var stacks = new Array();
   for(var i = 0; i < 4; i++)
-    stacks = stacks.concat(this.stacks[i]);
+    stacks = stacks.concat(this.tableau[i]);
   this.dragDropTargets = stacks;
 };
 
@@ -26,7 +26,7 @@ Mod3.deal = function() {
   // deal
   for(var i = 0; i < 4; i++)
     for(var j = 0; j < 8; j++)
-      this.dealToStack(cards,this.stacks[i][j],0,1);
+      this.dealToStack(cards,this.tableau[i][j],0,1);
   this.dealToStack(cards,this.stock,cards.length,0);
 };
 
@@ -58,7 +58,7 @@ Mod3.canMoveTo = function(card, stack) {
 Mod3.getHint = function() {
   for(var i = 0; i < 4; i++) {
     for(var j = 0; j < 8; j++) {
-      var lastcard = this.stacks[i][j].lastChild;
+      var lastcard = this.tableau[i][j].lastChild;
       if(lastcard) {
         var targets = this.findTargets(lastcard);
         if(targets) return {source: lastcard, destinations: targets}
@@ -72,7 +72,7 @@ Mod3.findTargets = function(card) {
   var row = (card.number() - 2) % 3;
   var targets = new Array();
   for(var j = 0; j < 8; j++) {
-    var stack = this.stacks[row][j];
+    var stack = this.tableau[row][j];
     if(this.canMoveTo(card,stack)) {
       // cases where the hint is useful are:
       //  - the target is an empty stack, but not on the same row the card is already on
@@ -102,8 +102,8 @@ Mod3.smartMove = function(card) {
   } else {
     // try and move to an empty space in the 4th row
     for(var j = 0; j < 8; j++) {
-      if(!this.stacks[3][j].hasChildNodes()) {
-        this.moveTo(card,this.stacks[3][j]);
+      if(!this.tableau[3][j].hasChildNodes()) {
+        this.moveTo(card,this.tableau[3][j]);
         return true;
       }
     }
@@ -124,7 +124,7 @@ Mod3.hasBeenWon = function() {
   // game won if all stacks in top 3 rows have 4 cards
   for(var i = 0; i < 3; i++)
     for(var j = 0; j < 8; j++)
-      if(this.stacks[i][j].childNodes.length!=4)
+      if(this.tableau[i][j].childNodes.length!=4)
         return false;
   return true;
 };

@@ -98,15 +98,15 @@ CardGame.prototype = {
     }
     // create a 2D stacks array
     if(tableauRows) {
-      this.stacks = new Array(tableauRows);
+      this.tableau = new Array(tableauRows);
       for(var i = 0; i < tableauRows; i++) {
-        this.stacks[i] = new Array(tableauCols);
+        this.tableau[i] = new Array(tableauCols);
         for(var j = 0; j < tableauCols; j++) {
           var s = document.getElementById(name+"-tableau-"+i+"-"+j);
           s.row = i;
           s.col = j;
           s.isPile = true;
-          this.stacks[i][j] = s;
+          this.tableau[i][j] = s;
           this.allstacks.push(s);
         }
       }
@@ -163,6 +163,11 @@ CardGame.prototype = {
     Cards.disableUndo();  // something like Chrome.fixUI() which queried stuff and was generally nice would be better :)
     this.updateScoreDisplay();
     this.clearGame();
+    // reset offset used when stacking cards.
+    if(this.stacks)
+      for(var i = 0; i < this.stacks.length; i++)
+        CardPositioner.fixStack(this.stacks[i]);
+    //
     this.deal();
     Cards.enableUI();
   },

@@ -47,9 +47,8 @@ CardGame.prototype = {
   },
   // convenience function to init stacks[], foundations[], reserves[], and cells[] arrays
   // (also creates .allstacks[] which is used when clearing the game layout for a new game)
-  // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
   // To use this function the game must init game.shortname first
-  initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, tableauRows, tableauCols, numCells) {
+  initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, numCells) {
     var i, j;
     this.allstacks = [];
     var name = this.shortname; // e.g. "klondike", "simon" etc
@@ -94,21 +93,6 @@ CardGame.prototype = {
       this.waste = createCardPile(name+"-waste");
       this.waste.isWaste = true;
       this.allstacks.push(this.waste);
-    }
-    // create a 2D stacks array
-    if(tableauRows) {
-      this.tableau = new Array(tableauRows);
-      for(i = 0; i < tableauRows; i++) {
-        this.tableau[i] = new Array(tableauCols);
-        for(j = 0; j < tableauCols; j++) {
-          var s = createCardPile(name+"-tableau-"+i+"-"+j);
-          s.row = i;
-          s.col = j;
-          s.isPile = true;
-          this.tableau[i][j] = s;
-          this.allstacks.push(s);
-        }
-      }
     }
     // cells
     if(numCells) {

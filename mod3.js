@@ -5,13 +5,9 @@ const CARD_IN_PLACE = 10, EMPTY_TABLEAU = 5;
 
 Mod3.init = function() {
   this.shortname = "mod3";
-  this.initStacks(0,24,0,true,false,1,8);
-  this.stockDealTargets = this.tableau[0]; // this is for the dealFromStock() functions in CardGame.js
-  //
-  var stacks = [];
-  stacks = stacks.concat(this.foundations);
-  stacks = stacks.concat(this.tableau[0]);
-  this.dragDropTargets = stacks;
+  this.initStacks(8,24,0,true,false);
+  this.stockDealTargets = this.stacks;
+  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 // Given the nature of Mod 3 we often need to know which row a stack is in
 Mod3.baseCard = function( stack ){
@@ -65,6 +61,7 @@ Mod3.deal = function() {
     // We have cards in place but still need cards to play on them
     for(var base = 0; base<3; base++){
       for(var suit = SPADE; suit <= CLUB; suit++){
+        // XXX js strict warnings here
         if( inplace[base][suit] && inplay[base][suit] ){
           possible = true; // yeah!
           break;
@@ -73,11 +70,8 @@ Mod3.deal = function() {
     }
   }
   // Now that we have ok cards, deal them out
-  for(var i = 0; i < 24; i++)
-    this.dealToStack(cards,this.foundations[i],0,1);
-
-  for(var i = 0; i < 8; i++)
-    this.dealToStack(cards,this.tableau[0][i],0,1);
+  for(var i = 0; i < 24; i++) this.dealToStack(cards,this.foundations[i],0,1);
+  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.stacks[i],0,1);
   this.dealToStack(cards,this.stock,cards.length,0);
   this.updateScoreDisplay();
 };
@@ -158,8 +152,8 @@ Mod3.smartMove = function(card) {
   } else {
     // try and move to an empty space in the 4th row
     for(var j = 0; j < 8; j++) {
-      if(!this.tableau[0][j].hasChildNodes()) {
-        this.moveTo(card,this.tableau[0][j]);
+      if(!this.stacks[j].hasChildNodes()) {
+        this.moveTo(card,this.stacks[j]);
         return true;
       }
     }
@@ -174,7 +168,7 @@ Mod3.smartMove = function(card) {
 // Try to automate some moves, but not all of them
 Mod3.autoplayMove = function (){
   for(var i = 0; i < 8; i++) {
-    var card = this.tableau[0][i].lastChild;
+    var card = this.stacks[i].lastChild;
     if(!card) continue;
     
     var targets = this.findTargets(card);
@@ -256,7 +250,7 @@ Mod3.getScoreForAction = function(action, card, source) {
     // This gets called after the deal - figure out how many piles were covered
     for(var j = 0; j < 8; j++ ) {
       // if this was filled
-      if(this.tableau[0][j].childNodes.length==1) score -= EMPTY_TABLEAU;
+      if(this.stacks[j].childNodes.length==1) score -= EMPTY_TABLEAU;
     }
     return score;
   }

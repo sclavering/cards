@@ -2,7 +2,7 @@ var FreeCell = new CardGame(NO_DRAG_DROP);
 
 FreeCell.init = function() {
   this.shortname = "freecell";
-  this.initStacks(8,4,0,false,false,0,0,4);
+  this.initStacks(8,4,0,false,false,4);
   // insufficient spaces message
   this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
 };

@@ -2,13 +2,16 @@ var Regiment = new CardGame();
 
 Regiment.init = function() {
   this.shortname = "regiment";
-  this.initStacks(0,8,8,false,false,2,8);
-  // mark type of foundations
-  for(var i = 0; i < 4; i++) this.foundations[i].isAceFoundation = true;
-  for(var i = 5; i < 8; i++) this.foundations[i].isKingFoundation = true;
+  this.initStacks(16,8,8);
+  for(var i = 0; i < 8; i++) {
+    this.foundations[i].isAceFoundation = (i < 4);
+    this.reserves[i].col = i;
+    this.stacks[i].col = i;
+    this.stacks[i+8].col = i;
+  }
   //
   this.thingsToReveal = this.reserves;
-  this.dragDropTargets = this.tableau[0].concat(this.tableau[1],this.foundations);
+  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 
 
@@ -17,8 +20,7 @@ Regiment.init = function() {
 //// start game
 Regiment.deal = function() {
   var cards = this.shuffleDecks(2);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.tableau[0][i],0,1);
-  for(var i = 0; i < 8; i++) this.dealToStack(cards,this.tableau[1][i],0,1);
+  for(var i = 0; i < 16; i++) this.dealToStack(cards,this.stacks[i],0,1);
   for(var i = 0; i < 8; i++) this.dealToStack(cards,this.reserves[i],10,1);
 };
 
@@ -31,7 +33,6 @@ Regiment.canMoveCard = Regiment.canMoveTo_LastOnPile;
 // this is likely to be the standard format for games with a set of both Ace and King foundations
 Regiment.canMoveToFoundation = function(card, target) {
   var last = target.lastChild;
-  //if(target.id.indexOf("ace")!=-1) { // if it's an Ace foundation
   if(target.isAceFoundation) {
     // can move an ace provided we haven't already got an Ace foundation for this suit,
     // or can build the foundation up in suit
@@ -71,8 +72,8 @@ Regiment.canMoveToPile = function(card, target) {
     // search alternately left and right ensuring all reserves
     var coldiff = Math.abs(targetcol - sourcecol);
     for(var i = 0; i < coldiff; i++) {
-      if(targetcol+i<8) if(this.reserves[targetcol+i].hasChildNodes()) return false;
-      if(targetcol-i>0) if(this.reserves[targetcol-i].hasChildNodes()) return false;
+      if(targetcol+i<8 && this.reserves[targetcol+i].hasChildNodes()) return false;
+      if(targetcol-i>=0 && this.reserves[targetcol-i].hasChildNodes()) return false;
     }
     // have checked all reserves as far out as source. so it is ok to move
     return true;
@@ -91,11 +92,9 @@ Regiment.getHint = function() {
 Regiment.findHintsForCard = function(card) {
   if(!card) return;
   // look through the tableau for somewhere to put it
-  for(var j = 0; j < 8; j++) {
-    for(var k = 0; k < 2; k++) {
-      var stack = this.tableau[k][j];
-      if(this.canMoveTo(card,stack)) this.addHint(card,stack);
-    }
+  for(var i = 0; i < 16; i++) {
+    var stack = this.stacks[i];
+    if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
 };
 
@@ -104,12 +103,9 @@ Regiment.findHintsForCard = function(card) {
 ///////////////////////////////////////////////////////////
 //// smartmove
 Regiment.getBestMoveForCard = function(card) {
-  for(var i = 0; i < 2; i++) {
-    for(var j = 0; j < 8; j++) {
-      var stack = this.tableau[i][j];
-      if(stack == card.parentNode) continue;
-      if(this.canMoveTo(card,stack)) return stack;
-    }
+  for(var i = 0; i < 16; i++) {
+    var stack = this.stacks[i];
+    if(stack!=card.parentNode && this.canMoveTo(card,stack)) return stack;
   }
   return null;
 };
@@ -120,15 +116,16 @@ Regiment.getBestMoveForCard = function(card) {
 //// Autoplay
 Regiment.autoplayMove = function() {
   // fill empty spaces, but only from reserves in same column
-  for(var j = 0; j < 8; j++) {
-    var last = this.reserves[j].lastChild;
+  for(var i = 0; i < 8; i++) {
+    var last = this.reserves[i].lastChild;
     if(!last) continue;
-    for(var i = 0; i < 2; i++) {
-      var stack = this.tableau[i][j];
-      if(!stack.hasChildNodes()) {
-        this.moveTo(last,stack);
-        return true;
-      }
+    if(!this.stacks[i].hasChildNodes()) {
+      this.moveTo(last, this.stacks[i]);
+      return true;
+    }
+    if(!this.stacks[i+8].hasChildNodes()) {
+      this.moveTo(last, this.stacks[i+8]);
+      return true;
     }
   }
   return false;

@@ -485,7 +485,7 @@ var BaseCardGame = {
 
 
   // === Smart move =======================================
-  // Smart move is called when the player middle clicks on a card.  It should
+  // Smart move is called when the player right-clicks on a card.  It should
   // perform the best possible move for that card.
   // Games should implement getBestMoveForCard(card), or maybe override smartMove()
   // itself.  See util.js for functions that are helpful in doing so.

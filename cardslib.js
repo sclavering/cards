@@ -114,8 +114,8 @@ function init() {
   try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
   buildGamesMenu(gamesInMenu, game);
 
-  // set window title. (setting window.title does not work while the app. is starting)
-  // xxx should use document.title, but that only works in recent mozillae
+  // set title (document.title while window is opening does not work in Fx 1.0 official build, does in Ubuntu + Fx 1.1 nightlies)
+  //document.title = gStrings["game."+game];
   document.documentElement.setAttribute("title", gStrings["game."+game]);
 
   // switch to the last game played
@@ -343,8 +343,7 @@ function playGame(game) {
   GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
-  // xxx should use document.title in future (moz 1.8a supports it)
-  window.title = gStrings["game."+game];
+  document.title = gStrings["game."+game];
 
   GameController = Games[game];
   GameController.switchTo();

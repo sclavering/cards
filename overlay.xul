@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE window [
+<!ENTITY % cardsDTD SYSTEM "chrome://cards/locale/cards.dtd">
+%cardsDTD;
+]>
+
+<overlay id="CardsOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<!-- Firebird -->
+<menupopup id="menu_ToolsPopup">
+  <menuitem id="cards-launch" label="&cards-launch-label;" insertbefore="prefSep"
+      oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
+</menupopup>
+
+<!-- Seamonkey -->
+<menupopup id="windowPopup">
+  <menuitem id="cards-launch" label="&cards-launch-label;" insertbefore="sep-window-list"
+      oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
+</menupopup>
+
+</overlay>

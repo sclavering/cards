@@ -4,10 +4,10 @@
      xmlns:c="http://www.mozilla.org/rdf/chrome#">
 
   <Seq about="urn:mozilla:package:root">
-    <li resource="urn:mozilla:package:cards"/>
+    <li>
+      <Description about="urn:mozilla:package:cards" c:name="cards"/>
+    </li>
   </Seq>
-
-  <Description about="urn:mozilla:package:cards" c:name="cards"/>
 
   <Seq about="urn:mozilla:overlays">
     <li resource="chrome://browser/content/browser.xul"/>

@@ -91,23 +91,9 @@ var CardMover1 = {
 
 
 var CardMover2 = {
-  highlighter: null,
-
-  init: function() {
-    this.highlighter = createHighlighter();
-  },
-
   move: function(card, to) {
     disableUI();
-    var highlighter = this.highlighter;
-    highlighter.highlight(card);
-    setTimeout(function() {
-      to.addCards(card);
-      highlighter.highlight(card);
-      setTimeout(function() {
-        highlighter.unhighlight();
-        animatedActionFinished();
-      }, 500);
-    }, 260);
+    to.addCards(card);
+    setTimeout(animatedActionFinished, 30);
   }
 };

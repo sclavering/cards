@@ -95,7 +95,6 @@ function init() {
   // init other stuff
   initMouseHandlers();
   CardMover1.init();
-  CardMover2.init();
 
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {

@@ -430,7 +430,12 @@ var BaseCardGame = {
 
 
   // === Dealing from the stock ===========================
-  // Games with a stock should provide dealFromStock(), probably via a form in rules.js
+  dealFromStock: function() {
+    throw "dealFromStock() not implemented";
+  },
+
+  turnStockOver: "no",
+
   // These functions are used to implement the standard rules and their *Action's
   dealCardTo: function(destination) {
     var card = this.stock.lastChild;

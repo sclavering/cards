@@ -5,7 +5,6 @@ AllGames.pyramid = {
 
   id: "pyramid",
   mouseHandling: "pyramid",
-  dealFromStock: "to waste, can turn stock over",
 
   init: function() {
     var i, row, col;
@@ -41,6 +40,10 @@ AllGames.pyramid = {
     for(var i = 0; i != 28; i++) this.piles[i].dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
+
+  dealFromStock: "to waste",
+
+  turnStockOver: "yes",
 
   canRemoveCard: function(card) {
     return card.isKing && card.parentNode.free();

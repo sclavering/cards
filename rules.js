@@ -41,11 +41,14 @@ mayAddCard:
 
 dealFromStock:
   "to waste"
-  "to waste, can turn stock over"
   "to foundation"
   "to piles"
   "to piles, if none empty"
   "to nonempty piles"
+
+turnStockOver: {
+  "no"
+  "yes"
 
 getLowestMovableCard:
   "descending, in suit"
@@ -191,11 +194,6 @@ var Rules = {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
     },
 
-    "to waste, can turn stock over": function() {
-      if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
-      else this.doAction(new TurnStockOverAction());
-    },
-
     "to foundation": function() {
       if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.foundation));
     },
@@ -213,6 +211,16 @@ var Rules = {
 
     "to nonempty piles": function() {
       this.doAction(new DealToNonEmptyPilesAction());
+    }
+  },
+
+
+  turnStockOver: {
+    "no": function() {},
+
+    // for games with a waste pile only
+    "yes": function() {
+      this.doAction(new TurnStockOverAction());
     }
   },
 

@@ -128,7 +128,7 @@ MouseHandlers["drag+drop"] = {
         else if(t.faceDown) Game.attemptRevealCard(t);
         else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
       } else {
-        if(t.isStock) Game.dealFromStock();
+        if(t.isStock) Game.turnStockOver();
       }
     }
   }
@@ -164,7 +164,8 @@ MouseHandlers["pyramid"] = {
         this.highlighter.unhighlight();
         this.card = null;
       }
-      Game.dealFromStock();
+      if(t.isPile) Game.turnStockOver();
+      else Game.dealFromStock();
       return;
     }
 

@@ -9,7 +9,6 @@ AllGames.doublesol = {
   __proto__: BaseCardGame,
 
   id: "doublesol",
-  dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 
   init: function() {
@@ -41,6 +40,10 @@ AllGames.doublesol = {
     for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, i, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
+
+  dealFromStock: "to waste",
+
+  turnStockOver: "yes",
 
   mayAddCardToFoundation: function(card) {
     if(card.nextSibling) return false;

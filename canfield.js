@@ -6,7 +6,6 @@ var CanfieldBase = {
   __proto__: BaseCardGame,
 
   id: "canfield",
-  dealFromStock: "to waste, can turn stock over",
   getLowestMovableCard: "face up",
 
   init: function() {
@@ -30,6 +29,10 @@ var CanfieldBase = {
       }
     }
   },
+
+  dealFromStock: "to waste",
+
+  turnStockOver: "yes",
 
   mayAddCardToFoundation: "canfield/penguin",
 

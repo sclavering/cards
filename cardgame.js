@@ -675,8 +675,8 @@ DifficultyLevelsController.prototype = {
     this.currentLevel.switchFrom();
   },
 
-  newGame: function() {
-    this.currentLevel.newGame();
+  newGame: function(cards) {
+    this.currentLevel.newGame(cards);
   },
 
   restorePastGame: function() {

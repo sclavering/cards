@@ -132,7 +132,7 @@ Spider.getHints = function() {
 ///////////////////////////////////////////////////////////
 //// smartmove (moves cards clicked with middle button to best possible destination
 Spider.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
+  if(!this.canMoveCard(card)) return;
   var destination = this.findBestMoveForCard(card);
   if(destination) this.moveTo(card,destination);
 };

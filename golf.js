@@ -65,14 +65,11 @@ Golf.getHints = function() {
 
 
 ///////////////////////////////////////////////////////////
-//// smartmove (moves cards clicked with middle button to best possible destination
+//// smartmove
 Golf.smartMove = function(card) {
-	if(this.canMoveTo(card, this.foundation)) {
-		this.moveTo(card, this.foundation);
-		return true;
-	}
-  return false;
+  if(this.canMoveTo(card, this.foundation)) this.moveTo(card, this.foundation);
 };
+
 
 
 ///////////////////////////////////////////////////////////

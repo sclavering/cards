@@ -62,7 +62,7 @@ Gypsy.getHintsForCard = function(card) {
 ///////////////////////////////////////////////////////////
 //// smart move
 Gypsy.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
+  if(!this.canMoveCard(card)) return;
   var target = this.findBestMoveForCard(card);
   if(target) this.moveTo(card,target);
 };
@@ -88,6 +88,7 @@ Gypsy.findBestMoveForCard = function(card) {
 };
 
 
+
 ///////////////////////////////////////////////////////////
 //// Autoplay
 Gypsy.autoplayMove = function() {
@@ -100,22 +101,8 @@ Gypsy.autoplayMove = function() {
 };
 // card can be autoplayed if both cards with the next lower number and of opposite colour are on foundations
 Gypsy.canAutoplayCard = function(card) {
-  if(card.isAce()) return true;
-  var altcolour = (card.colour()==RED) ? BLACK : RED;
-  if(this.cardsOnFoundations(altcolour,card.number()-1)) return true;
-  return false;
-};
-// if there are four stacks containing a card with number()>=number and colour() == colour, they must be
-// different suits and so both cards of specified number and colour are already on suit stacks
-// (hence cards of opposite colour and 1 less in number can be autoplayed)
-Gypsy.cardsOnFoundations = function(colour, number) {
-  var found = 0;
-  for(var i = 0; i < 8; i++) {
-    var last = this.foundations[i].lastChild;
-    if(last && last.number()>=number && last.colour()==colour)
-      found++;
-  }
-  return (found==4);
+  if(card.isAce() || card.number()==2) return true;
+  return (this.numCardsOnFoundations(card.altcolour(),card.number()-1) == 4);
 };
 
 

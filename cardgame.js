@@ -55,7 +55,7 @@ CardGame.prototype = {
     var name = this.shortname; // e.g. "klondike", "simon" etc
     if(numStacks) {
       this.stacks = new Array(numStacks);
-      for(var i = 0; i < numStacks; i++) {
+      for(i = 0; i < numStacks; i++) {
         this.stacks[i] = createCardPile(name+"-pile-"+i);
         this.stacks[i].isPile = true;
         this.allstacks.push(this.stacks[i]);
@@ -436,6 +436,27 @@ CardGame.prototype = {
 
 
 
+  // for games like FreeCell and Towers
+  getFreeCells: function() {
+    var freecells = [];
+    for(var i = 0; i < this.cells.length; i++)
+      if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
+    return freecells;
+  },
+  countFreeCells: function() {
+    var cells = 0;
+    for(var i = 0; i < this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
+    return cells;
+  },
+  getEmptyPiles: function() {
+    var spaces = [];
+    for(var i = 0; i < this.stacks.length; i++)
+      if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
+    return spaces;
+  },
+
+
+
   // === Redealing ========================================
   // XXX: add some UI for this
   // some games allow a certain number of "redeals", where all the remaining cards on the tableau
@@ -447,8 +468,9 @@ CardGame.prototype = {
     var numdown = [];
     var numup = [];
     var cards = [];
+    var i;
     // remove cards and store pattern
-    for(var i = 0; i < stacks.length; i++) {
+    for(i = 0; i < stacks.length; i++) {
       var down = 0, up = 0;
       while(stacks[i].hasChildNodes()) {
         var card = stacks[i].removeChild(stacks[i].lastChild);
@@ -463,7 +485,7 @@ CardGame.prototype = {
     // shuffle
     this.shuffle(cards);
     // deal out again
-    for(var i = 0; i < stacks.length; i++) {
+    for(i = 0; i < stacks.length; i++) {
       this.dealToStack(cards,this.stacks[i],numdown[i],numup[i]);
     }
   },
@@ -691,5 +713,18 @@ CardGame.prototype = {
       card = prv; prv = card.previousSibling;
     }
     return card;
+  },
+
+  // This gets used in lots of games, so we put it here to save duplication
+  // It assumes foundations are built in ascending order within a single colour, which is often true
+  // Typical usage (Klondike) is:
+  //   if(numCardsOnFoundations(RED,4)==2) ... can autoplay black fives ...
+  numCardsOnFoundations: function(colour, number) {
+    var found = 0;
+    for(var i = 0; i < this.foundations.length; i++) {
+      var top = this.foundations[i].lastChild;
+      if(top && top.number()>=number && top.colour()==colour) found++;
+    }
+    return found;
   }
 }

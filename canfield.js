@@ -52,12 +52,13 @@ Canfield.getHints = function() {
 };
 Canfield.getHintsForCard = function(card) {
   if(!card) return;
-  for(var i = 0; i < 4; i++) {
-    var stack = this.stacks[i];
+  var i, stack;
+  for(i = 0; i < 4; i++) {
+    stack = this.stacks[i];
     if(this.canMoveTo(card,stack)) this.addHint(card,stack);
   }
-  for(var i = 0; i < 4; i++) {
-    var stack = this.foundations[i];
+  for(i = 0; i < 4; i++) {
+    stack = this.foundations[i];
     if(this.canMoveTo(card,stack)) {
       this.addHint(card,stack);
       return; // don't hint more than one move to a foundation
@@ -70,27 +71,28 @@ Canfield.getHintsForCard = function(card) {
 ///////////////////////////////////////////////////////////
 //// smart move
 Canfield.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
+  if(!this.canMoveCard(card)) return;
   var target = this.findBestMoveForCard(card);
   if(target) this.moveTo(card,target);
 };
 // picks the first stack from the left the card could go to, or failing that, the first suit-stack
 Canfield.findBestMoveForCard = function(card) {
+  var i, stack;
   // find moves to non empty stacks
-  for(var i = 0; i < 4; i++) {
-    var stack = this.stacks[i];
+  for(i = 0; i < 4; i++) {
+    stack = this.stacks[i];
     if(stack==card.parentNode) continue; // unnecessary??
     if(stack.hasChildNodes() && this.canMoveToPile(card,stack)) return stack;
   }
   // find moves to empty stacks
-  for(var i = 0; i < 4; i++) {
-    var stack = this.stacks[i];
+  for(i = 0; i < 4; i++) {
+    stack = this.stacks[i];
     if(stack==card.parentNode) continue;
     if(!stack.hasChildNodes() && this.canMoveToPile(card,stack)) return stack;
   }
   // find moves to foundations
-  for(var i = 0; i < 4; i++) {
-    var stack = this.foundations[i];
+  for(i = 0; i < 4; i++) {
+    stack = this.foundations[i];
     if(stack==card.parentNode) continue;
     if(this.canMoveToFoundation(card,stack)) return stack;
   }

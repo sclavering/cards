@@ -104,7 +104,7 @@ Regiment.findHintsForCard = function(card) {
 ///////////////////////////////////////////////////////////
 //// smartmove (moves cards clicked with middle button to best possible destination
 Regiment.smartMove = function(card) {
-  if(!this.canMoveCard(card)) return false;
+  if(!this.canMoveCard(card)) return;
   var destination = this.findBestMoveForCard(card);
   if(destination) this.moveTo(card,destination);
 };
@@ -126,11 +126,13 @@ Regiment.findBestMoveForCard = function(card) {
 Regiment.autoplayMove = function() {
   // fill empty spaces, but only from reserves in same column
   for(var j = 0; j < 8; j++) {
+    var last = this.reserves[j].lastChild;
+    if(!last) continue;
     for(var i = 0; i < 2; i++) {
       var stack = this.tableau[i][j];
       if(!stack.hasChildNodes()) {
-        var last = this.reserves[j].lastChild;
-        if(last) { this.moveTo(last,stack); return true; }
+        this.moveTo(last,stack);
+        return true;
       }
     }
   }

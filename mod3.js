@@ -26,6 +26,9 @@ Mod3.isInPlace = function( stack ){
       stack.firstChild.number()!=this.baseCard(stack) ) return false;
   return true;
 };
+
+
+
 ///////////////////////////////////////////////////////////
 //// start game
 Mod3.deal = function() {
@@ -80,6 +83,7 @@ Mod3.deal = function() {
 };
 
 
+
 ///////////////////////////////////////////////////////////
 //// Moving
 //Mod3.canMoveCard = Mod3.canMoveCard_LastOnPile;
@@ -104,15 +108,16 @@ Mod3.canMoveTo = function(card, stack) {
     && stack.firstChild.number()==row);
 };
 
+
+
 ///////////////////////////////////////////////////////////
 //// hint
 Mod3.getHints = function() {
   for(var i = this.allstacks.length-1; i >=0; i--) {
-    if(this.allstacks[i]==this.stock)
-      continue;
+    if(this.allstacks[i]==this.stock) continue;
     var card = this.allstacks[i].lastChild ;
     var targets = this.findTargets(card);
-    for(var j=0; j<targets.length; j++){
+    for(var j = 0; j < targets.length; j++){
       var onCard = targets[j].lastChild;
       // cases where the hint would be useful are:
       //  - the target is an empty stack in another row that isn't the tableau
@@ -127,20 +132,20 @@ Mod3.getHints = function() {
     }
   }
 };
+
 // searches the foundation (only!) for a place to put the card
 Mod3.findTargets = function(card) {
+  if(!card) return [];
   var targets = [];
-  if(!card)
-    return targets;
   var row = (card.number() - 2) % 3;
   for(var j = row*8; j < (row*8+8); j++) {
     var stack = this.foundations[j];
-    if(this.canMoveTo(card,stack)) {
-        targets.push(stack);
-    }
+    if(this.canMoveTo(card,stack)) targets.push(stack);
   }
   return targets;
 };
+
+
 
 ///////////////////////////////////////////////////////////
 //// smart move
@@ -163,35 +168,36 @@ Mod3.smartMove = function(card) {
 };
 
 
+
 ///////////////////////////////////////////////////////////
 //// Autoplay
 // Try to automate some moves, but not all of them
 Mod3.autoplayMove = function (){
-  for(var i=0; i<8; i++){
-    if(!this.tableau[0][i].hasChildNodes())
-      continue;
+  for(var i = 0; i < 8; i++) {
     var card = this.tableau[0][i].lastChild;
+    if(!card) continue;
+    
     var targets = this.findTargets(card);
-    if(targets.length) {
-      // It's a pain when stuff automoves and you have to undo, so
-      // to be conservative we'll limit ourselves to the patently obvious...
-      for(var j = 0; j < targets.length; j++){
-        if(this.goodAutoMove(card, targets[j])){
-          this.moveTo(card,targets[j]);
-          return true;
-        }
+    if(targets.length==0) continue;
+    
+    // It's a pain when stuff automoves and you have to undo, so
+    // to be conservative we'll limit ourselves to the patently obvious...
+    for(var j = 0; j < targets.length; j++) {
+      if(this.goodAutoMove(card, targets[j])) {
+        this.moveTo(card,targets[j]);
+        return true;
       }
     }
   }
-  // Nothing to do in tableau
   return false;
 };
 
-Mod3.goodAutoMove = function(card, target){
+Mod3.goodAutoMove = function(card, target) {
+  var c;
   var row = (this.baseCard(target)-2)*8;
   var targCard = target.lastChild;
-  if( !targCard ){ // We are considering a move to an empty foundation pile
-    for(var c = row+7 ; c>=row; c--){
+  if(!targCard) { // We are considering a move to an empty foundation pile
+    for(c = row + 7; c >= row; c--) {
       if(this.foundations[c].lastChild && !this.isInPlace(this.foundations[c])) return false;
     }
     // Every slot was empty or in place
@@ -199,19 +205,21 @@ Mod3.goodAutoMove = function(card, target){
   }
   // Moving on top of another card
   // Allow move if there is an equal or larger target in the row already
-  for(var c = row+7 ; c>=row; c--){
+  for(c = row + 7; c >= row; c--) {
     var compCard = this.foundations[c].lastChild;
     // If are an
-    if( this.foundations[c]==target ) continue; // Of course that one is there...
+    if(this.foundations[c]==target) continue; // Of course that one is there...
     if(!compCard ||                   // if its empty or
        !compCard.isSameSuit(card) ||  // different suit or
        !this.isInPlace(compCard))     // out of order, we can't get an OK
       continue;
     // Same suit and in place
-    return(compCard.number()>=targCard.number());
+    return (compCard.number()>=targCard.number());
   }
   return false;
 };
+
+
 
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
@@ -223,40 +231,32 @@ Mod3.hasBeenWon = function() {
   return (this.score==(96*CARD_IN_PLACE + 8*EMPTY_TABLEAU));
 };
 
-Mod3.getScoreForAction = function (action, card, source) {
+Mod3.getScoreForAction = function(action, card, source) {
   var score = 0;
-  if ( action=="move-from-foundation" ){
+  if(action=="move-from-foundation") {
     // Moving out of position
-    if ( this.canMoveTo(card, source) ){ 
-      return (0 - CARD_IN_PLACE - EMPTY_TABLEAU);
-    }
+    if(this.canMoveTo(card, source)) return (0 - CARD_IN_PLACE - EMPTY_TABLEAU);
     // Just taking up a slot
     return (0 - EMPTY_TABLEAU);
   }
-  if ( action=="move-to-foundation" ){
-    if ( !source.firstChild ){
-      return CARD_IN_PLACE + EMPTY_TABLEAU; // Emptied a slot
-    }
+  if(action=="move-to-foundation") {
+    if(!source.firstChild) return CARD_IN_PLACE + EMPTY_TABLEAU; // Emptied a slot
     return CARD_IN_PLACE; // Only put a card in position
   }
-  if ( action=="move-between-piles" ){
-    if ( source.isFoundation ){
-      if ( !this.canMoveTo(card, source) ){ // Move from dealt postion to valid one
-        return CARD_IN_PLACE;
-      }
+  if(action=="move-between-piles") {
+    if(source.isFoundation) {
+      // Move from dealt postion to valid one
+      if(!this.canMoveTo(card, source)) return CARD_IN_PLACE;
       return 0;  // Moving from valid to valid foundation
     }
-    if ( source.firstChild ){
-      return (0 - EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
-    }
+    if(source.firstChild) return (0 - EMPTY_TABLEAU);  // Moving from another card in tableau to fill an empty
     return 0; // Moving from one empty tableau to another
   }
-  if ( action=="dealt-from-stock" ){
+  if(action=="dealt-from-stock") {
     // This gets called after the deal - figure out how many piles were covered
     for(var j = 0; j < 8; j++ ) {
-      if( this.tableau[0][j].childNodes.length==1 ){ // This was filled
-        score -= EMPTY_TABLEAU;
-      }
+      // if this was filled
+      if(this.tableau[0][j].childNodes.length==1) score -= EMPTY_TABLEAU;
     }
     return score;
   }

@@ -31,18 +31,16 @@ var YukonBase = {
   },
 
   autoplayMove: function() {
-    // move stuff to foundations
     for(var i = 0; i < this.stacks.length; i++) {
       var last = this.stacks[i].lastChild;
-      if(last && this.canMoveCard(last) && this.canAutoplayCard(last)
-        && this.sendToFoundations(last)) return true;
+      if(last && this.canAutoplayCard(last) && this.sendToFoundations(last)) return true;
     }
     return false;
   },
 
   hasBeenWon: function() {
     // game won if all foundations have 13 cards
-    for(var i = 0; i < this.foundations.length; i++)
+    for(var i = 0; i != this.foundations.length; i++)
       if(this.foundations[i].childNodes.length!=13)
         return false;
     return true;

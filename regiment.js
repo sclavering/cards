@@ -51,27 +51,22 @@ Games["regiment"] = {
   canMoveToPile: function(card, target) {
     var source = card.getSource();
     var last = target.lastChild;
-    if(last) {
-      // can move from either tableau, reserve, or foundation piles to build on a tableau pile
-      // build up or down within suit
-      return (card.isSameSuit(last) && card.differsByOneTo(last));
-    } else {
-      // target is empty. may only move a card from a reserve pile, and only if it is the closest reserve.
-      if(!source.isReserve) return false;
-      // get num of both piles
-      var targetcol = target.col;
-      var sourcecol = source.col;
-      // if same col then its ok
-      if(sourcecol==targetcol) return true;
-      // search alternately left and right ensuring all reserves
-      var coldiff = Math.abs(targetcol - sourcecol);
-      for(var i = 0; i < coldiff; i++) {
-        if(targetcol+i<8 && this.reserves[targetcol+i].hasChildNodes()) return false;
-        if(targetcol-i>=0 && this.reserves[targetcol-i].hasChildNodes()) return false;
-      }
-      // have checked all reserves as far out as source. so it is ok to move
-      return true;
-    }
+
+    // piles are built up or down (or both) within suit
+    if(last) return (card.isSameSuit(last) && card.differsByOneTo(last));
+    
+    // can only move to an empty pile from the closest reserve pile(s)
+    if(!source.isReserve) return false;
+    
+    var tcol = target.col, scol = source.col;
+    if(tcol==scol) return true;
+    if(this.reserves[tcol].hasChildNodes()) return false;
+    
+    var coldiff = Math.abs(tcol-scol);
+    var piles = getPilesRound(this.reserves[tcol]);
+    for(var i = 0; i!=piles.length && Math.abs(piles[i].col-tcol)!=coldiff; i++)
+      if(piles[i].hasChildNodes()) return false;
+    return true;
   },
 
   getHints: function() {

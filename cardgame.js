@@ -44,7 +44,7 @@ CardGame.prototype = {
   // otherwise string comparisons on the stack id are used for canMoveTo() and others.
   init: function() {
   },
-  // convenience function to init stacks[] foundations[] and reserves[] arrays (possibly cells[] in future)
+  // convenience function to init stacks[] foundations[], reserves[], and cells[] arrays
   // (also creates .allstacks[] which is used when clearing the game layout for a new game)
   // Games with multiple rows of tableau piles should pass 0 for numStacks, and use tableauRows/Cols instead
   // to use this game must init game.shortname first
@@ -357,9 +357,6 @@ CardGame.prototype = {
     }
     return true;
   },
-  canMoveTo_LastOnPile: function(card) {
-    return (card.faceUp() && card.isLastOnPile());
-  },
 
   // returns true/false for whether it is a legal move to take card to destination
   // this function follows the pattern needed by all games seen so far, leaving
@@ -367,12 +364,11 @@ CardGame.prototype = {
   canMoveTo: function(card,target) {
     // can never move TO a reserve pile
     if(target.isReserve || target.id.indexOf("reserve")!=-1) return false;
-    // games that don't have foundations should not have problems with this
-    // Mod3, where most of the stacks are sort of foundations just overrides this whole function
-    return ((target.isFoundation || target.id.indexOf("foundation")!=-1)
-      ? this.canMoveToFoundation(card,target)
-      : this.canMoveToPile(card,target));
+    if(target.isFoundation || target.id.indexOf("foundation")!=-1)
+      return this.canMoveToFoundation(card,target);
+    return this.canMoveToPile(card,target);
   },
+  
   // this is the way foundations work in most games: built one card at a time, all the same suit, ascending
   // games (e.g. Spider, SimpleSimon) where only a complete suit can move to foundation will need to override
   canMoveToFoundation: function(card,target) {
@@ -382,14 +378,23 @@ CardGame.prototype = {
     var last = target.lastChild;
     return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
   },
-  // XXX add some standard forms for canMoveToPile ???
-  //canMoveToPile
+  
+  // this should work for most games which have cells
+  canMoveToCell: function(card, target) {
+    return (!target.hasChildNodes() && card.isLastOnPile());
+  },
+  
+  // some standard forms for canMoveToPile
+  canMoveTo_LastOnPile: function(card, target) {
+    return (card.faceUp() && card.isLastOnPile());
+  },
+
 
   // actually perform the move, return true/false  for success.  Should generally call
   // this.trackMove(action: "some-string", card: card, source: someStackNode);
   // source can generally be retrieved by card.getSource(), if the function is being called
   // by CardMover, MouseHandler or CardTurner
-  // This generic versionn copes with all the games except Spider at the moment, and Spider
+  // This generic version copes with all the games except Spider at the moment, and Spider
   // was written in a very unusual way :)
   moveTo: function(card, target) {
     var source = card.getSource();
@@ -433,13 +438,15 @@ CardGame.prototype = {
 
 
   // === Redealing ========================================
+  // XXX: add some UI for this
   // some games allow a certain number of "redeals", where all the remaining cards on the tableau
   // are collected together and shuffled, then redealt in the pattern that was present before
 
   // At the moment this only works for tableau piles, not stocks, reserves, or anything else
   redeal: function() {
     var stacks = this.stacks;
-    var pattern = [];
+    var numdown = [];
+    var numup = [];
     var cards = [];
     // remove cards and store pattern
     for(var i = 0; i < stacks.length; i++) {
@@ -451,13 +458,14 @@ CardGame.prototype = {
         card.setFaceDown();
         cards.push(card);
       }
-      pattern.push([down,up]);
+      numdown.push(down);
+      numup.push(up);
     }
     // shuffle
     this.shuffle(cards);
     // deal out again
-    for(var i = 0; i < pattern.length; i++) {
-      this.dealToStack(cards,this.stacks[i],pattern[i][0],pattern[i][1]);
+    for(var i = 0; i < stacks.length; i++) {
+      this.dealToStack(cards,this.stacks[i],numdown[i],numup[i]);
     }
   },
 

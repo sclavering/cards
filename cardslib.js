@@ -219,6 +219,8 @@ function createCard(colour, suit, suitstr, number) {
 }
 
 var cardMethods = {
+  toString: function() { return this.number+this.suitstr; },
+
   isConsecutiveTo: function(card) { return (this.number==card.number+1); },
 
   isSameSuit: function(card) { return this.suit==card.suit; },
@@ -438,6 +440,10 @@ function createFloatingPile() {
       card.top = card._top -= top;
       card.left = card._left -= left;
     }
+    // setting the width and height avoids not-repainting artifacts after cards are removed from the floating pile
+    var last = this.lastChild;
+    this.width = last._left + last.boxObject.width;
+    this.height = last._top + last.boxObject.height;
   };
   gGameStack.appendChild(pile);
   pile.hide();
@@ -483,7 +489,9 @@ function createHighlighter() {
 function animatedActionFinished(pileWhichHasHadCardsRemoved) {
   if(Game.autoplay(pileWhichHasHadCardsRemoved)) return;
   enableUI();
-  if(gFloatingPileNeedsHiding) gFloatingPile.hide();
+  if(!gFloatingPileNeedsHiding) return;
+  gFloatingPileNeedsHiding = false;
+  gFloatingPile.hide();
 }
 
 function playGame(game) {

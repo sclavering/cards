@@ -110,7 +110,7 @@ MouseHandlers["drag+drop"] = {
       var tbox = target.boxObject;
       var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
-      if(overlaps && Game.attemptMove(card,target)) return;
+      if(overlaps && Game.attemptMove(card,target)) { gFloatingPileNeedsHiding = true; return; }
     }
 
     // ordering here may be important (not-repainting fun)

@@ -36,8 +36,7 @@ function moveCards1(firstCard, target) {
 //    var steps = (dx && dy) ? Math.round(Math.sqrt(dx*dx + dy*dy)) : (dx || dy);
 
     if(steps==1 || steps==0) {
-      // the cards don't look like they're being moved off screen then reappearing at the destination, even though that's what we're doing
-      if(parent==gFloatingPile) cards.hide();
+      if(parent==gFloatingPile) gFloatingPileNeedsHiding = true;
       target.addCards(firstCard);
       animatedActionFinished(source);
       return;
@@ -48,7 +47,6 @@ function moveCards1(firstCard, target) {
     steps--; // so it's 0 when the move is complete
 
     if(parent!=gFloatingPile) {
-  //    cards.className = parent.className; // so cards layed out as in originating pile // xxx not needed yet
       cards.left = cards._left = sx;
       cards.top = cards._top = sy;
       cards.addCards(firstCard);

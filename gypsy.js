@@ -6,6 +6,7 @@ Games["gypsy"] = {
   rule_dealFromStock: "to-piles",
   rule_canMoveCard: "descending,alt-colours",
   rule_canMoveToPile: "descending,alt-colours",
+  rule_getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
     // 1==easy, 2==hard
@@ -15,7 +16,7 @@ Games["gypsy"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
+    for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

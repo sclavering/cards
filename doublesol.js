@@ -9,6 +9,7 @@ Games["doublesol"] = {
   id: "doublesol",
   rule_dealFromStock: "to-waste,can-turn-stock-over",
   rule_canMoveToPile: "descending,alt-colours,kings-in-spaces",
+  rule_getLowestMovableCard: "face up",
 
   init: function() {
     this.sourceStacks = [this.waste].concat(this.stacks);
@@ -38,7 +39,7 @@ Games["doublesol"] = {
 
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
   getHintsFor: function(card) {
     if(!card) return;

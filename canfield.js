@@ -4,6 +4,7 @@ Games["canfield"] = {
   id: "canfield",
   acesHigh: true,
   rule_dealFromStock: "to-waste,can-turn-stock-over",
+  rule_getLowestMovableCard: "face up",
 
   init: function() {
     this.sourceStacks = [this.reserve,this.waste].concat(this.stacks);
@@ -37,7 +38,7 @@ Games["canfield"] = {
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);
     this.addHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

@@ -36,6 +36,13 @@ rule_dealFromStock:
   "to-piles,if-none-empty"
   "to-nonempty-piles"
 
+xxx these (c|sh)ould just use the rule_canMoveCard value
+rule_getLowestMovableCard:
+  "descending, in suit"
+  "descending mod13, in suit"
+  "descending, alt colours"
+  "face up":
+
 */
 
 var Rules = {
@@ -193,6 +200,46 @@ var Rules = {
     "to-nonempty-piles": function() {
       this.doAction(new DealToNonEmptyPilesAction());
     }
+  },
+
+
+  getLowestMovableCard: {
+    "descending, in suit":
+    function(pile) {
+      if(!pile.hasChildNodes()) return null;
+      var card = pile.lastChild, prv = card.previousSibling;
+      while(prv && prv.faceUp() && prv.isConsecutiveTo(card) && prv.isSameSuit(card)) {
+        card = prv; prv = card.previousSibling;
+      }
+      return card;
+    },
+
+    "descending mod13, in suit":
+    function(pile) {
+      if(!pile.hasChildNodes()) return null;
+      var card = pile.lastChild, prv = card.previousSibling;
+      while(prv && prv.faceUp() && prv.isConsecutiveMod13To(card) && prv.isSameSuit(card)) {
+        card = prv; prv = card.previousSibling;
+      }
+      return card;
+    },
+
+    "descending, alt colours":
+    function(pile) {
+      if(!pile.hasChildNodes()) return null;
+      var card = pile.lastChild, prv = card.previousSibling;
+      while(prv && prv.faceUp() && prv.isConsecutiveTo(card) && prv.colour()!=card.colour()) {
+        card = prv; prv = card.previousSibling;
+      }
+      return card;
+    },
+
+    "face up":
+    function(pile) {
+      if(!pile.hasChildNodes()) return null;
+      var card = pile.lastChild, prv = card.previousSibling;
+      while(prv && prv.faceUp()) card = prv, prv = card.previousSibling;
+      return card;
+    }
   }
 }
-

@@ -4,6 +4,7 @@ Games["towers"] = {
   id: "towers",
   rule_canMoveCard: "descending, in suit",
   rule_canMoveToPile: "descending,in-suit,kings-in-spaces",
+  rule_getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards = this.shuffleDecks(1);
@@ -22,7 +23,7 @@ Games["towers"] = {
   getHints: function() {
     var i;
     for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
-    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMoveableCard_Suit(this.stacks[i]));
+    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

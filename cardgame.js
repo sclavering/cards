@@ -20,6 +20,7 @@ var BaseCardGame = {
   rule_canMoveToPile: null,
   rule_canMoveToFoundation: null,
   rule_dealFromStock: null,
+  rule_getLowestMovableCard: null,
 
   // see mouse.js
   mouseHandling: "drag+drop",
@@ -83,6 +84,7 @@ var BaseCardGame = {
     if(this.rule_canMoveToPile) this.canMoveToPile = Rules.canMoveToPile[this.rule_canMoveToPile];
     if(this.rule_canMoveToFoundation) this.canMoveToFoundation = Rules.canMoveToFoundation[this.rule_canMoveToFoundation];
     if(this.rule_dealFromStock) this.dealFromStock = Rules.dealFromStock[this.rule_dealFromStock];
+    if(this.rule_getLowestMovableCard) this.getLowestMovableCard = Rules.getLowestMovableCard[this.rule_getLowestMovableCard];
   },
 
   // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
@@ -553,29 +555,6 @@ var BaseCardGame = {
   // call autoplay again on completion.)
   autoplayMove: function() {
     return false;
-  },
-
-  // Some nice functions to find the card on a stack that should be moved by autoplayMove()
-  // Get the lowest card in astack that can be moved for stacks built by:
-  // alternating colours (and decreasing number)
-  getLowestMoveableCard_AltColours: function(stack) {
-    if(!stack.hasChildNodes()) return null;
-    var card = stack.lastChild;
-    var prv = card.previousSibling;
-    while(prv && prv.faceUp() && prv.isConsecutiveTo(card) && prv.colour()!=card.colour()) {
-      card = prv; prv = card.previousSibling;
-    }
-    return card;
-  },
-  // strict suit (and decreasing number)
-  getLowestMoveableCard_Suit: function(stack) {
-    if(!stack.hasChildNodes()) return null;
-    var card = stack.lastChild;
-    var prv = card.previousSibling;
-    while(prv && prv.faceUp() && prv.isConsecutiveTo(card) && prv.isSameSuit(card)) {
-      card = prv; prv = card.previousSibling;
-    }
-    return card;
   },
 
   // This gets used in lots of games, so we put it here to save duplication

@@ -65,11 +65,12 @@ Games["spider"] = {
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
   rule_canMoveCard: "descending, in suit, not from foundation",
   rule_canMoveToFoundation: "13 cards",
+  rule_getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards;
     switch(this.difficultyLevel) {
-     case 1: cards = this.shuffleSuits(8,0,0,0); break;
+      case 1: cards = this.shuffleSuits(8,0,0,0); break;
       case 2: cards = this.shuffleSuits(4,4,0,0); break;
       default: cards = this.shuffleSuits(2,2,2,2);
     }
@@ -80,7 +81,7 @@ Games["spider"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMoveableCard_Suit(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   }
 };
 
@@ -130,6 +131,7 @@ Games["divorce"] = {
   rule_canMoveCard: "descending mod13, in suit, not from foundation",
   rule_canMoveToPile: "descending mod13",
   rule_canMoveToFoundation: "13 cards",
+  rule_getLowestMovableCard: "descending mod13, in suit",
 
   deal: function() {
     var cards = this.shuffleDecks(2);
@@ -138,14 +140,7 @@ Games["divorce"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) {
-      var card = this.stacks[i].lastChild;
-      if(!card) continue;
-      var prv = card.previousSibling;
-      while(prv && prv.isSameSuit(card) && prv.isConsecutiveMod13To(card))
-        card = prv, prv = prv.previousSibling;
-      this.addHintsFor(card);
-    }
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   }
 };
 

@@ -4,6 +4,7 @@ Games["freecell"] = {
   id: "freecell",
   rule_canMoveCard: "descending,alt-colours",
   rule_canMoveToPile: "descending,alt-colours",
+  rule_getLowestMovableCard: "descending, alt colours",
 
   deal: function() {
     var cards = this.shuffleDecks(1);
@@ -32,7 +33,7 @@ Games["freecell"] = {
   getHints: function() {
     var i;
     for(i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
-    for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMoveableCard_AltColours(this.stacks[i]));
+    for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

@@ -5,6 +5,7 @@ Games["simon"] = {
   difficultyLevels: ["easy-1suit","medium-2suits","hard-4suits"],
   rule_canMoveCard: "descending, in suit, not from foundation",
   rule_canMoveToPile: "descending",
+  rule_getLowestMovableCard: "descending, in suit",
 
   deal: function() {
     var cards =
@@ -23,7 +24,7 @@ Games["simon"] = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMoveableCard_Suit(this.stacks[i]));
+    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.stacks[i]));
   },
 
   getBestMoveForCard: function(card) {

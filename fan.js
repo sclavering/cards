@@ -21,6 +21,8 @@ Games.fan = {
       // games with piles such as 7,2,6H or 4,9,8C are impossible
       if(c.suit==d.suit && ((c==e.up && d.number<e.number) || (d==e.up && c.number<e.number)))
         return true;
+      // games with a pile such as J,9,10 are impossible
+      if(c.suit==d.suit && c.down==e && d.number<e.number) return true;
     }
     return false;
   },

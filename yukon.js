@@ -1,11 +1,6 @@
 var Yukon = new CardGame();
 
-Yukon.init = function() {
-  this.shortname = "yukon";
-  this.initStacks(7,4);
-  this.thingsToReveal = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
-};
+Yukon.shortname = "yukon";
 
 
 

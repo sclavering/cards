@@ -1,11 +1,9 @@
 var Klondike = new CardGame(CAN_TURN_STOCK_OVER);
 
+Klondike.shortname = "klondike";
+
 Klondike.init = function() {
-  this.shortname = "klondike";
-  this.initStacks(7,4,0,true,true);
   this.sourceStacks = [this.waste].concat(this.stacks);
-  this.thingsToReveal = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 
 

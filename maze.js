@@ -1,16 +1,9 @@
 var Maze = {
+  __proto__: BaseCardGame,
+  
   shortname: "maze",
   
-  numPiles: 54,
-
-  // stuff the CardGame() constructor would initialise if we were using it
-  stockCanTurnOver: false,
-  acesHigh: false,
-  usesMouseHandler2: false,
-
   init: function() {
-    this.initStacks();
-    this.dragDropTargets = this.stacks;
     // label the piles for use by canMoveTo
     for(var i = 0; i < 54; i++) this.stacks[i].pileNumber = i;
   },
@@ -107,7 +100,5 @@ var Maze = {
     return true;
   }
 }
-
-Maze.__proto__ = CardGame.prototype;
 
 Games["Maze"] = Maze;

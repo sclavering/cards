@@ -1,8 +1,8 @@
 var Towers = new CardGame(NO_DRAG_DROP);
 
+Towers.shortname = "towers";
+
 Towers.init = function() {
-  this.shortname = "towers";
-  this.initStacks(10,4,0,false,false,4);
   // insufficient spaces message
   this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
 };

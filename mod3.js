@@ -3,24 +3,14 @@ var Mod3 = new CardGame();
 // Scoring constants:
 const CARD_IN_PLACE = 10, EMPTY_TABLEAU = 5;
 
+Mod3.shortname = "mod3";
+
 Mod3.init = function() {
-  this.shortname = "mod3";
-  this.initStacks(8,24,0,true,false);
   this.stockDealTargets = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
-};
-// Given the nature of Mod 3 we often need to know which row a stack is in
-Mod3.baseCard = function( stack ){
-  if( !stack || !stack.isFoundation ) return 0;
-  // Should be the row in the form "mod3-rowX" where X is 1, 2 or 3
-  return parseInt(stack.parentNode.id.substr(8))+1;
-};
-// True if there is a point scoring card in this spot
-Mod3.isInPlace = function( stack ){
-  if( stack.isCard ) stack=stack.parentNode;
-  if( !stack.isFoundation || stack.childNodes.length==0 ||
-      stack.firstChild.number()!=this.baseCard(stack) ) return false;
-  return true;
+  var i;
+  for(i = 0;  i < 8;  i++) this.foundations[i].baseCard = 2;
+  for(i = 8;  i < 16; i++) this.foundations[i].baseCard = 3;
+  for(i = 16; i < 24; i++) this.foundations[i].baseCard = 4;
 };
 
 
@@ -88,16 +78,12 @@ Mod3.canMoveCard = function(card) {
 };
 
 Mod3.canMoveTo = function(card, stack) {
-  if(card.parentNode == stack)
-    return false; // Maybe we could, but why???
-  if(!stack.isFoundation)
-    // anything may be moved into an empty space in 4th row (row 3)
-    return !stack.hasChildNodes();
-  // convert the foundation name to row number
-  var row = this.baseCard(stack);
+  if(card.parentNode == stack) return false;
+  // anything may be moved into an empty space in 4th row (row 3)
+  if(!stack.isFoundation) return !stack.hasChildNodes();
   // row 2 has 2,5,8,J in it,  row 3 has 3,6,9,Q,  row 4 has 4,7,10,K
-  if(!stack.hasChildNodes())
-    return (card.number()==row);
+  var row = stack.baseCard;
+  if(!stack.hasChildNodes()) return (card.number()==row);
   return (card.isSameSuit(stack.lastChild) && card.number()==stack.lastChild.number()+3
     && stack.firstChild.number()==row);
 };
@@ -188,7 +174,7 @@ Mod3.autoplayMove = function (){
 
 Mod3.goodAutoMove = function(card, target) {
   var c;
-  var row = (this.baseCard(target)-2)*8;
+  var row = (target.baseCard-2)*8;
   var targCard = target.lastChild;
   if(!targCard) { // We are considering a move to an empty foundation pile
     for(c = row + 7; c >= row; c--) {
@@ -211,6 +197,11 @@ Mod3.goodAutoMove = function(card, target) {
     return (compCard.number()>=targCard.number());
   }
   return false;
+};
+// True if there is a point scoring card in this spot
+Mod3.isInPlace = function(stack) {
+  if(stack.isCard) stack = stack.parentNode;
+  return (stack.isFoundation && stack.hasChildNodes() && stack.firstChild.number()==stack.baseCard);
 };
 
 

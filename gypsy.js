@@ -1,11 +1,6 @@
 var Gypsy = new CardGame();
 
-Gypsy.init = function() {
-  this.shortname = "gypsy";
-  this.initStacks(8,8,0,true);
-  this.thingsToReveal = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
-};
+Gypsy.shortname = "gypsy";
 
 
 

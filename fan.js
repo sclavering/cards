@@ -1,19 +1,8 @@
 Games["Fan"] = {
+  __proto__: BaseCardGame,
+  
   shortname: "fan",
   
-  numPiles: 18,
-  numFoundations: 4,
-
-  // stuff the CardGame() constructor would initialise if we were using it
-  stockCanTurnOver: false,
-  acesHigh: false,
-  usesMouseHandler2: false,
-
-  init: function() {
-    this.initStacks();
-    this.dragDropTargets = this.stacks.concat(this.foundations);
-  },
-
 
   ///////////////////////////////////////////////////////////
   //// start game
@@ -82,7 +71,5 @@ Games["Fan"] = {
       if(this.foundations[i].childNodes.length!=13)
         return false;
     return true;
-  },
-  
-  __proto__: CardGame.prototype
+  }
 }

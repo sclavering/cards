@@ -1,17 +1,14 @@
 var Regiment = new CardGame();
 
+Regiment.shortname = "regiment";
+
 Regiment.init = function() {
-  this.shortname = "regiment";
-  this.initStacks(16,8,8);
   for(var i = 0; i < 8; i++) {
     this.foundations[i].isAceFoundation = (i < 4);
     this.reserves[i].col = i;
     this.stacks[i].col = i;
     this.stacks[i+8].col = i;
   }
-  //
-  this.thingsToReveal = this.reserves;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 
 

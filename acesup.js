@@ -1,11 +1,6 @@
 var AcesUp = new CardGame(ACES_HIGH);
 
-AcesUp.init = function() {
-  this.shortname = "acesup";
-  this.initStacks(4,1,0,true);
-  //
-  this.dragDropTargets = this.stacks.concat([this.foundation]);
-};
+AcesUp.shortname = "acesup";
 
 
 

@@ -1,11 +1,6 @@
 var Grandfather = new CardGame();
 
-Grandfather.init = function() {
-  this.shortname = "grandfather";
-  this.initStacks(7,4);
-  this.thingsToReveal = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
-};
+Grandfather.shortname = "grandfather";
 
 
 

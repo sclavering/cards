@@ -5,12 +5,10 @@
 
 var DoubleSol = new CardGame(CAN_TURN_STOCK_OVER);
 
+DoubleSol.shortname = "doublesol";
+
 DoubleSol.init = function() {
-  this.shortname = "doublesol";
-  this.initStacks(10,4,0,true,true);
   this.sourceStacks = [this.waste].concat(this.stacks);
-  this.thingsToReveal = this.stacks;
-  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 
 

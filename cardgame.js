@@ -25,99 +25,110 @@ function CardGame(params) {
   this.usesMouseHandler2 = (params&NO_DRAG_DROP)==NO_DRAG_DROP;
 };
 
-CardGame.prototype = {
-  foundations: null, // array of foundation piles
-  stock: null,       // the stock pile if the game has one
-  waste: null,
-  stacks: null,
-  thingsToReveal: null,
-  
-  // games should override these as appropriate
-  numPiles: 0,
-  numFoundations: 0,
-  numCells: 0,
-  numReserves: 0,
-  hasStock: false,
-  hasWaste: false,
+var BaseCardGame = CardGame.prototype = {  
+  // older games get these set by the CardGame() constructor.  newer games may want to override
+  stockCanTurnOver: false,
+  acesHigh: false,
+  usesMouseHandler2: false,
 
+  // these are all automatically set up by initStacks()
+  allstacks: [],   // array of piles of all times.  used for clearing the game
+  stacks: [],      // array of tableau piles
+  foundations: [], // array of foundation piles
+  reserves: [],    // ...
+  cells: [],
+  stock: null,     // the stock pile if the game has one, otherwise null
+  waste: null,
+  foundation: null, // if the game has just one foundation this will be it
+  reserve: null,
+  
+  thingsToReveal: null,
   dragDropTargets: null, // list of elements which the DragDrop system should test if cards are being dropped on
-  allstacks: null, // list of all <stack>s for cards, so that they can be cleared when a game is started
+  
+
 
 
   // === Start/Finish Playing =============================
-  initialised: false, // stores whether init() has already been run
-  // should initialise "dragDropTargets" and "allstacks", as well as anything else used by
-  // the game.  will only be called the first time a particular game is played
-  // If the game has cards which can be revealed it should set up a thingsToReveal
-  // array of <stack>s and the autoplay will handle them automatically.
-  // Piles should be initialised by calling createCardPile(pile-id), which initStacks(...) will do.
+  initialised: false,
+  
+  // Games which need to do some additional initialisation should override this.
+  // It is called the first time the game is played.
   init: function() {
   },
-  // convenience function to init stacks[], foundations[], reserves[], and cells[] arrays
-  // (also creates .allstacks[] which is used when clearing the game layout for a new game)
-  // To use this function the game must init game.shortname first
-  initStacks: function(numStacks, numFoundations, numReserves, hasStock, hasWaste, numCells) {
-    // older games pass these as args, newer ones have them as params
-    numStacks = numStacks || this.numPiles;
-    numFoundations = numFoundations || this.numFoundations;
-    numCells = numCells || this.numCells;
-    numReserves = numReserves || this.numReserves;
-    hasStock = hasStock || this.hasStock;
-    hasWaste = hasWaste || this.hasWaste;
-    
-    var i, j;
+  
+  // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
+  // |waste| members (sometimes to null or to empty arrays).
+  // Requires game to have a |shortname| param, and all piles of various types to have ids of
+  // the form {shortname}-{pile-type}-{int} in the XUL
+  initStacks: function() {
+    // We really really do have to set these all to empty arrays now, or every game ends
+    // up using the same arrays for |stacks| |foundations| etc, which means everything
+    // breaks horribly as soon as a the user switches to a new type of game.
+    // (Another example of why javascript really needs classes, not just prototypes)
+    this.stacks = [];
+    this.cells = [];
+    this.reserves = [];
+    this.foundations = [];
     this.allstacks = [];
-    var name = this.shortname; // e.g. "klondike", "simon" etc
-    if(numStacks) {
-      this.stacks = new Array(numStacks);
-      for(i = 0; i < numStacks; i++) {
-        this.stacks[i] = createCardPile(name+"-pile-"+i);
-        this.stacks[i].isPile = true;
-        this.allstacks.push(this.stacks[i]);
-      }
-    }
-    if(numFoundations==1) {
-      this.foundation = createCardPile(name+"-foundation");
-      this.foundation.isFoundation = true;
-      this.allstacks.push(this.foundation);
-    } else if(numFoundations) {
-      this.foundations = new Array(numFoundations);
-      for(i = 0; i < numFoundations; i++) {
-        this.foundations[i] = createCardPile(name+"-foundation-"+i);
-        this.foundations[i].isFoundation = true;
-        this.allstacks.push(this.foundations[i]);
-      }
-    }
-    if(numReserves==1) {
-      this.reserve = createCardPile(name+"-reserve");
-      this.reserve.isReserve = true;
-      this.allstacks.push(this.reserve);
-    } else if(numReserves) {
-      this.reserves = new Array(numReserves);
-      for(i = 0; i < numReserves; i++) {
-        this.reserves[i] = createCardPile(name+"-reserve-"+i);
-        this.reserves[i].isReserve = true;
-        this.allstacks.push(this.reserves[i]);
-      }
-    }
-    if(hasStock) {
-      this.stock = createCardPile(name+"-stock");
+    
+    var name = this.shortname;
+    this.stock = createCardPile(name+"-stock");
+    if(this.stock) {
       this.stock.isStock = true;
       this.allstacks.push(this.stock);
     }
-    if(hasWaste) {
-      this.waste = createCardPile(name+"-waste");
+    this.waste = createCardPile(name+"-waste");
+    if(this.waste) {
       this.waste.isWaste = true;
       this.allstacks.push(this.waste);
     }
-    if(numCells) {
-      this.cells = new Array(numCells);
-      for(i = 0; i < numCells; i++) {
-        this.cells[i] = createCardPile(name+"-cell-"+i);
-        this.cells[i].isCell = true;
-        this.allstacks.push(this.cells[i]);
-      }
+    // try for a single foundation or reserve pile
+    this.foundation = createCardPile(name+"-foundation");
+    if(this.foundation) {
+      this.foundation.isFoundation = true;
+      this.allstacks.push(this.foundation);
     }
+    this.reserve = createCardPile(name+"-reserve");
+    if(this.reserve) {
+      this.reserve.isReserve = true;
+      this.allstacks.push(this.reserve);
+    }
+    // try for >1 piles, foundations, reserves and cells
+    var i, node;
+    for(i = 0; true; i++) {
+      node = createCardPile(name+"-pile-"+i);
+      if(!node) break;
+      this.stacks.push(node);
+      this.allstacks.push(node);
+    }
+    for(i = 0; true; i++) {
+      node = createCardPile(name+"-foundation-"+i);
+      if(!node) break;
+      node.isFoundation = true;
+      this.foundations.push(node);
+      this.allstacks.push(node);
+    }
+    for(i = 0; true; i++) {
+      node = createCardPile(name+"-reserve-"+i);
+      if(!node) break;
+      node.isReserve = true;
+      this.reserves.push(node);
+      this.allstacks.push(node);
+    }
+    for(i = 0; true; i++) {
+      node = createCardPile(name+"-cell-"+i);
+      if(!node) break;
+      node.isCell = true;
+      this.cells.push(node);
+      this.allstacks.push(node);
+    }
+    // drag'n'drop targets.  could also include cells, but FreeCell/Towers don't use d'n'd in any case
+    this.dragDropTargets = this.stacks.concat(this.foundations);
+    if(this.foundation) this.dragDropTargets.push(this.foundation);
+    // which piles should we automatically reveal the top card of?
+    // (some games have no use for this, but checking all these piles doesn't take very long so...)
+    this.thingsToReveal = this.stacks.concat(this.reserves);
+    if(this.reserve) this.thingsToReveal.push(this.reserve);
   },
 
   start: function() {
@@ -127,6 +138,7 @@ CardGame.prototype = {
     MouseHandler.start();
     // init stack arrays and stuff
     if(!this.initialised) {
+      this.initStacks();
       this.init();
       this.initialised = true;
     }

@@ -564,7 +564,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="simon-pile-7"/><flex/>
       <pile class="fan-down" id="simon-pile-8"/><flex/>
       <pile class="fan-down" id="simon-pile-9"/><flex/>
-      <vbox id="simon-foundation">
+      <vbox>
         <foundation id="simon-foundation-0"/><rowspacer/>
         <foundation id="simon-foundation-1"/><rowspacer/>
         <foundation id="simon-foundation-2"/><rowspacer/>
@@ -657,7 +657,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="yukon-pile-4"/><flex/>
       <pile class="fan-down" id="yukon-pile-5"/><flex/>
       <pile class="fan-down" id="yukon-pile-6"/><flex/>
-      <vbox id="yukon-foundation">
+      <vbox>
         <foundation id="yukon-foundation-0"/><rowspacer/>
         <foundation id="yukon-foundation-1"/><rowspacer/>
         <foundation id="yukon-foundation-2"/><rowspacer/>

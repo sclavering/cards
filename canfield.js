@@ -1,11 +1,9 @@
 var Canfield = new CardGame(CAN_TURN_STOCK_OVER);
 
+Canfield.shortname = "canfield";
+
 Canfield.init = function() {
-  this.shortname = "canfield";
-  this.initStacks(4,4,1,true,true);
   this.sourceStacks = [this.reserve,this.waste].concat(this.stacks);
-  this.thingsToReveal = [this.reserve];
-  this.dragDropTargets = this.stacks.concat(this.foundations);
 };
 
 

@@ -5,15 +5,11 @@ Spider.dealsLeftDisplay = null;
 Spider.dealsLeft = null; // number of times that player can deal out a set of ten cards
 Spider.completedSuits = null; // count of how many suits have been completed and removed
 
+Spider.shortname = "spider";
 
 Spider.init = function() {
-  this.shortname = "spider";
-  this.initStacks(10,8,0,true);
-  //
   this.foundationsBox = document.getElementById("spider-foundations");
   this.dealsLeftDisplay = document.getElementById("spider-deals-left");
-  //
-  this.thingsToReveal = this.stacks;
   this.dragDropTargets = this.stacks.concat([this.foundationsBox]);
 };
 

@@ -152,7 +152,9 @@ var CardShuffler = {
 // give it a <stack> element or the id for one. adds some expando properties
 // (tried doing this in XBL, but it was unbearably slow)
 function createCardPile(id) {
-  return _createCardPile(document.getElementById(id));
+  var elt = document.getElementById(id);
+  if(!elt) return null;
+  return _createCardPile(elt);
 }
 function _createCardPile(elt) {
   elt.isCard = false;

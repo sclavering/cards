@@ -27,7 +27,6 @@ Spider.sendToFoundations = function() {
 ///////////////////////////////////////////////////////////
 //// start game
 Spider.deal = function() {
-  this.completedSuits = 0;
   this.dealsLeft = 5;
   this.updateDealsLeftDisplay();
   var cards;
@@ -100,15 +99,15 @@ Spider.moveTo = function(card, target) {
   }
 };
 Spider.removeCompleteSuit = function(card) {
-  var target = this.foundations[this.completedSuits];
-  this.completedSuits++;
+  var target = this.getFirstEmptyFoundation();
   this.trackMove("suit-completed", card, card.getSource());
   card.moveTo(target);
   return true;
 };
-Spider.unremoveCompleteSuit = function(card, source) {
-  this.completedSuits--;
-  card.transferTo(source);
+Spider.getFirstEmptyFoundation = function() {
+  for(var i = 0; i < this.foundations.length; i++)
+    if(!this.foundations[i].hasChildNodes()) return this.foundations[i];
+  return null;
 };
 
 
@@ -119,6 +118,7 @@ Spider.unremoveCompleteSuit = function(card, source) {
 Spider.getHints = function() {
   for(var i = 0; i < 10; i++) {
     var card = this.getLowestMoveableCard_Suit(this.stacks[i]);
+    if(!card) continue;
     for(var j = 0; j < 10; j++) {
       var stack = this.stacks[j];
       if(stack.hasChildNodes() && this.canMoveTo(card,stack))
@@ -174,7 +174,9 @@ Spider.autoplayMove = function() {
 ///////////////////////////////////////////////////////////
 //// winning, scoring, undo
 Spider.hasBeenWon = function() {
-  return (this.completedSuits==8);
+  for(var i = 0; i < 8; i++)
+    if(this.foundations[i].childNodes.length!=13) return false;
+  return true;
 };
 Spider.getScoreForAction = function(action) {
   return (
@@ -182,13 +184,5 @@ Spider.getScoreForAction = function(action) {
     action=="move-between-piles" ?  -1 :
     0);
 };
-Spider.undoMove = function(undo) {
-  switch(undo.action) {
-    case "suit-completed":
-      this.unremoveCompleteSuit(undo.card,undo.source); break;
-    default:
-      undo.card.transferTo(undo.source);
-  }
-}
 
 Games["Spider"] = Spider;

@@ -3,10 +3,6 @@ Games.pileon = {
 
   id: "pileon",
 
-  init: function() {
-    var cs = this.cards = makeDecks(1);
-  },
-
   deal: function(cards) {
     const ps = this.piles;
     for(var i = 0; i != 13; i++) ps[i].dealTo(cards, 0, 4);

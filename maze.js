@@ -42,7 +42,7 @@ var Maze = {
     var right = this.stacks[(i+1) % 54].firstChild;
     if(right) {
       if(right.isSameSuit(card) && right.isConsecutiveTo(card)) return true;
-      if(card.number()==12 && right.isAce()) return true;
+      if(card.isQueen() && right.isAce()) return true;
     }
     // if card is consecutive and same suit as card to the left
     // or if this is an ace and the card to the left any queen
@@ -50,7 +50,7 @@ var Maze = {
     left = this.stacks[left].firstChild;
     if(left) {
       if(card.isSameSuit(left) && card.isConsecutiveTo(left)) return true;
-      if(card.isAce() && left.number()==12) return true;
+      if(card.isAce() && left.isQueen()) return true;
     }
     return false;
   },

@@ -838,16 +838,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <pile class="fan-down" id="spider-pile-8"/><flex/>
       <pile class="fan-down" id="spider-pile-9"/><flex/>
       <vbox id="spider-side-panel">
-        <vbox id="spider-foundations" class="stack-of-card-stacks">
-          <foundation id="spider-foundation-0"/>
-          <foundation id="spider-foundation-1"/>
-          <foundation id="spider-foundation-2"/>
-          <foundation id="spider-foundation-3"/>
-          <foundation id="spider-foundation-4"/>
-          <foundation id="spider-foundation-5"/>
-          <foundation id="spider-foundation-6"/>
-          <foundation id="spider-foundation-7"/>
-        </vbox>
+        <foundation id="spider-foundation" class="spider-foundation"/>
         <rowspacer/>
         <hbox>
           <label value="&deals-left;"/>

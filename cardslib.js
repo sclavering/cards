@@ -436,6 +436,22 @@ var pileProperties = {
       card.top = card._top = prev._top + offset
       card.left = card._left = prev._left + offset;
     }
+  },
+
+  "spider-foundation": {
+    __proto__: basicPileProperties,
+
+    addCards: function(card) {
+      var last = this.lastChild;
+      var top = last ? last._top + gVFanOffset : 0;
+      while(card) {
+        var next = card.nextSibling;
+        this.appendChild(card);
+        card.top = card._top = top;
+        card.left = card._left = 0;
+        card = next;
+      }
+    }
   }
 };
 

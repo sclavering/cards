@@ -42,18 +42,13 @@ var SpiderLayoutBase = {
   __proto__: SpiderBase,
   layout: "spider",
 
-  // Special version which if target is a foundation uses the first empty foundation instead.
-  // Necessary because of the compact layout of foundations in Spider.
-  moveTo: function(card, target) {
-    if(target.isFoundation) target = this.firstEmptyFoundation;
-    BaseCardGame.moveTo.call(this,card,target);
-    return true;
+  sendToFoundations: function(card) {
+    const f = this.foundation;
+    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
   },
 
-  sendToFoundations: function(card) {
-    // the last foundation is empty unless the game has been won, so use its mayAddCard
-    var fs = this.foundations, f = fs[fs.length - 1];
-    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
+  hasBeenWon: function() {
+    return this.foundation.childNodes.length==104;
   }
 };
 
@@ -85,11 +80,12 @@ var Spider = {
   },
 
   autoplayMove: function() {
+    const ks = this.kings;
     for(var i = 0; i != 8; i++) {
-      var k = this.kings[i], p = k.parentNode;
+      var k = ks[i], p = k.parentNode;
       if(!p.isNormalPile) continue;
       var n = p.childNodes.length - 13;
-      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.firstEmptyFoundation);
+      if(n>=0 && p.childNodes[n]==k && k.parentNode.mayTakeCard(k)) return this.moveTo(k, this.foundation);
     }
     return false;
   }

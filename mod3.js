@@ -79,23 +79,21 @@ Mod3.canMoveToFoundation = function(card, stack) {
 ///////////////////////////////////////////////////////////
 //// hint
 Mod3.getHints = function() {
-  for(var i = this.allstacks.length-1; i >= 0; i--) {
-    var pile = this.allstacks[i];
-    if(pile.isStock || !pile.hasChildNodes()) continue;
-
-    var card = pile.lastChild;
-    var rowStart = card.row * 8, rowEnd = rowStart + 8;
-
-    for(var j = rowStart; j < rowEnd; j++) {
-      var target = this.foundations[j];
+  for(var i = 0; i < this.allstacks.length; i++) {
+    var source = this.allstacks[i];
+    if(source.isStock || !source.hasChildNodes()) continue;
+    var card = source.lastChild;
+    
+    var rowStart = card.row * 8;
+    for(var j = 0; j < 8; j++) {
+      var target = this.foundations[rowStart+j];
+      if(!this.canMoveTo(card,target)) continue;
       // hints are useful if:
-      //  - the target is an empty pile in a *different* row of the foundations (so we don't suggest
-      //    moving a 2, 3, or 4 along a row) (this case covers the hints from the bottom row too)
-      //  - the target is nonempty, and the source is the only card in its pile
-      if(this.canMoveTo(card,target)
-          && (target.hasChildNodes() ? !card.previousSibling : pile.parentNode!=target.parentNode)) {
-        this.addHint(card, target);
-      }
+      // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
+      // - |target| is nonempty, and |card| is the only card in |source|
+      if(source.isFoundation && (target.hasChildNodes()
+          ? card.previousSibling : source.parentNode==target.parentNode)) continue;
+      this.addHint(card, target);
     }
   }
 };

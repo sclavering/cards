@@ -34,19 +34,14 @@ AllGames.freecell = {
 
   // test if there are enough spaces/cells to perform a move, not just is it is legal.
   movePossible: function(card, target) {
-    dump("FreeCell.movePossible "+card.toString()+" "+target.id+"\n");
+    if(!card.nextSibling) return true;
     var spaces = this.countEmptyPiles(target);
-    dump(" s: "+spaces+"\n");
     var cells = this.numEmptyCells;
-    dump(" c: "+cells+"\n");
-    // this is the number we can move using the most complex algorithm
-    var numCanMove = (cells+1) * (1 + (spaces * (spaces + 1) / 2));
-    dump("canMove: "+numCanMove+"\n");
-    // count number of cards to move
+    // the number we can move using the most complex algorithm
+    if(spaces) spaces = spaces * (spaces + 1) / 2;
+    var numCanMove = (cells + 1) * (spaces + 1);
     var numToMove = 0;
     for(var next = card; next; next = next.nextSibling) numToMove++;
-    dump("numToMove: "+numToMove+"\n");
-    //
     return numToMove<=numCanMove;
   },
 

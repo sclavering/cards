@@ -469,11 +469,10 @@ using those 100px :)  thanks Neil.
       <stack id="yukon-pile-5" class="card-fan-down"/><spacer flex="1"/>
       <stack id="yukon-pile-6" class="card-fan-down"/><spacer flex="1"/>
       <vbox id="yukon-foundation">
-        <stack id="yukon-foundation-0" class="card-pile"/>
-        <stack id="yukon-foundation-1" class="card-pile"/>
-        <stack id="yukon-foundation-2" class="card-pile"/>
-        <stack id="yukon-foundation-3" class="card-pile"/>
-        <spacer flex="1"/>
+        <stack id="yukon-foundation-0" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="yukon-foundation-1" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="yukon-foundation-2" class="card-pile"/><spacer class="row-spacer"/>
+        <stack id="yukon-foundation-3" class="card-pile"/><spacer flex="1"/>
       </vbox>
       <spacer flex="1"/>
     </hbox>

@@ -28,7 +28,7 @@ FreeCell.canMoveTo = function(card, target) {
   if(target.isCell) return (!target.hasChildNodes() && !card.nextSibling);
   var last = target.lastChild;
   if(target.isFoundation)
-    return (last ? card.isSameSuit(last)&&card.isConsecutiveTo(last) : card.isAce());
+    return this.canMoveToFoundation(card, target); // inherited method
   if(!last || (last.isConsecutiveTo(card) && last.notSameColour(card))) {
     if(this.movePossible(card,target)) return true;
     // XXX this obviously needs to be made localisable, and moved elsewhere.

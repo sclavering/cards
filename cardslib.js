@@ -737,11 +737,14 @@ var Cards = {
     // FREECELL additions
     MouseHandler2.init(this.gameDisplayStack);   // handles drag-drop and mouse clicks
     Highlighter.init(this.gameDisplayStack);     // used by MouseHandler2
-    // retrieve current game, stored in prefCurrentGame attribute on <window> element
-    var currentGamePref =
-      (this.preferences.getPrefType("current-game") != 0)
-      ? this.preferences.getCharPref("current-game")
-      : "Klondike";
+    // retrieve current game
+    var currentGame;
+    try {
+      currentGame = this.preferences.getCharPref("current-game");
+    } catch(e) {
+      currentGame = "Klondike";
+    }
+    if(!Games[currentGame]) currentGame = "Klondike"; // just in case pref gets corrupted
     this.playGame(currentGamePref);
   },
 

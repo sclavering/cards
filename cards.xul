@@ -795,7 +795,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         <pile id="tripeaks-pile-1"/><flex/>
         <pilespacer/><flex/>
         <pilespacer/><flex/>
-        <pile id="tripeaks-pile-2"/><flex/>
+        <pile id="tripeaks-pile-2"/>
         <pilespacer/><halfpilespacer/>
         <flex4/>
       </hbox>

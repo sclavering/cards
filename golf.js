@@ -41,8 +41,7 @@ Golf.canMoveTo = function(card, stack) {
   if(stack != this.foundation) return false;
   var diff = this.foundation.lastChild.number() - card.number();
   return (diff ==  1 || diff == -1 // can go up or one by down
-         (this.difficultyLevel==1 &&
-          (diff == -12 || diff == 12)));  //Or King to Ace in easy mode
+          || (this.difficultyLevel==1 && (diff == -12 || diff == 12)));  // Or King<->Ace in easy mode
 };
 
 

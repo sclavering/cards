@@ -16,13 +16,6 @@ function toggleAnimation(menuitem) {
 
 var CardMover1 = {
   cards: null, // a <stack/> to hold the cards being moved
-  target: null, // where its going to
-  interval: null, // ref to the window.setInterval triggering the animation
-  tx: 0, // x coord to move to, including any offset into pile
-  ty: 0,
-  stepX: 0, // amount to change the position by on each step
-  stepY: 0,
-  stepNum: 0,
 
   init: function() {
     // class doesn't need to be flexible yet
@@ -33,10 +26,13 @@ var CardMover1 = {
   move: function(firstCard, target) {
     Cards.disableUI();
 
+    // initial coords
     var sx = firstCard.boxObject.x - gGameStackLeft;
     var sy = firstCard.boxObject.y - gGameStackTop;
-    var tx = this.tx = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
-    var ty = this.ty = target.boxObject.y - gGameStackTop + target.getNextCardTop();
+    // final coords
+    var tx = target.boxObject.x - gGameStackLeft + target.getNextCardLeft();
+    var ty = target.boxObject.y - gGameStackTop + target.getNextCardTop();
+    // change in coords
     var dx = tx - sx;
     var dy = ty - sy;
 
@@ -48,41 +44,42 @@ var CardMover1 = {
     }
 
     // put cards in the temp pile. _top and _left properties remain as numbers, unlike top and left
-//    this.cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
-    this.cards.left = this.cards._left = sx;
-    this.cards.top = this.cards._top = sy;
-    firstCard.transferTo(this.cards);
-    this.target = target;
+    var cards = this.cards; // so we can use it in the nested functions
+//    cards.className = firstCard.parentNode.className; // so cards layed out as in originating stack
+    cards.left = cards._left = sx;
+    cards.top = cards._top = sy;
+    firstCard.transferTo(cards);
 
     var angle = Math.atan2(dy, dx);
-    this.stepX = Math.cos(angle) * 55;
-    this.stepY = Math.sin(angle) * 55;
-    this.stepNum = Math.floor(dx ? dx/this.stepX : dy/this.stepY);
+    var stepX = Math.cos(angle) * 55;
+    var stepY = Math.sin(angle) * 55;
+    var stepNum = Math.floor(dx ? dx/stepX : dy/stepY);
 
-    this.interval = setInterval(function(){CardMover.step();}, 30);
-    this.step();
-  },
+    var interval = null;
 
-  step: function() {
-    if(this.stepNum==0) return this.moveComplete();
-    this.cards.left = this.cards._left += this.stepX;
-    this.cards.top = this.cards._top += this.stepY;
-    this.stepNum--;
-  },
+    function step() {
+      if(stepNum!=0) {
+        cards.left = cards._left += stepX;
+        cards.top = cards._top += stepY;
+        stepNum--;
+      } else {
+        // move is done
+        cards.left = tx;
+        cards.top = ty;
+        clearInterval(interval);
+        // Using a timer forces moz to paint the cards at their destination (but still as children
+        // of |cards|) before transferring them, which is good because the transfer takes a while.
+        setTimeout(function() {
+          cards.firstChild.transferTo(target);
+          cards.hide();
+          // don't enable UI until autoplay finished
+          if(!Game.autoplay()) Cards.enableUI();
+        }, 0);
+      }
+    };
 
-  moveComplete: function() {
-    this.cards.left = this.tx;
-    this.cards.top = this.ty;
-    clearInterval(this.interval);
-    // Using a timer forces moz to paint the cards at their destination (but still as children
-    // of this.cards) before transferring them, which is good because the transfer takes a while.
-    setTimeout(function() {
-      var cm = CardMover;
-      cm.cards.firstChild.transferTo(cm.target);
-      cm.cards.hide();
-      // don't enable UI until autoplay finished
-      if(!Game.autoplay()) Cards.enableUI();
-    }, 0);
+    interval = setInterval(step, 30);
+    step();
   }
 };
 

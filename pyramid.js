@@ -2,7 +2,7 @@ Games["pyramid"] = {
   __proto__: BaseCardGame,
 
   id: "pyramid",
-  useDragDrop: false,
+  mouseHandling: "click-to-select",
   canTurnStockOver: true,
 
 

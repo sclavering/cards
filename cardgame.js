@@ -5,7 +5,10 @@ var BaseCardGame = {
   // boolean flags that games might want to override
   canTurnStockOver: false,
   acesHigh: false,
-  useDragDrop: true, // if false we use "click to select, then click on target" in the style of FreeCell
+
+  // see mouse.js
+  mouseHandling: "drag+drop",
+  mouseHandler: null,
 
   // these are all automatically set up by initStacks()
   allstacks: [],   // array of piles of all times.  used for clearing the game
@@ -43,8 +46,6 @@ var BaseCardGame = {
     this.xulElement.hidden = false;
     // creates the Difficulty level menu on the toolbar if necessary, and sets the Game.difficultyLevel param
     this.initDifficultyLevel();
-    MouseHandler = this.useDragDrop ? MouseHandler1 : MouseHandler2;
-    MouseHandler.start();
     // init stack arrays and stuff
     this.newGame();
   },
@@ -52,12 +53,15 @@ var BaseCardGame = {
   end: function() {
     this.endGame();
     this.clearGame();
+    this.mouseHandler.reset();
     // hide
     this.xulElement.hidden = true;
   },
 
   initialise: function() {
     this.initialised = true;
+
+    if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
 
     this.initStacks();
 
@@ -188,6 +192,7 @@ var BaseCardGame = {
 
   // === Start Game =======================================
   newGame: function() {
+    this.mouseHandler.reset();
     this.score = 0;
     this.undoHistory = [];
     this.updateScoreDisplay();
@@ -417,7 +422,7 @@ var BaseCardGame = {
   // actually perform the move, return true/false  for success.  Should generally call
   // this.trackMove(action: "some-string", card: card, source: someStackNode);
   // source can generally be retrieved by card.getSource(), if the function is being called
-  // by CardMover, MouseHandler or CardTurner
+  // by CardMover, or CardTurner
   // This generic version copes with all the games except Spider at the moment, and Spider
   // was written in a very unusual way :)
   moveTo: function(card, target) {
@@ -434,7 +439,7 @@ var BaseCardGame = {
     return true;
   },
 
-  // convenience function, used in MouseHandler
+  // convenience function, used in mouse handlers
   attemptMove: function(source, target) {
     if(Game.canMoveTo(source,target)) {
       Game.moveTo(source,target);
@@ -443,11 +448,8 @@ var BaseCardGame = {
     return false;
   },
 
-  // function attempts to move card to each foundation in turn, returning a Boolean for success
-  // default version is provided for Klondike-like games, Spider-like games may need to override
-  // (i.e. games where whole Ace->King runs are removed at onve rather than individual cards
-  // Bear in mind that this calls canMoveTo() so just changing that may well be sufficient
-  // Note that checking whether a game even has foundations is done in MouseHandler.mouseClicked()
+  // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
+  // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
     if(!this.canMoveCard(card)) return false;
     for(var i = 0; i < this.foundations.length; i++) {

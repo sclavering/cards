@@ -6,7 +6,6 @@ var gGameStackLeft = 0;
 
 var Game = null;  // the current games
 var Games = [];   // all the games, indexed by id
-var MouseHandler; // nasty thing.
 
 var gUIEnabled = true; // set by Cards.[en/dis]ableUI().  used to ignore mouse events
 
@@ -359,7 +358,8 @@ function _createCardPile(elt) {
 }
 
 
-// for the CardMover, MouseHandler1, etc
+
+// for the CardMover, MouseHandlers["drag+drop"], etc
 function createFloatingPile(className) {
   var pile = document.createElement("stack");
   pile.className = className;
@@ -374,6 +374,29 @@ function createFloatingPile(className) {
   return pile;
 }
 
+
+
+function createHighlighter() {
+  var box = document.createElement("box");
+  box.className = "card-highlight";
+  box.isHighlighter = true;
+  gGameStack.appendChild(box);
+  box.unhighlight = function() {
+    this.top = -1000;
+    this.left = -1000;
+    this.height = 0;
+    this.width = 0;
+  };
+  box.highlight = function(card) {
+    // card may in fact be a stack
+    this.left = getLeft(card) - gGameStackLeft;
+    this.top = getTop(card) - gGameStackTop;
+    this.width = getWidth(card);
+    this.height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
+  };
+  box.unhighlight();
+  return box;
+}
 
 
 
@@ -427,206 +450,7 @@ var CardTurner = {
 
 
 
-/** MouseHandler1
-  *
-  * handles the dragging of cards (not true drag drop) and mouse clicks
-  *
-  * start() - called from CardGame.start(), resets some vars
-  * addEvents() - enables mouse clickes and drag-drop
-  * removeEvents() - disables clicks + drag-drop
-  *
-  * on mousedown the card being clicked is noted, then when the mouse moves
-  * Game.canMoveCard() is queried.  if it return true then the card noted
-  * and all cards folowing it in its parent stack are moved to a new stack in
-  * the drag layer, and mouse events are attached to move it with the mouse.
-  *
-  * when cards are dropped the position is compared to that of each <stack> in
-  * the targets array to see which target the user is trying to drop the cards
-  * on. Game.tryMoveTo() is then called (Game is always the object for the
-  * current game)
-  */
-var MouseHandler1 = {
-  nextCard: null, // set on mousedown, so that on mousemove a stack c can be created
-  cards: null, // the stack of cards being dragged
-  tx: 0, // tx and ty used in positioning for drag+drop
-  ty: 0,
-  dragInProgress: false,
 
-  // this is toggled true when mouse first moves and forces clicks to be ignored.
-  // it is toggled false again when a drag is finished
-  mouseMoved: false,
-
-  init: function() {
-    // class doesn't need to be flexible for the moment
-    this.cards = createFloatingPile("fan-down");
-  },
-
-  start: function() {
-    this.nextCard = null;
-    this.tx = 0;
-    this.ty = 0;
-  },
-
-  mouseDown: function(e) {
-    var t = e.target;
-    if(t.isCard && Game.canMoveCard(t)) this.nextCard = t;
-  },
-
-  mouseMove: function(e) {
-    if(this.dragInProgress) {
-      this.cards.left = e.pageX - this.tx;
-      this.cards.top = e.pageY - this.ty;
-    } else if(this.nextCard) {
-      var card = this.nextCard;
-//      this.cards.className = card.parentNode.className;
-      this.cards.left = getLeft(card) - gGameStackLeft;
-      this.cards.top = getTop(card) - gGameStackTop;
-      // property to retrieve original source of cards. for most
-      // piles |source| is a pointer back to the pile itself.
-      this.cards.source = card.parentNode.source;
-      card.transferTo(this.cards);
-      // other stuff
-      this.dragInProgress = true;
-      this.tx = e.pageX - this.cards.left;
-      this.ty = e.pageY - this.cards.top;
-      this.nextCard = null;
-    }
-  },
-
-  mouseUp: function(e) {
-    this.nextCard = null;
-    if(!this.dragInProgress) return;
-    this.dragInProgress = false;
-
-    var l = getLeft(this.cards), r = getRight(this.cards), t = getTop(this.cards), b = getBottom(this.cards);
-
-    var card = this.cards.firstChild;
-    var source = card.parentNode.source;
-    // try dropping cards on each possible target
-    var targets = Game.dragDropTargets;
-    var success = false;
-    for(var i = 0; !success && i<targets.length; i++) {
-      var target = targets[i];
-      if(target==source) continue;
-
-      var l2 = getLeft(target), r2 = getRight(target), t2 = getTop(target), b2 = getBottom(target);
-      var overlaps = (((l2<=l && l<=r2)||(l2<=r && r<=r2)) && ((t2<=t && t<=b2)||(t2<=b && b<=b2)));
-      if(overlaps && Game.attemptMove(card,target)) success = true;
-    }
-    // move cards back
-    if(!success) card.transferTo(source);
-
-    this.cards.hide();
-  },
-
-  // middle click calls smartMove(), left clicks reveal(), dealFromStock(),
-  // or turnStockOver(). double left click calls sendToFoundations()
-  mouseClick: function(e) {
-    if(this.dragInProgress) return;
-
-    var t = e.target;
-    if(e.button==1) {
-      if(t.isCard) Game.smartMove(t);
-    // right click should be showCard() ?
-    } else if(e.button==0) {
-      if(t.isCard) {
-        if(t.parentNode.isStock) Game.dealFromStock();
-        else if(t.faceDown()) Game.revealCard(t);
-        else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
-      } else {
-        if(t.isStock) Game.dealFromStock();
-      }
-    }
-  }
-}
-
-
-
-
-
-/** MouseHandler2
-  *
-  * This performs the same job as MouseHandler, except that it makes the procedure for moving
-  * a card:
-  *   click to select source,
-  *   click on destination,
-  * rather than drag+drop
-  *
-  * uses the new Highlighter class to highlight selected cards.
-  */
-var MouseHandler2 = {
-  source: null,
-
-  start: function() {},
-
-  mouseUp: function(e) {},
-  mouseDown: function(e) {},
-  mouseMove: function(e) {},
-
-  mouseClick: function(e) {
-    var t = e.target;
-    if(e.button==0) {
-      if(e.detail==2) { // && Game.foundations) {  // don't need for FreeCell, but might do in future
-        this.clearHighlight();
-        // in a double click the first click will have highlighted the card, so the
-        // second click's target is the highlight box
-        if(t.className=="card-highlight") Game.sendToFoundations(this.source);
-        this.source = null;
-      } else {
-        if(this.source) {
-          this.clearHighlight();
-          // we move to a pile, not to the card the user clicks on :)
-          if(t.isCard) t = t.parentNode;
-          // must check if target is a cell or foundation, to avoid trying
-          // to move card into the highlight box or main display stack :(
-          if(t.isPile || t.isCell || t.isFoundation)
-            if(t != this.source.parentNode)
-              Game.attemptMove(this.source,t);
-          this.source = null;
-        } else {
-          if((t.isCard && t.parentNode.isStock) || (t.isPile && t.isStock)) {
-            Game.dealFromStock();
-          } else if(t.isCard && Game.canMoveCard(t)) {
-            this.source = t;//.parentNode.lastChild;
-            this.highlight();
-          }
-        }
-      }
-    } else if(e.button==1) {
-      if(this.source) {
-        this.clearHighlight();
-        this.source = null;
-      }
-      if(t.isCard) Game.smartMove(t);
-    }
-  },
-
-  highlight: function() { Highlighter.highlight(this.source); },
-  clearHighlight: function() { Highlighter.clearHighlight(); }
-}
-
-var Highlighter = {
-  highlightBox: null, // a boxes that get positioned round cards to highlight them
-  destinations: null, // where the hint should show the card moving to
-
-  init: function(stack) {
-    this.highlightBox = document.createElement("box");
-    this.highlightBox.className = "card-highlight";
-  },
-
-  highlight: function(card) {
-    // card may be a stack if hint suggests moving to an empty stack
-    this.highlightBox.left = getLeft(card) - gGameStackLeft;
-    this.highlightBox.top = getTop(card) - gGameStackTop;
-    this.highlightBox.width = getWidth(card);
-    var height = card.isCard ? getBottom(card.parentNode.lastChild)-getTop(card) : getHeight(card);
-    this.highlightBox.height = height;
-    gGameStack.appendChild(this.highlightBox);
-  },
-  clearHighlight: function() {
-    gGameStack.removeChild(this.highlightBox);
-  }
-}
 
 
 
@@ -778,24 +602,6 @@ var HintHighlighter = {
 
 
 
-/* used to ensure that |this| refers to the right thing within the real event handler,
-   and so that we can avoid adding and removing the event listeners while animating */
-function handleMouseClick(e) {
-  if(!gUIEnabled) return;
-  MouseHandler.mouseClick(e);
-}
-function handleMouseUp(e) {
-  if(!gUIEnabled || e.button!=0) return;
-  MouseHandler.mouseUp(e);
-}
-function handleMouseDown(e) {
-  if(!gUIEnabled || e.button!=0) return;
-  MouseHandler.mouseDown(e);
-}
-function handleMouseMove(e) {
-  if(!gUIEnabled) return;
-  MouseHandler.mouseMove(e);
-}
 
 
 
@@ -842,17 +648,10 @@ var Cards = {
     gGameStackTop = gGameStack.boxObject.y;
     gGameStackLeft = gGameStack.boxObject.x;
 
-    // mouse event listeners
-    gGameStack.addEventListener("click", handleMouseClick, false);
-    gGameStack.addEventListener("mousemove", handleMouseMove, false);
-    gGameStack.addEventListener("mousedown", handleMouseDown, false);
-    gGameStack.addEventListener("mouseup", handleMouseUp, false);
-
-    // init other objects in cardslib.js
-    MouseHandler1.init();
+    // init other stuff
+    initMouseHandlers();
     CardMover.init();
     HintHighlighter.init();
-    Highlighter.init();
 
     // build the games menu
     var menu = document.getElementById("menupopup-gametypes");

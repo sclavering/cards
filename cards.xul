@@ -25,6 +25,7 @@
   <!-- gameWon attrs read and passed to nsIPromptService call.  Should be a stringbundle really -->
 
 <script type="application/x-javascript" src="cardslib.js"/>
+<script type="application/x-javascript" src="mouse.js"/>
 <script type="application/x-javascript" src="cardgame.js"/>
 <script type="application/x-javascript" src="freecellmover.js"/>
 

@@ -2,9 +2,9 @@
 // base class for FreeCell and Seahaven Towers
 var FreeCellGame = {
   __proto__: BaseCardGame,
-  
-  useDragDrop: false,
-  
+
+  mouseHandling: "click-to-select",
+
   init: function() {
     // insufficient spaces message
     this.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
@@ -14,7 +14,7 @@ var FreeCellGame = {
 
   // unlike in other games where this function returns a boolean, here we sometimes return an int.
   // false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
-  // (using 0 means the overall behaviour will match other games, but callers which do want to 
+  // (using 0 means the overall behaviour will match other games, but callers which do want to
   // know about an insufficent spaces result can test if the result ===0)
   canMoveTo: function(card, target) {
     if(target.isCell) return this.canMoveToCell(card, target);
@@ -23,7 +23,7 @@ var FreeCellGame = {
       return (this.movePossible(card,target) ? true : 0);
     return false;
   },
-  
+
   moveTo: function(card, target) {
     var source = card.parentNode;
     var action;
@@ -55,7 +55,7 @@ var FreeCellGame = {
     }
     return false;
   }
-  
+
 }
 
 
@@ -77,17 +77,17 @@ var FreeCellGame = {
 var FreeCellMover = {
   moveQueue: null, // an array (queue) of single card moves to be performed
                    // this will be null rather than an empty array
-  
+
   step: function() {
     if(!this.moveQueue) return false;
-    
+
     var move = this.moveQueue.shift();
     move.card.moveTo(move.target);
-    
+
     if(this.moveQueue.length==0) this.moveQueue = null;
     return true;
   },
-  
+
   move: function(card, target, freeCells, spaces) {
     // remove the target from the list of free cells
     // this is a workaround for the case where the card end up being moved onto the target,
@@ -116,15 +116,15 @@ var FreeCellMover = {
       // move groups of (numFreeCells+1) through cells to each space, then pull back
       // complexMove would most likely work, but would look odd as unnecessary work would be done
       this.queueMediumMove(card, last, target, freeCells, spaces, numToMove);
-    } else if(numToMove <= groupsize*(sumToNumSpaces+1)) { 
+    } else if(numToMove <= groupsize*(sumToNumSpaces+1)) {
       // run the last type of move, then consolidate all into one pile,
       // then run this kind again, until all but |card| have been moved
       this.queueComplexMove(card, last, target, freeCells, spaces, numToMove);
     }
-    
+
     this.step();
   },
-  
+
   // append to |moves| the seq of moves that uses only the |cells| as intermediate storage
   // (which might includes some spaces as well as cells), and moves the cards between
   // |first| and |last| inclusive to |target|
@@ -139,7 +139,7 @@ var FreeCellMover = {
     for(current = first.nextSibling; current!=last.nextSibling; current = current.nextSibling)
       this.moveQueue.push({card: current, target: target});
   },
-  
+
   // create a queue of moves that uses the cells to fill each space with c+1 cards
   queueMediumMove: function(first, last, target, cells, spaces, numToMove) {
     // the first and last cards of each set of #cells+1 cards put into a different space
@@ -161,10 +161,10 @@ var FreeCellMover = {
     // move the last few cards (<c+1 of them, so a simple move is sufficient)
     this.queueSimpleMove(first, current, target, cells);
     // move each of the piles of cards previously put into spaces to the real destination
-    for(s = s-1; s >= 0; s--) 
+    for(s = s-1; s >= 0; s--)
       this.queueSimpleMove(firsts[s], lasts[s], target, cells);
   },
-  
+
   queueComplexMove: function(first, last, target, cells, spaces, numToMove) {
     var numLeft = numToMove;
     var firsts = new Array(spaces.length);

@@ -1,4 +1,3 @@
-var Regiment =
 Games["regiment"] = {
   __proto__: BaseCardGame,
 

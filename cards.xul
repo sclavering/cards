@@ -35,6 +35,7 @@
 <script type="application/x-javascript" src="mod3.js"/>
 <script type="application/x-javascript" src="montana.js"/>
 <script type="application/x-javascript" src="penguin.js"/>
+<script type="application/x-javascript" src="pileon.js"/>
 <script type="application/x-javascript" src="pyramid.js"/>
 <script type="application/x-javascript" src="regiment.js"/>
 <script type="application/x-javascript" src="russiansol.js"/>
@@ -618,6 +619,33 @@ pile, stock, waste, cell, reserve and foundation elements are all essentially <s
       </vbox><flex2/>
     </hbox>
   </vbox>
+
+  <hbox id="pileon" hidden="true" class="game">
+    <colspacer/>
+    <hbox flex="1" equalsize="always">
+      <vbox flex="1">
+        <pile class="fan-right" id="pileon-pile-0"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-4"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-8"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-12"/>
+      </vbox><vbox flex="1">
+        <pile class="fan-right" id="pileon-pile-1"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-5"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-9"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-13"/>
+      </vbox><vbox flex="1">
+        <pile class="fan-right" id="pileon-pile-2"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-6"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-10"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-14"/>
+      </vbox><vbox flex="1">
+        <pile class="fan-right" id="pileon-pile-3"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-7"/><rowspacer/>
+        <pile class="fan-right" id="pileon-pile-11"/>
+      </vbox>
+    </hbox>
+    <colspacer/>
+  </hbox>
 
   <!-- Pyramid -->
   <vbox id="pyramid" hidden="true" class="game">

@@ -12,8 +12,6 @@
   *   calculates which move algorithms are currently in use (each one is called by
   *   the next level up of complexity), and preforms a single step for that.
   *   You should probably not call this function from outside CardMover
-  *
-  *
   */
 var FreeCellMover = {
   // for Simple/Medium/ComplexMover, state=0 means that this mover is currently inactive

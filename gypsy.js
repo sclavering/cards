@@ -66,7 +66,7 @@ Gypsy.smartMove = function(card) {
   var target = this.findBestMoveForCard(card);
   if(target) this.moveTo(card,target);
 };
-// picks the first stack fromthe left the card could go to, or - failing that - the first suit-stack
+// picks the first stack from the left the card could go to, or - failing that - the first suit-stack
 Gypsy.findBestMoveForCard = function(card) {
   // find a move onto another nonempty stack
   var dest = this.searchAround(card,function(c,s) {

@@ -3,8 +3,7 @@ var Golf = new CardGame();
 Golf.init = function() {
   this.shortname = "golf";
   this.initStacks(7,1,0,true,false);
-  this.dragDropTargets = new Array(1);
-  this.dragDropTargets[0] = this.foundation;
+  this.dragDropTargets = [this.foundation];
   this.stockDealTargets = this.dragDropTargets;
 };
 

@@ -11,10 +11,12 @@ Games["tripeaks"] = {
     // Piles 18-27 have no children.
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
 
+    var ps = this.piles;
+
     for(var i = 0; i != 18; i++) {
-      var p = this.piles[i];
-      var l = this.piles[lefts[i]];
-      var r = this.piles[lefts[i]+1];
+      var p = ps[i];
+      var l = ps[lefts[i]];
+      var r = ps[lefts[i]+1];
       p.leftChild = l;
       l.rightParent = p;
       p.rightChild = r;
@@ -24,16 +26,19 @@ Games["tripeaks"] = {
     // these are the piles which have no left/right parent
     const nolp = [0,1,2,3,5,7,9,12,15,18];
     const norp = [0,1,2,4,6,8,11,14,17,27];
-    for(i = 0; i != nolp.length; i++) this.piles[nolp[i]].leftParent = null;
-    for(i = 0; i != norp.length; i++) this.piles[norp[i]].rightParent = null;
+    for(i = 0; i != nolp.length; i++) ps[nolp[i]].leftParent = null;
+    for(i = 0; i != norp.length; i++) ps[norp[i]].rightParent = null;
 
     // handler, and we need them to have .leftChild and .rightChild
-    for(i = 0; i != this.piles.length; i++) {
-      var s = this.piles[i];
+    for(i = 0; i != ps.length; i++) {
+      var s = ps[i];
+      s.isPeak = false;
       s.leftFree = function() { return !(this.leftChild && this.leftChild.hasChildNodes()); };
       s.rightFree = function() { return !(this.rightChild && this.rightChild.hasChildNodes()); };
       s.free = function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); };
     }
+    ps[0].isPeak = ps[1].isPeak = ps[2].isPeak = true;
+
     // convenience
     this.waste.free = function() { return true; };
   },
@@ -85,5 +90,30 @@ Games["tripeaks"] = {
     // won when the the peaks are empty
     for(var i = 0; i != 3; i++) if(this.piles[i].hasChildNodes()) return false;
     return true;
+  },
+
+  getScoreFor: function(action) {
+    if(action instanceof DealFromStockToPileAction) {
+      action.streakLength = 0;
+      return -5;
+    }
+
+    var done = this.actionsDone;
+    var prev = done.length>1 ? done[done.length-2] : null;
+
+    if(action instanceof RevealCardAction) {
+      action.streakLength = prev ? prev.streakLength : 0;
+      return 0;
+    }
+
+    // it's a MoveAction
+    var score = action.streakLength = prev ? prev.streakLength + 1 : 1;
+
+    // bonuses for removing a peak card
+    var pile = action.source, ps = this.piles;
+    if(pile.isPeak)
+      score += (ps[0].hasChildNodes() + ps[1].hasChildNodes() + ps[2].hasChildNodes() == 1) ? 30 : 15;
+
+    return score;
   }
 }

@@ -65,6 +65,30 @@ Games["gypsy"] = {
     return null;
   },
 
+  sendToFoundations: function(card) {
+    if(!this.canMoveCard(card)) return false;
+    if(card.isAce()) return this.sendAceToFoundations(card);
+    for(var i = 0; i < this.foundations.length; i++)
+      if(this.attemptMove(card,this.foundations[i]))
+        return true;
+    return false;
+  },
+  sendAceToFoundations: function(ace) {
+    // see if there's a matching ace, if so place this one in line with that
+    for(var i = 0; i < 8; i++) {
+      var f = this.foundations[i];
+      if(f.firstChild && f.firstChild.isSameSuit(ace)) {
+        var target = this.foundations[i<4 ? i+4 : i-4];
+        if(this.attemptMove(ace, target)) return true;
+      }
+    }
+    // otherwise put in the first empty space
+    for(var j = 0; j < 8; j++)
+      if(this.attemptMove(ace, this.foundations[j]))
+        return true;
+    return false;
+  },
+
 
   ///////////////////////////////////////////////////////////
   //// Autoplay

@@ -275,7 +275,14 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
     <flex/>
     <hbox id="golf-stock-row">
       <flex/>
-      <stock class="slide" id="golf-stock"/><flex2/>
+      <vbox>
+        <stock id="golf-stock"/>
+        <hbox>
+          <label value="&deals-left;"/>
+          <label id="golf-deals-left"/>
+        </hbox>
+      </vbox>
+      <flex/>
       <foundation id="golf-foundation"/><flex/>
     </hbox>
     <rowspacer/>
@@ -322,22 +329,22 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <vbox align="center">
         <hbox>
           <foundation id="gypsy-foundation-0"/><colspacer/>
-          <foundation id="gypsy-foundation-1"/>
+          <foundation id="gypsy-foundation-4"/>
         </hbox><rowspacer/>
         <hbox>
-          <foundation id="gypsy-foundation-2"/><colspacer/>
-          <foundation id="gypsy-foundation-3"/>
-        </hbox><rowspacer/>
-        <hbox>
-          <foundation id="gypsy-foundation-4"/><colspacer/>
+          <foundation id="gypsy-foundation-1"/><colspacer/>
           <foundation id="gypsy-foundation-5"/>
         </hbox><rowspacer/>
         <hbox>
-          <foundation id="gypsy-foundation-6"/><colspacer/>
+          <foundation id="gypsy-foundation-2"/><colspacer/>
+          <foundation id="gypsy-foundation-6"/>
+        </hbox><rowspacer/>
+        <hbox>
+          <foundation id="gypsy-foundation-3"/><colspacer/>
           <foundation id="gypsy-foundation-7"/>
         </hbox><rowspacer/>
         <hbox>
-          <label value="&deals-left-label;"/>
+          <label value="&deals-left;"/>
           <label id="gypsy-deals-left"/>
         </hbox>
         <stock id="gypsy-stock"/>
@@ -505,7 +512,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
       <vbox>
         <stock id="mod3-stock"/>
         <hbox>
-          <label value="&deals-left-label;"/>
+          <label value="&deals-left;"/>
           <label id="mod3-deals-left"/>
         </hbox>
       </vbox>
@@ -773,7 +780,7 @@ pile, stock, waste, cell, reserve and foundation elements are all essenitally <s
         </vbox>
         <rowspacer/>
         <hbox>
-          <label value="&deals-left-label;"/>
+          <label value="&deals-left;"/>
           <label id="spider-deals-left"/>
         </hbox>
         <stock id="spider-stock"/>

@@ -32,7 +32,7 @@ Games["golf"] = {
   ///////////////////////////////////////////////////////////
   //// Moving
   canMoveCard: function(card) {
-    return (card.parentNode!=this.foundation && card.isLastOnPile());
+    return (card.parentNode.isNormalPile && card.isLastOnPile());
   },
 
   canMoveTo: function(card, stack) {
@@ -59,39 +59,6 @@ Games["golf"] = {
   //// smartmove
   smartMove: function(card) {
     if(this.canMoveTo(card, this.foundation)) this.moveTo(card, this.foundation);
-  },
-
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
-  autoplayMove: function() {
-    var card = this.stock.lastChild;
-
-    if(card && card.faceUp()) {  // We must have just flipped it... see below...
-      card.moveTo(this.foundation);
-      this.trackMove("dealt-from-stock", null, null);
-      return true;
-    }
-
-    var allEmpty = true;
-    // If there are no moveable cards move a card from the stock to the foundation
-    // (Any possible moves might be delayed as strategy otherwise...)
-    for(var i = 0; i < 7; i++) {
-      card = this.stacks[i].lastChild;
-      if(card) {
-        allEmpty = false;
-        if(this.canMoveTo(card, this.foundation)) return false;
-      }
-    }
-
-    // dealFromStock doesn't animate, so it's easy to miss...  we can do it ourself
-    card = this.stock.lastChild;
-    // If we want to move a card, first we'll flip it, then next autoplay will move it.
-    if(card) {
-      card.turnFaceUp();
-      return true;
-    }
-    return false;
   },
 
 

@@ -3,14 +3,12 @@ Games["golf"] = {
 
   id: "golf",
   difficultyLevels: ["easy-golf","medium-1deck","hard-2decks"],
+  rule_dealFromStock: "to-foundation",
 
   init: function() {
     this.stockDealTargets = [this.foundation];
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// start game
   deal: function() {
     var cards;
     var cardsPerColumn;
@@ -28,9 +26,6 @@ Games["golf"] = {
     this.dealToStack(cards,this.stock,cards.length,0);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   canMoveCard: function(card) {
     return (card.parentNode.isNormalPile && card.isLastOnPile());
   },
@@ -43,9 +38,6 @@ Games["golf"] = {
     return card.differsByOneTo(last);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// hint
   getHints: function() {
     for(var i = 0; i < 7; i++) {
       var card = this.stacks[i].lastChild;
@@ -54,19 +46,14 @@ Games["golf"] = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smartmove
   smartMove: function(card) {
     if(this.canMoveTo(card, this.foundation)) this.moveTo(card, this.foundation);
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     return (this.score == 0);
   },
+
   scores: {
     "move-to-foundation": -1,
     "dealt-from-stock"  : -1

@@ -7,7 +7,7 @@ Games["doublesol"] = {
   __proto__: BaseCardGame,
 
   id: "doublesol",
-  canTurnStockOver: true,
+  rule_dealFromStock: "to-waste,can-turn-stock-over",
 
 
   init: function() {

@@ -1,15 +1,9 @@
 var YukonBase = {
   __proto__: BaseCardGame,
 
-
-  ///////////////////////////////////////////////////////////
-  //// Moving
   rule_canMoveToPile: "descending,alt-colours",
 
-
-  ///////////////////////////////////////////////////////////
-  //// Hints
-  // take a card a find another card on a differnt stack of opposite colour and one less in rank
+  // take a card a find another card on a different stack of opposite colour and one less in rank
   getHintsForCard: function(card) {
     if(!card) return;
     for(var i = 0; i < this.stacks.length; i++) {
@@ -29,9 +23,6 @@ var YukonBase = {
     }
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// smart move
   getBestMoveForCard: function(card) {
     var piles = card.parentNode.isNormalPile ? this.getPilesRound(card.parentNode) : this.stacks;
     var i, pile;
@@ -46,9 +37,6 @@ var YukonBase = {
     return null;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// Autoplay
   autoplayMove: function() {
     // move stuff to foundations
     for(var i = 0; i < this.stacks.length; i++) {
@@ -59,9 +47,6 @@ var YukonBase = {
     return false;
   },
 
-
-  ///////////////////////////////////////////////////////////
-  //// winning, scoring, undo
   hasBeenWon: function() {
     // game won if all foundations have 13 cards
     for(var i = 0; i < this.foundations.length; i++)
@@ -69,6 +54,7 @@ var YukonBase = {
         return false;
     return true;
   },
+
   scores: {
     "move-to-foundation"  :  10,
     "card-revealed"       :   5,
@@ -114,6 +100,7 @@ Games["sanibel"] = {
   __proto__: YukonBase,
 
   id: "sanibel",
+  rule_dealFromStock: "to-waste",
 
   deal: function() {
     var cards = this.shuffleDecks(2);

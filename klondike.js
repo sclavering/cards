@@ -2,7 +2,7 @@ Games["klondike"] = {
   __proto__: BaseCardGame,
 
   id: "klondike",
-  canTurnStockOver: true,
+  rule_dealFromStock: "to-waste,can-turn-stock-over",
 
 
   init: function() {

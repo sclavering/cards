@@ -1,6 +1,7 @@
 var BaseCardGame = {
-  // games must provide this, the id of the vbox/hbox that contains all the game's content
+  // games must provide this, the id of the vbox/hbox that contains all the game's layout
   id: null,
+  xulElement: null, // the container vbox/hbox for the game (set automatically)
 
   // An array of strings, each of which is prefixed with "difficulty." then looked up in
   // gStrings to build the difficulty level menu when switching to the current card game.
@@ -10,13 +11,13 @@ var BaseCardGame = {
   difficultyLevel: 0,
 
   // boolean flags that games might want to override
-  canTurnStockOver: false,
   acesHigh: false,
 
   // rule vars that can be set rather than a Game providing the corresponding function
   // see rules.js for the possible values
   rule_canMoveCard: null,
   rule_canMoveToPile: null,
+  rule_dealFromStock: null,
 
   // see mouse.js
   mouseHandling: "drag+drop",
@@ -34,17 +35,15 @@ var BaseCardGame = {
   reserve: null,
 
   // array of piles to be examined after each move for cards to reveal
+  // in most cases this will be set automatically, but games can probably override
   thingsToReveal: null,
   // list of elements which the DragDrop system should test if cards are being dropped on
+  // xxx is this still used??
   dragDropTargets: null,
-  // the piles to deal to when the stock is clicked.  ignored if the game has a waste pile,
-  // and if left null this.stacks will be used instead.
-  stockDealTargets: null,
-
-  xulElement: null, // the container vbox/hbox for the game
 
 
   // === Start/Finish Playing =============================
+  // Games may override init(), and nothing else.
   initialised: false,
 
   // Games which need to do some additional initialisation should override this.
@@ -54,10 +53,8 @@ var BaseCardGame = {
 
   start: function() {
     if(!this.initialised) this.initialise();
-    // show
     this.xulElement.hidden = false;
     this.initDifficultyLevel();
-    // init stack arrays and stuff
     this.newGame();
   },
 
@@ -65,7 +62,6 @@ var BaseCardGame = {
     this.endGame();
     this.clearGame();
     this.mouseHandler.reset();
-    // hide
     this.xulElement.hidden = true;
   },
 
@@ -77,20 +73,20 @@ var BaseCardGame = {
     this.init(); // game specific stuff
 
     // if the game doesn't specify something
+    // xxx still required for init'ing stock.counter, but not for anything else!
     if(this.stock && !this.waste && !this.stockDealTargets) this.stockDealTargets = this.stacks;
 
     if(this.rule_canMoveCard) this.canMoveCard = Rules.canMoveCard[this.rule_canMoveCard];
     if(this.rule_canMoveToPile) this.canMoveToPile = Rules.canMoveToPile[this.rule_canMoveToPile];
+    if(this.rule_dealFromStock) this.dealFromStock = Rules.dealFromStock[this.rule_dealFromStock];
   },
 
-  // inits stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
+  // Init's stacks[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
   // |waste| members (sometimes to null or to empty arrays).
   // Requires game to have a |id| param, and all piles of various types to have ids of
   // the form {id}-{pile-type}-{int} in the XUL
   initStacks: function() {
-    // We have to set these all to empty arrays now, or every game ends up using the *same* arrays
-    // for |stacks|, |foundations|, etc., which means everything breaks horribly as soon as a the
-    // user switches to a new type of game.
+    // Unless these are set explicitly then all games share the same arrays (breaking everything)
     this.stacks = [];
     this.cells = [];
     this.reserves = [];
@@ -103,7 +99,8 @@ var BaseCardGame = {
       this.stock.isStock = true;
       this.allstacks.push(this.stock);
       // a <label/> for displaying the num. of deals left
-      this.stock.counter = document.getElementById(id+"-stock-counter");
+      var counter = this.stock.counter = document.getElementById(id+"-stock-counter");
+      if(counter) counter.add = function(val) { this.value = parseInt(this.value)+val; };
     }
     this.waste = createCardPile(id+"-waste");
     if(this.waste) {
@@ -204,6 +201,8 @@ var BaseCardGame = {
 
 
   // === Start Game =======================================
+  // Games should override deal(), and should use dealToStack to do so.
+
   newGame: function() {
     this.mouseHandler.reset();
     this.score = 0;
@@ -218,6 +217,7 @@ var BaseCardGame = {
     //
     this.deal();
     
+    // xxx this should probably happen elsewhere
     if(this.stock && this.stock.counter) {
       var dealsLeft = this.stock.childNodes.length;
       if(!this.waste) dealsLeft = Math.ceil(dealsLeft / this.stockDealTargets.length);
@@ -256,7 +256,7 @@ var BaseCardGame = {
   shuffle: function(cardArray) {
     return CardShuffler.shuffle(cardArray);
   },
-  // get "num" decks of cards, sorted Ace->King, Spades,Diamonds,Hearts,Clubs
+  // get "num" decks of cards, sorted Ace->King; Spades, Diamonds, Hearts, Clubs
   getCardDecks: function(num) {
     return CardShuffler.getCardDecks(num);
   },
@@ -276,92 +276,8 @@ var BaseCardGame = {
 
 
 
-  // === Undo stuff =======================================
-  score: 0,
-  undoHistory: new Array(),
-
-  canUndo: function() {
-    return (this.undoHistory.length>0);
-  },
-
-  // undo() deals with the mechanisms for storing the hostory of moves performed, and actually undoes
-  // a certain set of standard moves.  Anything specific to a certain Game (or sufficiently uncommon)
-  // will be handed off to undoMove(), which the game must then deal with.
-  // undo() also makes sure the score for a move is subtracted from the current score
-  undo: function() {
-    var undo = this.undoHistory.pop();
-    this.score -= undo.score;
-    this.updateScoreDisplay();
-    // undo the move of it is a basic action type, otherwise hand it to undoMove, which games can override
-    switch(undo.action) {
-      case "card-revealed":
-        undo.card.setFaceDown();
-        this.undo(); // it looks odd seeing blank cards on top of a pile
-        break;
-      case "dealt-from-stock":
-        this.undealFromStock();
-        break;
-      case "stock-turned-over":
-        this.undoTurnStockOver();
-        break;
-      case "redeal":
-        // redeals/reshuffles require a full map of where cards were previously
-        this.undoRedeal(undo.map);
-        break;
-      default:
-        this.undoMove(undo);
-    }
-    // en/dis-able the Undo and Redeal buttons
-    Cards.fixUI();
-  },
-  // Is passed an object with source and card properties.  must move card back, turn over or whatever
-  // This version should be sufficient for most games
-  undoMove: function(undo) {
-    undo.card.transferTo(undo.source);
-  },
-
-  restart: function() {
-    while(this.undoHistory.length!=0) this.undo();
-  },
-
-  updateScoreDisplay: function() {
-    Cards.displayScore(this.score);
-  },
-
-
-
-  // === Move tracking ====================================
-  // called by moveTo(), revealCard() and dealFromStock()
-  // updates th undo list and score
-  trackMove: function(action, card, source) {
-    var scorechange = this.getScoreForAction(action, card, source);
-    var move = {action: action, card: card, source: source, score: scorechange};
-    this.undoHistory.push(move);
-    this.score += scorechange;
-    this.updateScoreDisplay();
-    // if this is the first undo added enable the command
-    if(this.undoHistory.length==1) Cards.doEnableUndo();
-    // force hints to be regenerated
-    this.clearHints();
-  },
-
-  trackRedeal: function(map) {
-    var scorechange = this.getScoreForAction("redeal");
-    var move = {action: "redeal", map: map, score: scorechange};
-    this.undoHistory.push(move);
-    this.score += scorechange;
-    this.updateScoreDisplay();
-    // update UI if required
-    if(this.redealsRemaining==0) Cards.disableRedeal();
-    if(this.undoHistory.length==1) Cards.doEnableUndo();
-    // force hints to be regenerated
-    this.clearHints();
-  },
-
-
-
   // === Winning ==========================================
-  // should check if the game is in a won state and return a Boolean
+  // Games should obviously override this
   hasBeenWon: function() {
     return false;
   },
@@ -369,14 +285,61 @@ var BaseCardGame = {
 
 
   // === Scoring ==========================================
-  // takes strings describing action and returns an integer for the score
+  // games should override either |getScoreForAction|, or |scores|
+  score: 0,
+
+  updateScoreDisplay: function() {
+    Cards.displayScore(this.score);
+  },
+
+  // action is a string.  card and source are optional
   getScoreForAction: function(action, card, source) {
     if(action in this.scores) return this.scores[action];
     return 0;
   },
 
-  // a hashtable of scores (which individual games should provide)
+  // a hashtable of scores
   scores: {},
+
+
+
+  // === Move tracking and Undoing ========================
+  // All actions/moves that are undoable should be implemented as Action objects
+  // (see actions.js), and passed to doAction.  Games should probably not override
+  // any of these functions.
+  undoHistory: [],
+
+  // would be called "do", but that's a language keyword
+  doAction: function(action) {
+    action.perform();
+    action.score = this.getScoreForAction(action.action);
+    this.undoHistory.push(action);
+    this.score += action.score;
+    this.updateScoreDisplay();
+    this.clearHints();
+    // update UI
+    if(this.redealsRemaining==0) Cards.disableRedeal(); // yuck.  redeals should die.
+    if(this.undoHistory.length==1) Cards.doEnableUndo();
+  },
+
+  canUndo: function() {
+    return (this.undoHistory.length!=0);
+  },
+
+  // Action objects (see actions.js) each implement an undo() method.
+  // This just picks the right object, and adjusts the game score etc.
+  undo: function() {
+    var undo = this.undoHistory.pop();
+    this.score -= undo.score;
+    this.updateScoreDisplay();
+    undo.undo();
+    // en/dis-able the Undo and Redeal buttons
+    Cards.fixUI();
+  },
+
+  restart: function() {
+    while(this.undoHistory.length!=0) this.undo();
+  },
 
 
 
@@ -408,26 +371,18 @@ var BaseCardGame = {
     return (last ? (card.isSameSuit(last) && card.isConsecutiveTo(last)) : card.isAce());
   },
 
-  // actually perform the move, return true/false  for success.  Should generally call
-  // this.trackMove(action: "some-string", card: card, source: someStackNode);
-  // source can be retrieved via card.getSource()
-  // Spider, Pyramid and FreeCellGame override this
+  // xxx maybe this should die now?  it was important before doAction existed
   moveTo: function(card, target) {
-    var source = card.getSource();
-    var action =
-      (target.isFoundation && !source.isFoundation) ? "move-to-foundation" :
-      (source.isFoundation && !target.isFoundation) ? "move-from-foundation" :
-      (source==this.waste) ? "move-from-waste" :
-      "move-between-piles";
-    card.moveTo(target);
-    this.trackMove(action, card, source);
+    this.doAction(new MoveAction(card, card.getSource(), target));
     return true;
   },
 
   // convenience function
-  attemptMove: function(source, target) {
-    if(Game.canMoveTo(source,target)) {
-      Game.moveTo(source,target);
+  attemptMove: function(card, target) {
+    if(Game.canMoveTo(card,target)) {
+      // *don't* change to calling doAction directly, as some
+      // games might be overriding moveTo but not this function
+      this.moveTo(card,target);
       return true;
     }
     return false;
@@ -445,175 +400,33 @@ var BaseCardGame = {
 
 
 
-  // for games like FreeCell and Towers
-  getEmptyCells: function() {
-    var freecells = [];
-    for(var i = 0; i < this.cells.length; i++)
-      if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
-    return freecells;
-  },
-  countEmptyCells: function() {
-    var cells = 0;
-    for(var i = 0; i < this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
-    return cells;
-  },
-  getEmptyPiles: function() {
-    var spaces = [];
-    for(var i = 0; i < this.stacks.length; i++)
-      if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
-    return spaces;
-  },
-
-
-
   // === Redealing ========================================
-  // some games allow a certain number of "redeals", where all the remaining cards on the tableau
-  // are collected together and shuffled, then redealt in the pattern that was present before
-
-  // notes:
-  // * this will only work when all face up cards are above all face down cards on each stack
-  //   (but that seems always to be the case...)
-  // * this only works for tableau piles, not stocks, reserves, or anything else
-
+  // xxx relics of experiments with redeals.  only Montana has these now
   redeals: 0,
   redealsRemaining: 0,
-
   canRedeal: function() {
-    return (this.redealsRemaining > 0);
+    return false;
   },
-
   redeal: function() {
-    this.redealsRemaining--;
-    var numStacks = this.stacks.length;
-    var i, j;
-    // for redealing
-    var down = new Array(numStacks);
-    var up = new Array(numStacks);
-    var cards = [];
-    // for undoing the redeal in the future
-    var map = {};
-    map.cards = new Array(numStacks);
-    map.faceUp = new Array(numStacks);
-    // remove cards and store pattern
-    for(i = 0; i < numStacks; i++) {
-      down[i] = 0;
-      up[i] = 0;
-      var stack = this.stacks[i];
-      map.cards[i] = new Array(stack.childNodes.length);
-      map.faceUp[i] = new Array(stack.childNodes.length);
-      j = stack.childNodes.length;
-      while(stack.hasChildNodes()) {
-        j--;
-        var card = stack.removeChild(stack.lastChild);
-        map.cards[i][j] = card;
-        map.faceUp[i][j] = card.faceUp();
-        if(card.faceDown()) down[i]++;
-        else up[i]++;
-        card.setFaceDown();
-        cards.push(card);
-      }
-    }
-    // shuffle
-    cards = this.shuffle(cards);
-    // deal out again
-    for(i = 0; i < this.stacks.length; i++) {
-      this.dealToStack(cards,this.stacks[i],down[i],up[i]);
-    }
-    // track
-    this.trackRedeal(map);
-  },
-
-  undoRedeal: function(map) {
-    var i, j, stack;
-    // remove all cards from present positions
-    // (map holds references to them)
-    for(i = 0; i < this.stacks.length; i++) {
-      stack = this.stacks[i];
-      while(stack.hasChildNodes()) stack.removeChild(stack.lastChild);
-    }
-    // restore previous position
-    for(i = 0; i < map.cards.length; i++) {
-      stack = this.stacks[i];
-      for(j = 0; j < map.cards[i].length; j++) {
-        var card = map.cards[i][j];
-        if(map.faceUp[i][j]) card.setFaceUp();
-        else card.setFaceDown();
-        stack.addCard(card);
-      }
-    }
-    //
-    this.redealsRemaining++;
   },
 
 
 
   // === Revealing Cards ==================================
-  // xxx is canRevealCard actually used?
-  canRevealCard: function(card) {
-    return card.isLastOnPile();
-  },
   revealCard: function(card) {
-    if(card.faceDown() && card.isLastOnPile()) {
-      card.turnFaceUp();
-      this.trackMove("card-revealed", card, null);
-    }
+    if(card.faceDown() && card.isLastOnPile())
+      this.doAction(new RevealCardAction(card));
   },
 
 
 
   // === Dealing from the stock ===========================
-  // Dealing is to the waste pile if there is one, otherwise to each of stockDealTargets[],
-  // which will be set to stacks[] if not specified
-
-  // only used in games without a waste pile
-  // lets a game impose restrictions on dealing, e.g. in Spider dealing is not allowed if any pile is empty
-  canDealFromStock: function() {
-    return true;
-  },
-
-  dealFromStock: function() {
-    var counterChange = 0;
-    if(this.waste) {
-      if(this.stock.hasChildNodes()) {
-        this.dealCardTo(this.waste);
-        this.trackMove("dealt-from-stock", null, null);
-        counterChange--;
-      } else if(this.canTurnStockOver) {
-        while(this.waste.hasChildNodes()) this.undealCardFrom(this.waste);
-        counterChange = this.stock.childNodes.length;
-        this.trackMove("stock-turned-over", null, null);
-      } else {
-        return;
-      }
-    } else {
-      if(!this.stock.hasChildNodes() || !this.canDealFromStock()) return;
-      var stacks = this.stockDealTargets;
-      for(var i = 0; i < stacks.length; i++) this.dealCardTo(stacks[i]);
-      this.trackMove("dealt-from-stock", null, null);
-      counterChange--;
-    }
-    
-    var counter = this.stock.counter;
-    if(counter) counter.value = parseInt(counter.value) + counterChange;
-
-    this.autoplay();
-  },
-
+  // Games with a stock should provide dealFromStock(), or set rule_dealFromStock.
+  // These functions are used to implement the standard rules and their *Action's
   dealCardTo: function(destination) {
     var card = this.stock.lastChild;
     card.setFaceUp();
     card.transferTo(destination);
-  },
-
-  undealFromStock: function() {
-    if(this.waste) {
-      this.undealCardFrom(this.waste);
-    } else {
-      var stacks = this.stockDealTargets;
-      for(var i = stacks.length-1; i >= 0; i--) this.undealCardFrom(stacks[i]);
-    }
-    var counter = this.stock.counter;
-    if(counter) counter.value = parseInt(counter.value) + 1;
   },
 
   undealCardFrom: function(source) {
@@ -622,16 +435,10 @@ var BaseCardGame = {
     card.transferTo(this.stock);
   },
 
-  undoTurnStockOver: function() {
-    while(this.stock.hasChildNodes()) this.dealCardTo(this.waste);
-    
-    var counter = this.stock.counter;
-    if(counter) counter.value = 0;
-  },
-
 
 
   // === Hints ============================================
+  // Games should override getHints(); the implementation should call addHint() repeatedly.
   hintSources: [],
   hintDestinations: [],
   haveHints: false, // means hints have been calculated, though there may not be any.
@@ -654,12 +461,11 @@ var BaseCardGame = {
     this.hintNum %= this.hintSources.length;
   },
 
-  // should repeatedly call addHint
   getHints: function() {
   },
 
   // takes the card to suggest moving, and the destination to suggest moving to (generally a stack)
-  addHint: function(source,dest) {
+  addHint: function(source, dest) {
     this.hintSources.push(source);
     this.hintDestinations.push(dest);
   },
@@ -674,9 +480,10 @@ var BaseCardGame = {
 
 
   // === Smart move =======================================
-  // smart move is called when the player middle clicks on a card.  it should find the best
-  // possible move for that card (which will be game dependent) and perform it.
-  // Games can either implement getBestMoveForCard(card), or they can override smartMove itself
+  // Smart move is called when the player middle clicks on a card.  It should
+  // perform the best possible move for that card.
+  // Games should implement getBestMoveForCard(card), or maybe override smartMove()
+  // itself.  The other functions here are generally helpful in doing so.
   smartMove: function(card) {
     if(!this.canMoveCard(card)) return;
     var target = this.getBestMoveForCard(card);
@@ -742,9 +549,13 @@ var BaseCardGame = {
 
 
   // === Autoplay =========================================
-  // this function is called whenever an animation is completed, and should be called by any
-  // function that moves cards which doesn't use animation.
-  // a bool is returned so CardMover.move() can decide whether to reenable the UI
+  // autoplay() is called whenever an animation completes, and should be called
+  // after any move/action that doesn't use animation (e.g. dealing from the stock).
+  // Games can override thingsToReveal[] to control auto revealing.
+  // Games should override autoplayMove()
+  
+  // A bool is returned so CardMover.move() can decide whether to reenable the UI.
+  // (We want to keep it disabled throughout seq's of consecutive animated moves.)
   autoplay: function() {
     if(this.autoReveal() || this.autoplayMove()) {
       return true;
@@ -755,9 +566,9 @@ var BaseCardGame = {
     }
     return false;
   },
-  // XXX add some useful comments!
+
   autoReveal: function() {
-    var stacks = this.thingsToReveal; // games should create this array if they want autoRevealing
+    var stacks = this.thingsToReveal;
     if(!stacks) return false;
     for(var i = 0; i < stacks.length; i++) {
       var last = stacks[i].lastChild;
@@ -768,12 +579,10 @@ var BaseCardGame = {
     }
     return false;
   },
-  // must carry out a single autoplay step, returning true if successful, false otherwise
+
+  // Must carry out a single autoplay step, returning true if successful, false otherwise
   // (strictly speaking it must return true if it has inititated an animation, because that will
   // call autoplay again on completion.)
-  // its a good idea if this function takes card of all revelaing of cards before other stuff,
-  // because then when undo() is called it will never leave an exposed face down card, becuase
-  // undoing of revealCard calls undo() again
   autoplayMove: function() {
     return false;
   },

@@ -3,7 +3,7 @@ Games["canfield"] = {
 
   id: "canfield",
   acesHigh: true,
-  canTurnStockOver: true,
+  rule_dealFromStock: "to-waste,can-turn-stock-over",
 
 
   init: function() {

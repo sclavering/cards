@@ -7,6 +7,8 @@ Games["mod3"] = {
   __proto__: BaseCardGame,
 
   id: "mod3",
+  
+  rule_dealFromStock: "to-stacks",
 
 
   init: function() {

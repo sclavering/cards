@@ -11,7 +11,6 @@ var FreeCellGame = {
   },
 
 
-
   // unlike in other games where this function returns a boolean, here we sometimes return an int.
   // false==move impossible (violates rules), 0==not enough spaces for move, true==move possible
   // (using 0 means the overall behaviour will match other games, but callers which do want to
@@ -31,15 +30,14 @@ var FreeCellGame = {
 
   moveTo: function(card, target) {
     var source = card.parentNode;
-    var action;
-    if(target.isPile) {
-      action = "move-between-piles";
-      FreeCellMover.move(card, target, this.getEmptyCells(), this.getEmptyPiles());
+    if(target.isNormalPile) {
+      this.doAction(new FreeCellMoveAction(card, source, target,
+                        this.getEmptyCells(), this.getEmptyPiles()));
     } else {
-      action = target.isCell ? "card-moved-to-cell" : "cards-moved-to-foundation";
-      card.moveTo(target);
+      var action = new MoveAction(card,source,target);
+      action.action = target.isCell ? "card-moved-to-cell" : "cards-moved-to-foundation";
+      this.doAction(action);
     }
-    this.trackMove(action,card,source);
     return true;
   },
 
@@ -59,9 +57,47 @@ var FreeCellGame = {
       alert(this.insufficientSpacesMessage);
     }
     return false;
+  },
+
+
+  getEmptyCells: function() {
+    var freecells = [];
+    for(var i = 0; i < this.cells.length; i++)
+      if(!this.cells[i].hasChildNodes()) freecells.push(this.cells[i]);
+    return freecells;
+  },
+  countEmptyCells: function() {
+    var cells = 0;
+    for(var i = 0; i < this.cells.length; i++) if(!this.cells[i].hasChildNodes()) cells++;
+    return cells;
+  },
+  getEmptyPiles: function() {
+    var spaces = [];
+    for(var i = 0; i < this.stacks.length; i++)
+      if(!this.stacks[i].hasChildNodes()) spaces.push(this.stacks[i]);
+    return spaces;
   }
 }
 
+
+
+function FreeCellMoveAction(card, source, destination, cells, spaces) {
+  this.card = card;
+  this.source = source;
+  this.destination = destination;
+  this.cells = cells;
+  this.spaces = spaces;
+}
+FreeCellMoveAction.prototype = {
+  action: "move-between-piles",
+  
+  perform: function() {
+    FreeCellMover.move(this.card, this.destination, this.cells, this.spaces);
+  },
+  undo: function() {
+    this.card.transferTo(this.source);
+  }
+}
 
 
 

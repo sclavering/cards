@@ -720,7 +720,6 @@ var Cards = {
     else this.cmdRedeal.setAttribute("disabled","true");
   },
 
-  // called from CardGame.trackMove()/trackRedeal() as well as above
   enableUndo: function() {
     if(Game.canUndo()) this.cmdUndo.removeAttribute("disabled");
   },
@@ -747,7 +746,7 @@ var Cards = {
     this.difficultyLevelMenu.setAttribute("disabled","true");
   },
 
-  // called by CardGame.trackMove() I think.
+  // called by BaseCardGame.updateScoreDisplay()
   displayScore: function(score) { this.scoreDisplay.value = score; },
 
   // called from BaseCardGame.autoplay(), which is a function called after all significant

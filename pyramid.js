@@ -3,7 +3,7 @@ Games["pyramid"] = {
 
   id: "pyramid",
   mouseHandling: "click-to-select",
-  canTurnStockOver: true,
+  rule_dealFromStock: "to-waste,can-turn-stock-over",
 
 
   init: function() {
@@ -64,12 +64,7 @@ Games["pyramid"] = {
 
   // "target" is the second card of the pair to be removed (to the foundation).
   moveTo: function(card, target) {
-    var card2 = target.lastChild;
-    var source = card.parentNode;
-    card.transferTo(this.foundation);
-    card2.transferTo(this.foundation);
-    this.trackMove("pyramid-move", [card,card2], [source,target]);
-    Game.autoplay(); // so hasBeenWon gets called
+    this.doAction(new PyramidMoveAction(card.parentNode, target));
     return true;
   },
 
@@ -101,12 +96,25 @@ Games["pyramid"] = {
       if(this.stacks[i].hasChildNodes())
         return false;
     return true;
-  },
-
-  // handles moves of type "pyramid-move", where undo.source and undo.card are both arrays
-  undoMove: function(undo) {
-    for(var i = 0; i < undo.card.length; i++) {
-      undo.card[i].transferTo(undo.source[i]);
-    }
   }
 }
+
+
+function PyramidMoveAction(pile1, pile2) {
+  this.pile1 = pile1;
+  this.pile2 = pile2;
+}
+PyramidMoveAction.prototype = {
+  action: "pyramid-move",
+  
+  perform: function() {
+    this.pile1.lastChild.transferTo(Game.foundation);
+    this.pile2.lastChild.transferTo(Game.foundation);
+    Game.autoplay();
+  },
+  undo: function(undo) {
+    Game.foundation.lastChild.transferTo(this.pile2);
+    Game.foundation.lastChild.transferTo(this.pile1);
+  }
+}
+

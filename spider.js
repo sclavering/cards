@@ -1,18 +1,11 @@
-// contains both Spider and BlackWidow (a spider variant)
+// both Spider and BlackWidow (a spider variant)
 
 var BaseSpiderGame = {
   __proto__: BaseCardGame,
 
   id: "spider",
-
-
-  ///////////////////////////////////////////////////////////
-  //// Dealing
-  canDealFromStock: function() {
-    // cannot deal when any of the 10 stacks are empty
-    for(var i = 0; i < 10; i++) if(!this.stacks[i].hasChildNodes()) return false;
-    return true;
-  },
+  
+  rule_dealFromStock: "to-stacks,if-none-empty",
 
 
   ///////////////////////////////////////////////////////////

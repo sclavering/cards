@@ -3,6 +3,7 @@ Games["acesup"] = {
 
   id: "acesup",
   acesHigh: true,
+  rule_dealFromStock: "to-stacks",
 
 
   ///////////////////////////////////////////////////////////

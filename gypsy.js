@@ -3,6 +3,7 @@ Games["gypsy"] = {
 
   id: "gypsy",
   difficultyLevels: ["easy-2suits","hard-4suits"],
+  rule_dealFromStock: "to-stacks",
 
 
   ///////////////////////////////////////////////////////////

@@ -630,9 +630,7 @@ GameController.prototype = {
   futureGames: [],
   haveFutureGames: false,
 
-  switchTo: function(leaveDifficultyMenuAlone) {
-    if(!leaveDifficultyMenuAlone) initDifficultyLevelMenu(null);
-
+  switchTo: function() {
     if(!this.currentGame) this.newGame();
     else Game = this.currentGame;
 
@@ -675,60 +673,5 @@ GameController.prototype = {
   clearFutureGames: function() {
     this.futureGames = [];
     this.haveFutureGames = false;
-  }
-}
-
-
-function DifficultyLevelsController(id, ids, names) {
-  this.id = id;
-  this.levelIds = ids;
-  this.levelNames = names;
-
-  try { var curr = gPrefs.getIntPref(this.id+".currentdifficulty"); }
-  catch(e) { curr = Math.floor(ids.length/2); }
-  this.currentLevelIndex = curr;
-  this.currentLevel = AllGames[ids[curr]];
-}
-DifficultyLevelsController.prototype = {
-  setDifficultyLevel: function(levelIndex) {
-    gPrefs.setIntPref(this.id+".currentdifficulty", levelIndex);
-
-    this.currentLevelIndex = levelIndex;
-    this.currentLevel.switchFrom();
-    this.currentLevel = AllGames[this.levelIds[levelIndex]];
-    this.currentLevel.switchTo(true);
-  },
-
-  switchTo: function() {
-    initDifficultyLevelMenu(this.levelNames, this.currentLevelIndex);
-    this.currentLevel.switchTo(true);
-  },
-
-  switchFrom: function() {
-    this.currentLevel.switchFrom();
-  },
-
-  newGame: function(cards) {
-    this.currentLevel.newGame(cards);
-  },
-
-  restorePastGame: function() {
-    this.currentLevel.restorePastGame();
-  },
-
-  restoreFutureGame: function() {
-    this.currentLevel.restoreFutureGame();
-  },
-
-  get havePastGames() {
-    return this.currentLevel.havePastGames;
-  },
-
-  get haveFutureGames() {
-    return this.currentLevel.haveFutureGames;
-  },
-
-  clearFutureGames: function() {
-    this.currentLevel.clearFutureGames();
   }
 }

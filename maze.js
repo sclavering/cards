@@ -1,6 +1,4 @@
-Games.maze = true;
-
-AllGames.maze = {
+Games.maze = {
   __proto__: BaseCardGame,
 
   id: "maze",

@@ -1,20 +1,5 @@
-// Spider, Black Widow, Grounds for Divorce, and Wasp
-
-Games.blackwidow = Games.divorce = Games.wasp = true;
-
-Games.spider = {
-  names: ["easy-1suit", "medium-2suits", "hard-4suits"],
-  ids: ["spider-easy", "spider-medium", "spider"]
-};
-
-Games.simon = {
-  names: ["easy-1suit", "medium-2suits", "hard-4suits"],
-  ids: ["simon-easy", "simon-medium", "simon"]
-};
-
-
-
-
+// Spider, Black Widow, Grounds for Divorce, Wasp, and Simple Simon
+// ids: blackwidow, divorce, wasp, spider-1suit, spider-2suits, spider, simon-1suit, simon-2suits, simon
 
 var SpiderBase = {
   __proto__: BaseCardGame,
@@ -86,21 +71,21 @@ var Spider = {
 };
 
 
-AllGames["spider-easy"] = {
+Games["spider-1suit"] = {
   __proto__: Spider,
-  id: "spider-easy",
+  id: "spider-1suit",
   cards: [[SPADE], 8]
 };
 
 
-AllGames["spider-medium"] = {
+Games["spider-2suits"] = {
   __proto__: Spider,
-  id: "spider-medium",
+  id: "spider-2suits",
   cards: [[SPADE, HEART], 4]
 };
 
 
-AllGames.spider = {
+Games.spider = {
   __proto__: Spider,
   id: "spider",
   cards: 2
@@ -110,7 +95,7 @@ AllGames.spider = {
 
 
 
-AllGames.blackwidow = {
+Games.blackwidow = {
   __proto__: SpiderBase,
 
   id: "blackwidow",
@@ -149,7 +134,7 @@ AllGames.blackwidow = {
 
 
 
-AllGames.divorce = {
+Games.divorce = {
   __proto__: SpiderBase,
 
   id: "divorce",
@@ -195,7 +180,7 @@ AllGames.divorce = {
 
 
 
-AllGames.wasp = {
+Games.wasp = {
   __proto__: SpiderBase,
 
   id: "wasp",
@@ -261,21 +246,21 @@ var SimonBase = {
 };
 
 
-AllGames["simon-easy"] = {
+Games["simon-1suit"] = {
   __proto__: SimonBase,
-  id: "simon-easy",
+  id: "simon-1suit",
   cards: [[SPADE], 4]
 };
 
 
-AllGames["simon-medium"] = {
+Games["simon-2suits"] = {
   __proto__: SimonBase,
-  id: "simon-medium",
+  id: "simon-2suits",
   cards: [[SPADE, HEART], 2]
 };
 
 
-AllGames["simon"] = {
+Games["simon"] = {
   __proto__: SimonBase,
   id: "simon"
 };

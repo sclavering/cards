@@ -2,18 +2,17 @@
 
 <!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
 
-<overlay id="CardsOverlay"
-         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<overlay id="CardsOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <!-- Firefox -->
 <menupopup id="menu_ToolsPopup">
-  <menuitem id="cards-launch" label="&cards-launch-label;" insertbefore="prefSep"
+  <menuitem id="cards-launch" label="&play-cards;" insertbefore="devToolsSeparator"
       oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
 </menupopup>
 
 <!-- Seamonkey -->
 <menupopup id="windowPopup">
-  <menuitem id="cards-launch" label="&cards-launch-label;" insertbefore="sep-window-list"
+  <menuitem id="cards-launch" label="&play-cards;" insertbefore="sep-window-list"
       oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
 </menupopup>
 

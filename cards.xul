@@ -8,7 +8,7 @@
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   windowtype="cardgames-main"
-  title  ="&cards-window-title;"
+  title="&window.title;"
   id     ="cards-window"
   persist="screenX screenY width height sizemode"
   >
@@ -46,7 +46,6 @@
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">
-  <command id="cmd:setdifficulty" oncommand="GameController.setDifficultyLevel(event.target.value);"/>
   <command id="cmd:newgame" oncommand="newGame();"/>
   <command id="cmd:restart" oncommand="restartGame();"/>
   <command id="cmd:undo"    oncommand="undo();" disabled="true"/>
@@ -67,11 +66,12 @@
 <toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="&gamesMenu.label;">
-    <menupopup id="menupopup-gametypes" oncommand="playGame(event.target.gameId);"/>
-  </toolbarbutton>
-  <toolbarbutton id="game-difficulty-menu" type="menu" disabled="true" command="cmd:setdifficulty"
-      label="&difficulty-menu.label;" tooltiptext="&difficulty-menu.tooltip;">
-    <menupopup id="game-difficulty-popup"/>
+    <menupopup id="menupopup-gametypes"
+        oncommand="playGame(event.target.gameId);">
+      <menuitem id="gametypes-showall" label="&showallgames;"
+          oncommand="showGameSelector(); event.stopPropagation();"/>
+      <menuseparator/>
+    </menupopup>
   </toolbarbutton>
   <toolbarbutton command="cmd:newgame" label="&newgame.label;" tooltiptext="&newgame.tooltip;"/>
   <toolbarbutton command="cmd:restart" label="&restart.label;" tooltiptext="&restart.tooltip;"/>
@@ -89,7 +89,7 @@
   </toolbarbutton>
   <flex/>
   <hbox id="score-panel">
-    <label value="&statusbar-score-label;"/>
+    <label value="&score-label;"/>
     <label id="score-display"/>
   </hbox>
 </toolbar>

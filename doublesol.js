@@ -1,11 +1,6 @@
-/* this is a rather weird variant of Double Klondike, where foundations
-   are built: A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K in
-   strict suits, and one set of aces is missing
-   */
+// An interesting variant of (Double) Klondike where foundations are built A,A,2,2,3,...,Q,Q,K,K
 
-Games.doublesol = true;
-
-AllGames.doublesol = {
+Games.doublesol = {
   __proto__: BaseCardGame,
 
   id: "doublesol",

@@ -1,8 +1,4 @@
-Games.klondike = {
-  names: ["drawone", "drawthree"],
-  ids: ["klondike-draw1", "klondike-draw3"]
-};
-
+// provides: klondike, klondike-draw3
 
 var KlondikeBase = {
   __proto__: BaseCardGame,
@@ -80,7 +76,7 @@ var KlondikeBase = {
 
 
 
-AllGames["klondike-draw1"] = {
+Games["klondike"] = {
   __proto__: KlondikeBase,
   id: "klondike"
 };
@@ -89,7 +85,7 @@ AllGames["klondike-draw1"] = {
 
 
 
-AllGames["klondike-draw3"] = {
+Games["klondike-draw3"] = {
   __proto__: KlondikeBase,
   id: "klondike-draw3",
 

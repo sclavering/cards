@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<!-- Only want global.css, but referencing that directly gave XML parsing errors !! -->
+<?xml-stylesheet href="chrome://cards/content/cards.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://cards/locale/cards.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    windowtype="cardgames-selectgame"
+    title="&selectgame;"
+    id="cards-selectgame-dialogue"
+    persist="width height"
+    onload="onload();"
+    ondialogaccept="onaccept();"
+    >
+
+<label value="&selectgame.checkboxes;"/>
+
+<listbox id="games" rows="10" flex="1"/>
+
+<script><![CDATA[
+var list = null;
+
+function onload() {
+  list = document.getElementById("games");
+
+  var ids = window.arguments[0]; // array of game ids
+  var names = window.arguments[1]; // array of corresponding names
+  var tickedIds = window.arguments[2]; // an (unrelated) array of ids which should be ticked
+  var selectedId = window.arguments[3]; // id of game for which the listitem should start selected
+
+  var ticked = {}; // a hashtable version
+  for(var i = 0; i != tickedIds.length; ++i) ticked[tickedIds[i]] = true;
+
+  var item = null, index = 0; // index/item to be selected
+
+  for(i = 0; i != ids.length; ++i) {
+    var id = ids[i];
+    var li = document.createElement("listitem");
+    li.setAttribute("type", "checkbox");
+    li.setAttribute("label", names[i]);
+    li.gameId = id;
+    if(id in ticked) li.setAttribute("checked", "true");
+    list.appendChild(li);
+    if(id == selectedId) index = i, item = li;
+  }
+
+  list.selectedItem = item;
+  // xxx setting selectedItem ought to have done this (via item.selected=true),
+  // but it wasn't doing so in Firefox 1.0 on Ubuntu Linux 4.10 (on 2005-01-07)
+  item.setAttribute("selected", "true");
+}
+
+function onaccept() {
+  var items = list.childNodes, num = items.length;
+  var ticked = [];
+  for(var i = 0; i != num; ++i) {
+    var item = items[i];
+    if(item.checked) ticked.push(item.gameId);
+  }
+  opener.gameSelectorClosing(list.selectedItem.gameId, ticked);
+}
+]]></script>
+
+</dialog>

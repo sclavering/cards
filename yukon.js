@@ -1,5 +1,4 @@
-Games.yukon = Games.sanibel = true;
-
+// ids: yukon, sanibel
 
 var YukonBase = {
   __proto__: BaseCardGame,
@@ -39,7 +38,7 @@ var YukonBase = {
 };
 
 
-AllGames.yukon = {
+Games.yukon = {
   __proto__: YukonBase,
 
   id: "yukon",
@@ -75,7 +74,7 @@ AllGames.yukon = {
 };
 
 
-AllGames.sanibel = {
+Games.sanibel = {
   __proto__: YukonBase,
 
   id: "sanibel",

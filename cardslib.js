@@ -13,8 +13,8 @@ var gStrings = []; // the contents of the stringbundle
 var Game = null;  // the current games
 var GameController = null;
 
-var AllGames = [];
-var Games = [];   // all the games, indexed by id
+var Games = {}; // all the game controllers, indexed by game id
+var gGamesInMenu = []; // array of ids of games shown in Games menu
 
 var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
 
@@ -29,7 +29,6 @@ var gCardHeight = 0; // cards' heights in pixels (set in useCardSet)
 var gCardWidth = 0;
 
 // <command/> elements
-var gCmdSetDifficulty = "cmd:setdifficulty";
 var gCmdNewGame = "cmd:newgame";
 var gCmdRestartGame = "cmd:restart";
 var gCmdUndo = "cmd:undo";
@@ -42,9 +41,8 @@ var gMessageBox = "message";
 var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
 var gOptionsMenu = "options-menu";
-var gDifficultyLevelMenu = "game-difficulty-menu";
-var gDifficultyLevelPopup = "game-difficulty-popup";
 var gGameSelector = "game-type-menu";
+var gGameMenuPopup = "menupopup-gametypes";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
@@ -55,12 +53,10 @@ var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
 
 
 function init() {
-  var things = ["gCmdSetDifficulty","gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
-      "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu","gDifficultyLevelMenu",
-      "gDifficultyLevelPopup","gGameSelector","gScoreDisplay","gGameStack"];
+  var things = ["gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
+      "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu",
+      "gGameSelector","gScoreDisplay","gGameStack","gGameMenuPopup"];
   for(var t in things) window[things[t]] = document.getElementById(window[things[t]]);
-
-  gDifficultyLevelMenu.shouldBeEnabled = false;
 
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;
@@ -106,48 +102,24 @@ function init() {
     setTimeout(function(){thisthis.unhighlight();enableUI();}, 800);
   };
 
-  // build the games menu
-  var menu = document.getElementById("menupopup-gametypes");
-  var names = [];
-  var lookup = [];
-  var name, game;
-  for(game in Games) {
-    name = gStrings[game+".name"];
-    names.push(name);
-    lookup[name] = game;
-  }
-  names.sort();
-  for(var i in names) {
-    name = names[i], game = lookup[name];
-    var mi = document.createElement("menuitem");
-    mi.setAttribute("type", "radio");
-    mi.setAttribute("label", names[i]);
-    mi.gameId = game;
-    menu.appendChild(mi);
-  }
-
   // make controllers for each game type
-  for(game in AllGames) AllGames[game] = new GameController(game, AllGames[game]);
+  for(var game in Games) Games[game] = new GameController(game, Games[game]);
 
-  for(game in Games) {
-    var gamee = Games[game];
-    Games[game] = (gamee===true) ? AllGames[game]
-        : new DifficultyLevelsController(game, gamee.ids, gamee.names);
-  }
-
-  // switch to last played game
+  // work out which game was played last
   game = "klondike";
   try { game = gPrefs.getCharPref("current-game"); } catch(e) {}
   if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
 
+  // build the games menu
+  var gamesInMenu = ["spider","klondike"];
+  try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
+  buildGamesMenu(gamesInMenu, game);
+
   // set window title. (setting window.title does not work while the app. is starting)
-  document.documentElement.setAttribute("title", gStrings[game+".name"]);
+  // xxx should use document.title, but that only works in recent mozillae
+  document.documentElement.setAttribute("title", gStrings["game."+game]);
 
-  // tick/check the menuitem for current game
-  mi = menu.firstChild;
-  while(mi.gameId != game) mi = mi.nextSibling;
-  mi.setAttribute("checked", "true");
-
+  // switch to the last game played
   GameController = Games[game];
   GameController.switchTo();
 }
@@ -371,7 +343,7 @@ function playGame(game) {
   GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
-  window.title = gStrings[game+".name"];
+  window.title = gStrings["game."+game];
 
   GameController = Games[game];
   GameController.switchTo();
@@ -379,24 +351,63 @@ function playGame(game) {
 }
 
 
-function initDifficultyLevelMenu(items, selectedItem) {
-  gDifficultyLevelMenu.shouldBeEnabled = !!items;
-  if(!items) {
-    gDifficultyLevelMenu.setAttribute("disabled", "true");
-    return;
+function showGameSelector() {
+  const url = "chrome://cards/content/selectgame.xul";
+  const flags = "dialog,dependent,modal,chrome,resizable";
+
+  var game, name;
+  var names = [];
+  var lookup = {};
+
+  for(game in Games) {
+    names.push(name = gStrings["game."+game]);
+    lookup[name] = game;
   }
+  names.sort();
 
-  gDifficultyLevelMenu.removeAttribute("disabled");
+  var ids = new Array(names.length);
+  for(var i = 0; i != ids.length; ++i) ids[i] = lookup[names[i]];
 
-  var menu = gDifficultyLevelPopup;
-  while(menu.hasChildNodes()) menu.removeChild(menu.lastChild);
+  openDialog(url, null, flags, ids, names, gGamesInMenu, Game.id);
+}
 
+
+function gameSelectorClosing(selected, ticked) {
+  gPrefs.setCharPref("gamesInMenu", ticked.join(","));
+  buildGamesMenu(ticked, selected);
+  playGame(selected);
+}
+
+
+// |items| is an array of game ids; |selected| a game id for which the menuitem should be checked
+function buildGamesMenu(items, selected) {
+  const menu = gGameMenuPopup;
+  gGamesInMenu = items;
+
+  // removing any existing items
+  var separator = menu.childNodes[1];
+  while(separator != menu.lastChild) menu.removeChild(menu.lastChild);
+
+  // decide on menuitem names and sort them
+  var names = [];
+  var lookup = [];
   for(var i = 0; i != items.length; i++) {
+    var game = items[i];
+    var name = gStrings["game."+game];
+    names.push(name);
+    lookup[name] = game;
+  }
+  names.sort();
+
+  // build menu
+  for(i in names) {
+    name = names[i];
+    game = lookup[name];
     var mi = document.createElement("menuitem");
-    mi.setAttribute("label", gStrings["difficulty."+items[i]]);
-    mi.setAttribute("value", i);
     mi.setAttribute("type", "radio");
-    if(i==selectedItem) mi.setAttribute("checked","true");
+    mi.setAttribute("label", names[i]);
+    if(game==selected) mi.setAttribute("checked", "true");
+    mi.gameId = game;
     menu.appendChild(mi);
   }
 }
@@ -442,7 +453,6 @@ function enableUI() {
   gCmdNewGame.removeAttribute("disabled");
   gCmdRestartGame.removeAttribute("disabled");
   gOptionsMenu.removeAttribute("disabled");
-  if(gDifficultyLevelMenu.shouldBeEnabled) gDifficultyLevelMenu.removeAttribute("disabled");
   gGameSelector.removeAttribute("disabled");
   if(Game.canUndo || GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
   if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
@@ -457,7 +467,6 @@ function disableUI() {
   gCmdNewGame.setAttribute("disabled","true");
   gCmdRestartGame.setAttribute("disabled","true");
   gOptionsMenu.setAttribute("disabled","true");
-  gDifficultyLevelMenu.setAttribute("disabled","true");
   gGameSelector.setAttribute("disabled","true");
   gCmdUndo.setAttribute("disabled","true");
   gCmdRedo.setAttribute("disabled","true");

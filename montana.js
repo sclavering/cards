@@ -1,8 +1,4 @@
-Games.montana = {
-  names: ["easy", "hard"],
-  ids: ["montana", "montana-hard"]
-};
-
+// provides: montana, montana-hard
 
 var Montana = {
   __proto__: BaseCardGame,
@@ -85,14 +81,14 @@ var Montana = {
 };
 
 
-AllGames.montana = {
+Games.montana = {
   __proto__: Montana,
   id: "montana",
   isHardGame: false
 };
 
 
-AllGames["montana-hard"] = {
+Games["montana-hard"] = {
   __proto__: Montana,
   id: "montana-hard",
   isHardGame: true

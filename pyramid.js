@@ -1,6 +1,4 @@
-Games.pyramid = true;
-
-AllGames.pyramid = {
+Games.pyramid = {
   __proto__: BaseCardGame,
 
   id: "pyramid",

@@ -1,15 +1,9 @@
-Games.gypsy = {
-  names: ["easy-2suits", "hard-4suits"],
-  ids: ["gypsy-easy", "gypsy"]
-};
-
+// provides: gypsy, gypsy-2suits
 
 var GypsyBase = {
   __proto__: BaseCardGame,
 
   layout: "gypsy",
-  dealFromStock: "to piles",
-  getLowestMovableCard: "descending, alt colours",
 
   init: function() {
     const fs = this.foundations;
@@ -21,6 +15,8 @@ var GypsyBase = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
+  dealFromStock: "to piles",
+
   mayTakeCardFromPile: "run down, alt colours",
 
   mayAddCardToPile: "down, opposite colour",
@@ -28,6 +24,8 @@ var GypsyBase = {
   getHints: function() {
     for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
+  getLowestMovableCard: "descending, alt colours",
 
   getBestMoveForCard: "legal nonempty, or empty",
 
@@ -64,10 +62,10 @@ var GypsyBase = {
 };
 
 
-AllGames["gypsy-easy"] = {
+Games["gypsy-2suits"] = {
   __proto__: GypsyBase,
 
-  id: "gypsy-easy",
+  id: "gypsy-2suits",
 
   cards: [[SPADE, HEART], 4],
 
@@ -92,7 +90,7 @@ AllGames["gypsy-easy"] = {
 };
 
 
-AllGames["gypsy"] = {
+Games["gypsy"] = {
   __proto__: GypsyBase,
 
   id: "gypsy",

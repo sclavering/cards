@@ -1,6 +1,4 @@
-Games.fortythieves = true;
-
-AllGames.fortythieves = {
+Games.fortythieves = {
   __proto__: FreeCellGame,
 
   id: "fortythieves",

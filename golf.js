@@ -1,8 +1,4 @@
-Games.golf = {
-  names: ["easy-golf", "medium-1deck", "hard-2decks"],
-  ids: ["golf-easy", "golf", "golf-hard"]
-};
-
+// provides: golf, golf-easy, golf-hard
 
 var GolfBase = {
   __proto__: BaseCardGame,
@@ -56,7 +52,7 @@ var GolfBase = {
 
 
 // K->A or A->K allowed in Easy mode
-AllGames["golf-easy"] = {
+Games["golf-easy"] = {
   __proto__: GolfBase,
   id: "golf-easy",
 
@@ -66,14 +62,14 @@ AllGames["golf-easy"] = {
 };
 
 
-AllGames["golf"] = {
+Games["golf"] = {
   __proto__: GolfBase,
   id: "golf"
 };
 
 
 // 2 decks used
-AllGames["golf-hard"] = {
+Games["golf-hard"] = {
   __proto__: GolfBase,
   id: "golf-hard",
   cards: 2,

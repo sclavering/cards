@@ -1,6 +1,4 @@
-Games.regiment = true;
-
-AllGames.regiment = {
+Games.regiment = {
   __proto__: BaseCardGame,
 
   id: "regiment",

@@ -1,6 +1,4 @@
-Games.russiansol = true;
-
-AllGames.russiansol = {
+Games.russiansol = {
   __proto__: BaseCardGame,
 
   id: "russiansol",

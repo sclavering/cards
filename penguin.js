@@ -1,6 +1,4 @@
-Games.penguin = true;
-
-AllGames.penguin = {
+Games.penguin = {
   __proto__: BaseCardGame,
 
   id: "penguin",

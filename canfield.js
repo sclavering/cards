@@ -1,6 +1,4 @@
-Games.canfield = true;
-Games.demon = true;
-
+// provides: canfield, demon
 
 var CanfieldBase = {
   __proto__: BaseCardGame,
@@ -59,7 +57,7 @@ var CanfieldBase = {
 };
 
 
-AllGames.canfield = {
+Games.canfield = {
   __proto__: CanfieldBase,
 
   id: "canfield",
@@ -77,7 +75,7 @@ AllGames.canfield = {
 };
 
 
-AllGames.demon = {
+Games.demon = {
   __proto__: CanfieldBase,
 
   id: "demon",

@@ -1,6 +1,4 @@
-Games.towers = true;
-
-AllGames.towers = {
+Games.towers = {
   __proto__: FreeCellGame,
 
   id: "towers",

@@ -1,5 +1,8 @@
 var moveCards = null, turnCardUp = null; // function pointers
 
+var interruptMove = null; // null except during animation
+
+
 function enableAnimation(enable) {
   moveCards = enable ? moveCards1 : moveCards2;
   turnCardUp = enable ? turnCardUpAnimated : turnCardUpNonAnimated;
@@ -59,6 +62,7 @@ function moveCards1(firstCard, target) {
       target.addCards(firstCard);
       gFloatingPileNeedsHiding = true;
       animatedActionFinished(source);
+      interruptMove = null;
     };
 
     function step() {
@@ -73,8 +77,14 @@ function moveCards1(firstCard, target) {
         setTimeout(done, 0);
       }
     };
+    
+    function interrupt() {
+      clearInterval(interval);
+      done();
+    };
 
     interval = setInterval(step, 30);
+    interruptMove = interrupt;
 }
 
 

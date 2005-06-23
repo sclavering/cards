@@ -22,6 +22,11 @@ function initMouseHandlers() {
   gGameStack.addEventListener("mousemove", handleMouseMove, false);
   gGameStack.addEventListener("mousedown", handleMouseDown, false);
   gGameStack.addEventListener("mouseup", handleMouseUp, false);
+  // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-
+  // clicks (no down or click events), so it's easiest to do all right-click
+  // detection this way. NB: middle-click only gives a click event (no up/down).
+  gGameStack.oncontextmenu = handleRightClick;
+
 }
 function handleMouseClick(e) {
   if(!gUIEnabled) return;
@@ -39,11 +44,14 @@ function handleMouseMove(e) {
   if(!gUIEnabled) return;
   Game.mouseHandler.mouseMove(e);
 }
+function handleRightClick(e) {
+  if(!gUIEnabled) return;
+  Game.mouseHandler.rightClick(e);
+}
 
 
 
-
-var MouseHandlers = [];
+var MouseHandlers = {};
 
 MouseHandlers["drag+drop"] = {
   nextCard: null, // set on mousedown, so that on mousemove it can be moved to |cards|
@@ -118,20 +126,22 @@ MouseHandlers["drag+drop"] = {
   // or turnStockOver(). double left click calls sendToFoundations()
   mouseClick: function(e) {
     if(this.dragInProgress) return;
-
+    if(e.button != 0) return;
     var t = e.target;
-    if(e.button==2) {
-      if(t.isCard) Game.doBestMoveForCard(t);
-    } else if(e.button===0) {
-      if(t.isCard) {
-        if(t.parentNode.isStock) Game.dealFromStock();
-        else if(t.faceDown) Game.attemptRevealCard(t);
-        else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
-      } else {
-        if(t.isStock) Game.turnStockOver();
-      }
+    if(t.isCard) {
+      if(t.parentNode.isStock) Game.dealFromStock();
+      else if(t.faceDown) Game.attemptRevealCard(t);
+      else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
+    } else {
+      if(t.isStock) Game.turnStockOver();
     }
-  }
+  },
+  
+  rightClick: function(e) {
+    if(this.dragInProgress) return;
+    var t = e.target;
+    if(t.isCard) Game.doBestMoveForCard(t);
+  }  
 };
 
 
@@ -223,5 +233,7 @@ MouseHandlers["pyramid"] = {
     // otherwise the final click of the game gets caught by the window.onclick
     // handler for the game-won message, instantly starting a new game :(
     e.stopPropagation();
-  }
+  },
+  
+  rightClick: function() {}
 };

@@ -58,7 +58,7 @@ Games.acesup = {
 
   // no autoplay for this game
 
-  hasBeenWon: function() {
+  isWon: function() {
     if(this.stock.hasChildNodes()) return false;
     for(var i = 0; i != 4; i++) {
       var c = this.piles[i].firstChild;

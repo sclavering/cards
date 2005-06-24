@@ -201,13 +201,11 @@ var BaseCardGame = {
       if("redo" in d) d.redo();
       else d.perform();
       this.score += d.score;
+      // ugly
+      if(d.revealedCard) d.revealedCard.setFaceUp();
     }
 
     gScoreDisplay.value = this.score;
-
-    // necessary because global undo() function does not use disableUI/enableUI
-    if(this.canRedeal()) gCmdRedeal.removeAttribute("disabled");
-    else gCmdRedeal.setAttribute("disabled", "true");
   },
 
   _begin: function(cards) {
@@ -243,7 +241,7 @@ var BaseCardGame = {
 
   // === Winning ==========================================
   // Games should obviously override this
-  hasBeenWon: function() {
+  isWon: function() {
     return false;
   },
 
@@ -272,48 +270,62 @@ var BaseCardGame = {
 
   // === Move tracking and Undoing ========================
   // All actions/moves that are undoable should be implemented as Action objects
-  // (see actions.js), and passed to doAction.  Games should probably not override
-  // any of these functions.
+  // (see actions.js), and passed to doo().
   actionsDone: [],
   actionsUndone: [],
 
-  get canUndo() {
-    return this.actionsDone.length!=0;
-  },
+  canUndo: false,
+  canRedo: false,
 
-  get canRedo() {
-    return this.actionsUndone.length!=0;
-  },
-
-  // would be called "do", but that's a language keyword
-  doAction: function(action) {
+  doo: function(action) {
     this.actionsDone.push(action);
-    if(this.actionsUndone.length) this.actionsUndone = [];
+    this.canUndo = true;
+    if(this.canRedo) this.actionsUndone = [];
+    this.canRedo = false;
     action.score = this.getScoreFor(action);
-    action.perform();
-
-    gScoreDisplay.value = this.score += action.score;
+    //gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;
+  },
 
-    // xxx yuck
-    if(GameController.haveFutureGames) GameController.clearFutureGames();
+  // Called after a move completes (from global done() function)
+  //   pile - an optional <pile/> from which a card was removed
+  //   wasInterrupted - indicates no animations should be started here
+  // Returns a bool. indicating whether an animation was triggered.
+  done: function(pile, wasInterrupted) {
+    const acts = this.actionsDone, act = acts[acts.length-1];
+    gScoreDisplay.value = this.score += act.score;
 
-    // asynch. (i.e. animated) actions will trigger autoplay themselves,
-    // and autoplay will trigger a UI update if it actually does anything
-    if(!action.synchronous) return;
-    disableUI();
-    setTimeout(animatedActionFinished, 30, null);
+    const card = act.revealedCard = pile ? pile.lastChild : null;
+    if(!card) return false;
+    if(card.faceUp) {
+      act.revealedCard = null;
+      return false;
+    }
+    // xxx make animated turning work again
+//    if(wasInterrupted) {
+      card.setFaceUp();
+      return false;
+//    }
+    turnCardUp(card);
+    return true;
   },
 
   // Action objects (see actions.js) each implement an undo() method.
   // This just picks the right object, and adjusts the game score etc.
   undo: function() {
-    var action = this.actionsDone.pop();
+    const done = this.actionsDone
+    const action = done.pop();
     this.actionsUndone.push(action);
+
+    this.canRedo = true;
+    this.canUndo = done.length != 0;
+
     gScoreDisplay.value = this.score -= action.score;
     this.hintsReady = false;
 
     action.undo();
+    const revealed = action.revealedCard;
+    if(revealed) revealed.setFaceDown();
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
 
@@ -321,17 +333,30 @@ var BaseCardGame = {
   },
 
   redo: function() {
-    var action = this.actionsUndone.pop();
+    const undone = this.actionsUndone;
+    const action = undone.pop();
     this.actionsDone.push(action);
+
+    this.canUndo = true;
+    this.canRedo = undone.length != 0;
+
     gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;
 
-    if("redo" in action) action.redo();
+    if(action.redo) action.redo();
     else action.perform();
+    const revealed = action.revealedCard;
+    if(revealed) revealed.setFaceUp();
 
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
 
     if("redoNext" in action && action.redoNext) this.redo();
+  },
+
+  // called after each move (unless interrupted by user).
+  // Should return an Action, or null.  Generally shouldn't handle revealing of cards
+  autoplay: function(pileWhichHasHadCardsRemoved) {
+    return null;
   },
 
 
@@ -377,26 +402,12 @@ var BaseCardGame = {
 
   // === Moving between piles =============================
 
-  moveTo: function(card, target) {
-    this.doAction(new MoveAction(card, card.parentNode.source, target));
-    return true;
-  },
-
-  // for use by mouse handler only,  FreeCell version is quite different
-  attemptMove: function(card, destination) {
-    if(!destination.mayAddCard(card)) return false;
-    this.moveTo(card, destination);
-    return true;
-  },
-
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return false;
-    var f = this.getFoundationMoveFor(card);
-    if(!f) return false;
-    this.moveTo(card, f);
-    return true;
+    if(!card.parentNode.mayTakeCard(card)) return null;
+    const f = this.getFoundationMoveFor(card);
+    return f ? new Move(card, f) : null;
   },
 
   // xxx much better versions of this should be possible in most games
@@ -412,45 +423,21 @@ var BaseCardGame = {
   // xxx relics of experiments with redeals.  only Montana has these now
   redeals: 0,
   redealsRemaining: 0,
-  canRedeal: function() {
-    return false;
-  },
-  redeal: function() {
-  },
+  canRedeal: false,
+  redeal: function() {},
 
 
 
-  // === Revealing Cards ==================================
-  attemptRevealCard: function(card) {
-    if(card.faceDown && !card.nextSibling) this.doAction(new RevealCardAction(card));
-  },
-
+  // === Actions ==========================================
   revealCard: function(card) {
-    this.doAction(new RevealCardAction(card));
-    return true;
+    return card.faceDown && !card.nextSibling ? new Reveal(card) : null;
   },
 
-
-
-  // === Dealing from the stock ===========================
   dealFromStock: function() {
     throw "dealFromStock() not implemented";
   },
 
   turnStockOver: "no",
-
-  // These functions are used to implement the standard rules and their *Action's
-  dealCardTo: function(destination) {
-    var card = this.stock.lastChild;
-    card.setFaceUp();
-    destination.addCards(card);
-  },
-
-  undealCardFrom: function(source) {
-    var card = source.lastChild;
-    card.setFaceDown();
-    this.stock.addCards(card);
-  },
 
 
 
@@ -535,9 +522,9 @@ var BaseCardGame = {
   // === Right-click "intelligent" moving of cards ========
   // Called when the player right-clicks on a card. Games should implement getBestMoveForCard(card)
   doBestMoveForCard: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return;
-    var target = this.getBestMoveForCard(card);
-    if(target) this.moveTo(card,target);
+    if(!card.parentNode.mayTakeCard(card)) return null;
+    const target = this.getBestMoveForCard(card);
+    return target ? new Move(card, target) : null;
   },
 
   getBestMoveForCard: function(card) {
@@ -546,37 +533,21 @@ var BaseCardGame = {
 
 
 
-  // === Autoplay =========================================
-  // autoplay() is called whenever an animation completes, and should be called
-  // after any move/action that doesn't use animation (e.g. dealing from the stock).
-  // Games should override autoplayMove()
-
-  // A bool is returned so animatedActionFinished() can decide whether to reenable the UI.
-  // (We want to keep it disabled throughout seq's of consecutive animated moves.)
-  autoplay: function(pileWhichHasHadCardsRemoved) {
-    // automatically reveal cards
-    if(pileWhichHasHadCardsRemoved) {
-      var card = pileWhichHasHadCardsRemoved.lastChild;
-      if(card && card.faceDown) return this.revealCard(card);
-    }
-
-    if(this.autoplayMove(pileWhichHasHadCardsRemoved)) return true;
-    if(!this.hasBeenWon()) return false;
-
-    showGameWon();
-    return true;
-  },
-
-  // Must carry out a single autoplay step, returning true if successful, false otherwise
-  // (strictly speaking it must return true if it has inititated an animation, because that will
-  // call autoplay again on completion.)
-  autoplayMove: function() {
-    return false;
-  },
-
-
-
   // === Miscellany =======================================
+
+  // used for dealFromStock and turnStockOver
+  dealCardTo: function(destination) {
+    var card = this.stock.lastChild;
+    card.setFaceUp();
+    destination.addCards(card);
+  },
+
+  undealCardFrom: function(source) {
+    var card = source.lastChild;
+    card.setFaceDown();
+    this.stock.addCards(card);
+  },
+
   get firstEmptyFoundation() {
     var fs = this.foundations, len = fs.length;
     for(var i = 0; i != len; i++) if(!fs[i].hasChildNodes()) return fs[i];

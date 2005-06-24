@@ -43,16 +43,19 @@ var GypsyBase = {
     return null;
   },
 
-  autoplayMove: function() {
+  autoplay: function() {
     const ps = this.piles;
     for(var i = 0; i != 8; i++) {
       var last = ps[i].lastChild;
-      if(last && last.mayAutoplay && this.sendToFoundations(last)) return true;
+      if(last && last.mayAutoplay) {
+        var act = this.sendToFoundations(last);
+        if(act) return act;
+      }
     }
-    return false;
+    return null;
   },
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,

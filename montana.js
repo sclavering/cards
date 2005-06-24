@@ -60,14 +60,14 @@ var Montana = {
   },
 
   redeal: function() {
-    this.doAction(new MontanaRedealAction(this.isHardGame));
+    doo(new MontanaRedealAction(this.isHardGame));
   },
 
-  canRedeal: function() {
+  get canRedeal() {
     return this.redealsRemaining != 0;
   },
 
-  hasBeenWon: function() {
+  isWon: function() {
     for(var i = 0; i != 4; i++) {
       var pile = this.rowStarts[i], card = pile.lastChild, prv;
       if(!card || card.down) return false;

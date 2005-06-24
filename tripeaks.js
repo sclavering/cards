@@ -56,7 +56,8 @@ Games.tripeaks = {
   },
 
   removeCard: function(card) {
-    this.doAction(new MoveAction(card, card.parentNode, this.waste));
+    doo(new Move(card, this.waste));
+    //doo(new Move(card, this.waste, card.parentNode));
   },
 
   canSelectCard: function(card) {
@@ -76,34 +77,43 @@ Games.tripeaks = {
   cardWaitingToBeRevealed: null,
 
   // This game has no autoplay, but does need special auto-revealing:
-  autoplayMove: function(pileWhichHasHadCardsRemoved) {
+  autoplay: function(pileWhichHasHadCardsRemoved) {
     var card = this.cardWaitingToBeRevealed;
     if(card) {
       this.cardWaitingToBeRevealed = null;
-      return this.revealCard(card);
+      return new Reveal(card);
     }
 
-    if(!pileWhichHasHadCardsRemoved) return false;
+    if(!pileWhichHasHadCardsRemoved) return null;
 
-    var pile = pileWhichHasHadCardsRemoved;
-    var left = pile.leftParent, right = pile.rightParent;
+    const pile = pileWhichHasHadCardsRemoved;
+    const left = pile.leftParent, right = pile.rightParent;
     if(left && left.leftFree) {
       if(right && right.rightFree) this.cardWaitingToBeRevealed = right.lastChild;
-      return this.revealCard(left.lastChild);
+      return new Reveal(left.lastChild);
     }
-    if(right && right.rightFree) return this.revealCard(right.lastChild);
+    if(right && right.rightFree) return new Reveal(right.lastChild);
 
-    return false;
+    return null;
   },
 
-  hasBeenWon: function() {
+  getCardsToBeRevealed: function(pileWhichHasHadCardsRemoved) {
+    if(!pileWhichHasHadCardsRemoved) return [];
+    const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;
+    if(lp && rp) return [lp.firstChild, rp.firstChild];
+    if(lp) return [lp.firstChild];
+    if(rp) return [rp.firstChild];
+    return [];
+  },
+
+  isWon: function() {
     // won when the the peaks are empty
     for(var i = 0; i != 3; i++) if(this.piles[i].hasChildNodes()) return false;
     return true;
   },
 
   getScoreFor: function(action) {
-    if(action instanceof DealFromStockToPileAction) {
+    if(action instanceof DealToPile) {
       action.streakLength = 0;
       return -5;
     }
@@ -111,12 +121,12 @@ Games.tripeaks = {
     var done = this.actionsDone;
     var prev = done.length>1 ? done[done.length-2] : null;
 
-    if(action instanceof RevealCardAction) {
+    if(action instanceof Reveal) {
       action.streakLength = prev ? prev.streakLength : 0;
       return 0;
     }
 
-    // it's a MoveAction
+    // it's a Move
     var score = action.streakLength = prev ? prev.streakLength + 1 : 1;
 
     // bonuses for removing a peak card

@@ -59,9 +59,9 @@ var KlondikeBase = {
 
   getBestMoveForCard: "legal",
 
-  autoplayMove: "commonish",
+  autoplay: "commonish",
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,
@@ -108,7 +108,7 @@ Games["klondike-draw3"] = {
   },
 
   dealFromStock: function() {
-    this.doAction(new KlondikeDeal3Action());
+    return new KlondikeDeal3Action();
   },
 
   // Each time cards are dealt to the waste pile this is set to the number of cards dealt.  It is
@@ -147,7 +147,6 @@ KlondikeDeal3Action.prototype = {
     for(var i = this.numMoved; i != 0; --i) Game.undealCardFrom(w);
     i = Game.wasteDepth = this.oldWasteDepth;
     // unpack the cards that were there before, if necessary
-    //dump("kD undo: i="+i+"\n");
     for(var card = w.lastChild; i > 0; --i, card = card.previousSibling)
       card.left = card._left = i * gHFanOffset;
   }

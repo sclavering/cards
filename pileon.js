@@ -30,7 +30,7 @@ Games.pileon = {
   getBestMoveForCard: "legal nonempty, or empty",
 
   // Won when each pile is either empty or holds four cards of the same rank.
-  hasBeenWon: function() {
+  isWon: function() {
     const ps = this.piles;
     for(var i = 0; i != 15; ++i) {
       var p = ps[i], cs = p.childNodes;

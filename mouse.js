@@ -69,6 +69,7 @@ MouseHandlers["drag+drop"] = {
   },
 
   mouseDown: function(e) {
+    if(interruptAction) interrupt();
     var t = e.target;
     if(t.isCard && t.parentNode.mayTakeCard(t)) this.nextCard = t;
   },
@@ -114,7 +115,7 @@ MouseHandlers["drag+drop"] = {
       var tbox = target.boxObject;
       var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
-      if(overlaps && Game.attemptMove(card,target)) { gFloatingPileNeedsHiding = true; return; }
+      if(overlaps && attemptMove(card, target)) { gFloatingPileNeedsHiding = true; return; }
     }
 
     // ordering here may be important (not-repainting fun)
@@ -128,20 +129,28 @@ MouseHandlers["drag+drop"] = {
     if(this.dragInProgress) return;
     if(e.button != 0) return;
     var t = e.target;
+    var act = null;
     if(t.isCard) {
-      if(t.parentNode.isStock) Game.dealFromStock();
-      else if(t.faceDown) Game.attemptRevealCard(t);
-      else if(e.detail==2 && Game.foundations) Game.sendToFoundations(t);
+      if(t.parentNode.isStock) act = Game.dealFromStock();
+      else if(t.faceDown) act = Game.revealCard(t);
+      else if(e.detail==2 && Game.foundations) act = Game.sendToFoundations(t);
     } else {
-      if(t.isStock) Game.turnStockOver();
+      if(t.isStock) act = Game.turnStockOver();
     }
+    if(act) doo(act);
   },
-  
+
   rightClick: function(e) {
     if(this.dragInProgress) return;
-    var t = e.target;
-    if(t.isCard) Game.doBestMoveForCard(t);
-  }  
+    const t = e.target;
+    var tFloating = t.parentNode==gFloatingPile;
+    if(interruptAction) interrupt();
+    // it's OK to right-click a card while a *different* one is moving
+    if(t.isCard && !tFloating) {
+      const act = Game.doBestMoveForCard(t);
+      if(act) doo(act);
+    }
+  }
 };
 
 
@@ -174,8 +183,8 @@ MouseHandlers["pyramid"] = {
         this.highlighter.unhighlight();
         this.card = null;
       }
-      if(t.isAnyPile) Game.turnStockOver();
-      else Game.dealFromStock();
+      var act = t.isAnyPile ? Game.turnStockOver() : Game.dealFromStock();
+      if(act) doo(act);
       return;
     }
 
@@ -234,6 +243,6 @@ MouseHandlers["pyramid"] = {
     // handler for the game-won message, instantly starting a new game :(
     e.stopPropagation();
   },
-  
+
   rightClick: function() {}
 };

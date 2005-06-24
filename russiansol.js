@@ -29,9 +29,9 @@ Games.russiansol = {
 
   getBestMoveForCard: "to up or nearest space",
 
-  autoplayMove: "commonish",
+  autoplay: "commonish",
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,

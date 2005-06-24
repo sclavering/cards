@@ -28,7 +28,7 @@ var YukonBase = {
 
   getBestMoveForCard:  "legal nonempty, or empty",
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,
@@ -70,7 +70,7 @@ Games.yukon = {
     for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastChild);
   },
 
-  autoplayMove: "commonish"
+  autoplay: "commonish"
 };
 
 
@@ -117,5 +117,5 @@ Games.sanibel = {
     for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastChild);
   },
 
-  autoplayMove: "commonish 2deck"
+  autoplay: "commonish 2deck"
 };

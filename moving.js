@@ -1,6 +1,6 @@
 var moveCards = null, turnCardUp = null; // function pointers
 
-var interruptMove = null; // null except during animation
+var interruptAction = null; // null except during animation
 
 
 function enableAnimation(enable) {
@@ -15,10 +15,9 @@ function toggleAnimation(menuitem) {
 }
 
 
+const kAnimationDelay = 30;
 
 function moveCards1(firstCard, target) {
-    disableUI();
-
     var parent = firstCard.parentNode, source = parent.source;
     var cards = gFloatingPile;
 
@@ -40,7 +39,7 @@ function moveCards1(firstCard, target) {
     if(steps==1 || steps==0) {
       if(parent==gFloatingPile) gFloatingPileNeedsHiding = true;
       target.addCards(firstCard);
-      animatedActionFinished(source);
+      done(source);
       return;
     }
 
@@ -58,11 +57,10 @@ function moveCards1(firstCard, target) {
 
     // We want the cards to be displayed over their destination while the transfer happens.  Without
     // this function (called via a timer) that doesn't happen.
-    function done() {
+    function animDone() {
       target.addCards(firstCard);
       gFloatingPileNeedsHiding = true;
-      animatedActionFinished(source);
-      interruptMove = null;
+      done(source);
     };
 
     function step() {
@@ -74,26 +72,31 @@ function moveCards1(firstCard, target) {
         clearInterval(interval);
         cards.left = cards._left = tx;
         cards.top = cards._top = ty;
-        setTimeout(done, 0);
+        setTimeout(animDone, 0);
       }
     };
-    
+
     function interrupt() {
       clearInterval(interval);
-      done();
+      target.addCards(firstCard);
+      gFloatingPileNeedsHiding = true;
+      return source;
     };
 
-    interval = setInterval(step, 30);
-    interruptMove = interrupt;
+    interval = setInterval(step, kAnimationDelay);
+    interruptAction = interrupt;
 }
 
 
 
 function moveCards2(card, to) {
-    disableUI();
-    var source = card.parentNode.source;
-    to.addCards(card);
-    setTimeout(animatedActionFinished, 30, source);
+  var source = card.parentNode.source;
+  to.addCards(card);
+  var t = setTimeout(done, kAnimationDelay, source);
+  interruptAction = function() {
+    clearTimeout(t);
+    return source;
+  }
 }
 
 
@@ -103,7 +106,6 @@ var turnCardUpAnimatedCosines = new Array(7);
 for(var qxv = 0; qxv != 7; qxv++) turnCardUpAnimatedCosines[qxv] = Math.abs(Math.cos((7-qxv) * Math.PI / 7));
 
 function turnCardUpAnimated(card) {
-  disableUI();
   var oldLeft = card._left;
   var oldHalfWidth = card.boxObject.width / 2;
   var stepNum = 7;
@@ -113,7 +115,7 @@ function turnCardUpAnimated(card) {
       clearInterval(interval);
       card.left = oldLeft;
       card.removeAttribute("width"); // the width needs to be CSS controlled so that switching cardsets works properly
-      animatedActionFinished();
+      done();
       return;
     }
     var newHalfWidth = turnCardUpAnimatedCosines[stepNum] * oldHalfWidth;
@@ -121,12 +123,22 @@ function turnCardUpAnimated(card) {
     card.left = oldLeft + oldHalfWidth - newHalfWidth;
     if(stepNum==3) card.setFaceUp();  // gone past pi/2
   }, 45);
+  interruptAction = function() {
+    clearInterval(interval);
+    card.setFaceUp();
+    card.left = oldLeft;
+    card.removeAttribute("width");
+    return null;
+  };
 }
 
 
 
 function turnCardUpNonAnimated(card) {
-  disableUI();
   card.setFaceUp();
-  setTimeout(animatedActionFinished, 30, null);
+  const t = setTimeout(done, kAnimationDelay, null);
+  interruptAction = function() {
+    clearTimeout(t);
+    return null;
+  };
 }

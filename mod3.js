@@ -113,7 +113,7 @@ Games.mod3 = {
     return findEmpty(parent.isPile ? parent.surrounding : this.piles);
   },
 
-  autoplayMove: function() {
+  autoplay: function() {
     var rs = this.rows;
     for(var r = 0; r != 3; r++) {
       var shouldFillEmpty = true; // don't do so if any foudations have "junk" in them
@@ -125,8 +125,10 @@ Games.mod3 = {
           if(!last.inPlace) { shouldFillEmpty = false; continue; }
           if(!last.twin.inPlace) continue;
           var up1 = last.up, up2 = last.twin.up;
-          if(up1 && !up1.inPlace && !up1.nextSibling && !up1.parentNode.isStock) return this.moveTo(up1, pile);
-          if(up2 && !up2.inPlace && !up2.nextSibling && !up2.parentNode.isStock) return this.moveTo(up2, pile);
+          if(up1 && !up1.inPlace && !up1.nextSibling && !up1.parentNode.isStock)
+            return new Move(up1, pile);
+          if(up2 && !up2.inPlace && !up2.nextSibling && !up2.parentNode.isStock)
+            return new Move(up2, pile);
         } else if(shouldFillEmpty && !empty) {
           empty = pile;
         }
@@ -136,13 +138,14 @@ Games.mod3 = {
       var bs = this.bases[r];
       for(var i = 0; i != 8; i++) {
         var card = bs[i];
-        if(!card.parentNode.isStock && !card.nextSibling && !card.inPlace) return this.moveTo(card, empty);
+        if(!card.parentNode.isStock && !card.nextSibling && !card.inPlace)
+          return new Move(card, empty);
       }
     }
-    return false;
+    return null;
   },
 
-  hasBeenWon: function() {
+  isWon: function() {
     if(this.stock.hasChildNodes()) return false;
     const ps = this.piles;
     for(var i = 0; i != 8; i++)
@@ -160,7 +163,7 @@ Games.mod3 = {
       return score;
     }
 
-    // it's a MoveAction
+    // it's a Move
     var card = action.card, source = action.source, destination = action.destination;
     // if the user dragged+dropped the card then the source isn't the card's parent node, but if they
     // right-clicked it then it will be.

@@ -48,8 +48,8 @@ Games.pyramid = {
   },
 
   removeCard: function(card) {
-    // we don't use MoveAction because we don't want animation (for consistency with removing pairs)
-    this.doAction(new PyramidMoveAction(card,null));
+    // we don't use Move because we don't want animation (for consistency with removing pairs)
+    doo(new PyramidMoveAction(card,null));
   },
 
   canSelectCard: function(card) {
@@ -73,14 +73,14 @@ Games.pyramid = {
   },
 
   removePair: function(a, b) {
-    this.doAction(new PyramidMoveAction(a,b));
+    doo(new PyramidMoveAction(a,b));
   },
 
   // xxx write getHints()
 
   // this game has no autoplay
 
-  hasBeenWon: function() {
+  isWon: function() {
     // won when the tip of the pyramid has been removed
     return !this.piles[0].hasChildNodes();
   }

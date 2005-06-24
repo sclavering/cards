@@ -71,7 +71,7 @@ Games.doublesol = {
 
   getBestMoveForCard: "legal",
 
-  autoplayMove: function() {
+  autoplay: function() {
     var searchedForAces = false;
     const fs = this.foundations, as = this.aces;
     for(var i = 0; i != 4; i++) {
@@ -81,21 +81,22 @@ Games.doublesol = {
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
-        if(c1 && c1.faceUp && !c1.nextSibling && c1.mayAutoplay) return this.moveTo(c1, f);
-        if(c2 && c2.faceUp && !c2.nextSibling && c2.mayAutoplay) return this.moveTo(c2, f);
+        if(c1 && c1.faceUp && !c1.nextSibling && c1.mayAutoplay) return new Move(c1, f);
+        if(c2 && c2.faceUp && !c2.nextSibling && c2.mayAutoplay) return new Move(c2, f);
       } else if(!searchedForAces) {
         searchedForAces = true;
         for(var j = 0; j != 8; j++) {
           var a = as[j];
-          if(a.faceUp && !a.parentNode.isFoundation && !a.twin.parentNode.isFoundation && !a.nextSibling)
-            return this.moveTo(a, f);
+          if(a.faceUp && !a.parentNode.isFoundation && !a.twin.parentNode.isFoundation
+              && !a.nextSibling)
+            return new Move(a, f);
         }
       }
     }
-    return false;
+    return null;
   },
 
-  hasBeenWon: "26 cards on each foundation",
+  isWon: "26 cards on each foundation",
 
   scores: {
     "->foundation": 10,

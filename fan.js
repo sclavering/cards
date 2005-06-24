@@ -50,7 +50,7 @@ Games.fan = {
     return up ? (up.nextSibling ? null : up.parentNode) : findEmpty(card.parentNode.surrounding);
   },
 
-  autoplayMove: "commonish",
+  autoplay: "commonish",
 
-  hasBeenWon: "13 cards on each foundation"
+  isWon: "13 cards on each foundation"
 }

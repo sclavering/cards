@@ -37,10 +37,10 @@ var GolfBase = {
 
   doBestMoveForCard: function(card) {
     const f = this.foundation;
-    if(f.mayAddCard(card)) this.moveTo(card, f);
+    return f.mayAddCard(card) ? new Move(card, f) : null;
   },
 
-  hasBeenWon: function() {
+  isWon: function() {
     return this.score==0;
   },
 

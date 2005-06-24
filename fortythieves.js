@@ -56,7 +56,7 @@ Games.fortythieves = {
 
   getBestMoveForCard: "legal nonempty, or empty",
 
-  autoplayMove: "commonish 2deck",
+  autoplay: "commonish 2deck",
 
-  hasBeenWon: "13 cards on each foundation"
+  isWon: "13 cards on each foundation"
 };

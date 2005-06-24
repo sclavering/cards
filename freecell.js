@@ -74,7 +74,7 @@ Games.freecell = {
         || (empty && empty.mayAddCard(card) ? empty : null);
   },
 
-  autoplayMove: "commonish",
+  autoplay: "commonish",
 
-  hasBeenWon: "13 cards on each foundation"
+  isWon: "13 cards on each foundation"
 };

@@ -44,9 +44,9 @@ var CanfieldBase = {
 
   getBestMoveForCard: "legal nonempty, or empty",
 
-  autoplayMove: "commonish",
+  autoplay: "commonish",
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,

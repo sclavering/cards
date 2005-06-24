@@ -3,28 +3,30 @@
 var FreeCellGame = {
   __proto__: BaseCardGame,
 
+  // overridden to deal with FreeCellMover (and revealing cards is unnecessary)
+  done: function(pile, wasInterrupted) {
+    const acts = this.actionsDone, act = acts[acts.length-1];
+    gScoreDisplay.value = this.score += act.score;
+    
+    if(!wasInterrupted) return FreeCellMover.step();
+
+    FreeCellMover.interrupt();
+    return false;
+  },
+
   get insufficientSpacesMessage() {
     var ths = FreeCellGame;
     delete ths.insufficientSpacesMessage;
     return ths.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
   },
 
-  // note: the return value of 0 from mayAddCard is used to indicate the move is legal, but needs more cells/spaces
-  attemptMove: function(card, destination) {
-    var may = destination.mayAddCard(card);
-    if(may) return this.moveTo(card, destination);
-    if(may===0) showMessage("notEnoughSpaces");
-    return false;
-  },
-
   doBestMoveForCard: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return;
+    if(!card.parentNode.mayTakeCard(card)) return null;
     var p = this.getBestMoveForCard(card);
-    if(!p) return;
+    if(!p) return null;
     var src = card.parentNode.source;
-    var act = !card.nextSibling ? new MoveAction(card, src, p)
+    return !card.nextSibling ? new Move(card, p)
         : new FreeCellMoveAction(card, src, p, this.emptyCells, this.getEmptyPiles(p));
-    this.doAction(act);
   },
 
   get emptyCells() {
@@ -65,14 +67,6 @@ var FreeCellGame = {
       if(p!=ignore1 && p!=ignore2 && !p.hasChildNodes()) empty++
     }
     return empty;
-  },
-
-  // overriden because we want to call FreeCellMover.step(), and don't need to reveal cards
-  autoplay: function() {
-    if(FreeCellMover.step() || this.autoplayMove()) return true;
-    if(!Game.hasBeenWon()) return false;
-    showGameWon();
-    return true;
   }
 }
 
@@ -112,6 +106,13 @@ var FreeCellMover = {
     if(!this.cards.length) return false;
     moveCards(this.cards.shift(), this.tos.shift());
     return true;
+  },
+  
+  interrupt: function() {
+    const froms = this.cards, tos = this.tos, num = froms.length;
+    for(var i = 0; i != num; ++i) tos[i].addCards(froms[i]);
+    this.cards = [];
+    this.tos = [];
   },
 
   // construct the queue of single-card steps for a move and do the first step

@@ -78,20 +78,20 @@ Games.unionsquare = {
   },
 
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
-  autoplayMove: function() {
+  autoplay: function() {
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
       var f = fs[i], len = f.childNodes.length, last = f.lastChild;
       if(len<12 || len==26) continue;
       var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.parentNode;
-      if((cp.isPile || cp.isWaste) && !c.nextSibling) return this.moveTo(c, f);
+      if((cp.isPile || cp.isWaste) && !c.nextSibling) return new Move(c, f);
       c = c.twin, cp = c.parentNode;
-      if((cp.isPile || cp.isWaste) && !c.nextSibling) return this.moveTo(c, f);
+      if((cp.isPile || cp.isWaste) && !c.nextSibling) return new Move(c, f);
     }
-    return false;
+    return null;
   },
 
-  hasBeenWon: "26 cards on each foundation"
+  isWon: "26 cards on each foundation"
 };
 
 

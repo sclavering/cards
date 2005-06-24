@@ -44,7 +44,10 @@ var gGameStackTop = 0;    // ... and its coords
 var gGameStackLeft = 0;
 
 var gFloatingPile = null;
-var gFloatingPileNeedsHiding = false; // see animatedActionFinished()
+var gFloatingPileNeedsHiding = false; // see done()
+
+const CI = Components.interfaces;
+const CC = Components.classes;
 
 
 function init() {
@@ -59,17 +62,17 @@ function init() {
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;
 
-  gFloatingPile = createFloatingPile();
+  createFloatingPile();
 
   // init the pref branch
-  gPrefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService)
-  gPrefs = gPrefs.getBranch("games.cards.");
+  gPrefs = CC["@mozilla.org/preferences-service;1"]
+      .getService(CI.nsIPrefService).getBranch("games.cards.");
 
   // load stringbundle
-  var svc = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
+  var svc = CC["@mozilla.org/intl/stringbundle;1"].getService(CI.nsIStringBundleService);
   var bundle = svc.createBundle("chrome://cards/locale/cards.properties").getSimpleEnumeration();
   while(bundle.hasMoreElements()) {
-    var property = bundle.getNext().QueryInterface(Components.interfaces.nsIPropertyElement);
+    var property = bundle.getNext().QueryInterface(CI.nsIPropertyElement);
     gStrings[property.key] = property.value;
   }
 
@@ -93,11 +96,10 @@ function init() {
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
     to = to.lastChild || to; // |to| could be a pile
-    disableUI();
     this.highlight(from);
     var thisthis = this; // because |this| within these functions would refer to the wrong thing
     setTimeout(function(){thisthis.highlight(to);}, 350);
-    setTimeout(function(){thisthis.unhighlight();enableUI();}, 800);
+    setTimeout(function(){thisthis.unhighlight();}, 800);
   };
 
   // make controllers for each game type
@@ -114,14 +116,15 @@ function init() {
   try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
   buildGamesMenu(gamesInMenu, game);
 
-  // set title (document.title while window is opening does not work in Fx 1.0 official build, does in Ubuntu + Fx 1.1 nightlies)
-  //document.title = gStrings["game."+game];
+  // document.title works in Fx 1.1, setAttribute works in Fx 1.0 official
+  document.title = gStrings["game."+game];
   document.documentElement.setAttribute("title", gStrings["game."+game]);
 
   // switch to the last game played
   GameController = Games[game];
   GameController.switchTo();
-  enableUI();
+
+  updateUI();
 }
 
 window.addEventListener("load", init, false);
@@ -268,12 +271,13 @@ var cardMethods = {
 
 
 function createFloatingPile() {
-  var pile = document.createElement("stack");
+  const pile = gFloatingPile = document.createElement("stack");
   initPile(pile);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;
     this.top = this.left = this._top = this._left = -1000;
+    gFloatingPileNeedsHiding = false;
   };
   pile.addCards = function(card) {
     var src = card.parentNode.source;
@@ -293,7 +297,6 @@ function createFloatingPile() {
   };
   gGameStack.appendChild(pile);
   pile.hide();
-  return pile;
 }
 
 
@@ -327,19 +330,7 @@ function createHighlighter() {
 
 
 
-
-// we don't want to enable the UI between an animated move and any autoplay it triggers
-function animatedActionFinished(pileWhichHasHadCardsRemoved) {
-  if(Game.autoplay(pileWhichHasHadCardsRemoved)) return;
-  enableUI();
-  if(!gFloatingPileNeedsHiding) return;
-  gFloatingPileNeedsHiding = false;
-  gFloatingPile.hide();
-}
-
-
 function playGame(game) {
-  disableUI();
   GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
@@ -347,7 +338,8 @@ function playGame(game) {
 
   GameController = Games[game];
   GameController.switchTo();
-  enableUI();
+
+  updateUI();
 }
 
 
@@ -414,20 +406,81 @@ function buildGamesMenu(items, selected) {
 
 
 function newGame(cards) {
-  disableUI();
+  interrupt();
   GameController.newGame(cards);
-  enableUI();
+  updateUI();
 }
 
 
 function restartGame() {
+  interrupt();
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
-  if(Game.canUndo) newGame(Game.cardsAsDealt.slice(0));
+  if(!Game.canUndo) return;
+  newGame(Game.cardsAsDealt.slice(0));
+  updateUI();
+}
+
+
+function attemptMove(card, to) {
+  const may = to.mayAddCard(card);
+  if(may) {
+    doo(new Move(card, to));
+    return true;
+  }
+  if(may===0) showMessage("notEnoughSpaces");
+  return false;
+}
+
+
+function doo(action) { // "do" is a reserved word
+  // enable undo + disable redo (but avoid doing so unnecessarily)
+  if(!Game.canUndo && !GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
+  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.setAttribute("disabled","true");
+
+  if(GameController.haveFutureGames) GameController.clearFutureGames();
+  Game.doo(action);
+  action.perform();
+
+  // asynch. (i.e. animated) actions trigger autoplay themselves
+  if(!action.synchronous) return;
+  const t = setTimeout(done, kAnimationDelay, null);
+  interruptAction = function() {
+    clearTimeout(t);
+    return null;
+  };
+}
+
+
+// we don't want to enable the UI between an animated move and any autoplay it triggers
+function done(pileWhichHasHadCardsRemoved) {
+//  dump("done\n");
+  interruptAction = null;
+  if(Game.done(pileWhichHasHadCardsRemoved, false)) return;
+  const act = Game.autoplay(pileWhichHasHadCardsRemoved);
+//  dump("done.act=="+act+"\n");
+  if(act) {
+    doo(act);
+  } else {
+    if(gFloatingPileNeedsHiding) gFloatingPile.hide();
+    if(Game.isWon()) showGameWon();
+  }
+}
+
+
+function interrupt() {
+//  dump("interrupted?\n");
+  if(!interruptAction) return;
+//  dump("interrupted!\n");
+  const pile = interruptAction();
+  interruptAction = null;
+  Game.done(pile, true);
+  if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 
 
 function undo() {
+  interrupt();
   var couldRedo = Game.canRedo || GameController.haveFutureGames;
   if(Game.canUndo) Game.undo();
   else GameController.restorePastGame();
@@ -437,6 +490,7 @@ function undo() {
 
 
 function redo() {
+  interrupt();
   var couldUndo = Game.canUndo || GameController.havePastGames;
   if(Game.canRedo) Game.redo();
   else GameController.restoreFutureGame();
@@ -445,32 +499,28 @@ function redo() {
 }
 
 
-// enable/disable the UI elements. this is done whenever any animation
-// is taking place, as problems ensue otherwise.
-function enableUI() {
-  gUIEnabled = true;
-  if(Game.getHints) gCmdHint.removeAttribute("disabled");
-  gCmdNewGame.removeAttribute("disabled");
-  gCmdRestartGame.removeAttribute("disabled");
-  gOptionsMenu.removeAttribute("disabled");
-  gGameSelector.removeAttribute("disabled");
-  if(Game.canUndo || GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
-  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
-  if(Game.canRedeal()) gCmdRedeal.removeAttribute("disabled");
+function hint() {
+  interrupt();
+  Game.hint();
 }
 
 
-function disableUI() {
-  if(!gUIEnabled) return;
-  gUIEnabled = false;
-  gCmdHint.setAttribute("disabled","true");
-  gCmdNewGame.setAttribute("disabled","true");
-  gCmdRestartGame.setAttribute("disabled","true");
-  gOptionsMenu.setAttribute("disabled","true");
-  gGameSelector.setAttribute("disabled","true");
-  gCmdUndo.setAttribute("disabled","true");
-  gCmdRedo.setAttribute("disabled","true");
-  gCmdRedeal.setAttribute("disabled","true");
+function redeal() {
+  interrupt();
+  Game.redeal();
+  updateUI();
+}
+
+
+function updateUI() {
+  if(Game.canUndo || GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
+  else gCmdUndo.setAttribute("disabled","true");
+  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
+  else gCmdRedo.setAttribute("disabled","true");
+  if(Game.canRedeal) gCmdRedeal.removeAttribute("disabled");
+  else gCmdRedeal.setAttribute("disabled","true");
+  if(Game.getHints) gCmdHint.removeAttribute("disabled");
+  else gCmdHint.setAttribute("disabled","true");
 }
 
 
@@ -482,12 +532,12 @@ function showGameWon() {
 var gMessageCallback = null;
 
 function showMessage(msg, fun) {
-  disableUI();
   gMessageCallback = fun;
   gMessageLine1.value = gStrings["message."+msg];
   gMessageLine2.value = gStrings["message2."+msg];
   gMessageBox.hidden = false;
-  // the setTimeout is to ensure any mouse event that led to showMessage being called has gone away
+
+  // the setTimeout is to flush any mouse event that led to the showMessage() call
   setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
 }
 
@@ -495,7 +545,6 @@ function doneShowingMessage() {
   window.onclick = null;
   gMessageBox.hidden = true;
   if(gMessageCallback) gMessageCallback();
-  else enableUI();
 }
 
 

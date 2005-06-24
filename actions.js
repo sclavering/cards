@@ -11,10 +11,10 @@ redo() should be synchronous if present.  if not present perform() is used inste
 the "action" member is used for scoring.
 */
 
-function RevealCardAction(card) {
+function Reveal(card) {
   this.card = card;
 }
-RevealCardAction.prototype = {
+Reveal.prototype = {
   action: "card-revealed",
   synchronous: false,
   undoNext: true,
@@ -34,10 +34,10 @@ RevealCardAction.prototype = {
 }
 
 
-function DealFromStockToPileAction(pile) {
+function DealToPile(pile) {
   this.to = pile;
 }
-DealFromStockToPileAction.prototype = {
+DealToPile.prototype = {
   action: "dealt-from-stock",
   synchronous: true,
 
@@ -69,8 +69,8 @@ TurnStockOverAction.prototype = {
 
 
 // has to work for Wasp, where just 3 cards are dealt, but there are seven piles
-function DealToPilesAction() {}
-DealToPilesAction.prototype = {
+function DealToPiles() {}
+DealToPiles.prototype = {
   action: "dealt-from-stock",
   synchronous: true,
   dealt: 0,
@@ -117,17 +117,18 @@ DealToNonEmptyPilesAction.prototype = {
 }
 
 
-// source is where the card was originally from, not the temp. pile it was probably dragged around in
-function MoveAction(card, source, destination) {
+// source (optional) is where the card was originally from,
+// not the temp. pile it was probably dragged around in
+function Move(card, destination, source) {
   this.card = card;
-  this.source = source;
+  this.source = source = source || card.parentNode.source;
   this.destination = destination;
   this.action =
       destination.isFoundation
       ? (source.isFoundation ? "foundation->foundation" : "->foundation")
       : (source.isFoundation ? "foundation->" : (source.localName+"->"+destination.localName));
 }
-MoveAction.prototype = {
+Move.prototype = {
   synchronous: false,
 
   perform: function() {

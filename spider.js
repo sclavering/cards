@@ -23,22 +23,22 @@ var SpiderBase = {
 
   getBestMoveForCard: "down and same suit, or down, or empty",
 
-  autoplayMove: function() {
+  autoplay: function() {
     const ks = this.kings, num = ks.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
       var k = ks[i], p = k.parentNode;
-      if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k))
-        return this.moveTo(k, f);
+      if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
-    return false;
+    return null;
   },
 
   sendToFoundations: function(card) {
     const f = this.foundation;
-    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) && this.moveTo(card, f);
+    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card)
+        ? new Move(card, f) : null;
   },
 
-  hasBeenWon: "foundation holds all cards",
+  isWon: "foundation holds all cards",
 
   scores: {
     "->foundation": 100,
@@ -164,15 +164,15 @@ Games.divorce = {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
-  autoplayMove: function() {
+  autoplay: function() {
     const ps = this.piles, num = ps.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
       var p = ps[i], n = p.childNodes.length - 13;
       if(n < 0) continue;
       var c = p.childNodes[n];
-      if(p.mayTakeCard(c) && f.mayAddCard(c)) return this.moveTo(c, f);
+      if(p.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
     }
-    return false;
+    return null;
   }
 };
 

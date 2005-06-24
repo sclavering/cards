@@ -67,7 +67,7 @@ Games.maze = {
 
   // Autoplay not used
 
-  hasBeenWon: function() {
+  isWon: function() {
     var pile = this.piles[0], first = pile;
     do {
       var next = pile.next, c1 = pile.lastChild, c2 = next.lastChild;

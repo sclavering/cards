@@ -47,12 +47,12 @@
 <script type="application/x-javascript" src="yukon.js"/>
 
 <commandset id="cards-commands">
-  <command disabled="true" id="cmd:newgame" oncommand="newGame();"/>
-  <command disabled="true" id="cmd:restart" oncommand="restartGame();"/>
-  <command disabled="true" id="cmd:undo" oncommand="undo();"/>
-  <command disabled="true" id="cmd:redo" oncommand="redo();"/>
-  <command disabled="true" id="cmd:hint" oncommand="Game.hint();"/>
-  <command disabled="true" id="cmd:redeal" oncommand="Game.redeal();"/>
+  <command id="cmd:newgame" oncommand="newGame();"/>
+  <command id="cmd:restart" oncommand="restartGame();"/>
+  <command id="cmd:undo" oncommand="undo();"/>
+  <command id="cmd:redo" oncommand="redo();"/>
+  <command id="cmd:hint" oncommand="hint();"/>
+  <command id="cmd:redeal" oncommand="redeal();"/>
 </commandset>
 
 <keyset id="cards-keys">

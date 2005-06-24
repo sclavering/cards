@@ -55,7 +55,7 @@ getLowestMovableCard:
   "descending, alt colours"
   "face up"
 
-hasBeenWon:
+isWon:
   "13 cards on each foundation"
   "foundation holds all cards"
 
@@ -63,7 +63,7 @@ getBestMoveForCard
   "to up or nearest space"
   "down and same suit, or down, or empty"
 
-autoplayMove
+autoplay
   "commonish"
   "commonish 2deck"
 */
@@ -191,36 +191,36 @@ var Rules = {
 
   dealFromStock: {
     "to waste": function() {
-      if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.waste));
+      return this.stock.hasChildNodes() ? new DealToPile(this.waste) : null;
     },
 
     "to foundation": function() {
-      if(this.stock.hasChildNodes()) this.doAction(new DealFromStockToPileAction(this.foundation));
+      return this.stock.hasChildNodes() ? new DealToPile(this.foundation) : null;
     },
 
     "to piles": function() {
-      if(!this.stock.hasChildNodes()) return;
-      this.doAction(new DealToPilesAction(this.piles));
+      return this.stock.hasChildNodes() ? DealToPiles(this.piles) : null;
     },
 
     "to piles, if none empty": function() {
-      if(!this.stock.hasChildNodes()) return;
-      for(var i = 0; i != Game.piles.length; i++) if(!Game.piles[i].hasChildNodes()) return;
-      this.doAction(new DealToPilesAction(this.piles));
+      if(!this.stock.hasChildNodes()) return null;
+      for(var i = 0; i != Game.piles.length; i++) if(!Game.piles[i].hasChildNodes()) return null;
+      return new DealToPiles(this.piles);
     },
 
     "to nonempty piles": function() {
-      this.doAction(new DealToNonEmptyPilesAction());
+      return new DealToNonEmptyPilesAction();
     }
   },
 
 
   turnStockOver: {
-    "no": function() {},
-
-    // for games with a waste pile only
+    "no": function() {
+      return null;
+    },
+    // only for games with a waste pile
     "yes": function() {
-      this.doAction(new TurnStockOverAction());
+      return new TurnStockOverAction();
     }
   },
 
@@ -256,7 +256,7 @@ var Rules = {
   },
 
 
-  hasBeenWon: {
+  isWon: {
     "13 cards on each foundation":
     function() {
       const fs = this.foundations, num = fs.length;
@@ -331,12 +331,11 @@ var Rules = {
   },
 
 
-  autoplayMove: {
+  autoplay: {
     // To use this games must have 4 foundations, built one card at a time, starting with those cards
     // in foundationBases[], and continuing with the unique |up| member of each card.
     // Cards' mayAutoplay field can be overridden with a getter function if needed.
     // xxx the .faceUp checks are redundant with the !.nextSibling ones at present
-    // Note: moveTo can fail (and return false) in FreeCell (and similar games)
     "commonish":
     function() {
       var triedToFillEmpty = false;
@@ -346,16 +345,18 @@ var Rules = {
         var f = fs[i];
         if(f.hasChildNodes()) {
           var c = f.lastChild.up;
-          if(c && c.faceUp && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+          if(c && c.faceUp && !c.nextSibling && c.mayAutoplay)
+            return new Move(c, f);
         } else if(!triedToFillEmpty) {
           triedToFillEmpty = true;
           for(var j = 0; j != numBs; j++) {
             var b = bs[j];
-            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling) return this.moveTo(b, f);
+            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling)
+              return new Move(b, f);
           }
         }
       }
-      return false;
+      return null;
     },
 
     // like above, but for 2 decks
@@ -369,21 +370,23 @@ var Rules = {
           if(last.isKing) continue;
           var c = last.up, cp = c.parentNode;
           if(!cp.isFoundation && !cp.isStock && !c.nextSibling) {
-            if(c.mayAutoplay) return this.moveTo(c, f);
+            if(c.mayAutoplay) return new Move(c, f);
             continue; // mayAutoplay will also be false for the twin
           } else {
             c = c.twin, cp = c.parentNode;
-            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.mayAutoplay) return this.moveTo(c, f);
+            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.mayAutoplay)
+              return new Move(c, f);
           }
         } else if(!lookedForAces) {
           lookedForAces = true;
           for(var j = 0; j != 8; j++) {
             var a = as[j], ap = a.parentNode;
-            if(!ap.isFoundation && !ap.isStock && !a.nextSibling) return this.moveTo(a, f);
+            if(!ap.isFoundation && !ap.isStock && !a.nextSibling)
+              return new Move(a, f)
           }
         }
       }
-      return false;
+      return null;
     }
   }
 }

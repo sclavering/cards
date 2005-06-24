@@ -118,32 +118,32 @@ Games.regiment = {
     return null;
   },
 
-  autoplayMove: function(pileWhichHasHadCardsRemoved) {
+  autoplay: function(pileWhichHasHadCardsRemoved) {
     var i, pile, last, card;
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;
       if(pile.isPile && !pile.hasChildNodes() && this.reserves[pile.col].hasChildNodes())
-        return this.moveTo(this.reserves[pile.col].lastChild, pile);
+        return new Move(this.reserves[pile.col].lastChild, pile);
     }
 
     for(i = 0; i != 4; i++) {
       pile = this.foundations[i], last = pile.lastChild;
       if(last && last.up && last.twin.parentNode.isFoundation) {
         card = last.up.parentNode.isFoundation ? last.twin.up : last.up;
-        if(!card.nextSibling) return this.moveTo(card, pile);
+        if(!card.nextSibling) return new Move(card, pile);
       }
     }
     for(i = 4; i != 8; i++) {
       pile = this.foundations[i], last = pile.lastChild;
       if(last && last.down && last.twin.parentNode.isFoundation) {
         card = last.down.parentNode.isFoundation ? last.twin.down : last.down;
-        if(!card.nextSibling) return this.moveTo(card, pile);
+        if(!card.nextSibling) return new Move(card, pile);
       }
     }
-    return false;
+    return null;
   },
 
-  hasBeenWon: "13 cards on each foundation",
+  isWon: "13 cards on each foundation",
 
   scores: {
     "->foundation": 10,

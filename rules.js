@@ -199,7 +199,7 @@ var Rules = {
     },
 
     "to piles": function() {
-      return this.stock.hasChildNodes() ? DealToPiles(this.piles) : null;
+      return this.stock.hasChildNodes() ? new DealToPiles(this.piles) : null;
     },
 
     "to piles, if none empty": function() {

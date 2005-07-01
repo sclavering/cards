@@ -1,7 +1,6 @@
 var BaseCardGame = {
   id: null, // needs to be unique.  used in pref. names.
 
-  layout: null, // id of a xul element.  if left null this.id will be used instead
   xulElement: null, // the container vbox/hbox for the game (set automatically)
 
   // This becomes an array of all the cards a game uses, either explicitly in the game's init(), or
@@ -19,7 +18,7 @@ var BaseCardGame = {
   mouseHandling: "drag+drop",
   mouseHandler: null,
 
-  // these are all automatically set up by initPiles()
+  // these are all automatically set up
   allpiles: [],    // array of piles of all types.  used for clearing the game
   piles: [],       // array of tableau piles
   foundations: [], // array of foundation piles
@@ -72,7 +71,7 @@ var BaseCardGame = {
       if(typeof this[r] == "string") this[r] = Rules.mayAddCard[this[r]];
     }
 
-    this.initXulElement();
+    this.buildLayout();
     this.init();
     this.initCards();
     this.init2();
@@ -84,88 +83,163 @@ var BaseCardGame = {
     else if(!("isCard" in this.cards[0])) this.cards = makeCardSuits.apply(null, this.cards);
   },
 
-  initXulElement: function() {
-    if(!this.layout || this.layout==this.id) {
-      this.xulElement = document.getElementById(this.id);
-      this.initPiles();
-      return;
-    }
+  // a string, starting with "v" or "h" (depending on wether outer element should be a <vbox> or an
+  // <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined in _buildLayout
+  layoutTemplate: null,
 
-    function replaceIds(newId, oldIdLength, node) {
-      if(node.id) node.id = newId + node.id.substring(oldIdLength);
-      for(var i = 0; i != node.childNodes.length; i++) replaceIds(newId, oldIdLength, node.childNodes[i]);
-    }
+  // classNames for the elements of various types
+  layoutForFoundations: "",
+  layoutForCells: "",
+  layoutForReserves: "",
+  layoutForPiles: "fan-down",
+  layoutForStock: "",
+  layoutForWaste: "",
 
-    // if it uses the same layout as another game then clone that layout and fix the ids in the clone (so initPiles() works)
-    var elt = this.xulElement = document.getElementById(this.layout).cloneNode(true);
-    replaceIds(this.id, this.layout.length, elt);
-    gGameStack.insertBefore(elt, gGameStack.firstChild);
+  buildLayout: function() {
+    // make sure each game type has its own arrays for these
+    this.allpiles = [];
+    this.piles = [];
+    this.foundations = [];
+    this.cells = [];
+    this.reserves = [];
 
-    this.initPiles();
-    // throw away any cards we cloned
-    var ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      while(p.hasChildNodes()) p.removeChild(p.lastChild);
-    }
-  },
+    const containerIsVbox = this.layoutTemplate[0] == "v";
+    const box = this.xulElement = document.createElement(containerIsVbox ? "vbox" : "hbox");
+    this._buildLayout(box, !containerIsVbox, this.layoutTemplate);
+    box.className = "game";
+    gGameStack.insertBefore(box, gGameStack.firstChild);
 
-  // Init's piles[], foundations[], reserves[], cells[], |foundation|, |reserve|, |stock| and
-  // |waste| members (sometimes to null or to empty arrays).
-  // Requires relevant XUL elements to have ids of the form {this.id}-{pile-type}[-{int}]
-  initPiles: function() {
-    // Unless these are set explicitly then all games share the same arrays (breaking everything)
-    var allpiles = this.allpiles = [];
-    var id = this.id+"-";
-
-    const uppercase = {stock:"Stock",waste:"Waste",reserve:"Reserve",foundation:"Foundation",cell:"Cell",pile:"Pile"};
-
-    const items1 = ["stock", "waste", "reserve", "foundation"];
-
-    // init piles of which there are only one (stock, waste, and a reserve or foundation in some cases)
-    for(var i = 0; i != 4; i++) {
-      var item = items1[i], upper = uppercase[item];
-      var p = this[item] = initPileFromId(id+item, item, this["mayTakeCardFrom"+upper], this["mayAddCardTo"+upper]);
-      if(p) allpiles.push(p);
-    }
-
-    const items2 = ["reserve", "cell", "foundation", "pile"];
-
-    // init the collections of piles of various types
-    for(i = 0; i != 4; i++) {
-      item = items2[i], upper = uppercase[item];;
-      var type = id+item+"-";
-      var mayTakeCard = this["mayTakeCardFrom"+upper], mayAddCard = this["mayAddCardTo"+upper];
-      var ps = this[item+"s"] = [];
-      for(var j = 0; true; j++) {
-        p = initPileFromId(type+j, item, mayTakeCard, mayAddCard);
-        if(!p) break;
-        ps.push(p);
-        allpiles.push(p);
-      }
-      if(!j) continue;
-      // allow each collection to be used as a doubly-linked list
-      var max = j - 1;
-      for(j = 0; j != max; j++) ps[j].next = ps[j+1], ps[j+1].prev = ps[j];
-    }
-
-    const s = this.stock;
-    if(s) {
-      // a <label/> for displaying the num. of deals left
-      var counter = document.getElementById(id+"stock-counter");
-      if(counter) {
-        s._counter = counter;
-        s.__defineGetter__("counter", function() { return this._counter._value; });
-        s.__defineSetter__("counter", function(val) { var c = this._counter; return c.value = c._value = val; });
-      } else {
-        // useless number that dealFromStock can twiddle without causing problems
-        s.counter = 0;
-      }
-    }
+    // prevents JS strict warnings for games with no visible counter ???
+    if(this.stock) this.stock.counter = 0;
 
     // xxx kill this
     this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
-    if(this.foundation) this.dragDropTargets.push(this.foundation);
+
+    // some games expect these
+    if(this.foundations.length == 1) this.foundation = this.foundations[0];
+    if(this.reserves.length == 1) this.reserve = this.reserves[0];
+  },
+
+  _buildLayout: function(container, nextBoxVertical, template) {
+    var box = container;
+    var newbox, p;
+    var allpiles = this.allpiles;
+    
+    function makePile(type, arry, layout, mayTake, mayAdd) {
+      const len = arry ? arry.length : 0;
+      const p = createPile(type, len, layout, mayTake, mayAdd);
+      if(arry) arry.push(p);
+      allpiles.push(p);
+      box.appendChild(p);
+      if(len) {
+        const prev = arry[len-1];
+        prev.next = p;
+        p.prev = prev;
+      }
+      return p;
+    }
+    
+    function startBox(type, className) {
+      newbox = document.createElement(type);
+      newbox.className = className;
+      box.appendChild(newbox);
+      box = newbox;
+    }
+    
+    const len = template.length;
+    // first char is "h"/"v", not of interest here
+    for(var i = 1; i != len; ++i) {
+      switch(template[i]) {
+      // start a box
+        case "[": // in opposite direction
+          startBox(nextBoxVertical ? "vbox" : "hbox", "");
+          nextBoxVertical = !nextBoxVertical;
+          break;
+        case "`": // in current direction (used by Fan)
+          startBox(nextBoxVertical ? "hbox" : "vbox", "");
+          break;
+        case "(":
+          startBox("vbox", "pyramid-rows"); break;
+        case "<":
+          startBox("hbox", "pyramid-row"); break;
+      // finish a box
+        case "]":
+          nextBoxVertical = !nextBoxVertical;
+          // fall through
+        case ">":
+        case ")":
+        case "'":
+          box = box.parentNode;
+          break;
+      // annotations: "{attrname=val}", applies to most-recent pile or box
+        case "{":
+          var i0 = i;
+          while(template[i] != "}") ++i;
+          var blob = template.substring(i0 + 1, i).split("=");
+          (box.lastChild || box).setAttribute(blob[0], blob[1]);
+          break;
+        case "}":
+          throw "BaseCardGame._buildLayout: reached a } in template"
+      // add piles or labels
+        case "p":
+          makePile("pile", this.piles, this.layoutForPiles,
+                   this.mayTakeCardFromPile, this.mayAddCardToPile);
+          break;
+        case "f":
+          makePile("foundation", this.foundations, this.layoutForFoundations,
+                   this.mayTakeCardFromFoundation, this.mayAddCardToFoundation);
+          break;
+        case "c":
+          makePile("cell", this.cells, this.layoutForCells,
+                   this.mayTakeCardFromCell, this.mayAddCardToCell);
+          break;
+        case "r":
+          makePile("reserve", this.reserves, this.layoutForReserves,
+                   this.mayTakeCardFromReserve, this.mayAddCardToReserve);
+          break;
+        case "w":
+          this.waste = makePile("waste", null, this.layoutForWaste,
+                                this.mayTakeCardFromWaste, this.mayAddCardToWaste);
+          break;
+        case "s":
+          this.stock = makePile("stock", null, this.layoutForStock,
+                                this.mayTakeCardFromStock, this.mayAddCardToStock);
+          break;
+        case "l":
+          var counter = document.createElement("label");
+          counter.className = "stockcounter";
+          box.appendChild(counter);
+          var s = this.stock;
+          s._counter = counter;
+          s.__defineGetter__("counter", function() { return this._counter._value; });
+          s.__defineSetter__("counter", function(val) {
+            const c = this._counter; return c.value = c._value = val; });
+          break;
+      // add spaces
+        case "-":
+          box.appendChild(document.createElement("halfpilespacer")); break;
+        case "+":
+        case "#":
+          p = document.createElement("pilespacer");
+          p.className = this.layoutForPiles; // needed by PileOn; doesn't hurt elsewhere
+          box.appendChild(p);
+          break;
+        case " ":
+          box.appendChild(document.createElement("space")); break;
+        case "1":
+          box.appendChild(document.createElement("flex")); break;
+        case "2":
+          box.appendChild(document.createElement("flex2")); break;
+        case "3":
+          box.appendChild(document.createElement("flex3")); break;
+        case "4":
+          box.appendChild(document.createElement("flex4")); break;
+        default:
+          throw ("BaseCardGame.buildLayout: strange char found: "+template[i]);
+      }
+    }
+    // sanity check
+    if(box != container) throw "BaseCardGame._buildLayout: layout had unclosed box";
   },
 
 

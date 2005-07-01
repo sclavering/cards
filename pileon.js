@@ -3,6 +3,10 @@ Games.pileon = {
 
   id: "pileon",
 
+  layoutTemplate: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]",
+
+  layoutForPiles: "fan-right pileon",
+
   deal: function(cards) {
     const ps = this.piles;
     for(var i = 0; i != 13; i++) ps[i].dealTo(cards, 0, 4);

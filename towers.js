@@ -2,7 +2,8 @@ Games.towers = {
   __proto__: FreeCellGame,
 
   id: "towers",
-  getLowestMovableCard: "descending, in suit",
+
+  layoutTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
   init: function() {
     var cs = this.cards = makeDecks(1);
@@ -29,6 +30,8 @@ Games.towers = {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
+  getLowestMovableCard: "descending, in suit",
 
   getBestMoveForCard: function(card) {
     var up = card.up;

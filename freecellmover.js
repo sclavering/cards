@@ -7,7 +7,7 @@ var FreeCellGame = {
   done: function(pile, wasInterrupted) {
     const acts = this.actionsDone, act = acts[acts.length-1];
     gScoreDisplay.value = this.score += act.score;
-    
+
     if(!wasInterrupted) return FreeCellMover.step();
 
     FreeCellMover.interrupt();
@@ -107,7 +107,7 @@ var FreeCellMover = {
     moveCards(this.cards.shift(), this.tos.shift());
     return true;
   },
-  
+
   interrupt: function() {
     const froms = this.cards, tos = this.tos, num = froms.length;
     for(var i = 0; i != num; ++i) tos[i].addCards(froms[i]);

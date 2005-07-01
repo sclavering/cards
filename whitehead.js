@@ -2,9 +2,8 @@ Games.whitehead = {
   __proto__: BaseCardGame,
 
   id: "whitehead",
-  layout: "klondike",
-  dealFromStock: "to waste",
-  getLowestMovableCard: "descending, in suit",
+
+  layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
 
   init: function() {
     var cs = this.cards = makeDecks(1);
@@ -29,6 +28,8 @@ Games.whitehead = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
+  dealFromStock: "to waste",
+
   mayTakeCardFromPile: "run down, same suit",
 
   mayAddCardToPile: function(card) {
@@ -40,6 +41,8 @@ Games.whitehead = {
     this.addHintsFor(this.waste.lastChild);
     for(var i = 0; i != 7; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
+  getLowestMovableCard: "descending, in suit",
 
   getBestMoveForCard: function(card) {
     var up = card.up, on = card.on;

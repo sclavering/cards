@@ -3,6 +3,10 @@ Games.maze = {
 
   id: "maze",
 
+  layoutTemplate:
+    "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
+    + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
+
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces
     var cs = this.cards = makeCardRuns(1, 12);

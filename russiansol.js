@@ -2,7 +2,8 @@ Games.russiansol = {
   __proto__: BaseCardGame,
 
   id: "russiansol",
-  layout: "yukon",
+
+  layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
   init: function() {
     var cs = this.cards = makeDecks(1);

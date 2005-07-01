@@ -3,6 +3,12 @@ Games.unionsquare = {
 
   id: "unionsquare",
 
+  layoutTemplate: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2",
+
+  layoutForPiles: "unionsquare",
+
+  layoutForFoundations: "unionsquare-f",
+
   init: function() {
     var cs = this.cards = makeDecks(2);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];

@@ -3,6 +3,10 @@ Games.fortythieves = {
 
   id: "fortythieves",
 
+  layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]",
+
+  layoutForWaste: "fan-right",
+
   init: function() {
     var cs = this.cards = makeDecks(2);
     var as = this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];

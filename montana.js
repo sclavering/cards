@@ -3,7 +3,9 @@
 var Montana = {
   __proto__: BaseCardGame,
 
-  layout: "montana",
+  layoutTemplate:
+    "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1] "
+    + "[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
 
   redeals: 2,
   redealsRemaining: 2,

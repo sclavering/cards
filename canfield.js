@@ -4,7 +4,8 @@ var CanfieldBase = {
   __proto__: BaseCardGame,
 
   id: "canfield",
-  getLowestMovableCard: "face up",
+
+  layoutTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
 
   init: function() {
     var cs = this.cards = makeDecksMod13(1);
@@ -28,6 +29,17 @@ var CanfieldBase = {
     }
   },
 
+  deal: function(cards) {
+    this.reserve.dealTo(cards, this.reserveFaceDownCards, this.reserveFaceUpCards);
+    this.foundations[0].dealTo(cards, 0, 1);
+    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
+    this.stock.dealTo(cards, cards.length, 0);
+
+    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
+    const cs = this.cards;
+    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
+  },
+
   dealFromStock: "to waste",
 
   turnStockOver: "yes",
@@ -41,6 +53,8 @@ var CanfieldBase = {
     this.addHintsFor(this.waste.lastChild);
     for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
+  getLowestMovableCard: "face up",
 
   getBestMoveForCard: "legal nonempty, or empty",
 
@@ -61,17 +75,8 @@ Games.canfield = {
   __proto__: CanfieldBase,
 
   id: "canfield",
-
-  deal: function(cards) {
-    this.reserve.dealTo(cards, 12, 1);
-    this.foundations[0].dealTo(cards, 0, 1);
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
-
-    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
-    const cs = this.cards;
-    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
-  }
+  reserveFaceDownCards: 12,
+  reserveFaceUpCards: 1
 };
 
 
@@ -79,24 +84,7 @@ Games.demon = {
   __proto__: CanfieldBase,
 
   id: "demon",
-  layout: "canfield",
-
-  init: function() {
-    this.__proto__.init.call(this);
-    this.reserve.className = "fan-down";
-    initPile(this.reserve);
-    this.reserve.mayTakeCard = this.mayTakeCardFromReserve;
-    this.reserve.mayAddCard = this.mayAddCardToReserve;
-  },
-
-  deal: function(cards) {
-    this.reserve.dealTo(cards, 0, 13);
-    this.foundations[0].dealTo(cards, 0, 1);
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
-
-    var num = this.foundationStartNumber = this.foundations[0].firstChild.number;
-    const cs = this.cards;
-    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
-  }
+  layoutForReserves: "fan-down",
+  reserveFaceDownCards: 0,
+  reserveFaceUpCards: 13
 }

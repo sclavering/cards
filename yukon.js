@@ -26,7 +26,7 @@ var YukonBase = {
     }
   },
 
-  getBestMoveForCard:  "legal nonempty, or empty",
+  getBestMoveForCard: "legal nonempty, or empty",
 
   isWon: "13 cards on each foundation",
 
@@ -42,6 +42,8 @@ Games.yukon = {
   __proto__: YukonBase,
 
   id: "yukon",
+
+  layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
   init: function() {
     var cs = this.cards = makeDecks(1);
@@ -78,8 +80,10 @@ Games.sanibel = {
   __proto__: YukonBase,
 
   id: "sanibel",
+
+  layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
+
   //cards: 2,
-  dealFromStock: "to waste",
 
   init: function() {
     var cs = this.cards = makeDecks(2);
@@ -105,6 +109,8 @@ Games.sanibel = {
     this.waste.dealTo(cards, 0, 1);
     for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 3, 7);
   },
+
+  dealFromStock: "to waste",
 
   getHints: function() {
     const ps = this.piles;

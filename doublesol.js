@@ -4,7 +4,10 @@ Games.doublesol = {
   __proto__: BaseCardGame,
 
   id: "doublesol",
-  getLowestMovableCard: "face up",
+
+  layoutTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+
+  layoutForFoundations: "doublesol-foundation",
 
   init: function() {
     var cs = this.cards = makeDecks(2);
@@ -68,6 +71,8 @@ Games.doublesol = {
       this.addHintsFor(card);
     }
   },
+
+  getLowestMovableCard: "face up",
 
   getBestMoveForCard: "legal",
 

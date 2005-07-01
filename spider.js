@@ -4,7 +4,9 @@
 var SpiderBase = {
   __proto__: BaseCardGame,
 
-  layout: "spider",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f sl]2",
+
+  layoutForFoundations: "foundation8",
 
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
@@ -184,7 +186,10 @@ Games.wasp = {
   __proto__: SpiderBase,
 
   id: "wasp",
-  layout: "wasp",
+
+  layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
+
+  layoutForFoundations: "foundation4",
 
   // converted to an array of cards by SpiderBase.init2()
   kings: [12, 25, 38, 51],
@@ -222,7 +227,9 @@ Games.wasp = {
 var SimonBase = {
   __proto__: SpiderBase,
 
-  layout: "simon",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
+
+  layoutForFoundations: "foundation4",
 
   // see SpiderBase.init2
   kings: [12, 25, 38, 51],

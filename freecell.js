@@ -2,7 +2,8 @@ Games.freecell = {
   __proto__: FreeCellGame,
 
   id: "freecell",
-  getLowestMovableCard: "descending, alt colours",
+
+  layoutTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
 
   init: function() {
     var cards = this.cards = makeDecks(1);
@@ -56,6 +57,8 @@ Games.freecell = {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
+  getLowestMovableCard: "descending, alt colours",
 
   // similar to Rules.getBestMoveForCard["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space

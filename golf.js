@@ -5,8 +5,9 @@ var GolfBase = {
 
   get stockCounterStart() { return this.stock.childNodes.length; },
 
-  layout: "golf",
-  dealFromStock: "to foundation",
+  layoutTemplate: "v[3[sl]2f3] [2p1p1p1p1p1p1p2]",
+
+  layoutForStock: "slide",
 
   cardsPerColumn: 5,
   initialScore: 51,
@@ -16,6 +17,8 @@ var GolfBase = {
     this.foundation.dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
+
+  dealFromStock: "to foundation",
 
   mayTakeCardFromFoundation: "no",
 

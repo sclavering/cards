@@ -272,7 +272,7 @@ var cardMethods = {
 
 function createFloatingPile() {
   const pile = gFloatingPile = document.createElement("stack");
-  initPile(pile);
+  initPile(pile, "");
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;

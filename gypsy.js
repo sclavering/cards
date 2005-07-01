@@ -3,7 +3,7 @@
 var GypsyBase = {
   __proto__: BaseCardGame,
 
-  layout: "gypsy",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2",
 
   init: function() {
     const fs = this.foundations;

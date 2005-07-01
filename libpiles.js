@@ -11,24 +11,34 @@ const pileIdentifiers =
 function initPileFromId(id, type, mayTakeCard, mayAddCard) {
   var elt = document.getElementById(id);
   if(!elt) return null;
-  initPile(elt);
+  initPile(elt, elt.className);
   elt[pileIdentifiers[type]] = true;
   elt.mayTakeCard = mayTakeCard;
   elt.mayAddCard = mayAddCard;
   return elt;
 }
 
+function createPile(type, num, layout, mayTakeCard, mayAddCard) {
+  const p = document.createElement(type);
+  p.className = layout || "";
+  initPile(p, p.className);
+  p[pileIdentifiers[type]] = true;
+  p.mayTakeCard = mayTakeCard;
+  p.mayAddCard = mayAddCard;
+  return p;
+}
 
-function initPile(elt) {
+
+function initPile(elt, layout) {
   elt.offset = 0;
   // for the floating pile |source| is set to the pile the cards originally came from.
   elt.source = elt;
 
   // get properties and methods based on *the first value* in the class attribute
-  var classv = elt.className, pos = classv.indexOf(" ");
-  if(pos != -1) classv = classv.substring(0, pos);
+  var pos = layout.indexOf(" ");
+  if(pos != -1) layout = layout.substring(0, pos);
 
-  var ms = PileTypes[classv] || basicPileProperties;
+  var ms = PileTypes[layout] || basicPileProperties;
   // make pile type inherit from basic pile
   if(ms!=basicPileProperties && ms.__proto__==Object.prototype)
     ms.__proto__ = basicPileProperties;

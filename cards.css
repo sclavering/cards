@@ -11,8 +11,6 @@ flex5 { -moz-box-flex: 5; }
 
 label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwanted margins */
 
-toolbargrippy { display:none; } /* die grippies, die! */
-
 #games { overflow: hidden; }
 
 
@@ -43,10 +41,16 @@ toolbarbutton { padding-left: 6px; padding-right: 6px; margin-right: 5px;}
 rowspacer { height: 10px;}
 colspacer { width: 10px; }
 
+space { min-width: 10px; min-height: 10px; }
+
 .game {
   padding-top: 10px;
 }
 
+.stockcounter {
+  text-align: center;
+  padding-top: 0.2em;
+}
 
 .card-highlight { background: darkgray; -moz-opacity: 0.3; }
 

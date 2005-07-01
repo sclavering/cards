@@ -2,7 +2,8 @@ Games.acesup = {
   __proto__: BaseCardGame,
 
   id: "acesup",
-  dealFromStock: "to piles",
+
+  layoutTemplate: "h1s2p1p1p1p2f1",
 
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high
@@ -16,6 +17,8 @@ Games.acesup = {
     for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
     this.stock.dealTo(cards, 48, 0);
   },
+
+  dealFromStock: "to piles",
 
   mayTakeCardFromFoundation: "no",
 

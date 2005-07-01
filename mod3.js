@@ -6,6 +6,12 @@ Games.mod3 = {
   __proto__: BaseCardGame,
 
   id: "mod3",
+
+  layoutTemplate:
+    "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1[sl]1]",
+
+  layoutForFoundations: "slide",
+
   cards: null,
   dealFromStock: "to piles",
 

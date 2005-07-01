@@ -3,6 +3,8 @@ Games.penguin = {
 
   id: "penguin",
 
+  layoutTempalte: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
+
   init: function() {
     var cs = this.cards = makeDecksMod13(1);
     this.pilesAndCells = this.piles.concat(this.cells);

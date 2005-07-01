@@ -2,8 +2,11 @@ Games.tripeaks = {
   __proto__: BaseCardGame,
 
   id: "tripeaks",
+
+  layoutTemplate: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
+    +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3[s l]2w3]2",
+
   mouseHandling: "pyramid",
-  dealFromStock: "to waste",
 
   init: function() {
     this.cards = makeDecksMod13(1);
@@ -49,6 +52,8 @@ Games.tripeaks = {
     this.waste.dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
+
+  dealFromStock: "to waste",
 
   canRemoveCard: function(card) {
     // can be called with waste.lastChild, but that won't matter

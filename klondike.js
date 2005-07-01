@@ -3,7 +3,7 @@
 var KlondikeBase = {
   __proto__: BaseCardGame,
 
-  layout: "klondike",
+  layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
 
   init: function() {
     var cs = this.cards = makeDecks(1);

@@ -2,6 +2,11 @@ Games.regiment = {
   __proto__: BaseCardGame,
 
   id: "regiment",
+
+  layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
+
+  layoutForPiles: "",
+
   cards: 2,
 
   init: function() {

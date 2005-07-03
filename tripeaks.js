@@ -79,36 +79,12 @@ Games.tripeaks = {
 
   // xxx write getHints()
 
-  cardWaitingToBeRevealed: null,
-
-  // This game has no autoplay, but does need special auto-revealing:
-  autoplay: function(pileWhichHasHadCardsRemoved) {
-    var card = this.cardWaitingToBeRevealed;
-    if(card) {
-      this.cardWaitingToBeRevealed = null;
-      return new Reveal(card);
-    }
-
-    if(!pileWhichHasHadCardsRemoved) return null;
-
-    const pile = pileWhichHasHadCardsRemoved;
-    const left = pile.leftParent, right = pile.rightParent;
-    if(left && left.leftFree) {
-      if(right && right.rightFree) this.cardWaitingToBeRevealed = right.lastChild;
-      return new Reveal(left.lastChild);
-    }
-    if(right && right.rightFree) return new Reveal(right.lastChild);
-
-    return null;
-  },
-
-  getCardsToBeRevealed: function(pileWhichHasHadCardsRemoved) {
-    if(!pileWhichHasHadCardsRemoved) return [];
+  getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
+    const res = [];
     const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;
-    if(lp && rp) return [lp.firstChild, rp.firstChild];
-    if(lp) return [lp.firstChild];
-    if(rp) return [rp.firstChild];
-    return [];
+    if(lp && !lp.leftChild.hasChildNodes()) res.push(lp.firstChild);
+    if(rp && !rp.rightChild.hasChildNodes()) res.push(rp.firstChild);
+    return res;
   },
 
   isWon: function() {
@@ -125,11 +101,6 @@ Games.tripeaks = {
 
     var done = this.actionsDone;
     var prev = done.length>1 ? done[done.length-2] : null;
-
-    if(action instanceof Reveal) {
-      action.streakLength = prev ? prev.streakLength : 0;
-      return 0;
-    }
 
     // it's a Move
     var score = action.streakLength = prev ? prev.streakLength + 1 : 1;

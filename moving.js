@@ -1,11 +1,10 @@
-var moveCards = null, turnCardUp = null; // function pointers
+var moveCards = null; // function pointer
 
-var interruptAction = null; // null except during animation
+var interruptAction = null; // null except during animation, when it's a function
 
 
 function enableAnimation(enable) {
   moveCards = enable ? moveCards1 : moveCards2;
-  turnCardUp = enable ? turnCardUpAnimated : turnCardUpNonAnimated;
 }
 
 function toggleAnimation(menuitem) {
@@ -97,48 +96,4 @@ function moveCards2(card, to) {
     clearTimeout(t);
     return source;
   }
-}
-
-
-
-// precompute cosines ("qxv" used to avoid accidentally not declaring loop vars in other scopes)
-var turnCardUpAnimatedCosines = new Array(7);
-for(var qxv = 0; qxv != 7; qxv++) turnCardUpAnimatedCosines[qxv] = Math.abs(Math.cos((7-qxv) * Math.PI / 7));
-
-function turnCardUpAnimated(card) {
-  var oldLeft = card._left;
-  var oldHalfWidth = card.boxObject.width / 2;
-  var stepNum = 7;
-  var interval = setInterval(function() {
-    stepNum--;
-    if(stepNum==-1) { // testing for -1 ensures a 40ms delay after the turn completes
-      clearInterval(interval);
-      card.left = oldLeft;
-      card.removeAttribute("width"); // the width needs to be CSS controlled so that switching cardsets works properly
-      done();
-      return;
-    }
-    var newHalfWidth = turnCardUpAnimatedCosines[stepNum] * oldHalfWidth;
-    card.width = 2 * newHalfWidth;
-    card.left = oldLeft + oldHalfWidth - newHalfWidth;
-    if(stepNum==3) card.setFaceUp();  // gone past pi/2
-  }, 45);
-  interruptAction = function() {
-    clearInterval(interval);
-    card.setFaceUp();
-    card.left = oldLeft;
-    card.removeAttribute("width");
-    return null;
-  };
-}
-
-
-
-function turnCardUpNonAnimated(card) {
-  card.setFaceUp();
-  const t = setTimeout(done, kAnimationDelay, null);
-  interruptAction = function() {
-    clearTimeout(t);
-    return null;
-  };
 }

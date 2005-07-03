@@ -11,29 +11,6 @@ redo() should be synchronous if present.  if not present perform() is used inste
 the "action" member is used for scoring.
 */
 
-function Reveal(card) {
-  this.card = card;
-}
-Reveal.prototype = {
-  action: "card-revealed",
-  synchronous: false,
-  undoNext: true,
-
-  perform: function() {
-    turnCardUp(this.card);
-    // evil-ish hack to get this move redone when the preceding one is redone
-    var d = Game.actionsDone;
-    d[d.length-2].redoNext = true;
-  },
-  undo: function() {
-    this.card.setFaceDown();
-  },
-  redo: function() {
-    this.card.setFaceUp();
-  }
-}
-
-
 function DealToPile(pile) {
   this.to = pile;
 }

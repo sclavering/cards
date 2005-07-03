@@ -59,9 +59,10 @@ var GypsyBase = {
 
   scores: {
     "->foundation": 10,
-    "card-revealed": 5,
     "foundation->": -15
-  }
+  },
+
+  scoreForRevealing: 5
 };
 
 

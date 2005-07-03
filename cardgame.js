@@ -124,7 +124,7 @@ var BaseCardGame = {
     var box = container;
     var newbox, p;
     var allpiles = this.allpiles;
-    
+
     function makePile(type, arry, layout, mayTake, mayAdd) {
       const len = arry ? arry.length : 0;
       const p = createPile(type, len, layout, mayTake, mayAdd);
@@ -138,14 +138,14 @@ var BaseCardGame = {
       }
       return p;
     }
-    
+
     function startBox(type, className) {
       newbox = document.createElement(type);
       newbox.className = className;
       box.appendChild(newbox);
       box = newbox;
     }
-    
+
     const len = template.length;
     // first char is "h"/"v", not of interest here
     for(var i = 1; i != len; ++i) {
@@ -276,7 +276,8 @@ var BaseCardGame = {
       else d.perform();
       this.score += d.score;
       // ugly
-      if(d.revealedCard) d.revealedCard.setFaceUp();
+      var cs = action.revealedCards;
+      for(var j = 0; j != cs.length; ++j) cs[j].setFaceDown();
     }
 
     gScoreDisplay.value = this.score;
@@ -337,6 +338,9 @@ var BaseCardGame = {
     return (actionstr in this.scores) ? this.scores[actionstr] : 0;
   },
 
+  // score for each card revealed.  done() handles the revealing of cards
+  scoreForRevealing: 0,
+
   // a string->number map of scores
   scores: {},
 
@@ -357,7 +361,6 @@ var BaseCardGame = {
     if(this.canRedo) this.actionsUndone = [];
     this.canRedo = false;
     action.score = this.getScoreFor(action);
-    //gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;
   },
 
@@ -367,21 +370,19 @@ var BaseCardGame = {
   // Returns a bool. indicating whether an animation was triggered.
   done: function(pile, wasInterrupted) {
     const acts = this.actionsDone, act = acts[acts.length-1];
-    gScoreDisplay.value = this.score += act.score;
 
-    const card = act.revealedCard = pile ? pile.lastChild : null;
-    if(!card) return false;
-    if(card.faceUp) {
-      act.revealedCard = null;
-      return false;
-    }
-    // xxx make animated turning work again
-//    if(wasInterrupted) {
-      card.setFaceUp();
-      return false;
-//    }
-    turnCardUp(card);
-    return true;
+    const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp();
+    act.score += cs.length * this.scoreForRevealing;
+
+    gScoreDisplay.value = this.score += act.score;    
+    return false;
+  },
+
+  // overridden by TriPeaks
+  getCardsToReveal: function(pile) {
+    const card = pile ? pile.lastChild : null;
+    return card && card.faceDown ? [card] : [];
   },
 
   // Action objects (see actions.js) each implement an undo() method.
@@ -398,8 +399,8 @@ var BaseCardGame = {
     this.hintsReady = false;
 
     action.undo();
-    const revealed = action.revealedCard;
-    if(revealed) revealed.setFaceDown();
+    const cs = action.revealedCards;
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceDown();
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
 
@@ -419,8 +420,8 @@ var BaseCardGame = {
 
     if(action.redo) action.redo();
     else action.perform();
-    const revealed = action.revealedCard;
-    if(revealed) revealed.setFaceUp();
+    const cs = action.revealedCards;
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp();
 
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
 
@@ -504,7 +505,8 @@ var BaseCardGame = {
 
   // === Actions ==========================================
   revealCard: function(card) {
-    return card.faceDown && !card.nextSibling ? new Reveal(card) : null;
+    // For all current games, revealing always happens automatically.
+    throw "BaseCardGame.revealCard called";
   },
 
   dealFromStock: function() {

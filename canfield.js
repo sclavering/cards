@@ -65,9 +65,10 @@ var CanfieldBase = {
   scores: {
     "->foundation": 10,
     "waste->pile": 5,
-    "card-revealed": 5,
     "foundation->": -15
-  }
+  },
+
+  scoreForRevealing: 5
 };
 
 

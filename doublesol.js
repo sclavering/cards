@@ -106,8 +106,9 @@ Games.doublesol = {
   scores: {
     "->foundation": 10,
     "waste->pile": 5,
-    "card-revealed": 5,
     "foundation->": -15,
     "stock-turned-over": -100
-  }
+  },
+
+  scoreForRevealing: 5
 }

@@ -7,16 +7,7 @@ var gSlideOffset = 2; // num pixels between top+left edges of two cards in a sli
 // properties to identify the type of a pile
 const pileIdentifiers =
   {stock:"isStock", waste:"isWaste", reserve:"isReserve", cell:"isCell", foundation:"isFoundation", pile:"isPile"};
-
-function initPileFromId(id, type, mayTakeCard, mayAddCard) {
-  var elt = document.getElementById(id);
-  if(!elt) return null;
-  initPile(elt, elt.className);
-  elt[pileIdentifiers[type]] = true;
-  elt.mayTakeCard = mayTakeCard;
-  elt.mayAddCard = mayAddCard;
-  return elt;
-}
+  
 
 function createPile(type, num, layout, mayTakeCard, mayAddCard) {
   const p = document.createElement(type);
@@ -66,7 +57,7 @@ var basicPileProperties = {
   isPile: false,
 
   // previous and next pile of the same type
-  // BaseCardGame.initPiles() forms these into doubly-linked non-circular lists
+  // BaseCardGame.buildLayout() forms these into doubly-linked non-circular lists
   prev: null,
   next: null,
 
@@ -74,7 +65,7 @@ var basicPileProperties = {
   nextCardLeft: 0,
   nextCardTop: 0,
 
-  // these are replaced in BaseCardGame.initPiles, based on the game's mayTakeCardFrom* and mayAddCardTo* methods
+  // replaced in BaseCardGame.buildLayout, based on the game's mayTakeCardFrom* and mayAddCardTo* methods
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
 

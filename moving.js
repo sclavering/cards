@@ -35,7 +35,7 @@ function moveCards1(firstCard, target) {
     var steps = Math.round(Math.sqrt(dx*dx + dy*dy) / 55);
 //    var steps = (dx && dy) ? Math.round(Math.sqrt(dx*dx + dy*dy)) : (dx || dy);
 
-    if(steps==1 || steps==0) {
+    if(steps==0) {
       if(parent==gFloatingPile) gFloatingPileNeedsHiding = true;
       target.addCards(firstCard);
       done(source);

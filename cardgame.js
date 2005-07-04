@@ -234,6 +234,8 @@ var BaseCardGame = {
           box.appendChild(document.createElement("flex3")); break;
         case "4":
           box.appendChild(document.createElement("flex4")); break;
+        case "5":
+          box.appendChild(document.createElement("flex5")); break;
         default:
           throw ("BaseCardGame.buildLayout: strange char found: "+template[i]);
       }

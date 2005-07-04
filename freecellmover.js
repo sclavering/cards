@@ -7,17 +7,13 @@ var FreeCellGame = {
   done: function(pile, wasInterrupted) {
     const acts = this.actionsDone, act = acts[acts.length-1];
     gScoreDisplay.value = this.score += act.score;
+    
+    act.revealedCards = []; //BaseCardGame.undo/redo/restore all require this
 
     if(!wasInterrupted) return FreeCellMover.step();
 
     FreeCellMover.interrupt();
     return false;
-  },
-
-  get insufficientSpacesMessage() {
-    var ths = FreeCellGame;
-    delete ths.insufficientSpacesMessage;
-    return ths.insufficientSpacesMessage = document.documentElement.getAttribute("insufficientSpacesMessage");
   },
 
   doBestMoveForCard: function(card) {

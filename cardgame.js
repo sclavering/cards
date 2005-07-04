@@ -278,7 +278,7 @@ var BaseCardGame = {
       else d.perform();
       this.score += d.score;
       // ugly
-      var cs = action.revealedCards;
+      var cs = d.revealedCards;
       for(var j = 0; j != cs.length; ++j) cs[j].setFaceDown();
     }
 

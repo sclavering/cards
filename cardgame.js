@@ -696,6 +696,8 @@ GameController.prototype = {
 
     Game = this.currentGame = new this.constructor();
     Game.begin(cards);
+    const act = Game.autoplay();
+    if(act) doo(act);    
   },
 
   restorePastGame: function() {

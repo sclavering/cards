@@ -1,7 +1,7 @@
 Games.maze = {
   __proto__: BaseCardGame,
 
-  id: "maze",
+  pileType: MazePile,
 
   layoutTemplate:
     "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
@@ -24,16 +24,6 @@ Games.maze = {
     for(var i = 0; i != num; i++) ps[i].dealTo(cards, 0, 1);
   },
 
-  mayAddCardToPile: function(card) {
-    if(this.hasChildNodes()) return false;
-
-    var prev = this.prev.lastChild, next = this.next.lastChild;
-    return (card.isQueen && next && next.isAce)
-        || (card.isAce && prev && prev.isQueen)
-        || (prev && prev==card.down)
-        || (next && next==card.up);
-  },
-
   getHints: function() {
     for(var i = 0; i != 54; i++) {
       var p = this.piles[i];
@@ -52,7 +42,7 @@ Games.maze = {
     }
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     if(card.isAce) {
       var start = card.parentNode, pile = start.next;
       while(pile!=start && (pile.hasChildNodes() || !(pile.next.lastChild==card.up

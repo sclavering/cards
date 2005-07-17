@@ -1,19 +1,18 @@
 Games.regiment = {
   __proto__: BaseCardGame,
 
-  id: "regiment",
+  reserveLayout: BaseLayout,
+  pileType: BaseLayout,
 
   layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
-
-  layoutForPiles: "",
 
   cards: 2,
 
   init: function() {
-    var cs = this.cards = makeDecks(2);
+    const cs = this.cards = makeDecks(2);
     const fs = this.foundations, ps = this.piles, rs = this.reserves;
-    var afs = this.aceFoundations = fs.slice(0,4);
-    var kfs = this.kingFoundations = fs.slice(4,8);
+    const afs = this.aceFoundations = fs.slice(0,4);
+    const kfs = this.kingFoundations = fs.slice(4,8);
 
     for(var i = 0; i != 8; i++) {
       rs[i].up = ps[i];
@@ -27,14 +26,17 @@ Games.regiment = {
     }
 
     for(i = 0; i != 16; i++) {
-      var col = ps[i].col = i % 8;
-      ps[i].reserve = rs[col];
-      ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
+      var p = ps[i], col = p.col = i % 8;
+      p.reserve = rs[col];
+      p.isPile = true;
+      p.mayTakeCard = this.mayTakeCardFromPile;
+      p.mayAddCard = this.mayAddCardToPile;
+      p.following = ps.slice(i+1).concat(ps.slice(0, i));
     }
 
     const acepos = [0, 13, 26, 39, 52, 65, 78, 91];
-    var as = this.aces = new Array(8);
-    var ks = this.kings = new Array(8);
+    const as = this.aces = new Array(8);
+    const ks = this.kings = new Array(8);
     for(i = 0; i != 8; i++) as[i] = cs[acepos[i]], ks[i] = cs[acepos[i]+12];
   },
 
@@ -43,7 +45,7 @@ Games.regiment = {
     for(i = 0; i != 8; i++) this.reserves[i].dealTo(cards, 10, 1);
   },
 
-  mayTakeCardFromPile: "single card",
+  mayTakeCardFromPile: mayTakeSingleCard,
 
   mayAddCardToAceFoundation: function(card) {
     var last = this.lastChild, twin = card.twin;
@@ -60,8 +62,8 @@ Games.regiment = {
 
   mayAddCardToPile: function(card) {
     // piles are built up or down (or both) within suit
-    var last = this.lastChild;
-    if(last) return card.suit==last.suit && card.differsByOneFrom(last);
+    var l = this.lastChild;
+    if(l) return card.suit==l.suit && (l.number==card.upNumber || card.number==l.upNumber);
 
     // empty piles must be filled from the closest reserve pile
     var source = card.parentNode.source;
@@ -87,7 +89,7 @@ Games.regiment = {
     for(i = 0; i != 16; i++) this.addHintsFor(this.piles[i].lastChild);
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     const parent = card.parentNode;
     const ps = parent.isPile ? parent.following : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {

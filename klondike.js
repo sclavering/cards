@@ -1,9 +1,8 @@
-// provides: klondike, klondike-draw3
-
-var KlondikeBase = {
+const KlondikeBase = {
   __proto__: BaseCardGame,
 
-  layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
+  foundationType: KlondikeFoundation,
+  pileType: KlondikePile,
 
   init: function() {
     var cs = this.cards = makeDecks(1);
@@ -30,16 +29,11 @@ var KlondikeBase = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to waste",
-
-  turnStockOver: "yes",
-
-  mayAddCardToPile: "down and different colour, king in space",
-
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
     for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
+
   getHintsFor: function(card) {
     if(!card) return;
     if(card.isKing) {
@@ -57,7 +51,7 @@ var KlondikeBase = {
 
   getLowestMovableCard: "face up",
 
-  getBestMoveForCard: "legal",
+  getBestDestinationFor: "legal",
 
   autoplay: "commonish",
 
@@ -74,81 +68,18 @@ var KlondikeBase = {
 };
 
 
-
-
-
-Games["klondike"] = {
+Games.klondike1 = {
   __proto__: KlondikeBase,
-  id: "klondike"
+  stockType: StockDealToWasteOrRefill,
+  wasteLayout: BaseLayout,
+  layoutTemplate: "v[1[sl]1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 
 
-
-
-
-Games["klondike-draw3"] = {
+Games.klondike3 = {
   __proto__: KlondikeBase,
-  id: "klondike-draw3",
-
-  init2: function() {
-    const w = this.waste;
-    // make waste pile wider, and spacer narrower
-    w.className = "draw3-waste";
-    w.nextSibling.nextSibling.className = "draw3-waste-spacer";
-    // only ever has to handle one card
-    w.addCards = function(card) {
-      var depth = ++Game.wasteDepth;
-      this.appendChild(card);
-      card.top = card._top = 0;
-      card.left = card._left = depth>0 ? depth * gHFanOffset : 0;
-    };
-    // only called after a card is removed from the waste pile
-    w.fixLayout = function() {
-      --Game.wasteDepth;
-    };
-  },
-
-  dealFromStock: function() {
-    return new KlondikeDeal3Action();
-  },
-
-  // Each time cards are dealt to the waste pile this is set to the number of cards dealt.  It is
-  // decreased whenever a card is removed from the pile, so will be 0 once all the cards from
-  // a given deal are removed, and negative if further cards are removed.  It is needed to position
-  // cards being readded to the waste pile (by undo(), for instance).
-  wasteDepth: 0
-};
-
-
-function KlondikeDeal3Action() {
-  this.oldWasteDepth = Game.wasteDepth;
-};
-KlondikeDeal3Action.prototype = {
-  synchronous: true,
-
-  perform: function() {
-    const w = Game.waste;
-    // pack any cards already there to the left of the pile
-    var card = w.lastChild;
-    while(card && card._left) {
-      card.left = card._left = 0;
-      card = card.previousSibling;
-    }
-    // deal new cards
-    Game.wasteDepth = -1;
-    var num = Game.stock.childNodes.length;
-    if(num > 3) num = 3;
-    for(var i = 0; i != num; ++i) Game.dealCardTo(Game.waste);
-    this.numMoved = num;
-  },
-
-  undo: function() {
-    const w = Game.waste;
-    // undeal cards
-    for(var i = this.numMoved; i != 0; --i) Game.undealCardFrom(w);
-    i = Game.wasteDepth = this.oldWasteDepth;
-    // unpack the cards that were there before, if necessary
-    for(var card = w.lastChild; i > 0; --i, card = card.previousSibling)
-      card.left = card._left = i * gHFanOffset;
-  }
+  stockType: Deal3OrRefillStock,
+  wasteType: Deal3Waste,
+  wasteLayout: null,
+  layoutTemplate: "v[1[sl]1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };

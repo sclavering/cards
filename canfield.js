@@ -1,9 +1,9 @@
-// provides: canfield, demon
-
-var CanfieldBase = {
+const CanfieldBase = {
   __proto__: BaseCardGame,
 
-  id: "canfield",
+  stockType: StockDealToWasteOrRefill,
+  foundationType: DemonFoundation,
+  pileType: KlondikePile,
 
   layoutTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
 
@@ -40,14 +40,6 @@ var CanfieldBase = {
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 
-  dealFromStock: "to waste",
-
-  turnStockOver: "yes",
-
-  mayAddCardToFoundation: "canfield/penguin",
-
-  mayAddCardToPile: "down, opposite colour",
-
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);
     this.addHintsFor(this.waste.lastChild);
@@ -56,7 +48,7 @@ var CanfieldBase = {
 
   getLowestMovableCard: "face up",
 
-  getBestMoveForCard: "legal nonempty, or empty",
+  getBestDestinationFor: "legal nonempty, or empty",
 
   autoplay: "commonish",
 
@@ -74,8 +66,7 @@ var CanfieldBase = {
 
 Games.canfield = {
   __proto__: CanfieldBase,
-
-  id: "canfield",
+  reserveLayout: BaseLayout,
   reserveFaceDownCards: 12,
   reserveFaceUpCards: 1
 };
@@ -83,9 +74,7 @@ Games.canfield = {
 
 Games.demon = {
   __proto__: CanfieldBase,
-
-  id: "demon",
-  layoutForReserves: "fan-down",
+  reserveLayout: FanDownLayout,
   reserveFaceDownCards: 0,
   reserveFaceUpCards: 13
 }

@@ -1,7 +1,7 @@
 Games.russiansol = {
   __proto__: BaseCardGame,
 
-  id: "russiansol",
+  pileType: WaspPile,
 
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
@@ -15,8 +15,6 @@ Games.russiansol = {
     for(var i = 1; i != 7; i++) this.piles[i].dealTo(cards, i, 5);
   },
 
-  mayAddCardToPile: "onto .up",
-
   getHints: function() {
     for(var i = 0; i != 7; i++) {
       var pile = this.piles[i];
@@ -28,7 +26,7 @@ Games.russiansol = {
     }
   },
 
-  getBestMoveForCard: "to up or nearest space",
+  getBestDestinationFor: "to up or nearest space",
 
   autoplay: "commonish",
 

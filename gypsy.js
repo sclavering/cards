@@ -1,7 +1,9 @@
-// provides: gypsy, gypsy-2suits
-
-var GypsyBase = {
+const GypsyBase = {
   __proto__: BaseCardGame,
+
+  stockType: StockDealToPiles,
+  pileType: GypsyPile,
+  pileLayout: FanDownLayout,
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2",
 
@@ -15,19 +17,13 @@ var GypsyBase = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to piles",
-
-  mayTakeCardFromPile: "run down, alt colours",
-
-  mayAddCardToPile: "down, opposite colour",
-
   getHints: function() {
     for(var i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 
   getLowestMovableCard: "descending, alt colours",
 
-  getBestMoveForCard: "legal nonempty, or empty",
+  getBestDestinationFor: "legal nonempty, or empty",
 
   getFoundationMoveFor: function(card) {
     if(card.isAce) {
@@ -66,10 +62,8 @@ var GypsyBase = {
 };
 
 
-Games["gypsy-2suits"] = {
+Games.gypsy2 = {
   __proto__: GypsyBase,
-
-  id: "gypsy-2suits",
 
   cards: [[SPADE, HEART], 4],
 
@@ -94,10 +88,8 @@ Games["gypsy-2suits"] = {
 };
 
 
-Games["gypsy"] = {
+Games.gypsy4 = {
   __proto__: GypsyBase,
-
-  id: "gypsy",
 
   cards: 2,
 

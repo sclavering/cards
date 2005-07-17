@@ -4,9 +4,12 @@
 var SpiderBase = {
   __proto__: BaseCardGame,
 
-  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f sl]2",
+  stockType: StockDealToPilesIfNoneAreEmpty,
+  foundationType: Spider8Foundation,
+  pileType: SpiderPile,
+  pileLayout: FanDownLayout,
 
-  layoutForFoundations: "foundation8",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f sl]2",
 
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
@@ -17,14 +20,9 @@ var SpiderBase = {
     for(var i = 0; i != num; i++) ks[i] = cs[ki[i]];
   },
 
-  dealFromStock: "to piles, if none empty",
+  getBestDestinationFor: "down and same suit, or down, or empty",
 
-  mayTakeCardFromFoundation: "no",
-
-  mayAddCardToPile: "down",
-
-  getBestMoveForCard: "down and same suit, or down, or empty",
-
+  // this sucks
   autoplay: function() {
     const ks = this.kings, num = ks.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
@@ -52,7 +50,7 @@ var SpiderBase = {
 
 
 
-var Spider = {
+const Spider = {
   __proto__: SpiderBase,
 
   getLowestMovableCard: "descending, in suit",
@@ -63,33 +61,26 @@ var Spider = {
     this.stock.dealTo(cards, 50, 0);
   },
 
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToFoundation: "13 cards",
-
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   }
 };
 
 
-Games["spider-1suit"] = {
+Games.spider1 = {
   __proto__: Spider,
-  id: "spider-1suit",
   cards: [[SPADE], 8]
 };
 
 
-Games["spider-2suits"] = {
+Games.spider2 = {
   __proto__: Spider,
-  id: "spider-2suits",
   cards: [[SPADE, HEART], 4]
 };
 
 
-Games.spider = {
+Games.spider4 = {
   __proto__: Spider,
-  id: "spider",
   cards: 2
 };
 
@@ -100,7 +91,8 @@ Games.spider = {
 Games.blackwidow = {
   __proto__: SpiderBase,
 
-  id: "blackwidow",
+  pileType: BlackWidowPile,
+
   cards: 2,
 
   deal: function(cards) {
@@ -108,10 +100,6 @@ Games.blackwidow = {
     for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
     this.stock.dealTo(cards, 50, 0);
   },
-
-  mayAddCardToFoundation: "king->ace flush",
-
-  mayTakeCardFromPile: "run down",
 
   getHints: function() {
     for(var i = 0; i != 10; i++) {
@@ -139,11 +127,7 @@ Games.blackwidow = {
 Games.divorce = {
   __proto__: SpiderBase,
 
-  id: "divorce",
-
-  get stockCounterStart() { return this.stock.childNodes.length; },
-
-  dealFromStock: "to nonempty piles",
+  stockType: StockDealToNonemptyPiles,
 
   init: function() {
     this.cards = makeDecksMod13(2);
@@ -153,12 +137,6 @@ Games.divorce = {
     for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 5);
     this.stock.dealTo(cards, cards.length, 0);
   },
-
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToFoundation: "13 cards",
-
-  mayAddCardToPile: "down",
 
   getLowestMovableCard: "descending, in suit",
 
@@ -185,11 +163,12 @@ Games.divorce = {
 Games.wasp = {
   __proto__: SpiderBase,
 
-  id: "wasp",
+  stockType: StockDealToPiles,
+  foundationType: Spider4Foundation,
+  pileType: WaspPile,
+  pileLayout: null,
 
   layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
-
-  layoutForFoundations: "foundation4",
 
   // converted to an array of cards by SpiderBase.init2()
   kings: [12, 25, 38, 51],
@@ -200,13 +179,7 @@ Games.wasp = {
     this.stock.dealTo(cards, 3, 0);
   },
 
-  dealFromStock: "to piles",
-
-  mayAddCardToFoundation: "king->ace flush",
-
-  mayAddCardToPile: "onto .up",
-
-  getBestMoveForCard: "to up or nearest space",
+  getBestDestinationFor: "to up or nearest space",
 
   getHints: function() {
     for(var i = 0; i != 7; i++) {
@@ -224,12 +197,12 @@ Games.wasp = {
 
 
 
-var SimonBase = {
+const SimonBase = {
   __proto__: SpiderBase,
 
-  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
+  foundationType: Spider4Foundation,
 
-  layoutForFoundations: "foundation4",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
 
   // see SpiderBase.init2
   kings: [12, 25, 38, 51],
@@ -241,10 +214,6 @@ var SimonBase = {
     for(var i = 2; i != 10; i++) ps[i].dealTo(cards, 0, 10-i);
   },
 
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToFoundation: "13 cards",
-
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
@@ -252,22 +221,17 @@ var SimonBase = {
   getLowestMovableCard: "descending, in suit"
 };
 
-
-Games["simon-1suit"] = {
+Games.simon1 = {
   __proto__: SimonBase,
-  id: "simon-1suit",
   cards: [[SPADE], 4]
 };
 
-
-Games["simon-2suits"] = {
+Games.simon2 = {
   __proto__: SimonBase,
-  id: "simon-2suits",
   cards: [[SPADE, HEART], 2]
 };
 
-
-Games["simon"] = {
+Games.simon4 = {
   __proto__: SimonBase,
-  id: "simon"
+  cards: 1
 };

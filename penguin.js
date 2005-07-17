@@ -1,9 +1,10 @@
 Games.penguin = {
   __proto__: BaseCardGame,
 
-  id: "penguin",
+  foundationType: DemonFoundation,
+  pileType: PenguinPile,
 
-  layoutTempalte: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
+  layoutTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
 
   init: function() {
     var cs = this.cards = makeDecksMod13(1);
@@ -27,17 +28,6 @@ Games.penguin = {
     }
 
     for(i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, 7);
-  },
-
-  mayTakeCardFromFoundation: "no",
-
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToFoundation: "canfield/penguin",
-
-  mayAddCardToPile: function(card) {
-    var last = this.lastChild;
-    return last ? card.up==last : card.upNumber==Game.foundationStartNumber;
   },
 
   getHints: function() {
@@ -75,7 +65,7 @@ Games.penguin = {
 
   getLowestMovableCard: "descending, in suit",
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     if(card.upNumber==Game.foundationStartNumber) {
       var par = card.parentNode, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
       if(p) return p;

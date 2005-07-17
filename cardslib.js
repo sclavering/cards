@@ -90,9 +90,6 @@ function init() {
   if(useAnimation) animationMenuItem.setAttribute("checked","true");
   else animationMenuItem.removeAttribute("checked");
 
-  // init other stuff
-  initMouseHandlers();
-
   gHintHighlighter = createHighlighter();
   gHintHighlighter.showHint = function(from, to) {
     to = to.lastChild || to; // |to| could be a pile
@@ -101,6 +98,13 @@ function init() {
     setTimeout(function(){thisthis.highlight(to);}, 350);
     setTimeout(function(){thisthis.unhighlight();}, 800);
   };
+
+  gGameStack.addEventListener("click", handleMouseClick, false);
+  gGameStack.addEventListener("mousedown", handleMouseDown, false);
+  // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-
+  // clicks (no down or click events), so it's easiest to do all right-click
+  // detection this way. NB: middle-click only gives a click event (no up/down).
+  gGameStack.oncontextmenu = handleRightClick;
 
   // make controllers for each game type
   for(var game in Games) Games[game] = new GameController(game, Games[game]);
@@ -130,6 +134,22 @@ function init() {
 window.addEventListener("load", init, false);
 
 
+function handleMouseDown(e) {
+  if(!gUIEnabled || e.button!=0) return;
+  Game.mouseDown(e);
+}
+function handleMouseMove(e) {
+  if(!gUIEnabled) return;
+  Game.mouseMove(e);
+}
+function handleMouseClick(e) {
+  if(!gUIEnabled || e.button!=0) return;
+  Game.mouseClick(e);
+}
+function handleRightClick(e) {
+  if(!gUIEnabled) return;
+  Game.mouseRightClick(e);
+}
 
 
 
@@ -248,10 +268,6 @@ var cardMethods = {
 
   toString: function() { return this.number+this.suitstr; },
 
-  differsByOneFrom: function(card) {
-    return this.number==card.upNumber || card.number==this.upNumber;
-  },
-
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;
@@ -271,8 +287,8 @@ var cardMethods = {
 
 
 function createFloatingPile() {
-  const pile = gFloatingPile = document.createElement("stack");
-  initPile(pile, "");
+  const pile = gFloatingPile = createPile("stack", BaseLayout, null);
+  dump("floating pile: "+pile+"\n");
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;
@@ -419,17 +435,6 @@ function restartGame() {
   if(!Game.canUndo) return;
   newGame(Game.cardsAsDealt.slice(0));
   updateUI();
-}
-
-
-function attemptMove(card, to) {
-  const may = to.mayAddCard(card);
-  if(may) {
-    doo(new Move(card, to));
-    return true;
-  }
-  if(may===0) showMessage("notEnoughSpaces");
-  return false;
 }
 
 

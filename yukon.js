@@ -1,9 +1,7 @@
-// ids: yukon, sanibel
-
-var YukonBase = {
+const YukonBase = {
   __proto__: BaseCardGame,
 
-  mayAddCardToPile: "down, opposite colour",
+  pileType: KlondikePile,
 
   // take a card a find another card on a different pile of opposite colour and one less in rank
   getHintsForCard: function(card) {
@@ -26,7 +24,7 @@ var YukonBase = {
     }
   },
 
-  getBestMoveForCard: "legal nonempty, or empty",
+  getBestDestinationFor: "legal nonempty, or empty",
 
   isWon: "13 cards on each foundation",
 
@@ -42,7 +40,7 @@ var YukonBase = {
 Games.yukon = {
   __proto__: YukonBase,
 
-  id: "yukon",
+  foundationType: KlondikeFoundation,
 
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
@@ -80,7 +78,8 @@ Games.yukon = {
 Games.sanibel = {
   __proto__: YukonBase,
 
-  id: "sanibel",
+  stockType: StockDealToWaste,
+  foundationType: KlondikeFoundation,
 
   layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
@@ -110,8 +109,6 @@ Games.sanibel = {
     this.waste.dealTo(cards, 0, 1);
     for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 3, 7);
   },
-
-  dealFromStock: "to waste",
 
   getHints: function() {
     const ps = this.piles;

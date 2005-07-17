@@ -1,9 +1,11 @@
 Games.acesup = {
   __proto__: BaseCardGame,
 
-  id: "acesup",
+  stockType: StockDealToPiles,
+  foundationType: AcesUpFoundation,
+  pileType: AcesUpPile,
 
-  layoutTemplate: "h1s2p1p1p1p2f1",
+  layoutTemplate: "h1[sl]2p1p1p1p2f1",
 
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high
@@ -17,24 +19,6 @@ Games.acesup = {
     for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
     this.stock.dealTo(cards, 48, 0);
   },
-
-  dealFromStock: "to piles",
-
-  mayTakeCardFromFoundation: "no",
-
-  mayTakeCardFromPile: "single card",
-
-  mayAddCardToFoundation: function(card) {
-    const ps = Game.piles;
-    for(var i = 0; i != 4; i++) {
-      var top = ps[i].lastChild;
-      if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
-      if(top && card.suit==top.suit && card.number<top.number) return true;
-    }
-    return false;
-  },
-
-  mayAddCardToPile: "if empty",
 
   getHints: function() {
     const ps = this.piles, f = this.foundation;
@@ -50,8 +34,9 @@ Games.acesup = {
     }
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     const f = this.foundation;
+    if(card.parentNode == f) return null;
     if(f.mayAddCard(card)) return f;
     // return next empty pile
     for(var p = card.parentNode, p2 = p.next; p2 != p; p2 = p2.next)
@@ -69,4 +54,4 @@ Games.acesup = {
     }
     return true;
   }
-}
+};

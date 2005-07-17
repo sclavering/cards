@@ -1,7 +1,7 @@
-// provides: montana, montana-hard
-
-var Montana = {
+const Montana = {
   __proto__: BaseCardGame,
+
+  pileType: MontanaPile,
 
   layoutTemplate:
     "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1] "
@@ -34,11 +34,6 @@ var Montana = {
     for(var i = 0; i != 52; i++) this.piles[i].dealTo(cards, 0, 1);
   },
 
-  mayAddCardToPile: function(card) {
-    var left = this.leftp;
-    return !this.hasChildNodes() && (left ? left.hasChildNodes() && left.lastChild.up==card : card.number==2);
-  },
-
   getHints: function() {
     for(var i = 0; i != 52; i++) {
       var pile = this.piles[i];
@@ -55,7 +50,7 @@ var Montana = {
     }
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.parentNode.rightp;
     return pile && !pile.hasChildNodes() ? pile : null;
@@ -83,16 +78,14 @@ var Montana = {
 };
 
 
-Games.montana = {
+Games.montanaEasier = {
   __proto__: Montana,
-  id: "montana",
   isHardGame: false
 };
 
 
-Games["montana-hard"] = {
+Games.montana = {
   __proto__: Montana,
-  id: "montana-hard",
   isHardGame: true
 };
 

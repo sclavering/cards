@@ -1,7 +1,9 @@
 Games.whitehead = {
   __proto__: BaseCardGame,
 
-  id: "whitehead",
+  stockType: StockDealToWaste,
+  foundationType: KlondikeFoundation,
+  pileType: WhiteheadPile,
 
   layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
 
@@ -28,15 +30,6 @@ Games.whitehead = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to waste",
-
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToPile: function(card) {
-    var lst = this.lastChild;
-    return !lst || lst==card.up || lst==card.on;
-  },
-
   getHints: function() {
     this.addHintsFor(this.waste.lastChild);
     for(var i = 0; i != 7; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -44,7 +37,7 @@ Games.whitehead = {
 
   getLowestMovableCard: "descending, in suit",
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     var up = card.up, on = card.on;
     if(up) {
       var p = up.parentNode;

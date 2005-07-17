@@ -1,34 +1,18 @@
-// provides: golf, golf-easy, golf-hard
-
-var GolfBase = {
+const GolfBase = {
   __proto__: BaseCardGame,
 
-  get stockCounterStart() { return this.stock.childNodes.length; },
+  stockType: StockDealToFoundation,
+  foundationType: GolfFoundation,
+  pileType: GolfPile,
+  pileLayout: FanDownLayout,
 
   layoutTemplate: "v[3[sl]2f3] [2p1p1p1p1p1p1p2]",
-
-  layoutForStock: "slide",
-
-  cardsPerColumn: 5,
-  initialScore: 51,
 
   deal: function(cards) {
     for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, this.cardsPerColumn);
     this.foundation.dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
-
-  dealFromStock: "to foundation",
-
-  mayTakeCardFromFoundation: "no",
-
-  mayTakeCardFromPile: "single card",
-
-  mayAddCardToFoundation: function(card) {
-    return card.differsByOneFrom(this.lastChild);
-  },
-
-  mayAddCardToPile: "no",
 
   getHints: function() {
     const f = this.foundation, ps = this.piles;
@@ -38,44 +22,32 @@ var GolfBase = {
     }
   },
 
-  doBestMoveForCard: function(card) {
+  getBestActionFor: function(card) {
     const f = this.foundation;
     return f.mayAddCard(card) ? new Move(card, f) : null;
   },
 
   isWon: function() {
-    return this.score==0;
-  },
-
-  scores: {
-    "->foundation": -1,
-    "dealt-from-stock": -1
+    const ps = this.piles, num = ps.length;
+    for(var i = 0; i != num; ++i) if(ps[i].hasChildNodes()) return false;
+    return true;
   }
 };
 
 
-// K->A or A->K allowed in Easy mode
-Games["golf-easy"] = {
+Games.golf1 = {
   __proto__: GolfBase,
-  id: "golf-easy",
-
+  cardsPerColumn: 5,
   init: function() {
     this.cards = makeDecksMod13(1);
   }
 };
 
 
-Games["golf"] = {
+Games.golf2 = {
   __proto__: GolfBase,
-  id: "golf"
-};
-
-
-// 2 decks used
-Games["golf-hard"] = {
-  __proto__: GolfBase,
-  id: "golf-hard",
-  cards: 2,
   cardsPerColumn: 8,
-  initialScore: 103
+  init: function() {
+    this.cards = makeDecksMod13(2);
+  }
 };

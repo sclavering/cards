@@ -1,17 +1,16 @@
 Games.fan = {
   __proto__: BaseCardGame,
 
-  id: "fan",
+  pileType: FanPile,
 
   // xxx this doesn't give the desired numbering of the piles
   layoutTemplate: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
     +"[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]' ]",
 
-  layoutForPiles: "fan-right",
-
   init: function() {
     var cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
+    this.kings = [cs[12], cs[25], cs[38], cs[51]];
   },
 
   deal: function(cards) {
@@ -33,11 +32,9 @@ Games.fan = {
     return false;
   },
 
-  mayTakeCardFromPile: "single card",
-
-  mayAddCardToPile: "onto .up, kings in spaces",
-
   getHints: function() {
+    const ps = this.piles, len = ps.length;
+
     for(var i = 0; i != this.piles.length; i++) {
       var card = this.piles[i].lastChild;
       if(!card) continue;
@@ -51,7 +48,7 @@ Games.fan = {
     }
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     var up = card.up;
     return up ? (up.nextSibling ? null : up.parentNode) : findEmpty(card.parentNode.surrounding);
   },

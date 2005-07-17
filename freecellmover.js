@@ -1,4 +1,3 @@
-
 // base class for FreeCell, Seahaven Towers and Forty Thieves
 var FreeCellGame = {
   __proto__: BaseCardGame,
@@ -7,7 +6,7 @@ var FreeCellGame = {
   done: function(pile, wasInterrupted) {
     const acts = this.actionsDone, act = acts[acts.length-1];
     gScoreDisplay.value = this.score += act.score;
-    
+
     act.revealedCards = []; //BaseCardGame.undo/redo/restore all require this
 
     if(!wasInterrupted) return FreeCellMover.step();
@@ -16,9 +15,15 @@ var FreeCellGame = {
     return false;
   },
 
-  doBestMoveForCard: function(card) {
+  // mayAddCard returns 0 to mean "legal, but not enough cells+spaces to do the move"
+  getActionForDrop: function(card) {
+    const may = this.mayAddCard(card);
+    return may ? new Move(card, this) : may===0 ? new ErrorMsg("notEnoughSpaces") : null;
+  },
+
+  getBestActionFor: function(card) {
     if(!card.parentNode.mayTakeCard(card)) return null;
-    var p = this.getBestMoveForCard(card);
+    var p = this.getBestDestinationFor(card);
     if(!p) return null;
     var src = card.parentNode.source;
     return !card.nextSibling ? new Move(card, p)
@@ -41,7 +46,7 @@ var FreeCellGame = {
   },
 
   // The source and target of a move should not be used as spaces. However this is only called via
-  // doBestMoveForCard, where the source won't be empty since it still contains the cards, so only
+  // getBestActionFor, where the source won't be empty since it still contains the cards, so only
   // the target need be ignored.
   getEmptyPiles: function(ignore1) {
     var spaces = [];
@@ -94,7 +99,7 @@ FreeCellMoveAction.prototype = {
 
 
 // Carries out the sequences of single-card moves necessary to move a run of cards in games like FreeCell
-var FreeCellMover = {
+const FreeCellMover = {
   cards: [], // a queue of the remaining cards to move
   tos: [],   // their destinations
 

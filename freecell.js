@@ -1,7 +1,8 @@
 Games.freecell = {
   __proto__: FreeCellGame,
 
-  id: "freecell",
+  pileType: FreeCellPile,
+  pileLayout: FanDownLayout,
 
   layoutTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
 
@@ -35,24 +36,6 @@ Games.freecell = {
     */
   },
 
-  mayTakeCardFromPile: "run down, alt colours",
-
-  mayAddCardToPile: function(card) {
-    var last = this.lastChild;
-    if(last && (last.colour==card.colour || last.number!=card.upNumber)) return false
-
-    // check there are enough cells+spaces to perform the move
-
-    if(!card.nextSibling) return true;
-
-    var spaces = Game.countEmptyPiles(this, card.parentNode.source);
-    if(spaces) spaces = spaces * (spaces + 1) / 2;
-    var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
-    var numToMove = 0;
-    for(var next = card; next; next = next.nextSibling) numToMove++;
-    return (numToMove <= canMove) ? true : 0;
-  },
-
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -60,9 +43,9 @@ Games.freecell = {
 
   getLowestMovableCard: "descending, alt colours",
 
-  // similar to Rules.getBestMoveForCard["legal nonempty, or empty"], but must consider cells,
+  // similar to Rules.getBestDestinationFor["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     const pr = card.parentNode, ps = pr.isPile ? pr.surrounding : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; i++) {

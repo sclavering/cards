@@ -1,11 +1,12 @@
 Games.fortythieves = {
   __proto__: FreeCellGame,
 
-  id: "fortythieves",
+  stockType: StockDealToWaste,
+  wasteLayout: FanRightLayout,
+  pileType: FortyThievesPile,
+  pileLayout: FanDownLayout,
 
   layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]",
-
-  layoutForWaste: "fan-right",
 
   init: function() {
     var cs = this.cards = makeDecks(2);
@@ -29,28 +30,6 @@ Games.fortythieves = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to waste",
-
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToPile: function(card) {
-    var last = this.lastChild;
-    if(last && (card.suit!=last.suit || card.upNumber!=last.number)) return false;
-
-    // check there are enough spaces to perform the move
-
-    if(!card.nextSibling) return true;
-
-    var canMove = Game.countEmptyPiles(this, card.parentNode.source);
-    if(canMove) canMove = canMove * (canMove + 1) / 2;
-    canMove++;
-
-    var toMove = 0;
-    for(var next = card; next; next = next.nextSibling) toMove++;
-
-    return (toMove <= canMove) ? true : 0;
-  },
-
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
     this.addHintsFor(this.waste.lastChild);
@@ -58,7 +37,7 @@ Games.fortythieves = {
 
   getLowestMovableCard: "descending, in suit",
 
-  getBestMoveForCard: "legal nonempty, or empty",
+  getBestDestinationFor: "legal nonempty, or empty",
 
   autoplay: "commonish 2deck",
 

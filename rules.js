@@ -4,51 +4,7 @@ Standard forms for the various member functions that games need to provide.
 Set the member to one of the strings below and BaseCardGame.initialise() will replace it with the
 relevant function in this file.
 
-
 Current choices:
-
-mayTakeCard:
-(used for mayTakeCardFromWaste, mayTakeCardFromFoundation etc.)
-  "yes" - may always take any card from this pile
-  "no"  - nay never take any card from this pile
-  "single card" - may take the topmost card and no other
-  "face up" - may take any card in the pile which is face up
-  "run down"
-  "run down, alt colours"
-  "run down, same suit"
-
-mayAddCard:
-(used for mayAddCardToFoundation etc.)
-  "yes"
-  "no"
-  "if empty"
-
-  // for cells
-  "single card, if empty"
-
-  // for ordinary piles
-  "onto .up"
-  "onto .up, kings in spaces"
-  "down"
-  "down, opposite colour"
-  "down and different colour, king in space"
-
-  // for foundations
-  "single card, up in suit or ace in space"
-  "canfield/penguin"
-  "13 cards"
-  "king->ace flush"
-
-dealFromStock:
-  "to waste"
-  "to foundation"
-  "to piles"
-  "to piles, if none empty"
-  "to nonempty piles"
-
-turnStockOver: {
-  "no"
-  "yes"
 
 getLowestMovableCard:
   "descending, in suit"
@@ -59,7 +15,7 @@ isWon:
   "13 cards on each foundation"
   "foundation holds all cards"
 
-getBestMoveForCard
+getBestDestinationFor
   "to up or nearest space"
   "down and same suit, or down, or empty"
 
@@ -69,162 +25,6 @@ autoplay
 */
 
 var Rules = {
-  mayTakeCard: {
-    "yes":
-    function(card) { return true; },
-
-    "no":
-    function(card) { return false; },
-
-    // faceUp check may be unnecessary
-    "single card":
-    function(card) { return !card.nextSibling && card.faceUp; },
-
-    "face up":
-    function(card) { return card.faceUp; },
-
-    "run down":
-    function(card) {
-      if(card.faceDown) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.number!=next.upNumber) return false;
-      return true;
-    },
-
-    "run down, alt colours":
-    function(card) {
-      if(card.faceDown) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.colour==next.colour || card.number!=next.upNumber) return false;
-      return true;
-    },
-
-    "run down, same suit":
-    function(card) {
-      if(card.faceDown) return false;
-      for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-        if(card.suit!=next.suit || card.number!=next.upNumber) return false;
-      return true;
-    }
-  },
-
-
-  mayAddCard: {
-    "yes": function(card) { return true; },
-
-    "no": function(card) { return false; },
-
-    "if empty":
-    function(card) {
-      return !card.nextSdibling && !this.hasChildNodes();
-    },
-
-
-    // for cells
-
-    "single card, if empty":
-    function(card) {
-      return !this.hasChildNodes() && !card.nextSibling;
-    },
-
-
-    // for ordinary piles
-
-    "onto .up":
-    function(card) {
-      return !this.hasChildNodes() || this.lastChild==card.up;
-    },
-
-    "onto .up, kings in spaces":
-    function(card) {
-      return this.hasChildNodes ? this.lastChild==card.up : card.isKing;
-    },
-
-    "down":
-    function(card) {
-      return !this.hasChildNodes() || this.lastChild.number==card.upNumber;
-    },
-
-    "down, opposite colour":
-    function(card) {
-      var last = this.lastChild;
-      return !last || (last.number==card.upNumber && last.colour!=card.colour);
-    },
-
-    "down and different colour, king in space":
-    function(card) {
-      var last = this.lastChild;
-      return last ? last.number==card.upNumber && last.colour!=card.colour : card.isKing;
-    },
-
-    // for foundations
-
-    "single card, up in suit or ace in space":
-    function(card) {
-      const last = this.lastChild;
-      return !card.nextSibling && (this.hasChildNodes() ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
-    },
-
-    // requires .up fields of cards to form circular lists within suits, and defining Game.foundationStartNumber
-    "canfield/penguin":
-    function(card) {
-      if(card.nextSibling) return false;
-      return this.hasChildNodes() ? this.lastChild.up==card : card.number==Game.foundationStartNumber;
-    },
-
-    "13 cards":
-    function(card) {
-      const sibs = card.parentNode.childNodes;
-      var i = sibs.length - 13;
-      return i >= 0 && sibs[i]==card;
-    },
-
-    "king->ace flush":
-    function(card) {
-      if(!card.isKing || !card.parentNode.lastChild.isAce) return false;
-      var next = card.nextSibling;
-      while(next && card.suit==next.suit && card.number==next.upNumber) card = next, next = next.nextSibling;
-      return !next; // all cards should be part of the run
-    }
-  },
-
-
-  dealFromStock: {
-    "to waste": function() {
-      return this.stock.hasChildNodes() ? new DealToPile(this.waste) : null;
-    },
-
-    "to foundation": function() {
-      return this.stock.hasChildNodes() ? new DealToPile(this.foundation) : null;
-    },
-
-    "to piles": function() {
-      return this.stock.hasChildNodes() ? new DealToPiles(this.piles) : null;
-    },
-
-    "to piles, if none empty": function() {
-      if(!this.stock.hasChildNodes()) return null;
-      for(var i = 0; i != Game.piles.length; i++) if(!Game.piles[i].hasChildNodes()) return null;
-      return new DealToPiles(this.piles);
-    },
-
-    "to nonempty piles": function() {
-      return new DealToNonEmptyPilesAction();
-    }
-  },
-
-
-  turnStockOver: {
-    "no": function() {
-      return null;
-    },
-    // only for games with a waste pile
-    "yes": function() {
-      return new TurnStockOverAction();
-    }
-  },
-
-
   getLowestMovableCard: {
     "descending, in suit":
     function(pile) {
@@ -278,7 +78,7 @@ var Rules = {
   },
 
 
-  getBestMoveForCard: {
+  getBestDestinationFor: {
     "to up or nearest space":
     function(card) {
       var up = card.up, upp = up && up.parentNode, p = card.parentNode;

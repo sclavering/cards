@@ -1,7 +1,7 @@
 Games.towers = {
   __proto__: FreeCellGame,
 
-  id: "towers",
+  pileType: TowersPile,
 
   layoutTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
@@ -15,17 +15,6 @@ Games.towers = {
     for(i = 1; i != 3; i++) this.cells[i].dealTo(cards, 0, 1);
   },
 
-  mayTakeCardFromPile: "run down, same suit",
-
-  mayAddCardToPile: function(card) {
-    var last = this.lastChild;
-    if(last ? last != card.up : !card.isKing) return false;
-    // check if there are enough cells to perform the move
-    var toMove = 0;
-    for(var next = card; next; next = next.nextSibling) toMove++;
-    return (toMove <= 1 + Game.numEmptyCells) ? true : 0;
-  },
-
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -33,7 +22,7 @@ Games.towers = {
 
   getLowestMovableCard: "descending, in suit",
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     var up = card.up;
     if(up) {
       var upp = up.parentNode;

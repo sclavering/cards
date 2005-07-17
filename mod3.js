@@ -1,19 +1,14 @@
-// Scoring constants:
-const MOD3_CARD_IN_PLACE = 10, MOD3_EMPTY_PILE = 5;
-const MOD3_MAX_SCORE = 1000; // (96*MOD3_CARD_IN_PLACE + 8*MOD3_EMPTY_PILE);
-
 Games.mod3 = {
   __proto__: BaseCardGame,
 
-  id: "mod3",
+  stockType: StockDealToPiles,
+  foundationType: Mod3Foundation,
+  pileType: AcesUpPile,
 
   layoutTemplate:
     "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1[sl]1]",
 
-  layoutForFoundations: "slide",
-
   cards: null,
-  dealFromStock: "to piles",
 
   init: function() {
     var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
@@ -62,13 +57,6 @@ Games.mod3 = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  get initialScore() {
-    var score = 0;
-    const fs = this.foundations;
-    for(var i = 0; i != 24; i++) if(fs[i].lastChild.inPlace) score += MOD3_CARD_IN_PLACE;
-    return score;
-  },
-
   // games that start with no cards in the correct place on the foundations are impossible
   shuffleImpossible: function(cards) {
     for(var i = 95; i != 87; i--)
@@ -76,16 +64,6 @@ Games.mod3 = {
         return false;
     return true;
   },
-
-  mayTakeCardFromPile: "single card",
-
-  mayAddCardToFoundation: function(card) {
-    if(card.parentNode == this) return false;
-    var last = this.lastChild;
-    return last ? last.inPlace && (card.down==last || card.twin.down==last) : !card.down && card.row==this.row;
-  },
-
-  mayAddCardToPile: "if empty",
 
   getHints: function() {
     for(var i = 0; i != this.allpiles.length; i++) {
@@ -106,7 +84,7 @@ Games.mod3 = {
     }
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     if(card.down) {
       var d1 = card.down, d2 = card.twin.down;
       if(d1.inPlace && !d1.nextSibling) return d1.parentNode;
@@ -157,32 +135,6 @@ Games.mod3 = {
     for(var i = 0; i != 8; i++)
       if(ps[i].hasChildNodes()) return false
     return true;
-  },
-
-  getScoreFor: function(action) {
-    var score = 0;
-
-    if(action.action=="dealt-from-stock") {
-      // how many empty piles are we going to fill?
-      for(var j = 0; j != 8; j++)
-        if(!this.piles[j].hasChildNodes()) score -= MOD3_EMPTY_PILE;
-      return score;
-    }
-
-    // it's a Move
-    var card = action.card, source = action.source, destination = action.destination;
-    // if the user dragged+dropped the card then the source isn't the card's parent node, but if they
-    // right-clicked it then it will be.
-    var notInSource = card.parentNode!=source;
-
-    if(source.isFoundation) {
-      if(notInSource ? source.mayAddCard(card) : source.baseCardInPlace) score -= MOD3_CARD_IN_PLACE;
-    } else {
-      if(notInSource ? !source.hasChildNodes() : !card.previousSibling) score += MOD3_EMPTY_PILE;
-    }
-    if(destination.isFoundation) score += MOD3_CARD_IN_PLACE;
-    else if(!destination.hasChildNodes()) score -= MOD3_EMPTY_PILE;
-
-    return score;
   }
 }
+

@@ -3,11 +3,11 @@
 Games.doublesol = {
   __proto__: BaseCardGame,
 
-  id: "doublesol",
+  stockType: StockDealToWasteOrRefill,
+  foundationType: DoubleSolFoundation,
+  pileType: KlondikePile,
 
   layoutTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
-
-  layoutForFoundations: "doublesol-foundation",
 
   init: function() {
     var cs = this.cards = makeDecks(2);
@@ -39,20 +39,6 @@ Games.doublesol = {
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to waste",
-
-  turnStockOver: "yes",
-
-  mayAddCardToFoundation: function(card) {
-    if(card.nextSibling) return false;
-    // foundations are built A,A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
-    if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
-    var last = this.lastChild, prv = last.previousSibling;
-    return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
-  },
-
-  mayAddCardToPile: "down and different colour, king in space",
-
   getHints: function() {
     this.getHintsFor(this.waste.lastChild);
     for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -74,7 +60,7 @@ Games.doublesol = {
 
   getLowestMovableCard: "face up",
 
-  getBestMoveForCard: "legal",
+  getBestDestinationFor: "legal",
 
   autoplay: function() {
     var searchedForAces = false;
@@ -111,4 +97,4 @@ Games.doublesol = {
   },
 
   scoreForRevealing: 5
-}
+};

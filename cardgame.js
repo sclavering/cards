@@ -1,22 +1,10 @@
 var BaseCardGame = {
-  id: null, // needs to be unique.  used in pref. names.
 
   xulElement: null, // the container vbox/hbox for the game (set automatically)
 
   // This becomes an array of all the cards a game uses, either explicitly in the game's init(), or
   // by initialise() if it is a number (of decks to be created) or an array [[suits], repeat]
   cards: 1,
-
-  // works for most games
-  get stockCounterStart() {
-    var cards = this.stock.childNodes.length;
-    if(this.waste) return cards;
-    return Math.ceil(cards / this.piles.length);
-  },
-
-  // see mouse.js
-  mouseHandling: "drag+drop",
-  mouseHandler: null,
 
   // these are all automatically set up
   allpiles: [],    // array of piles of all types.  used for clearing the game
@@ -48,28 +36,15 @@ var BaseCardGame = {
   },
 
   hide: function() {
-    this.mouseHandler.reset();
     this.xulElement.hidden = true;
   },
 
   initialise: function() {
     this.initialised = true;
-    if(!this.mouseHandler) this.mouseHandler = MouseHandlers[this.mouseHandling];
 
     // see rules.js
     // if any of various members that should be functions are instead strings then substitute appropriate function
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
-    // the mayTakeCardFromFoo and mayAddCardToFoo take values from Rules.mayTakeCard an Rules.mayAddCard respectively
-    const takes = ["mayTakeCardFromStock","mayTakeCardFromWaste","mayTakeCardFromReserve",
-                  "mayTakeCardFromCell","mayTakeCardFromFoundation","mayTakeCardFromPile"];
-    const adds = ["mayAddCardToStock","mayAddCardToWaste","mayAddCardToReserve",
-                  "mayAddCardToCell","mayAddCardToFoundation","mayAddCardToPile"];
-    for(var i = 0; i != takes.length; i++) {
-      r = takes[i];
-      if(typeof this[r] == "string") this[r] = Rules.mayTakeCard[this[r]];
-      r = adds[i];
-      if(typeof this[r] == "string") this[r] = Rules.mayAddCard[this[r]];
-    }
 
     this.buildLayout();
     this.init();
@@ -87,13 +62,19 @@ var BaseCardGame = {
   // <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined in _buildLayout
   layoutTemplate: null,
 
-  // classNames for the elements of various types
-  layoutForFoundations: "",
-  layoutForCells: "",
-  layoutForReserves: "",
-  layoutForPiles: "fan-down",
-  layoutForStock: "",
-  layoutForWaste: "",
+  stockType: null,
+  stockLayout: null,
+  wasteType: Waste,
+  wasteLayout: BaseLayout,
+  foundationType: KlondikeFoundation,
+  foundationLayout: null,
+  cellType: Cell,
+  cellLayout: null,
+  reserveType: Reserve,
+  reserveLayout: null,
+  pileType: null,
+  pileLayout: null,
+  pilespacerClass: "",
 
   buildLayout: function() {
     // make sure each game type has its own arrays for these
@@ -124,10 +105,13 @@ var BaseCardGame = {
     var box = container;
     var newbox, p;
     var allpiles = this.allpiles;
+    const dropact = this.getActionForDrop
 
-    function makePile(type, arry, layout, mayTake, mayAdd) {
+    function makePile(type, impl, layout, arry) {
       const len = arry ? arry.length : 0;
-      const p = createPile(type, len, layout, mayTake, mayAdd);
+      const p = createPile(type, impl, layout);
+      if(p.getActionForDrop==BaseLayout.getActionForDrop && dropact)
+        p.getActionForDrop = dropact;
       if(arry) arry.push(p);
       allpiles.push(p);
       box.appendChild(p);
@@ -182,28 +166,23 @@ var BaseCardGame = {
           throw "BaseCardGame._buildLayout: reached a } in template"
       // add piles or labels
         case "p":
-          makePile("pile", this.piles, this.layoutForPiles,
-                   this.mayTakeCardFromPile, this.mayAddCardToPile);
+          makePile("pile", this.pileType, this.pileLayout, this.piles);
           break;
         case "f":
-          makePile("foundation", this.foundations, this.layoutForFoundations,
-                   this.mayTakeCardFromFoundation, this.mayAddCardToFoundation);
+          this.foundation = makePile("foundation", this.foundationType,
+                                     this.foundationLayout, this.foundations);
           break;
         case "c":
-          makePile("cell", this.cells, this.layoutForCells,
-                   this.mayTakeCardFromCell, this.mayAddCardToCell);
+          makePile("cell", this.cellType, this.cellLayout, this.cells);
           break;
         case "r":
-          makePile("reserve", this.reserves, this.layoutForReserves,
-                   this.mayTakeCardFromReserve, this.mayAddCardToReserve);
+          makePile("reserve", this.reserveType, this.reserveLayout, this.reserves);
           break;
         case "w":
-          this.waste = makePile("waste", null, this.layoutForWaste,
-                                this.mayTakeCardFromWaste, this.mayAddCardToWaste);
+          this.waste = makePile("waste", this.wasteType, this.wasteLayout);
           break;
         case "s":
-          this.stock = makePile("stock", null, this.layoutForStock,
-                                this.mayTakeCardFromStock, this.mayAddCardToStock);
+          this.stock = makePile("stock", this.stockType, this.stockLayout);
           break;
         case "l":
           var counter = document.createElement("label");
@@ -221,7 +200,7 @@ var BaseCardGame = {
         case "+":
         case "#":
           p = document.createElement("pilespacer");
-          p.className = this.layoutForPiles; // needed by PileOn; doesn't hurt elsewhere
+          p.className = this.pilespacerClass;
           box.appendChild(p);
           break;
         case " ":
@@ -286,12 +265,11 @@ var BaseCardGame = {
   },
 
   _begin: function(cards) {
-    this.mouseHandler.reset();
     this.clearGame();
     this.redealsRemaining = this.redeals;
     this.deal(cards);
     gScoreDisplay.value = this.score = this.initialScore;
-    if(this.stock) this.stock.counter = this.stockCounterStart;
+    if(this.stock) this.stock.counter = this.stock.counterStart;
   },
 
   clearGame: function() {
@@ -300,6 +278,7 @@ var BaseCardGame = {
     for(var i = 0; i != num; i++) {
       var p = ps[i];
       while(p.hasChildNodes()) p.removeChild(p.lastChild).setFaceDown();
+      dump("fixing layout for "+p.localName+"\n");
       p.fixLayout();
     }
   },
@@ -377,7 +356,7 @@ var BaseCardGame = {
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp();
     act.score += cs.length * this.scoreForRevealing;
 
-    gScoreDisplay.value = this.score += act.score;    
+    gScoreDisplay.value = this.score += act.score;
     return false;
   },
 
@@ -440,40 +419,12 @@ var BaseCardGame = {
 
   // === Testing if moves are allowed =====================
 
-  // These methods are copied onto all piles of the relevant type as their "mayTakeCard"
-  // method.  They should be functions taking a single arg. which is a card (which will be
-  // a childNode of that pile), and return a boolean indicating whether it may be moved.
-  // String values come from Rules.mayTakeCard.
+  // xxx document me!
 
-  mayTakeCardFromStock: "no",
-
-  mayTakeCardFromWaste: "single card",
-
-  mayTakeCardFromReserve: "single card",
-
-  mayTakeCardFromCell: "yes",
-
-  mayTakeCardFromFoundation: "single card",
-
-  mayTakeCardFromPile: "face up",
-
-
-  // These methods are copied onto piles of the relevant type as their "mayAddCard" method.
-  // They should be functions taking a single arg. which is a card to be added (along with
-  // all its nextSiblings) to the pile, and return a boolean indicating whether that is OK.
-  // String values come from Rules.mayAddCard.
-
-  mayAddCardToStock: "no",
-
-  mayAddCardToWaste: "no",
-
-  mayAddCardToReserve: "no",
-
-  mayAddCardToCell: "single card, if empty",
-
-  mayAddCardToFoundation: "single card, up in suit or ace in space",
-
-  mayAddCardToPile: null, // to ensure JS console errors for any game which omits this
+  // a single version for all types of piles suffices at present
+  getActionForDrop: function(card) {
+    return this.mayAddCard(card) ? new Move(card, this) : null;
+  },
 
 
 
@@ -502,20 +453,6 @@ var BaseCardGame = {
   redealsRemaining: 0,
   canRedeal: false,
   redeal: function() {},
-
-
-
-  // === Actions ==========================================
-  revealCard: function(card) {
-    // For all current games, revealing always happens automatically.
-    throw "BaseCardGame.revealCard called";
-  },
-
-  dealFromStock: function() {
-    throw "dealFromStock() not implemented";
-  },
-
-  turnStockOver: "no",
 
 
 
@@ -598,33 +535,20 @@ var BaseCardGame = {
 
 
   // === Right-click "intelligent" moving of cards ========
-  // Called when the player right-clicks on a card. Games should implement getBestMoveForCard(card)
-  doBestMoveForCard: function(card) {
+  // Called when the player right-clicks on a card. Games should implement getBestDestinationFor(card)
+  getBestActionFor: function(card) {
     if(!card.parentNode.mayTakeCard(card)) return null;
-    const target = this.getBestMoveForCard(card);
+    const target = this.getBestDestinationFor(card);
     return target ? new Move(card, target) : null;
   },
 
-  getBestMoveForCard: function(card) {
+  getBestDestinationFor: function(card) {
     return null;
   },
 
 
 
   // === Miscellany =======================================
-
-  // used for dealFromStock and turnStockOver
-  dealCardTo: function(destination) {
-    var card = this.stock.lastChild;
-    card.setFaceUp();
-    destination.addCards(card);
-  },
-
-  undealCardFrom: function(source) {
-    var card = source.lastChild;
-    card.setFaceDown();
-    this.stock.addCards(card);
-  },
 
   get firstEmptyFoundation() {
     var fs = this.foundations, len = fs.length;
@@ -642,6 +566,165 @@ var BaseCardGame = {
     const cs = this.cells, num = cs.length;
     for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) return cs[i];
     return null;
+  },
+
+
+
+  // === Mouse Handling =======================================
+  // Games must implement mouseDown, mouseUp, mouseMove, mouseClick and mouseRightClick
+
+  _mouseNextCard: null, // set on mousedown on a movable card
+  _mouseDownTarget: null, // always set on mousedown
+  _tx: 0, // used in positioning for drag+drop
+  _ty: 0,
+  _ex0: 0, // coords of mousedown event
+  _ey0: 0,
+  _tx0: 0, // bounds of mousedown target, used to check mouseup is over same target
+  _tx1: 0,
+  _ty0: 0,
+  _ty1: 0,
+  _dragInProgress: false,
+
+  mouseDown: function(e) {
+    if(interruptAction) interrupt();
+    const t = this.getEventTarget(e);
+    if(!t) return;
+    dump("down on "+t.localName+"\n");
+    this._mouseDownTarget = t;
+    this._ex0 = e.pageX;
+    this._ey0 = e.pageY;
+    const tbox = t.boxObject;
+    this._tx0 = tbox.x;
+    this._ty0 = tbox.y;
+    this._tx1 = tbox.x + tbox.width;
+    this._ty1 = tbox.y + tbox.height;
+    dump("height="+tbox.height+"\n");
+
+    dump("down at ("+e.pageX+","+e.pageY+")\n");
+    dump("downt bounds: ("+this._tx0+","+this._ty0+") to ("+this._tx1+","+this._ty1+")\n");
+//    if(t && t.isCard && t.parentNode.mayTakeCard(t)) this._mouseNextCard = t;
+    if(!t.isCard || !t.parentNode.mayTakeCard(t)) return;
+    this._mouseNextCard = t;
+    dump("down on movable\n");
+    gGameStack.onmousemove = handleMouseMove;
+  },
+
+  mouseMove: function(e) {
+//    dump("move\n");
+    const cards = gFloatingPile;
+    if(this._dragInProgress) {
+      cards.top = cards._top = e.pageY - this._ty;
+      cards.left = cards._left = e.pageX - this._tx;
+    } else if(this._mouseNextCard) {
+      // ignore very tiny movements of the mouse during a click
+      // (otherwise clicking without dragging is rather difficult on Mac)
+      dump("move at ("+e.pageX+","+e.pageY+") on "+e.target.className+"\n");
+      const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
+      if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
+      dump("moved quite a bit\n");
+
+      const card = this._mouseNextCard;
+//      cards.className = card.parentNode.className;
+      cards.top = cards._top = card.boxObject.y - gGameStackTop;
+      cards.left = cards._left = card.boxObject.x - gGameStackLeft;
+      cards.source = card.parentNode.source;
+      cards.addCards(card);
+      // other stuff
+      this._dragInProgress = true;
+      this._tx = ex0 - cards._left;
+      this._ty = ey0 - cards._top;
+      this._mouseNextCard = null;
+    }
+  },
+
+  mouseUp: function(e) {
+    this._mouseNextCard = null;
+    if(!this._dragInProgress) return;
+    this._dragInProgress = false;
+
+    const cbox = gFloatingPile.boxObject;
+    var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
+
+    var card = gFloatingPile.firstChild;
+    var source = card.parentNode.source;
+    // try dropping cards on each possible target
+    var targets = Game.dragDropTargets;
+    for(var i = 0; i != targets.length; i++) {
+      var target = targets[i];
+      if(target==source) continue;
+
+      var tbox = target.boxObject;
+      var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
+      var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
+      if(!overlaps) continue;
+//      dump("target="+target+" "+target.localName+"\n");
+      var act = target.getActionForDrop(card);
+      if(!act) continue;
+      if(act instanceof ErrorMsg) {
+        act.show();
+        break;
+      } else {
+        gFloatingPileNeedsHiding = true;
+        doo(act);
+        return;
+      }
+    }
+
+    // ordering here may be important (not-repainting fun)
+    gFloatingPile.hide();
+    source.addCards(card);
+  },
+
+  mouseClick: function(e) {
+    gGameStack.onmousemove = null;
+    dump((this._clickCount++) + " clicks\n");
+    if(this._dragInProgress) {
+      this.mouseUp(e);
+      return;
+    }
+
+//    const t = this.getEventTarget(e);
+    const t = this._mouseDownTarget;
+    this._mouseDownTarget = null;
+    this._mouseNextCard = null;
+//    dump("t0="+t0.className+" t="+t.className+"\n");
+//    if(t != t0) {
+    const ex = e.pageX, ey = e.pageY;
+    dump("click ends at ("+ex+","+ey+")\n");
+    if(ex < this._tx0 || ex > this._tx1 || ey < this._ty0 || ey > this._ty1) {
+      dump("click moved from original card\n");
+      return;
+    }
+    dump("ok click\n");
+//    dump("no drag\n");
+//    if(!t) return;
+//    dump("has target\n");
+    const p = t.parentNode;
+    var act = null;
+    if(t.isStock) act = t.deal();
+    else if(p.isStock) act = p.deal();
+    else if(t.isCard) act = Game.getBestActionFor(t);
+    if(act) doo(act);
+  },
+
+  _clickCount: 0,
+
+  mouseRightClick: function(e) {
+    dump("right\n");
+    if(this._dragInProgress || this._mouseNextCard) return;
+    dump("right (no drag)\n");
+    const t = this.getEventTarget(e);
+    if(!t) return;
+    const tFloating = t.parentNode==gFloatingPile;
+    if(interruptAction) interrupt();
+    // it's OK to right-click a card while a *different* one is moving
+    const act = t.isCard && !tFloating ? Game.sendToFoundations(t) : null;
+    if(act) doo(act);
+  },
+
+  // Pyramid + TriPeaks need to do something different
+  getEventTarget: function(event) {
+    return event.target;
   }
 }
 
@@ -663,6 +746,7 @@ function makeGameConstructor(proto) {
 function GameController(id, proto) {
   this.id = id;
   this.proto = proto;
+  proto.id = id; // cardslib.js still uses this
   this.constructor = makeGameConstructor(proto);
   this.pastGames = [];
   this.futureGames = [];
@@ -697,7 +781,7 @@ GameController.prototype = {
     Game = this.currentGame = new this.constructor();
     Game.begin(cards);
     const act = Game.autoplay();
-    if(act) doo(act);    
+    if(act) doo(act);
   },
 
   restorePastGame: function() {

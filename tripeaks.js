@@ -1,80 +1,45 @@
 Games.tripeaks = {
-  __proto__: BaseCardGame,
+  __proto__: PyramidBase,
 
-  id: "tripeaks",
+  stockType: StockDealToFoundation,
+  foundationType: GolfFoundation,
+  pileType: GolfPile,
+  pileLayout: {
+    __proto__: PyramidLayout,
+    isPeak: false
+  },
 
   layoutTemplate: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
-    +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3[s l]2w3]2",
-
-  mouseHandling: "pyramid",
+    +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3[s l]2f3]2",
 
   init: function() {
     this.cards = makeDecksMod13(1);
-
-    // The numbers of the piles that should be the leftChild of piles 0-17, rightChilds are all 1 greater.
-    // Piles 18-27 have no children.
+    const ps = this.piles;
+    // indices of the leftChild's of piles 0-17 (piles 18+ have no children)
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
-
-    var ps = this.piles;
-
     for(var i = 0; i != 18; i++) {
-      var p = ps[i];
-      var l = ps[lefts[i]];
-      var r = ps[lefts[i]+1];
+      var p = ps[i], n = lefts[i], l = ps[n], r = ps[n+1];
       p.leftChild = l;
       l.rightParent = p;
       p.rightChild = r;
       r.leftParent = p;
     }
 
-    // these are the piles which have no left/right parent
-    const nolp = [0,1,2,3,5,7,9,12,15,18];
-    const norp = [0,1,2,4,6,8,11,14,17,27];
-    for(i = 0; i != nolp.length; i++) ps[nolp[i]].leftParent = null;
-    for(i = 0; i != norp.length; i++) ps[norp[i]].rightParent = null;
-
-    // handler, and we need them to have .leftChild and .rightChild
-    for(i = 0; i != ps.length; i++) {
-      var s = ps[i];
-      s.isPeak = false;
-      s.__defineGetter__("leftFree", function() { return !this.leftChild || !this.leftChild.hasChildNodes(); });
-      s.__defineGetter__("rightFree", function() { return !this.rightChild || !this.rightChild.hasChildNodes(); });
-      s.__defineGetter__("free", function() { return !(this.leftChild && (this.leftChild.hasChildNodes() || this.rightChild.hasChildNodes())); });
-    }
     ps[0].isPeak = ps[1].isPeak = ps[2].isPeak = true;
 
-    this.waste.free = true;
+    this.foundation.free = true;
   },
 
   deal: function(cards) {
     for(var i = 0; i != 18; i++) this.piles[i].dealTo(cards, 1, 0);
     for(i = 18; i != 28; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.waste.dealTo(cards, 0, 1);
+    this.foundation.dealTo(cards, 0, 1);
     this.stock.dealTo(cards, cards.length, 0);
   },
 
-  dealFromStock: "to waste",
-
-  canRemoveCard: function(card) {
-    // can be called with waste.lastChild, but that won't matter
-    return card.differsByOneFrom(this.waste.lastChild) && card.parentNode.free;
-  },
-
-  removeCard: function(card) {
-    doo(new Move(card, this.waste));
-    //doo(new Move(card, this.waste, card.parentNode));
-  },
-
-  canSelectCard: function(card) {
-    return false;
-  },
-
-  // since we never allow a card to be selected canRemovePair and removePair don't actually matter
-  canRemovePair: function(a, b) {
-    return false;
-  },
-
-  removePair: function(a, b) {
+  getBestActionFor: function(card) {
+    const f = Game.foundation, c = f.lastChild;
+    return card.faceUp && (c.number==card.upNumber || c.upNumber==card.number) && new Move(card, f);
   },
 
   // xxx write getHints()

@@ -54,6 +54,6 @@ space { min-width: 10px; min-height: 10px; }
 
 .card-highlight { background: darkgray; -moz-opacity: 0.3; }
 
-.pyramid-row > pile {
+.pyramid-pile {
   background-image: none;
 }

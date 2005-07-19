@@ -278,7 +278,6 @@ var BaseCardGame = {
     for(var i = 0; i != num; i++) {
       var p = ps[i];
       while(p.hasChildNodes()) p.removeChild(p.lastChild).setFaceDown();
-      dump("fixing layout for "+p.localName+"\n");
       p.fixLayout();
     }
   },
@@ -575,71 +574,53 @@ var BaseCardGame = {
 
   _mouseNextCard: null, // set on mousedown on a movable card
   _mouseDownTarget: null, // always set on mousedown
+  _dragInProgress: false,
   _tx: 0, // used in positioning for drag+drop
   _ty: 0,
   _ex0: 0, // coords of mousedown event
   _ey0: 0,
-  _tx0: 0, // bounds of mousedown target, used to check mouseup is over same target
-  _tx1: 0,
-  _ty0: 0,
-  _ty1: 0,
-  _dragInProgress: false,
 
   mouseDown: function(e) {
-    if(interruptAction) interrupt();
     const t = this.getEventTarget(e);
     if(!t) return;
-    dump("down on "+t.localName+"\n");
+    // Ideally the second click of a double click would be retargetted at
+    // gFloatingPile.source, but that's difficult because the "click" doesn't happen.
+    if(t.parentNode==gFloatingPile) return;
+    if(interruptAction) interrupt();
     this._mouseDownTarget = t;
     this._ex0 = e.pageX;
     this._ey0 = e.pageY;
-    const tbox = t.boxObject;
-    this._tx0 = tbox.x;
-    this._ty0 = tbox.y;
-    this._tx1 = tbox.x + tbox.width;
-    this._ty1 = tbox.y + tbox.height;
-    dump("height="+tbox.height+"\n");
-
-    dump("down at ("+e.pageX+","+e.pageY+")\n");
-    dump("downt bounds: ("+this._tx0+","+this._ty0+") to ("+this._tx1+","+this._ty1+")\n");
-//    if(t && t.isCard && t.parentNode.mayTakeCard(t)) this._mouseNextCard = t;
     if(!t.isCard || !t.parentNode.mayTakeCard(t)) return;
     this._mouseNextCard = t;
-    dump("down on movable\n");
-    gGameStack.onmousemove = handleMouseMove;
+    gGameStack.onmousemove = this.mouseMove0;
+  },
+
+  mouseMove0: function(e) {
+    const fp = gFloatingPile, self = Game; // this==window
+    // ignore very tiny movements of the mouse during a click
+    // (otherwise clicking without dragging is rather difficult)
+    const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
+    if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
+    const card = self._mouseNextCard;
+    fp.top = fp._top = card.boxObject.y - gGameStackTop;
+    fp.left = fp._left = card.boxObject.x - gGameStackLeft;
+    fp.source = card.parentNode.source;
+    fp.addCards(card);
+    self._dragInProgress = true;
+    self._tx = ex0 - fp._left;
+    self._ty = ey0 - fp._top;
+    self._mouseNextCard = null;
+    gGameStack.onmousemove = self.mouseMove;
   },
 
   mouseMove: function(e) {
-//    dump("move\n");
-    const cards = gFloatingPile;
-    if(this._dragInProgress) {
-      cards.top = cards._top = e.pageY - this._ty;
-      cards.left = cards._left = e.pageX - this._tx;
-    } else if(this._mouseNextCard) {
-      // ignore very tiny movements of the mouse during a click
-      // (otherwise clicking without dragging is rather difficult on Mac)
-      dump("move at ("+e.pageX+","+e.pageY+") on "+e.target.className+"\n");
-      const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
-      if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-      dump("moved quite a bit\n");
-
-      const card = this._mouseNextCard;
-//      cards.className = card.parentNode.className;
-      cards.top = cards._top = card.boxObject.y - gGameStackTop;
-      cards.left = cards._left = card.boxObject.x - gGameStackLeft;
-      cards.source = card.parentNode.source;
-      cards.addCards(card);
-      // other stuff
-      this._dragInProgress = true;
-      this._tx = ex0 - cards._left;
-      this._ty = ey0 - cards._top;
-      this._mouseNextCard = null;
-    }
+    const fp = gFloatingPile, self = Game; // this==window
+    fp.top = fp._top = e.pageY - self._ty;
+    fp.left = fp._left = e.pageX - self._tx;
   },
 
-  mouseUp: function(e) {
+  endDrag: function(e) {
     this._mouseNextCard = null;
-    if(!this._dragInProgress) return;
     this._dragInProgress = false;
 
     const cbox = gFloatingPile.boxObject;
@@ -657,7 +638,6 @@ var BaseCardGame = {
       var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
       if(!overlaps) continue;
-//      dump("target="+target+" "+target.localName+"\n");
       var act = target.getActionForDrop(card);
       if(!act) continue;
       if(act instanceof ErrorMsg) {
@@ -677,28 +657,14 @@ var BaseCardGame = {
 
   mouseClick: function(e) {
     gGameStack.onmousemove = null;
-    dump((this._clickCount++) + " clicks\n");
     if(this._dragInProgress) {
-      this.mouseUp(e);
+      this.endDrag(e);
       return;
     }
-
-//    const t = this.getEventTarget(e);
     const t = this._mouseDownTarget;
+    if(!t) return;
     this._mouseDownTarget = null;
     this._mouseNextCard = null;
-//    dump("t0="+t0.className+" t="+t.className+"\n");
-//    if(t != t0) {
-    const ex = e.pageX, ey = e.pageY;
-    dump("click ends at ("+ex+","+ey+")\n");
-    if(ex < this._tx0 || ex > this._tx1 || ey < this._ty0 || ey > this._ty1) {
-      dump("click moved from original card\n");
-      return;
-    }
-    dump("ok click\n");
-//    dump("no drag\n");
-//    if(!t) return;
-//    dump("has target\n");
     const p = t.parentNode;
     var act = null;
     if(t.isStock) act = t.deal();
@@ -706,8 +672,6 @@ var BaseCardGame = {
     else if(t.isCard) act = Game.getBestActionFor(t);
     if(act) doo(act);
   },
-
-  _clickCount: 0,
 
   mouseRightClick: function(e) {
     dump("right\n");
@@ -743,7 +707,7 @@ function makeGameConstructor(proto) {
 }
 
 
-function GameController(id, proto) {
+function GameControllerObj(id, proto) {
   this.id = id;
   this.proto = proto;
   proto.id = id; // cardslib.js still uses this
@@ -751,7 +715,7 @@ function GameController(id, proto) {
   this.pastGames = [];
   this.futureGames = [];
 }
-GameController.prototype = {
+GameControllerObj.prototype = {
   proto: null,
   constructor: null,
   pastGames: [],

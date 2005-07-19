@@ -16,8 +16,6 @@ var GameController = null;
 var Games = {}; // all the game controllers, indexed by game id
 var gGamesInMenu = []; // array of ids of games shown in Games menu
 
-var gUIEnabled = true; // set by [en/dis]ableUI().  used to ignore mouse events
-
 var gHintHighlighter = null;
 
 var gCardHeight = 0; // cards' heights in pixels (set in useCardSet)
@@ -99,15 +97,15 @@ function init() {
     setTimeout(function(){thisthis.unhighlight();}, 800);
   };
 
-  gGameStack.addEventListener("click", handleMouseClick, false);
-  gGameStack.addEventListener("mousedown", handleMouseDown, false);
+  gGameStack.onclick = handleMouseClick;
+  gGameStack.onmousedown = handleMouseDown;
   // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-
   // clicks (no down or click events), so it's easiest to do all right-click
   // detection this way. NB: middle-click only gives a click event (no up/down).
   gGameStack.oncontextmenu = handleRightClick;
 
   // make controllers for each game type
-  for(var game in Games) Games[game] = new GameController(game, Games[game]);
+  for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
 
   // work out which game was played last
   game = "klondike";
@@ -120,34 +118,21 @@ function init() {
   try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
   buildGamesMenu(gamesInMenu, game);
 
-  // document.title works in Fx 1.1, setAttribute works in Fx 1.0 official
-  document.title = gStrings["game."+game];
-  document.documentElement.setAttribute("title", gStrings["game."+game]);
-
-  // switch to the last game played
-  GameController = Games[game];
-  GameController.switchTo();
-
-  updateUI();
+  // without the setTimeout the game often ends up with one pile incorrectly laid out
+  // (typically a fan down that ends up fanning upwards)
+  setTimeout(playGame, 0, game);
 }
 
 window.addEventListener("load", init, false);
 
 
 function handleMouseDown(e) {
-  if(!gUIEnabled || e.button!=0) return;
-  Game.mouseDown(e);
-}
-function handleMouseMove(e) {
-  if(!gUIEnabled) return;
-  Game.mouseMove(e);
+  if(e.button==0) Game.mouseDown(e);
 }
 function handleMouseClick(e) {
-  if(!gUIEnabled || e.button!=0) return;
-  Game.mouseClick(e);
+  if(e.button==0) Game.mouseClick(e);
 }
 function handleRightClick(e) {
-  if(!gUIEnabled) return;
   Game.mouseRightClick(e);
 }
 
@@ -251,7 +236,7 @@ function makeCard(number, suit) {
 }
 
 
-var cardMethods = {
+const cardMethods = {
   isCard: true,
   isAnyPile: false,
 
@@ -347,7 +332,7 @@ function createHighlighter() {
 
 
 function playGame(game) {
-  GameController.switchFrom();
+  if(GameController) GameController.switchFrom();
 
   gPrefs.setCharPref("current-game",game);
   document.title = gStrings["game."+game];

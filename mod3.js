@@ -15,7 +15,6 @@ Games.mod3 = {
 
     function inPlace() { return this.parentNode.isFoundation && !!this.previousSibling; };
     function inPlace2() { return this.parentNode.row == this.row; }
-    function baseInPlace() { return this.hasChildNodes() && this.firstChild.number==this.baseNumber; }
 
     this.bases = new Array(3);
 
@@ -36,19 +35,11 @@ Games.mod3 = {
     this.cards = flattenOnce(css);
 
     var fs = this.foundations, ps = this.piles;
-    for(i = 0; i != 24; i++) fs[i].__defineGetter__("baseCardInPlace", baseInPlace);
-    for(i = 0; i != 8; i++) ps[i].baseCardInPlace = false;
-    this.stock.baseCardInPlace = false;
-
     var rs = this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16), ps];
     for(i = 0; i != 4; i++)
       for(j = 0; j != 8; j++)
         rs[i][j].row = i;
     this.stock.row = 4; // just so long as it's not 0, 1, or 2
-
-    for(i = 0; i != i; i++)
-      for(j = 0; j != 8; j++)
-        this.rows[i][j].baseNumber = i + 2;
   },
 
   deal: function(cards) {

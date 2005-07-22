@@ -5,22 +5,7 @@ const KlondikeBase = {
   pileType: KlondikePile,
 
   init: function() {
-    var cs = this.cards = makeDecks(1);
-
-    // black sixes may be autoplayed after both red fives are on foundations, etc.
-    // Aces and twos may always be autoplayed
-    const off = [13, -13, -26, -26, 26, 26, 13, -13];
-    for(var i = 0; i != 4; i++) {
-      for(var j = 2, k = 2 + i*13; j != 13; j++, k++) {
-        var c = cs[k];
-        c.autoplayAfterA = cs[k+off[i]-1];
-        c.autoplayAfterB = cs[k+off[i+4]-1];
-        //c.onA = cards[k+off[i]+1];
-        //c.onB = cards[k+off[i+4]+1];
-        c.__defineGetter__("mayAutoplay", mayAutoplayAfterTwoOthers);
-      }
-    }
-
+    const cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
   },
 
@@ -54,6 +39,8 @@ const KlondikeBase = {
   getBestDestinationFor: "legal",
 
   autoplay: "commonish",
+
+  getAutoplayableNumbers: "klondike",
 
   isWon: "13 cards on each foundation",
 

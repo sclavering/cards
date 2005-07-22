@@ -15,10 +15,6 @@ Games.whitehead = {
       for(var j = 0; j != 13; j++, k++) {
         var c = cs[k];
         c.on = j==12 ? null : cs[k+off[i]+1];
-        if(j < 2) continue; // Aces and twos may always be autoplayed
-        // Autoplay 6C after 5S (i.e. one less and of same colour, but different suit).
-        c.autoplayAfter = cs[k+off[i]-1];
-        c.__defineGetter__("mayAutoplay", function() { return this.autoplayAfter.parentNode.isFoundation; });
       }
     }
 
@@ -51,6 +47,17 @@ Games.whitehead = {
   },
 
   autoplay: "commonish",
+
+  getAutoplayableNumbers: function() {
+    const nums = [,2,2,2,2]; // can always play an Ace or two
+    const suitmap = [,CLUB,DIAMOND,HEART,SPADE]; // other suit of same colour
+    const fs = this.foundations;
+    for(var i = 0; i != 4; ++i) {
+      var c = fs[i].lastChild;
+      if(c) nums[suitmap[c.suit]] = c.upNumber;
+    }
+    return nums;
+  },
 
   isWon: "13 cards on each foundation",
 

@@ -132,12 +132,10 @@ var Rules = {
 
 
   autoplay: {
-    // To use this games must have 4 foundations, built one card at a time, starting with those cards
-    // in foundationBases[], and continuing with the unique |up| member of each card.
-    // Cards' mayAutoplay field can be overridden with a getter function if needed.
-    // xxx the .faceUp checks are redundant with the !.nextSibling ones at present
     "commonish":
     function() {
+      // suit -> maximum number of that suit that can be autoplayed
+      const maxNums = this.getAutoplayableNumbers();
       var triedToFillEmpty = false;
       // numBs matters for Penguin
       const fs = this.foundations, bs = this.foundationBases, numBs = bs.length;
@@ -145,7 +143,7 @@ var Rules = {
         var f = fs[i];
         if(f.hasChildNodes()) {
           var c = f.lastChild.up;
-          if(c && c.faceUp && !c.nextSibling && c.mayAutoplay)
+          if(c && c.faceUp && !c.nextSibling && c.number <= maxNums[c.suit])
             return new Move(c, f);
         } else if(!triedToFillEmpty) {
           triedToFillEmpty = true;
@@ -163,6 +161,8 @@ var Rules = {
     "commonish 2deck":
     function() {
       const fs = this.foundations, as = this.foundationBases;
+      const maxNums = this.getAutoplayableNumbers();
+
       var lookedForAces = false;
       for(var i = 0; i != 8; i++) {
         var f = fs[i], last = f.lastChild;
@@ -170,11 +170,11 @@ var Rules = {
           if(last.isKing) continue;
           var c = last.up, cp = c.parentNode;
           if(!cp.isFoundation && !cp.isStock && !c.nextSibling) {
-            if(c.mayAutoplay) return new Move(c, f);
-            continue; // mayAutoplay will also be false for the twin
+            if(c.number <= maxNums[c.suit]) return new Move(c, f);
+            continue;
           } else {
             c = c.twin, cp = c.parentNode;
-            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.mayAutoplay)
+            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.number<=maxNums[c.suit])
               return new Move(c, f);
           }
         } else if(!lookedForAces) {
@@ -187,6 +187,49 @@ var Rules = {
         }
       }
       return null;
+    }
+  },
+
+  // returns a suit -> number map
+  getAutoplayableNumbers: {
+    // can play 5H if 4C and 4S played.  can play any Ace or 2
+    "klondike": function() {
+      const fs = this.foundations;
+      const colournums = [1000, 1000]; // colour -> smallest num of that colour on fs
+      const colourcounts = [0, 0]; // num of foundation of a given colour
+      for(var i = 0; i != 4; ++i) {
+        var c = fs[i].lastChild;
+        if(!c) continue;
+        var col = c.colour, num = c.number;
+        colourcounts[col]++;
+        if(colournums[col] > num) colournums[col] = num;
+      }
+      if(colourcounts[0] < 2) colournums[0] = 1;
+      if(colourcounts[1] < 2) colournums[1] = 1;
+      // suit -> num map
+      const rednum = colournums[RED] + 1, blacknum = colournums[BLACK] + 1;
+//      dump("decided can move red "+blacknum+"s and black "+rednum+"s\n");
+      return [, rednum, blacknum, blacknum, rednum];
+    },
+
+    "any": function() {
+      return [,13,13,13,13];
+    },
+
+    gypsy: function() {
+      const fs = this.foundations;
+      const nums = [20,20], counts = [0,0]; // colour -> foo maps
+      for(var i = 0; i != 8; ++i) {
+        var c = fs[i].lastChild;
+        if(!c) continue;
+        var colour = c.colour, num = c.number;
+        counts[colour]++;
+        if(nums[colour] > num) nums[colour] = num;
+      }
+      if(counts[0] != 4) nums[0] = 0;
+      if(counts[1] != 4) nums[1] = 0;
+      const black = nums[RED] + 1, red = nums[BLACK] + 1;
+      return [,black,red,red,black];
     }
   }
 }
@@ -202,15 +245,4 @@ function findEmpty(piles) {
     if(!p.hasChildNodes()) return p;
   }
   return null;
-}
-
-// these are to be used as mayAutoplay getter functions on cards
-function mayAutoplayAfterTwoOthers() {
-  return this.autoplayAfterA.parentNode.isFoundation && this.autoplayAfterB.parentNode.isFoundation;
-}
-
-function mayAutoplayAfterFourOthers() {
-  var a = this.autoplayAfterA, b = this.autoplayAfterB;
-  return a.parentNode.isFoundation && a.twin.parentNode.isFoundation
-      && b.parentNode.isFoundation && b.twin.parentNode.isFoundation;
 }

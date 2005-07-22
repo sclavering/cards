@@ -6,22 +6,11 @@ Games.fortythieves = {
   pileType: FortyThievesPile,
   pileLayout: FanDownLayout,
 
-  layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]",
+  layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  [sl] w  ] [2p1p1p1p1p1p1p1p1p1p2]",
 
   init: function() {
-    var cs = this.cards = makeDecks(2);
-    var as = this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-
-    function mayAutoplay() {
-      return this.down.parentNode.isFoundation && this.twin.down.parentNode.isFoundation;
-    }
-
-    for(var i = 0; i != 104; i++) cs[i].__defineGetter__("mayAutoplay", mayAutoplay);
-    for(i = 0; i != 8; i++) {
-      var c = as[i];
-      delete c.mayAutoplay;
-      c.mayAutoplay = true;
-    }
+    const cs = this.cards = makeDecks(2);
+    this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
 
   deal: function(cards) {
@@ -40,6 +29,25 @@ Games.fortythieves = {
   getBestDestinationFor: "legal nonempty, or empty",
 
   autoplay: "commonish 2deck",
+
+  // can autoplay 5D when both 4Ds played.  can autoplay any Ace
+  getAutoplayableNumbers: function() {
+    const fs = this.foundations;
+    const nums = [,20,20,20,20]; // suit -> min number seen on fs
+    const counts = [,0,0,0,0]; // suit -> num such fs
+    for(var i = 0; i != 8; ++i) {
+      var c = fs[i].lastChild;
+      if(!c) continue;
+      var suit = c.suit, num = c.number;
+      counts[suit]++;
+      if(nums[suit] > num) nums[suit] = num;
+    }
+    for(i = 1; i != 5; ++i) {
+      if(counts[i] < 2) nums[i] = 1;
+      else nums[i]++;
+    }
+    return nums;
+  },
 
   isWon: "13 cards on each foundation"
 };

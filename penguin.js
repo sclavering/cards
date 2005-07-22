@@ -1,26 +1,26 @@
 Games.penguin = {
   __proto__: BaseCardGame,
 
-  foundationType: DemonFoundation,
+  foundationType: KlondikeFoundation,
   pileType: PenguinPile,
 
   layoutTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
 
   init: function() {
-    var cs = this.cards = makeDecksMod13(1);
+    this.cards = makeDecksMod13(1);
     this.pilesAndCells = this.piles.concat(this.cells);
   },
 
   deal: function(cards) {
-    var fb = cards[51];
-    this.foundationBases = [fb];
-    var fnum = this.foundationStartNumber = fb.number;
+    // first card's number will be used as "aces"
+    var beak = cards[51];
+    this.foundationBases = [beak];
+    renumberCards(this.cards, beak.displayNum);
 
-    // put cards of the same number (as the one to appear in top=left corner) on the foundations
-    var f = 0;
-    for(var i = 50; f != 3 && i >= 0; i--) {
+    // put other "aces" up
+    for(var i = 50, f = 0; f != 3; --i) {
       var c = cards[i];
-      if(c.number!=fnum) continue;
+      if(!c.isAce) continue;
       cards.splice(i, 1);
       this.foundations[f].addCard(c);
       c.setFaceUp();
@@ -37,7 +37,7 @@ Games.penguin = {
       var c = this.getLowestMovableCard(ps[i]);
       if(!c) continue;
       // suggest moving to a pile
-      if(c.number==this.foundationStartNumber) {
+      if(c.isAce) {
         var p = this.firstEmptyPile;
         if(p) this.addHint(c, p);
       } else {
@@ -66,7 +66,7 @@ Games.penguin = {
   getLowestMovableCard: "descending, in suit",
 
   getBestDestinationFor: function(card) {
-    if(card.upNumber==Game.foundationStartNumber) {
+    if(card.isKing) {
       var par = card.parentNode, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
       if(p) return p;
     } else {
@@ -77,6 +77,8 @@ Games.penguin = {
   },
 
   autoplay: "commonish",
+
+  getAutoplayableNumbers: "any",
 
   isWon: "13 cards on each foundation"
 }

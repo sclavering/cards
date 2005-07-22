@@ -7,20 +7,7 @@ Games.freecell = {
   layoutTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
 
   init: function() {
-    var cards = this.cards = makeDecks(1);
-
-    // black sixes may be autoplayed after both red fives are on foundations, etc.
-    // Aces and twos may always be autoplayed
-    var off = [12, -14, -27, -27, 25, 25, 12, -14];
-    for(var i = 0; i != 4; i++) {
-      for(var j = 2, k = 2 + i*13; j != 13; j++, k++) {
-        var card = cards[k];
-        card.autoplayAfterA = cards[k+off[i]];
-        card.autoplayAfterB = cards[k+off[i+4]];
-        card.__defineGetter__("mayAutoplay", mayAutoplayAfterTwoOthers);
-      }
-    }
-
+    const cards = this.cards = makeDecks(1);
     this.foundationBases = [cards[0], cards[13], cards[26], cards[39]];
   },
 
@@ -61,6 +48,8 @@ Games.freecell = {
   },
 
   autoplay: "commonish",
+
+  getAutoplayableNumbers: "klondike",
 
   isWon: "13 cards on each foundation"
 };

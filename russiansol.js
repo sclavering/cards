@@ -2,6 +2,7 @@ Games.russiansol = {
   __proto__: BaseCardGame,
 
   pileType: WaspPile,
+  foundationType: FanFoundation,
 
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
@@ -30,11 +31,12 @@ Games.russiansol = {
 
   autoplay: "commonish",
 
+  getAutoplayableNumbers: "any",
+
   isWon: "13 cards on each foundation",
 
   scores: {
-    "->foundation": 10,
-    "foundation->": -15
+    "->foundation": 10
   },
 
   scoreForRevealing: 5

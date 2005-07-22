@@ -45,19 +45,8 @@ Games.yukon = {
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
   init: function() {
-    var cs = this.cards = makeDecks(1);
+    const cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-
-    const off = [13, -13, -26, -26, 26, 26, 13, -13];
-    for(var i = 0, n = 0; i != 4; i++) {
-      n++;
-      for(var j = 1; j != 13; j++, n++) {
-        var c = cs[n];
-        c.autoplayAfterA = cs[n+off[i]-1];
-        c.autoplayAfterB = cs[n+off[i+4]-1];
-        c.__defineGetter__("mayAutoplay", mayAutoplayAfterTwoOthers);
-      }
-    }
   },
 
   deal: function(cards) {
@@ -71,7 +60,9 @@ Games.yukon = {
     for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastChild);
   },
 
-  autoplay: "commonish"
+  autoplay: "commonish",
+
+  getAutoplayableNumbers: "klondike"
 };
 
 
@@ -83,24 +74,8 @@ Games.sanibel = {
 
   layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
-  //cards: 2,
-
   init: function() {
     var cs = this.cards = makeDecks(2);
-
-    const off1 = [13, 26, 13, 26, 13, 26, 13, -78];
-    const off2 = [26, 39, 26, 39, 26, -65, -78, -65];
-    for(var i = 0, n = 0; i != 8; i++) {
-      n++;
-      var o1 = off1[i], o2 = off2[i];
-      for(var j = 1; j != 13; j++, n++) {
-        var c = cs[n];
-        c.autoplayAfterA = cs[n+o1-1];
-        c.autoplayAfterB = cs[n+o2-1];
-        c.__defineGetter__("mayAutoplay", mayAutoplayAfterFourOthers);
-      }
-    }
-
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
 
@@ -121,5 +96,7 @@ Games.sanibel = {
     for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastChild);
   },
 
-  autoplay: "commonish 2deck"
+  autoplay: "commonish 2deck",
+
+  getAutoplayableNumbers: "gypsy"
 };

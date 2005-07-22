@@ -3,7 +3,7 @@ function flattenOnce(a) { return a.concat.apply([], a); }
 
 
 // constants for colours and suits
-const RED = 1, BLACK = 2;
+const RED = 0, BLACK = 1;
 const SPADE = 1, HEART = 2, DIAMOND = 3, CLUB = 4;
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
@@ -216,25 +216,40 @@ function makeCards(numbers, suits, repeat) {
   return flattenOnce(cards);
 }
 
+// Used for Penguin, Canfield, Demon
+// |cards| should be concatenated series of A-K runs within suit
+// |num| is the number (as displayed) of the cards which should be made to behave like Aces (1's)
+function renumberCards(cards, num) {
+  var neg = 1 - num, pos = 14 - num;
+  for(var i = 0; i != cards.length; ++i) {
+    var c = cards[i], n = c.displayNum, m = n >= num ? neg : pos;
+//    dump("renumbering "+c.displayStr+" to "+(n+m)+"\n");
+    setCardNumber(c, n + m);
+  }
+}
 
 // pass number==14 for a "high" Ace
 function makeCard(number, suit) {
   var c = document.createElement("image");
   for(var m in cardMethods) c[m] = cardMethods[m]; // add standard methods
-  c.number = number;
-  c.upNumber = number+1; // card.number==other.number+1 used to be very common
-  var realNum = c.realNumber = number==14 ? 1 : number;
   c.colour = [,BLACK, RED, RED, BLACK][suit];
   c.altcolour = c.colour==RED ? BLACK : RED;
   c.suit = suit;
   c.suitstr = [,"S", "H", "D", "C"][suit];
-  c.isAce = realNum==1;
-  c.isQueen = number==12;
-  c.isKing = number==13;
-  c.setFaceDown(); // sets faceUp, faceDown and className
+  c.displayNum = number==14 ? 1 : number
+  c.displayStr = c.suitstr + c.displayNum;
+  setCardNumber(c, number);
+  c.setFaceDown();
   return c;
 }
 
+function setCardNumber(card, number) {
+  card.number = number;
+  card.upNumber = number+1; // card.number==other.number+1 used to be very common
+  card.isAce = number==1 || number==14;
+  card.isQueen = number==12;
+  card.isKing = number==13;
+}
 
 const cardMethods = {
   isCard: true,
@@ -251,12 +266,12 @@ const cardMethods = {
   // often overridden with a getter function
   mayAutoplay: true,
 
-  toString: function() { return this.number+this.suitstr; },
+  toString: function() { return this.displayStr; },
 
   setFaceUp: function() {
     this.faceUp = true;
     this.faceDown = false;
-    this.className = "card "+this.suitstr+this.realNumber;
+    this.className = "card " + this.displayStr;
   },
 
   setFaceDown: function() {
@@ -273,7 +288,6 @@ const cardMethods = {
 
 function createFloatingPile() {
   const pile = gFloatingPile = createPile("stack", BaseLayout, null);
-  dump("floating pile: "+pile+"\n");
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;
@@ -444,11 +458,9 @@ function doo(action) { // "do" is a reserved word
 
 // we don't want to enable the UI between an animated move and any autoplay it triggers
 function done(pileWhichHasHadCardsRemoved) {
-//  dump("done\n");
   interruptAction = null;
   if(Game.done(pileWhichHasHadCardsRemoved, false)) return;
   const act = Game.autoplay(pileWhichHasHadCardsRemoved);
-//  dump("done.act=="+act+"\n");
   if(act) {
     doo(act);
   } else {
@@ -459,9 +471,7 @@ function done(pileWhichHasHadCardsRemoved) {
 
 
 function interrupt() {
-//  dump("interrupted?\n");
   if(!interruptAction) return;
-//  dump("interrupted!\n");
   const pile = interruptAction();
   interruptAction = null;
   Game.done(pile, true);

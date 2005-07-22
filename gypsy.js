@@ -42,15 +42,17 @@ const GypsyBase = {
 
   autoplay: function() {
     const ps = this.piles;
+    const nums = this.getAutoplayableNumbers();
     for(var i = 0; i != 8; i++) {
       var last = ps[i].lastChild;
-      if(last && last.mayAutoplay) {
-        var act = this.sendToFoundations(last);
-        if(act) return act;
-      }
+      if(!last || last.number > nums[last.suit]) continue;
+      var act = this.sendToFoundations(last);
+      if(act) return act;
     }
     return null;
   },
+
+  getAutoplayableNumbers: "gypsy",
 
   isWon: "13 cards on each foundation",
 
@@ -62,52 +64,12 @@ const GypsyBase = {
   scoreForRevealing: 5
 };
 
-
 Games.gypsy2 = {
   __proto__: GypsyBase,
-
-  cards: [[SPADE, HEART], 4],
-
-  init2: function() {
-    const cs = this.cards;
-    for(var i = 0, n = 0; i != 8; i++) {
-      n++;
-      for(var j = 1; j != 13; j++, n++) {
-        var c = cs[n];
-        c.autoplayAfter = cs[(n+12) % 104];
-        c.__defineGetter__("mayAutoplay", function() {
-          var c0 = this.autoplayAfter, c = c0;
-          do {
-            if(!c.parentNode.isFoundation) return false;
-            c = c.twin;
-          } while(c!=c0);
-          return true;
-        });
-      }
-    }
-  }
+  cards: [[SPADE, HEART], 4]
 };
-
 
 Games.gypsy4 = {
   __proto__: GypsyBase,
-
-  cards: 2,
-
-  init2: function() {
-    const cs = this.cards;
-
-    const off1 = [13, 26, 13, 26, 13, 26, 13, -78];
-    const off2 = [26, 39, 26, 39, 26, -65, -78, -65];
-    for(var i = 0, n = 0; i != 8; i++) {
-      n++;
-      var o1 = off1[i], o2 = off2[i];
-      for(var j = 1; j != 13; j++, n++) {
-        var c = cs[n];
-        c.autoplayAfterA = cs[n+o1-1];
-        c.autoplayAfterB = cs[n+o2-1];
-        c.__defineGetter__("mayAutoplay", mayAutoplayAfterFourOthers);
-      }
-    }
-  }
+  cards: 2
 };

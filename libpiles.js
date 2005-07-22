@@ -510,7 +510,7 @@ const PenguinPile = {
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
     const last = this.lastChild;
-    return last ? card.up==last : card.upNumber==Game.foundationStartNumber;
+    return last ? card.up==last : card.isKing;
   }
 };
 
@@ -619,6 +619,11 @@ const WhiteheadPile = {
 
 
 
+function mayAddCardToKlondikeFoundation(card) {
+  const last = this.lastChild;
+  return !card.nextSibling && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
+}
+
 const NoWorryingBackFoundation = {
   __proto__: BaseLayout,
   isFoundation: true,
@@ -634,21 +639,12 @@ const WorryingBackFoundation = {
 
 const KlondikeFoundation = {
   __proto__: WorryingBackFoundation,
-
-  mayAddCard: function(card) {
-    const last = this.lastChild;
-    return !card.nextSibling && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
-  }
+  mayAddCard: mayAddCardToKlondikeFoundation
 };
 
-// cards .up fields must form circular lists within suits, and must define Game.foundationStartNumber
-const DemonFoundation = {
-  __proto__: WorryingBackFoundation,
-
-  mayAddCard: function(card) {
-    if(card.nextSibling) return false;
-    return this.hasChildNodes() ? this.lastChild.up==card : card.number==Game.foundationStartNumber;
-  }
+const FanFoundation = {
+  __proto__: NoWorryingBackFoundation,
+  mayAddCard: mayAddCardToKlondikeFoundation
 };
 
 const GolfFoundation = {

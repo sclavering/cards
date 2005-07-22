@@ -2,6 +2,7 @@ Games.fan = {
   __proto__: BaseCardGame,
 
   pileType: FanPile,
+  foundationType: FanFoundation,
 
   // xxx this doesn't give the desired numbering of the piles
   layoutTemplate: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
@@ -54,6 +55,8 @@ Games.fan = {
   },
 
   autoplay: "commonish",
+
+  getAutoplayableNumbers: "any",
 
   isWon: "13 cards on each foundation"
 }

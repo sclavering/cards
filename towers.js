@@ -36,5 +36,7 @@ Games.towers = {
 
   autoplay: "commonish",
 
+  getAutoplayableNumbers: "any",
+
   isWon: "13 cards on each foundation"
 };

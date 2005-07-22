@@ -258,7 +258,7 @@ var BaseCardGame = {
       this.score += d.score;
       // ugly
       var cs = d.revealedCards;
-      for(var j = 0; j != cs.length; ++j) cs[j].setFaceDown();
+      for(var j = 0; j != cs.length; ++j) cs[j].setFaceUp();
     }
 
     gScoreDisplay.value = this.score;
@@ -674,9 +674,7 @@ var BaseCardGame = {
   },
 
   mouseRightClick: function(e) {
-    dump("right\n");
     if(this._dragInProgress || this._mouseNextCard) return;
-    dump("right (no drag)\n");
     const t = this.getEventTarget(e);
     if(!t) return;
     const tFloating = t.parentNode==gFloatingPile;

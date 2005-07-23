@@ -108,15 +108,31 @@ const BaseLayout = {
 };
 
 
+function addCardsKeepingTheirLayout(card) {
+  var src = card.parentNode.source;
+  var left = card._left, top = card._top - this.nextCardTop;
+  for(var next = card.nextSibling; card; card = next) {
+    next = card.nextSibling;
+    this.appendChild(card);
+    card.top = card._top -= top;
+    card.left = card._left -= left;
+  }
+  // For gFloatingPile - avoids not-repainting artifacts after cards are removed
+  var last = this.lastChild;
+  this.width = last._left + last.boxObject.width;
+  this.height = last._top + last.boxObject.height;
+  src.fixLayout();
+  this.fixLayout();
+}
+
+
 const FanDownLayout = {
   __proto__: BaseLayout,
-
-    addCard: function(card) {
-      this.appendChild(card);
-      var prev = card.previousSibling;
-      card.top = card._top = prev ? prev._top + (this.offset || gVFanOffset) : 0;
-      card.left = card._left = 0;
-    },
+  
+  // doing this avoids the cards changing layout twice if they come from a packed fan and
+  // this fan ends up packed (once to realyout using this.offset, then again with a new
+  // offset once .fixLayout() is called)
+  addCards: addCardsKeepingTheirLayout,
 
     get nextCardTop() {
       if(!this.hasChildNodes()) return 0;
@@ -131,10 +147,9 @@ const FanDownLayout = {
 
       const firstbox = this.firstChild.boxObject;
       var space = window.innerHeight - firstbox.y - firstbox.height;
-      var offset = Math.min(Math.floor(space / this.childNodes.length), gVFanOffset);
+      const offset = Math.min(space / this.childNodes.length, gVFanOffset);
       var old = this.offset || gVFanOffset;
       this.offset = offset;
-      if(offset == old) return;
       var top = 0;
       var card = this.firstChild;
       while(card) {

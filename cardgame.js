@@ -268,6 +268,8 @@ var BaseCardGame = {
     this.clearGame();
     this.redealsRemaining = this.redeals;
     this.deal(cards);
+    const ps = this.allpiles, num = ps.length;
+    for(var i = 0; i != num; ++i) ps[i].fixLayout();
     gScoreDisplay.value = this.score = this.initialScore;
     if(this.stock) this.stock.counter = this.stock.counterStart;
   },

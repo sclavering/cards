@@ -294,22 +294,7 @@ function createFloatingPile() {
     this.top = this.left = this._top = this._left = -1000;
     gFloatingPileNeedsHiding = false;
   };
-  pile.addCards = function(card) {
-    var src = card.parentNode.source;
-    var left = card._left, top = card._top;
-    for(var next = card.nextSibling; card; card = next) {
-      next = card.nextSibling;
-      this.appendChild(card);
-      card.top = card._top -= top;
-      card.left = card._left -= left;
-    }
-    // setting the width and height avoids not-repainting artifacts after cards are removed from the floating pile
-    var last = this.lastChild;
-    this.width = last._left + last.boxObject.width;
-    this.height = last._top + last.boxObject.height;
-
-    src.fixLayout();
-  };
+  pile.addCards = addCardsKeepingTheirLayout;
   gGameStack.appendChild(pile);
   pile.hide();
 }

@@ -263,9 +263,6 @@ const cardMethods = {
   // null, or a pointer to another card of the same type with the pointer chains forming a loop
   twin: null,
 
-  // often overridden with a getter function
-  mayAutoplay: true,
-
   toString: function() { return this.displayStr; },
 
   setFaceUp: function() {

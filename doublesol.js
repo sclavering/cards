@@ -13,26 +13,6 @@ Games.doublesol = {
 
   init: function() {
     var cs = this.cards = makeDecks(2);
-
-    // e.g. we want one of the 3D and one of the 3H to be on the foundations before autoplaying a 4S or 4C
-    function mayAutoplay() {
-      return (this.autoplayAfterA.parentNode.isFoundation || this.twin.autoplayAfterA.parentNode.isFoundation)
-          && (this.autoplayAfterB.parentNode.isFoundation || this.twin.autoplayAfterB.parentNode.isFoundation);
-    }
-
-    const off1 = [13, 26, 13, 26, 13, 26, 13, -78];
-    const off2 = [26, 39, 26, 39, 26, -65, -78, -65];
-    for(var i = 0, n = 0; i != 8; i++) {
-      n+=2;
-      var o1 = off1[i], o2 = off2[i];
-      for(var j = 2; j != 13; j++, n++) {
-        var c = cs[n];
-        c.autoplayAfterA = cs[n+o1-1];
-        c.autoplayAfterB = cs[n+o2-1];
-        c.__defineGetter__("mayAutoplay", mayAutoplay);
-      }
-    }
-
     this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
 
@@ -62,6 +42,21 @@ Games.doublesol = {
   autoplay: function() {
     var searchedForAces = false;
     const fs = this.foundations, as = this.aces;
+
+    const nums = [20,20], counts = [0, 0];
+    for(var i = 0; i != 4; ++i) {
+      var c = fs[i].lastChild;
+      if(!c) continue;
+      var col = c.colour, num = c.number;
+      counts[col]++;
+      if(num < nums[col]) nums[col] = num;
+    }
+    if(counts[0] < 2) nums[0] = 1;
+    if(counts[1] < 2) nums[1] = 1;
+    var tmp = nums[0] + 1;
+    nums[0] = nums[1] + 1;
+    nums[1] = tmp;
+
     for(var i = 0; i != 4; i++) {
       var f = fs[i];
       if(f.hasChildNodes()) {
@@ -69,8 +64,9 @@ Games.doublesol = {
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
-        if(c1 && c1.faceUp && !c1.nextSibling && c1.mayAutoplay) return new Move(c1, f);
-        if(c2 && c2.faceUp && !c2.nextSibling && c2.mayAutoplay) return new Move(c2, f);
+        if(!c1 || c1.number > nums[c1.colour]) continue;
+        if(c1.faceUp && !c1.nextSibling) return new Move(c1, f);
+        if(c2 && c2.faceUp && !c2.nextSibling) return new Move(c2, f);
       } else if(!searchedForAces) {
         searchedForAces = true;
         for(var j = 0; j != 8; j++) {

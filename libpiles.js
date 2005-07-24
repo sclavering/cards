@@ -128,7 +128,7 @@ function addCardsKeepingTheirLayout(card) {
 
 const FanDownLayout = {
   __proto__: BaseLayout,
-  
+
   // doing this avoids the cards changing layout twice if they come from a packed fan and
   // this fan ends up packed (once to realyout using this.offset, then again with a new
   // offset once .fixLayout() is called)

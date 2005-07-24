@@ -7,6 +7,8 @@ Games.maze = {
     "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
     + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
 
+  dealTemplate: { piles: [0, 1] },
+
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces
     var cs = this.cards = makeCardRuns(1, 12);
@@ -17,11 +19,6 @@ Games.maze = {
 
     this.aces = [cs[0], cs[12], cs[24], cs[36]];
     this.queens = [cs[11], cs[23], cs[35], cs[47]];
-  },
-
-  deal: function(cards) {
-    const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; i++) ps[i].dealTo(cards, 0, 1);
   },
 
   getHints: function() {

@@ -7,14 +7,11 @@ const GypsyBase = {
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2",
 
+  dealTemplate: { piles: [2, 1] },
+
   init: function() {
     const fs = this.foundations;
     for(var i = 0; i != 4; i++) fs[i].twin = fs[i+4], fs[i+4].twin = fs[i];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 8; i++) this.piles[i].dealTo(cards, 2, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

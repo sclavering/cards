@@ -7,6 +7,8 @@ const Montana = {
     "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1] "
     + "[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
 
+  dealTemplate: { piles: [0, 1] },
+
   redeals: 2,
   redealsRemaining: 2,
 
@@ -28,10 +30,6 @@ const Montana = {
     ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
 
     this.rowStarts = [ps[0], ps[13], ps[26], ps[39]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 52; i++) this.piles[i].dealTo(cards, 0, 1);
   },
 
   getHints: function() {

@@ -4,14 +4,11 @@ const KlondikeBase = {
   foundationType: KlondikeFoundation,
   pileType: KlondikePile,
 
+  dealTemplate: { piles: [[0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]] },
+
   init: function() {
     const cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, i, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

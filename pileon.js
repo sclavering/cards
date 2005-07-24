@@ -7,10 +7,8 @@ Games.pileon = {
 
   layoutTemplate: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]",
 
-  deal: function(cards) {
-    const ps = this.piles;
-    for(var i = 0; i != 13; i++) ps[i].dealTo(cards, 0, 4);
-  },
+  // last two piles should be empty, but this does work (because [].pop()==undefined)
+  dealTemplate: { piles: [0, 4] },
 
   // xxx write getHints()
 

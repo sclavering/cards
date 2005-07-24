@@ -6,22 +6,21 @@ Games.freecell = {
 
   layoutTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
 
+  dealTemplate: { piles: [[0,7],[0,7],[0,7],[0,7],[0,6],[0,6],[0,6],[0,6]] },
+
   init: function() {
     const cards = this.cards = makeDecks(1);
     this.foundationBases = [cards[0], cards[13], cards[26], cards[39]];
   },
 
+/* an illegal but predictable deal for debugging FreeCellMover
   deal: function(cards) {
-    const ps = this.piles;
-    for(var i = 0; i != 4; i++) ps[i].dealTo(cards, 0, 7);
-    for(i = 4; i != 8; i++) ps[i].dealTo(cards, 0, 6);
-    /* a predictable (and illegal) deal for debugging FreeCellMover
     cards = this.cardsAsDealt = this.cards.slice(0);
     const is = [12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14];
     for(var i = 0; i != is.length; i++) ps[0].addCard(cards[is[i]].setFaceUp());
     for(i = 0; i != 4; i++) this.cells[i].appendChild(cards[51-i]);
-    */
   },
+*/
 
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);

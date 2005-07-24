@@ -284,9 +284,50 @@ var BaseCardGame = {
     }
   },
 
-  // should deal out the provided shuffled cards for a new game.  piles will already be empty
+
+  // overriding versions should deal out the provided shuffled cards for a new game.
+  // piles will already be empty.
   deal: function(cards) {
+    const dt = this.dealTemplate;
+    if(!dt) throw "dealTemplate missing, and deal() not overridden";
+
+    for(var x in dt) {
+      var t = dt[x], place = this[x];
+      if(place.isAnyPile) {
+        this._dealSomeCards(place, t, cards);
+      } // |place| is an array of piles
+      else if(typeof t[0] == "number") {
+        // use same template for every pile
+        for(var j = 0; j != place.length; ++j)
+          this._dealSomeCards(place[j], t, cards);
+      }
+      else {
+        // use a different template for each piles
+        for(j = 0; j != place.length; ++j)
+          this._dealSomeCards(place[j], t[j], cards);
+      }
+    }
+
+    // deal any remaining cards to the stock (keeps the templates simple)
+    if(this.stock) this._dealSomeCards(this.stock, [cards.length], cards);
   },
+
+  // |nums| is an array [a,b,c,...] of ints.  |a| face-down cards, then |b| face-up cards
+  // then |c| face-down cards (etc., until end of list) will be dealt to |pile|
+  _dealSomeCards: function(pile, nums, cards) {
+    for(var i = 0, faceDown = true; i != nums.length; ++i, faceDown = !faceDown) {
+      var n = nums[i];
+      for(var j = 0; j != n; ++j) {
+        var c = cards.pop();
+        if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
+        if(faceDown) c.setFaceDown();
+        else c.setFaceUp();
+        pile.addCard(c);
+      }
+    }
+    pile.fixLayout();
+  },
+
 
   // Games can override with a more interesting function if they wish to eliminate (some) impossible deals.
   // The cards will be shuffled repeatedly until this returns false, after which they are passed to deal(..)

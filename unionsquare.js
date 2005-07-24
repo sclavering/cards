@@ -7,19 +7,14 @@ Games.unionsquare = {
 
   layoutTemplate: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2",
 
+  dealTemplate: { piles: [0,1] },
+
   init: function() {
     var cs = this.cards = makeDecks(2);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
 
     const ps = this.piles;
     for(var i = 0; i != 16; ++i) ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
-  },
-
-  deal: function(cards) {
-    const ps = this.piles;
-    for(var i = 0; i != 16; ++i) ps[i].dealTo(cards, 0, 1);
-    this.waste.dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   // xxx write getHints()

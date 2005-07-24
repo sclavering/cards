@@ -7,17 +7,14 @@ Games.acesup = {
 
   layoutTemplate: "h1[sl]2p1p1p1p2f1",
 
+  dealTemplate: { piles: [0,1] },
+
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high
     for(var i = 0; i != 4; i++) this.piles[i].num = i;
     const ps = this.piles;
     ps[0].prev = ps[3];
     ps[3].next = ps[0];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, 48, 0);
   },
 
   getHints: function() {

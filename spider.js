@@ -53,13 +53,9 @@ var SpiderBase = {
 const Spider = {
   __proto__: SpiderBase,
 
-  getLowestMovableCard: "descending, in suit",
+  dealTemplate: { piles: [[5,1],[5,1],[5,1],[5,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1]] },
 
-  deal: function(cards) {
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
-    for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
-    this.stock.dealTo(cards, 50, 0);
-  },
+  getLowestMovableCard: "descending, in suit",
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
@@ -89,17 +85,11 @@ Games.spider4 = {
 
 
 Games.blackwidow = {
-  __proto__: SpiderBase,
+  __proto__: Spider,
 
   pileType: BlackWidowPile,
 
   cards: 2,
-
-  deal: function(cards) {
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 5, 1);
-    for(i = 4; i != 10; i++) this.piles[i].dealTo(cards, 4, 1);
-    this.stock.dealTo(cards, 50, 0);
-  },
 
   getHints: function() {
     for(var i = 0; i != 10; i++) {
@@ -129,13 +119,10 @@ Games.divorce = {
 
   stockType: StockDealToNonemptyPiles,
 
+  dealTemplate: { piles: [0, 5] },
+
   init: function() {
     this.cards = makeDecksMod13(2);
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 5);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getLowestMovableCard: "descending, in suit",
@@ -170,14 +157,10 @@ Games.wasp = {
 
   layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
 
+  dealTemplate: { piles: [[3,4],[3,4],[3,4],[0,7],[0,7],[0,7],[0,7]] },
+
   // converted to an array of cards by SpiderBase.init2()
   kings: [12, 25, 38, 51],
-
-  deal: function(cards) {
-    for(var i = 0; i != 3; i++) this.piles[i].dealTo(cards, 3, 4);
-    for(i = 3; i != 7; i++) this.piles[i].dealTo(cards, 0, 7);
-    this.stock.dealTo(cards, 3, 0);
-  },
 
   getBestDestinationFor: "to up or nearest space",
 
@@ -204,15 +187,10 @@ const SimonBase = {
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
 
+  dealTemplate: { piles: [[0,8],[0,8],[0,8],[0,7],[0,6],[0,5],[0,4],[0,3],[0,2],[0,1]] },
+
   // see SpiderBase.init2
   kings: [12, 25, 38, 51],
-
-  deal: function(cards) {
-    const ps = this.piles;
-    ps[0].dealTo(cards, 0, 8);
-    ps[1].dealTo(cards, 0, 8);
-    for(var i = 2; i != 10; i++) ps[i].dealTo(cards, 0, 10-i);
-  },
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));

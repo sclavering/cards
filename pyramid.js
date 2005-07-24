@@ -68,6 +68,8 @@ Games.pyramid = {
   layoutTemplate: "h1[s w]1({flex=5}<1p1><4-++p1p++-4><3++p1p1p++3>"
     +"<3-+p1p1p1p+-3><2+p1p1p1p1p+2><2-p1p1p1p1p1p-2><1p1p1p1p1p1p1p1>)1f1",
 
+  dealTemplate: { piles: [0, 1] },
+
   init: function() {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;
     const ps = this.piles;
@@ -78,11 +80,6 @@ Games.pyramid = {
       p.leftChild = l; l.rightParent = p;
       p.rightChild = r; r.leftParent = p;
     }
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 28; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getActionForDrop: function(card) {

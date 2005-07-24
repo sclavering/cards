@@ -6,6 +6,8 @@ Games.regiment = {
 
   layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
 
+  dealTemplate: { piles: [0, 1], reserves: [10, 1] },
+
   cards: 2,
 
   init: function() {
@@ -38,11 +40,6 @@ Games.regiment = {
     const as = this.aces = new Array(8);
     const ks = this.kings = new Array(8);
     for(i = 0; i != 8; i++) as[i] = cs[acepos[i]], ks[i] = cs[acepos[i]+12];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 16; i++) this.piles[i].dealTo(cards, 0, 1);
-    for(i = 0; i != 8; i++) this.reserves[i].dealTo(cards, 10, 1);
   },
 
   mayTakeCardFromPile: mayTakeSingleCard,

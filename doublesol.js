@@ -9,6 +9,8 @@ Games.doublesol = {
 
   layoutTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
 
+  dealTemplate: { piles: [[0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1]] },
+
   init: function() {
     var cs = this.cards = makeDecks(2);
 
@@ -32,11 +34,6 @@ Games.doublesol = {
     }
 
     this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, i, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

@@ -5,14 +5,11 @@ Games.towers = {
 
   layoutTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
+  dealTemplate: { piles: [0,5], cells: [[],[0,1],[0,1],[]] },
+
   init: function() {
     var cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 5);
-    for(i = 1; i != 3; i++) this.cells[i].dealTo(cards, 0, 1);
   },
 
   getHints: function() {

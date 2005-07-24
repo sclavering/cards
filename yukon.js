@@ -44,14 +44,11 @@ Games.yukon = {
 
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
+  dealTemplate: { piles: [[0,1],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]] },
+
   init: function() {
     const cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
-
-  deal: function(cards) {
-    this.piles[0].dealTo(cards, 0, 1);
-    for(var i = 1; i != 7; i++) this.piles[i].dealTo(cards, i, 5);
   },
 
   getHints: function() {
@@ -74,15 +71,11 @@ Games.sanibel = {
 
   layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
+  dealTemplate: { piles: [3,7] },
+
   init: function() {
     var cs = this.cards = makeDecks(2);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
-
-  deal: function(cards) {
-    this.stock.dealTo(cards, 3, 0);
-    this.waste.dealTo(cards, 0, 1);
-    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 3, 7);
   },
 
   getHints: function() {

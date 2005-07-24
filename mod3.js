@@ -8,6 +8,8 @@ Games.mod3 = {
   layoutTemplate:
     "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1[sl]1]",
 
+  dealTemplate: { foundations: [0, 1], piles: [0, 1] },
+
   cards: null,
 
   init: function() {
@@ -40,12 +42,6 @@ Games.mod3 = {
       for(j = 0; j != 8; j++)
         rs[i][j].row = i;
     this.stock.row = 4; // just so long as it's not 0, 1, or 2
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 24; i++) this.foundations[i].dealTo(cards, 0, 1);
-    for(i = 0; i != 8; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   // games that start with no cards in the correct place on the foundations are impossible

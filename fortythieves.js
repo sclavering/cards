@@ -8,15 +8,14 @@ Games.fortythieves = {
 
   layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  [sl] w  ] [2p1p1p1p1p1p1p1p1p1p2]",
 
+  dealTemplate: {
+    piles: [0, 4],
+    waste: [0, 1]
+  },
+
   init: function() {
     const cs = this.cards = makeDecks(2);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 10; i++) this.piles[i].dealTo(cards, 0, 4);
-    this.waste.dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

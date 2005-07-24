@@ -7,6 +7,8 @@ Games.whitehead = {
 
   layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
 
+  dealTemplate: { piles: [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7]] },
+
   init: function() {
     var cs = this.cards = makeDecks(1);
 
@@ -19,11 +21,6 @@ Games.whitehead = {
     }
 
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
-
-  deal: function(cards) {
-    for(var i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, i+1);
-    this.stock.dealTo(cards, cards.length, 0);
   },
 
   getHints: function() {

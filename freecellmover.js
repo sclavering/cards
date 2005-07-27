@@ -81,7 +81,6 @@ function FreeCellMoveAction(card, source, destination, cells, spaces) {
   this.spaces = spaces;
 }
 FreeCellMoveAction.prototype = {
-  action: "pile->pile",
   synchronous: false,
 
   perform: function() {

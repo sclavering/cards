@@ -36,6 +36,7 @@ var gMessageLine2 = "message2";
 var gOptionsMenu = "options-menu";
 var gGameSelector = "game-type-menu";
 var gGameMenuPopup = "menupopup-gametypes";
+var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
@@ -51,7 +52,7 @@ const CC = Components.classes;
 function init() {
   const things = ["gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
       "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu",
-      "gGameSelector","gScoreDisplay","gGameStack","gGameMenuPopup"];
+      "gGameSelector","gScorePanel","gScoreDisplay","gGameStack","gGameMenuPopup"];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
@@ -501,8 +502,6 @@ function updateUI() {
   else gCmdRedo.setAttribute("disabled","true");
   if(Game.canRedeal) gCmdRedeal.removeAttribute("disabled");
   else gCmdRedeal.setAttribute("disabled","true");
-  if(Game.getHints) gCmdHint.removeAttribute("disabled");
-  else gCmdHint.setAttribute("disabled","true");
 }
 
 

@@ -26,14 +26,7 @@ const YukonBase = {
 
   getBestDestinationFor: "legal nonempty, or empty",
 
-  isWon: "13 cards on each foundation",
-
-  scores: {
-    "->foundation": 10,
-    "foundation->": -15
-  },
-
-  scoreForRevealing: 5
+  isWon: "13 cards on each foundation"
 };
 
 

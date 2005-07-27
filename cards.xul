@@ -88,10 +88,10 @@
     </menupopup>
   </toolbarbutton>
   <flex/>
-  <hbox id="score-panel">
+  <vbox id="score-panel" align="center" pack="center"><hbox>
     <label value="&score-label;"/>
     <label id="score-display"/>
-  </hbox>
+  </hbox></vbox>
 </toolbar>
 </toolbox>
 

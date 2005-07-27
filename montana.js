@@ -93,7 +93,6 @@ function MontanaRedealAction(hardGame) {
   this.map = [[],[],[],[]];
 }
 MontanaRedealAction.prototype = {
-  action: "redeal",
   synchronous: true,
 
   perform: function() {

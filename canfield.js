@@ -37,15 +37,7 @@ const CanfieldBase = {
 
   getAutoplayableNumbers: "klondike",
 
-  isWon: "13 cards on each foundation",
-
-  scores: {
-    "->foundation": 10,
-    "waste->pile": 5,
-    "foundation->": -15
-  },
-
-  scoreForRevealing: 5
+  isWon: "13 cards on each foundation"
 };
 
 

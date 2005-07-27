@@ -7,12 +7,11 @@ flex2 { -moz-box-flex: 2; }
 flex3 { -moz-box-flex: 3; }
 flex4 { -moz-box-flex: 4; }
 flex5 { -moz-box-flex: 5; }
-
+space { min-width: 10px; min-height: 10px; }
 
 label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwanted margins */
 
 #games { overflow: hidden; }
-
 
 #message {
   -moz-box-orient: vertical;
@@ -34,14 +33,8 @@ label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwa
   font-size: 1.2em;
 }
 
-
-#score-panel { margin-right: 10px; }
-toolbarbutton { padding-left: 6px; padding-right: 6px; margin-right: 5px;}
-
-rowspacer { height: 10px;}
-colspacer { width: 10px; }
-
-space { min-width: 10px; min-height: 10px; }
+#score-panel, toolbarbutton { margin-right: 10px; }
+#score-panel label { margin: 0 }
 
 .game {
   padding-top: 10px;

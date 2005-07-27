@@ -56,12 +56,5 @@ Games.whitehead = {
     return nums;
   },
 
-  isWon: "13 cards on each foundation",
-
-  scores: {
-    "->foundation": 10,
-    "waste->pile": 5,
-    "foundation->": -15,
-    "stock-turned-over": -100
-  }
+  isWon: "13 cards on each foundation"
 };

@@ -58,6 +58,8 @@ Games.tripeaks = {
     return true;
   },
 
+  hasScoring: true,
+
   getScoreFor: function(action) {
     if(action instanceof DealToPile) {
       action.streakLength = 0;

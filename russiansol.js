@@ -30,11 +30,5 @@ Games.russiansol = {
 
   getAutoplayableNumbers: "any",
 
-  isWon: "13 cards on each foundation",
-
-  scores: {
-    "->foundation": 10
-  },
-
-  scoreForRevealing: 5
+  isWon: "13 cards on each foundation"
 }

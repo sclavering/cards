@@ -33,6 +33,10 @@ var BaseCardGame = {
 
   show: function() {
     this.xulElement.hidden = false;
+    
+    if(this.getHints) gCmdHint.removeAttribute("disabled");
+    else gCmdHint.setAttribute("disabled","true");
+    gScorePanel.hidden = !this.hasScoring;
   },
 
   hide: function() {
@@ -346,26 +350,24 @@ var BaseCardGame = {
 
 
   // === Scoring ==========================================
-  // games should override either |getScoreFor|, or |scores|
+  // games may override getScoreFor (and hasScoring)
 
   // score at the start of a game
   // read after deal() (which is important if a game uses a getter function for this)
   initialScore: 0,
+
+  hasScoring: false,
 
   // when adjusting this you should also adjust gScoreDisplay.value
   score: 0,
 
   // action is an Action object
   getScoreFor: function(action) {
-    var actionstr = action.action;
-    return (actionstr in this.scores) ? this.scores[actionstr] : 0;
+    return 0;
   },
 
   // score for each card revealed.  done() handles the revealing of cards
   scoreForRevealing: 0,
-
-  // a string->number map of scores
-  scores: {},
 
 
 

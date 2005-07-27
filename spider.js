@@ -40,9 +40,10 @@ var SpiderBase = {
 
   isWon: "foundation holds all cards",
 
-  scores: {
-    "->foundation": 100,
-    "pile->pile": -1
+  hasScoring: true,
+
+  getScoreFor: function(act) {
+    return act instanceof Move ? (act.destination.isFoundation ? 100 : -1) : 0;
   }
 };
 

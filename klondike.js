@@ -41,11 +41,15 @@ const KlondikeBase = {
 
   isWon: "13 cards on each foundation",
 
-  scores: {
-    "->foundation": 10,
-    "waste->pile": 5,
-    "foundation->": -15,
-    "stock-turned-over": -100
+  hasScoring: true,
+
+  getScoreFor: function(act) {
+    if(act instanceof RefillStock) return -100;
+    if(!(act instanceof Move)) return 0;
+    const s = act.source, d = act.destination;
+    if(d.isFoundation) return s.isFoundation ? 0 : 10;
+    if(s.isFoundation) return -15;
+    return s.isWaste ? 5 : 0;
   },
 
   scoreForRevealing: 5

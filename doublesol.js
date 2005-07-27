@@ -80,14 +80,5 @@ Games.doublesol = {
     return null;
   },
 
-  isWon: "26 cards on each foundation",
-
-  scores: {
-    "->foundation": 10,
-    "waste->pile": 5,
-    "foundation->": -15,
-    "stock-turned-over": -100
-  },
-
-  scoreForRevealing: 5
+  isWon: "26 cards on each foundation"
 };

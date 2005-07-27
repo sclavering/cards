@@ -17,7 +17,6 @@ function DealToPile(pile) {
   this.to = pile;
 }
 DealToPile.prototype = {
-  action: "dealt-from-stock",
   synchronous: true,
 
   perform: function() {
@@ -35,7 +34,6 @@ DealToPile.prototype = {
 
 function RefillStock() {}
 RefillStock.prototype = {
-  action: "stock-turned-over",
   synchronous: true,
 
   perform: function() {
@@ -88,7 +86,6 @@ Deal3Action.prototype = {
 // has to work for Wasp, where just 3 cards are dealt, but there are seven piles
 function DealToPiles() {}
 DealToPiles.prototype = {
-  action: "dealt-from-stock",
   synchronous: true,
   dealt: 0,
 
@@ -108,7 +105,6 @@ DealToPiles.prototype = {
 
 function DealToNonEmptyPilesAction() {}
 DealToNonEmptyPilesAction.prototype = {
-  action: "dealt-from-stock",
   synchronous: true,
   last: 0, // the pile index we reached on the final deal before running out of cards
   num: 0, // num piles dealt to
@@ -140,10 +136,6 @@ function Move(card, destination, source) {
   this.card = card;
   this.source = source = source || card.parentNode.source;
   this.destination = destination;
-  this.action =
-      destination.isFoundation
-      ? (source.isFoundation ? "foundation->foundation" : "->foundation")
-      : (source.isFoundation ? "foundation->" : (source.localName+"->"+destination.localName));
 }
 Move.prototype = {
   synchronous: false,
@@ -165,7 +157,6 @@ function RemovePair(card1, card2) {
   this.c2 = card2; this.p2 = card2 && card2.parentNode.source;
 }
 RemovePair.prototype = {
-  action: "pyramid-move",
   synchronous: true,
 
   perform: function() {

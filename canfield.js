@@ -18,7 +18,7 @@ const CanfieldBase = {
     this.stock.dealTo(cards, cards.length, 0);
 
     const cs = this.cards;
-    const num = this.foundations[0].firstChild.number;
+    const num = this.foundations[0].firstChild.displayNum;
     renumberCards(cs, num);
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },

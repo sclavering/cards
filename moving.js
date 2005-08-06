@@ -42,8 +42,8 @@ function moveCards1(firstCard, target) {
       return;
     }
 
-    var stepX = dx / steps;
-    var stepY = dy / steps;
+    const stepX = dx / steps;
+    const stepY = dy / steps;
     steps--; // so it's 0 when the move is complete
 
     if(parent!=gFloatingPile) {
@@ -71,7 +71,12 @@ function moveCards1(firstCard, target) {
         clearInterval(interval);
         cards.left = cards._left = tx;
         cards.top = cards._top = ty;
-        setTimeout(animDone, 0);
+        const timeout = setTimeout(animDone, 0);
+        interruptAction = function() {
+          clearTimeout(timeout);
+          target.addCards(firstCard);
+          gFloatingPileNeedsHiding = true;
+        };
       }
     };
 
@@ -89,9 +94,9 @@ function moveCards1(firstCard, target) {
 
 
 function moveCards2(card, to) {
-  var source = card.parentNode.source;
+  const source = card.parentNode.source;
   to.addCards(card);
-  var t = setTimeout(done, kAnimationDelay, source);
+  const t = setTimeout(done, kAnimationDelay, source);
   interruptAction = function() {
     clearTimeout(t);
     return source;

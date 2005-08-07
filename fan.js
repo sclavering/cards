@@ -49,10 +49,7 @@ Games.fan = {
     }
   },
 
-  getBestDestinationFor: function(card) {
-    var up = card.up;
-    return up ? (up.nextSibling ? null : up.parentNode) : findEmpty(card.parentNode.surrounding);
-  },
+  getBestDestinationFor: "to up or nearest space",
 
   autoplay: "commonish",
 

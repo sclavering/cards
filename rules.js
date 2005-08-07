@@ -81,9 +81,10 @@ var Rules = {
   getBestDestinationFor: {
     "to up or nearest space":
     function(card) {
-      var up = card.up, upp = up && up.parentNode, p = card.parentNode;
-      if(up && up.faceUp && upp.isPile && upp!=p && !up.nextSibling) return upp;
-      return findEmpty(p.surrounding);
+      const up = card.up, upp = up && up.parentNode;
+      if(upp && upp.mayAddCard(card)) return upp;
+      const e = findEmpty(card.parentNode.surrounding);
+      return e && e.mayAddCard(card) ? e : null;
     },
 
     "down and same suit, or down, or empty":
@@ -115,7 +116,8 @@ var Rules = {
           empty = p;
         }
       }
-      return empty;
+      // the check is essential in Forty Thieves, and won't matter much elsewhere
+      return empty && empty.mayAddCard(card) ? empty : null;
     },
 
     "legal":

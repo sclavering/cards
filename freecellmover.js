@@ -161,16 +161,12 @@ const FreeCellMover = {
     const group = cells.length + 1;
     const last = first + num;
     const limit = first + group;
-    //~ dump("  qMedium "+cards[first].str+"@"+first+" to "+cards[last-1].str+"@"+(last-1)+" to "+target.id+", limit="+limit+"\n");
     for(var i = last, s = 0; i > limit; ++s) {
       i -= group;
-      //~ dump("  qM calls qS for "+cards[i].str+"@"+i+" and "+group+" to "+spaces[s].id+"\n");
       this.queueSimple(cards, i, group, spaces[s], cells);
     }
-    //~ dump("  qM middle call qS: "+cards[first].toString()+" and "+(i-first)+" to target\n");
     this.queueSimple(cards, first, i - first, target, cells);
     while(i != last) {
-      //~ dump("  qM calls qS for "+cards[i].toString()+" and "+group+" to target\n");
       this.queueSimple(cards, i, group, target, cells);
       i += group;
     }
@@ -182,10 +178,8 @@ const FreeCellMover = {
   queueComplex: function(cards, first, num, target, cells, spaces) {
     const group = cells.length + 1;
     const last = first + num;
-    //~ dump("qComplex "+cards[first].str+"@"+first+" to "+cards[last-1].str+"@"+(last-1)+" to "+target.id+"\n");
     // the num. of cards movable by queueMedium, at any given moment
     var batch = (spaces.length + 1) * group;
-    //~ dump("qC initial batch size: "+batch+"\n");
     // suffixes of |spaces| - ss[i] is spaces.slice(i+1), or undefined
     var ss = new Array(spaces.length);
 
@@ -193,22 +187,17 @@ const FreeCellMover = {
     var c = last; // card index
 
     while(num > batch) {
-      dump("qC 1st loop: num="+num+" batch="+batch+"\n");
       var sp = ss[s] = spaces.slice(s+1);
       batch -= group; // we're about to use spaces[s], so must adjust |batch| first
       c -= batch;
-      //~ dump(" qC calls qM for"+cards[c].str+"@"+c+" to "+cards[c+batch-1].str+" to "+spaces[s].id+"\n");
       this.queueMedium(cards, c, batch, spaces[s], cells, sp);
       ++s;
       num -= batch;
     }
-    //~ dump(" qC: first+num==c ? "+(first+num==c)+"\n");
-    //~ dump(" qC calls qM "+cards[first].str+"@"+first+" to "+cards[c-1].str+"@"+(c-1)+" to target ("+target.id+")\n");
     this.queueMedium(cards, first, num, target, cells, sp);
 
     while(c != last) {
       --s;
-      //~ dump(" qC calls qM for"+cards[c].str+"@"+c+" to "+cards[c+batch-1].str+" to target ("+target.id+")\n");
       this.queueMedium(cards, c, batch, target, cells, ss[s]);
       c += batch;
       batch += group;

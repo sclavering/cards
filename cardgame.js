@@ -33,7 +33,7 @@ var BaseCardGame = {
 
   show: function() {
     this.xulElement.hidden = false;
-    
+
     if(this.getHints) gCmdHint.removeAttribute("disabled");
     else gCmdHint.setAttribute("disabled","true");
     gScorePanel.hidden = !this.hasScoring;

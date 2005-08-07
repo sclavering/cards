@@ -33,7 +33,8 @@ label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwa
   font-size: 1.2em;
 }
 
-#score-panel, toolbarbutton { margin-right: 10px; }
+#score-panel { margin-right: 10px }
+toolbarbutton { margin-left: 10px; }
 #score-panel label { margin: 0 }
 
 .game {

@@ -42,20 +42,7 @@ Games.doublesol = {
   autoplay: function() {
     var searchedForAces = false;
     const fs = this.foundations, as = this.aces;
-
-    const nums = [20,20], counts = [0, 0];
-    for(var i = 0; i != 4; ++i) {
-      var c = fs[i].lastChild;
-      if(!c) continue;
-      var col = c.colour, num = c.number;
-      counts[col]++;
-      if(num < nums[col]) nums[col] = num;
-    }
-    if(counts[0] < 2) nums[0] = 1;
-    if(counts[1] < 2) nums[1] = 1;
-    var tmp = nums[0] + 1;
-    nums[0] = nums[1] + 1;
-    nums[1] = tmp;
+    const nums = this.getAutoplayableNumbers();
 
     for(var i = 0; i != 4; i++) {
       var f = fs[i];
@@ -64,7 +51,7 @@ Games.doublesol = {
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
-        if(!c1 || c1.number > nums[c1.colour]) continue;
+        if(!c1 || c1.number > nums[c1.suit]) continue;
         if(c1.faceUp && !c1.nextSibling) return new Move(c1, f);
         if(c2 && c2.faceUp && !c2.nextSibling) return new Move(c2, f);
       } else if(!searchedForAces) {
@@ -79,6 +66,8 @@ Games.doublesol = {
     }
     return null;
   },
+
+  getAutoplayableNumbers: "klondike",
 
   isWon: "26 cards on each foundation"
 };

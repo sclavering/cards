@@ -93,7 +93,7 @@ function init() {
   gHintHighlighter.showHint = function(from, to) {
     to = to.lastChild || to; // |to| could be a pile
     this.highlight(from);
-    var thisthis = this; // because |this| within these functions would refer to the wrong thing
+    const thisthis = this; // because |this| within these functions would refer to the wrong thing
     setTimeout(function(){thisthis.highlight(to);}, 350);
     setTimeout(function(){thisthis.unhighlight();}, 800);
   };
@@ -109,13 +109,13 @@ function init() {
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
 
   // work out which game was played last
-  game = "klondike";
+  game = "klondike1";
   try { game = gPrefs.getCharPref("current-game"); } catch(e) {}
-  if(!(game in Games)) game = "klondike"; // just in case pref gets corrupted
+  if(!(game in Games)) game = "klondike1"; // just in case pref gets corrupted
 
   // build the games menu
-  var gamesInMenu = ["freecell","fan","divorce","gypsy","klondike","mod3","penguin","pileon",
-      "russiansol","simon","spider","spider-2suits","unionsquare","whitehead","wasp","yukon"];
+  var gamesInMenu = ["freecell","fan","divorce","gypsy4","klondike1","mod3","penguin","pileon",
+      "russiansol","simon4","spider2","spider4","unionsquare","wasp","whitehead","yukon"];
   try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
   buildGamesMenu(gamesInMenu, game);
 

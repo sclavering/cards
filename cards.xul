@@ -62,6 +62,8 @@
   <key id="key:hint"    key="&key.hint;"    modifiers="accel" command="cmd:hint"/>
 </keyset>
 
+<!-- replaces the non-functional browser menubar on Mac OS with an empty one -->
+<menubar hidden="true"/>
 
 <toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">

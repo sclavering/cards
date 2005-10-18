@@ -38,11 +38,14 @@ RefillStock.prototype = {
 
   perform: function() {
     const s = Game.stock, w = Game.waste;
+    this.wasteOldNextOffsetMultiplier = w.nextOffsetMultiplier || 0; // draw3 hack
     while(w.hasChildNodes()) s.undealCardFrom(w);
+    w.nextOffsetMultiplier = 0; // draw3 hack    
     s.counter = s.childNodes.length;
   },
   undo: function() {
     const s = Game.stock, w = Game.waste;
+    w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.childNodes.length; // draw3 hack
     while(s.hasChildNodes()) s.dealCardTo(w);
     s.counter = 0;
   }
@@ -55,30 +58,17 @@ Deal3Action.prototype = {
 
   perform: function() {
     const s = Game.stock, w = Game.waste;
-    this.oldWasteDepth = w.depth;
-    // pack any cards already there to the left of the pile
-    var card = w.lastChild;
-    while(card && card._left) {
-      card.left = card._left = 0;
-      card = card.previousSibling;
-    }
-    // deal new cards
-    w.depth = -1;
-    var num = s.childNodes.length;
-    if(num > 3) num = 3;
+    this.numPacked = w.packCards();
+    const num = this.numMoved = Math.min(s.childNodes.length, 3);
     for(var i = 0; i != num; ++i) s.dealCardTo(w);
-    s.counter -= this.numMoved = num;
+    s.counter -= num;
   },
 
   undo: function() {
     const s = Game.stock, w = Game.waste;
-    s.counter += this.numMoved
-    // undeal cards
+    s.counter += this.numMoved;
     for(var i = this.numMoved; i != 0; --i) s.undealCardFrom(w);
-    i = w.depth = this.oldWasteDepth;
-    // unpack the cards that were there before, if necessary
-    for(var card = w.lastChild; i > 0; --i, card = card.previousSibling)
-      card.left = card._left = i * gHFanOffset;
+    w.unpackCards(this.numPacked);
   }
 }
 

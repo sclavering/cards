@@ -3,7 +3,10 @@ const CanfieldBase = {
 
   stockType: StockDealToWasteOrRefill,
   foundationType: KlondikeFoundation,
-  pileType: KlondikePile,
+  pileType: CanfieldPile,
+  reserveLayout: BaseLayout,
+  reserveFaceDownCards: 12,
+  reserveFaceUpCards: 1,
 
   layoutTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
 
@@ -40,18 +43,20 @@ const CanfieldBase = {
   isWon: "13 cards on each foundation"
 };
 
-
 Games.canfield = {
-  __proto__: CanfieldBase,
-  reserveLayout: BaseLayout,
-  reserveFaceDownCards: 12,
-  reserveFaceUpCards: 1
+  __proto__: CanfieldBase
 };
 
+Games.canfield3 = {
+  __proto__: CanfieldBase,
+  stockType: Deal3OrRefillStock,
+  wasteType: Deal3VWaste,
+  wasteLayout: null
+};
 
 Games.demon = {
   __proto__: CanfieldBase,
   reserveLayout: FanDownLayout,
   reserveFaceDownCards: 0,
   reserveFaceUpCards: 13
-}
+};

@@ -3,7 +3,6 @@ const GypsyBase = {
 
   stockType: StockDealToPiles,
   pileType: GypsyPile,
-  pileLayout: FanDownLayout,
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2",
 

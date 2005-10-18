@@ -67,7 +67,7 @@ Games.klondike1 = {
 Games.klondike3 = {
   __proto__: KlondikeBase,
   stockType: Deal3OrRefillStock,
-  wasteType: Deal3Waste,
+  wasteType: Deal3HWaste,
   wasteLayout: null,
   layoutTemplate: "v[1[sl]1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };

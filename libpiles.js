@@ -307,31 +307,57 @@ const Waste = {
   mayAddCard: function() { return false; }
 };
 
-const Deal3Waste = {
+const Deal3WasteBase = {
   __proto__: BaseLayout,
-
   isWaste: true,
-
-  className: "draw3-waste",
-
-  depth: 0, // used in positioning
-
+  nextOffsetMultiplier: 0,
+  oldChildCount: 0,
   // only ever has to handle one card
   addCards: function(card) {
-    const depth = ++this.depth;
     this.appendChild(card);
-    card.top = card._top = 0;
-    card.left = card._left = depth>0 ? depth * gHFanOffset : 0;
+    card.top = card.left = card._top = card._left = 0;
+    const mul = Math.max(this.nextOffsetMultiplier++, 0);
+    card[this.prop] = card[this.prop2] = mul * this.offset;
+    this.oldChildCount++;
   },
-
-  // only called after a card is removed from the waste pile
+  packCards: function() {
+    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
+    const numToPack = Math.max(this.nextOffsetMultiplier, 0);
+    for(var i = num - numToPack; i != num; ++i) cs[i][prop] = cs[i][prop2] = 0;
+    this.nextOffsetMultiplier = 0;
+    return numToPack;
+  },
+  unpackCards: function(numToUnpack) {
+    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
+    const offset = this.offset, ixOffset = num - numToUnpack;
+    for(var i = 0; i != numToUnpack; ++i) {
+      const c = cs[ixOffset + i];
+      c[prop] = c[prop2] = i * offset;
+    }
+    this.nextOffsetMultiplier = numToUnpack;
+  },
+  // called after a card is removed, and also at start of game (hence the oldChildCount)
   fixLayout: function() {
-    --this.depth;
+    this.nextOffsetMultiplier -= this.oldChildCount - this.childNodes.length;
+    this.oldChildCount = this.childNodes.length;
   },
-
   mayTakeCard: function(card) { return !card.nextSibling; },
-
   mayAddCard: function(card) { return false; }
+};
+
+const Deal3HWaste = {
+  __proto__: Deal3WasteBase,
+  className: "draw3h-waste",
+  prop: "left",
+  prop2: "_left",
+  offset: gHFanOffset
+};
+
+const Deal3VWaste = {
+  __proto__: Deal3WasteBase,
+  prop: "top",
+  prop2: "_top",
+  offset: gVFanOffset
 };
 
 
@@ -387,6 +413,11 @@ function mayTakeRunningFlush(card) {
   return true;
 }
 
+function mayAddToGypsyPile(card) {
+  const last = this.lastChild;
+  return !last || (last.colour!=card.colour && last.number==card.upNumber);
+}
+
 // works fine in mod13 games (e.g. Demon)
 function mayAddToKlondikePile(card) {
   const last = this.lastChild;
@@ -416,6 +447,13 @@ const BlackWidowPile = {
   isPile: true,
   mayTakeCard: mayTakeDescendingRun,
   mayAddCard: mayAddOntoUpNumberOrEmpty
+};
+
+const CanfieldPile = {
+  __proto__: FanDownLayout,
+  isPile: true,
+  mayTakeCard: mayTakeIfFaceUp,
+  mayAddCard: mayAddToGypsyPile
 };
 
 const FanPile = {
@@ -481,9 +519,10 @@ const GolfPile = {
 };
 
 const GypsyPile = {
+  __proto__: FanDownLayout,
   isPile: true,
   mayTakeCard: mayTakeFromFreeCellPile,
-  mayAddCard: mayAddToKlondikePile
+  mayAddCard: mayAddToGypsyPile
 };
 
 const KlondikePile = {

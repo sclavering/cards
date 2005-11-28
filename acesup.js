@@ -5,7 +5,7 @@ Games.acesup = {
   foundationType: AcesUpFoundation,
   pileType: AcesUpPile,
 
-  layoutTemplate: "h1[sl]2p1p1p1p2f1",
+  layoutTemplate: "h2[sl]2p1p1p1p2f2",
 
   dealTemplate: { piles: [0,1] },
 

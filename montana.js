@@ -1,6 +1,8 @@
 const Montana = {
   __proto__: BaseCardGame,
 
+  helpId: "montana",
+
   pileType: MontanaPile,
 
   layoutTemplate:

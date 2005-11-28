@@ -52,6 +52,7 @@
   <command id="cmd:redo" oncommand="redo();"/>
   <command id="cmd:hint" oncommand="hint();"/>
   <command id="cmd:redeal" oncommand="redeal();"/>
+  <command id="cmd.help" oncommand="help();"/>  
 </commandset>
 
 <keyset id="cards-keys">
@@ -81,6 +82,7 @@
   <toolbarbutton command="cmd:redo"    label="&redo.label;"    tooltiptext="&redo.tooltip;"/>
   <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
   <toolbarbutton command="cmd:redeal"  label="&redeal.label;"  tooltiptext="&redeal.tooltip;"/>
+  <toolbarbutton command="cmd.help"    label="&help.label;"    tooltiptext="&help.tooltip;"/>
   <toolbarbutton id="options-menu" type="menu" label="&options.label;">
     <menupopup id="options-popup" oncommand="useCardSet(event.originalTarget.value);">
       <menuitem type="radio" label="&cardset.small;" value="small" id="cardset-small"/>

@@ -48,6 +48,7 @@ Games.canfield = {
 };
 
 Games.canfield3 = {
+  helpId: "canfield",
   __proto__: CanfieldBase,
   stockType: Deal3OrRefillStock,
   wasteType: Deal3VWaste,

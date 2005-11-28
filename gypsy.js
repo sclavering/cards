@@ -1,6 +1,8 @@
 const GypsyBase = {
   __proto__: BaseCardGame,
 
+  helpId: "gypsy",
+
   stockType: StockDealToPiles,
   pileType: GypsyPile,
 

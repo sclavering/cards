@@ -369,6 +369,17 @@ function gameSelectorClosing(selected, ticked) {
 }
 
 
+function help() {
+  const helpid = Game.helpId || Game.id;
+  // position the help window roughly centered on the Cards window
+  const w = 450, h = 350;
+  const t = Math.floor(screenY + (outerHeight - h) / 3);
+  const l = Math.floor(screenX + (outerWidth - w) / 2);
+  const featureStr = "dialog=no,width=" + w + ",height=" + h + ",top=" + t + ",left=" + l;
+  openDialog("chrome://cards/locale/help.html#" + helpid, null, featureStr);
+}
+
+
 // |items| is an array of game ids; |selected| a game id for which the menuitem should be checked
 function buildGamesMenu(items, selected) {
   const menu = gGameMenuPopup;

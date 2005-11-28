@@ -1,6 +1,8 @@
 const GolfBase = {
   __proto__: BaseCardGame,
 
+  helpId: "golf",
+
   stockType: StockDealToFoundation,
   foundationType: GolfFoundation,
   pileType: GolfPile,

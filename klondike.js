@@ -60,6 +60,7 @@ const KlondikeBase = {
 
 Games.klondike1 = {
   __proto__: KlondikeBase,
+  helpId: "klondike",
   layoutTemplate: "v[1[sl]1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 

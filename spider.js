@@ -53,6 +53,7 @@ var SpiderBase = {
 
 const Spider = {
   __proto__: SpiderBase,
+  helpId: "spider",
 
   dealTemplate: { piles: [[5,1],[5,1],[5,1],[5,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1]] },
 
@@ -87,6 +88,7 @@ Games.spider4 = {
 
 Games.blackwidow = {
   __proto__: Spider,
+  helpId: null,
 
   pileType: BlackWidowPile,
 
@@ -183,6 +185,7 @@ Games.wasp = {
 
 const SimonBase = {
   __proto__: SpiderBase,
+  helpId: "simon",
 
   foundationType: Spider4Foundation,
 

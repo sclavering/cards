@@ -554,7 +554,7 @@ const MontanaPile = {
   mayTakeCard: function() { return true; },
   mayAddCard: function(card) {
     const lp = this.leftp;
-    return !this.hasChildNodes() && (lp ? card.down.parentNode==lp : card.number==2);
+    return !this.hasChildNodes() && (card.number==2 ? !lp : card.down.parentNode==lp);
   }
 };
 

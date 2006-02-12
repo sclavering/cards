@@ -98,7 +98,9 @@ function init() {
     setTimeout(function(){thisthis.unhighlight();}, 800);
   };
 
-  gGameStack.onclick = handleMouseClick;
+  // We use onmouseup rather than onclick because in Fx1.5mac (at least) there is no click event 
+  // if you hold the mouse in one place for a few seconds between moving it and releasing the btn.
+  gGameStack.onmouseup = handleMouseClick;
   gGameStack.onmousedown = handleMouseDown;
   // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-
   // clicks (no down or click events), so it's easiest to do all right-click

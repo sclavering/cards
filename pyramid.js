@@ -52,7 +52,9 @@ const PyramidFoundation = {
   free: true,
   getActionForDrop: function(card) {
     return card.isKing ? new RemovePair(card, null) : null;
-  }
+  },
+  // needed when someone right-clicks a card
+  mayAddCard: no
 };
 
 
@@ -82,13 +84,10 @@ Games.pyramid = {
     }
   },
 
+  // only used for waste and .piles
   getActionForDrop: function(card) {
     const c = this.lastChild;
-    if(!c) {
-      dump("ee by 'eck!\n");
-      return null;
-    }
-    return card.number + c.number == 13 && this.free ? new RemovePair(card, c) : null;
+    return c && card.number + c.number == 13 && this.free ? new RemovePair(card, c) : null;
   },
 
   getBestActionFor: function(card) {

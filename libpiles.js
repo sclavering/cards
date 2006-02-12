@@ -3,6 +3,8 @@ var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 
+function yes() { return true; }
+function no() { return false; }
 
 // two objects can be supplied to provide the methods + properties for the pile because layouts
 // do not consistently appear with the same mayAddCard/mayTakeCard functions.
@@ -224,8 +226,8 @@ const PyramidLayout = {
 const BasicStock = {
   __proto__: BaseLayout,
   isStock: true,
-  mayTakeCard: function(card) { return false; },
-  mayAddCard: function(card) { return false; },
+  mayTakeCard: no,
+  mayAddCard: no,
 
   dealCardTo: function(destination) {
     const card = this.lastChild;
@@ -304,7 +306,7 @@ const StockDealToNonemptyPiles = {
 const Waste = {
   isWaste: true,
   mayTakeCard: function(card) { return !card.nextSibling; },
-  mayAddCard: function() { return false; }
+  mayAddCard: no
 };
 
 const Deal3WasteBase = {
@@ -342,7 +344,7 @@ const Deal3WasteBase = {
     this.oldChildCount = this.childNodes.length;
   },
   mayTakeCard: function(card) { return !card.nextSibling; },
-  mayAddCard: function(card) { return false; }
+  mayAddCard: no
 };
 
 const Deal3HWaste = {
@@ -364,11 +366,8 @@ const Deal3VWaste = {
 
 const Cell = {
   __proto__: BaseLayout,
-
   isCell: true,
-
-  mayTakeCard: function(card) { return true; },
-
+  mayTakeCard: yes,
   mayAddCard: function(card) {
     return !this.hasChildNodes() && !card.nextSibling;
   }
@@ -379,7 +378,7 @@ const Cell = {
 const Reserve = {
   isReserve: true,
   mayTakeCard: function(card) { return !card.nextSibling; },
-  mayAddCard: function(card) { return false; }
+  mayAddCard: no
 };
 
 
@@ -515,7 +514,7 @@ const GolfPile = {
   isPile: true,
   // don't allow drag_drop because it's slower than just clicking the cards
   mayTakeCard: mayTakeSingleCard,
-  mayAddCard: function(card) { return false; }
+  mayAddCard: no
 };
 
 const GypsyPile = {
@@ -535,11 +534,9 @@ const KlondikePile = {
 const MazePile = {
   __proto__: BaseLayout,
   isPile: true,
-  mayTakeCard: function(card) { return true; },
-
+  mayTakeCard: yes,
   mayAddCard: function(card) {
     if(this.hasChildNodes()) return false;
-
     var prev = this.prev.lastChild, next = this.next.lastChild;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
@@ -551,7 +548,7 @@ const MazePile = {
 const MontanaPile = {
   __proto__: BaseLayout,
   isPile: true,
-  mayTakeCard: function() { return true; },
+  mayTakeCard: yes,
   mayAddCard: function(card) {
     const lp = this.leftp;
     return !this.hasChildNodes() && (card.number==2 ? !lp : card.down.parentNode==lp);
@@ -681,7 +678,7 @@ function mayAddCardToKlondikeFoundation(card) {
 const NoWorryingBackFoundation = {
   __proto__: BaseLayout,
   isFoundation: true,
-  mayTakeCard: function() { return false; }
+  mayTakeCard: no
 };
 
 // "worrying back" is what removing cards from the foundation is called

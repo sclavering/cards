@@ -5,8 +5,7 @@ Games.russiansol = {
   foundationType: FanFoundation,
 
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
-
-  dealTemplate: { piles: [[0,1],[1,5],[2,5],[3,5],[4,5],[5,5],[6,5]] },
+  dealTemplate: "p 0,1 1,5 2,5 3,5 4,5 5,5 6,5",
 
   init: function() {
     var cs = this.cards = makeDecks(1);

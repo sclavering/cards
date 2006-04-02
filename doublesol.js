@@ -9,7 +9,7 @@ Games.doublesol = {
 
   layoutTemplate: "v[1[sl]1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
 
-  dealTemplate: { piles: [[0,1],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1],[7,1],[8,1],[9,1]] },
+  dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
 
   init: function() {
     var cs = this.cards = makeDecks(2);

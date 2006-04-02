@@ -66,6 +66,23 @@ var BaseCardGame = {
   // <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined in _buildLayout
   layoutTemplate: null,
 
+  // A string, unless deal() is overridden.
+  //  template ::= foo "; " template | foo
+  //  foo ::= [PFCRWS] " " nums | [pfcrws] (" " nums)+
+  //  nums ::= [0-9] ("," [0-9])*
+  //
+  // "nums" lists are alternate numbers of face-down and face-up cards.
+  // Capital letters mean "deal this (nums) pattern to every pile of this type".
+  // Lower-case letters are followed by a pattern for each pile of that type
+  // e.g. "F 0,1; p 0,1 1,2"
+  // would mean "deal a single face-up card to each foundation, a single face-up card to
+  // the first pile, and two-face up cards on top of one face-down card to the second pile"
+  //
+  // p=pile, f=foundation, c=cell, r=reserve, w=waste, s=stock
+  // Once all the cards are dealt, any further instructions will be silently ignored. This
+  // is used by, e.g.,  Fan ("P 0,3") to leave the final pile with just 1 card
+  dealTemplate: null,
+
   stockType: null,
   stockLayout: null,
   wasteType: Waste,
@@ -83,10 +100,11 @@ var BaseCardGame = {
   buildLayout: function() {
     // make sure each game type has its own arrays for these
     this.allpiles = [];
-    this.piles = [];
-    this.foundations = [];
-    this.cells = [];
-    this.reserves = [];
+    const byType = this.pilesByType = { p: [], f: [], c: [], r: [], w: [], s: [] };
+    this.piles = byType.p;
+    this.foundations = byType.f;
+    this.cells = byType.c;
+    this.reserves = byType.r;
 
     const containerIsVbox = this.layoutTemplate[0] == "v";
     const box = this.xulElement = document.createElement(containerIsVbox ? "vbox" : "hbox");
@@ -198,7 +216,7 @@ var BaseCardGame = {
     const type = {p:"pile", f:"foundation", c:"cell", r:"reserve", w:"waste", s:"stock"}[ch];
     const obj1 = this[type + "Type"] || null; // e.g. this.pileType
     const obj2 = this[type + "Layout"] || null; // e.g. this.pileLayout
-    const arry = this[type + "s"] || null; // e.g. this.piles
+    const arry = this.pilesByType[ch];
     
     const p = createPile(type, obj1, obj2);
     this.allpiles.push(p);
@@ -208,7 +226,7 @@ var BaseCardGame = {
       prev.next = p;
       p.prev = prev;
     }
-    if(arry) arry.push(p);
+    arry.push(p);
     this[type] = p; // set this.stock, this.waste, etc; don't care about setting this.cell
     // xxx ew!
     const dropact = this.getActionForDrop
@@ -281,33 +299,33 @@ var BaseCardGame = {
   deal: function(cards) {
     const dt = this.dealTemplate;
     if(!dt) throw "dealTemplate missing, and deal() not overridden";
-
-    for(var x in dt) {
-      var t = dt[x], place = this[x];
-      if(place.isAnyPile) {
-        this._dealSomeCards(place, t, cards);
-      } // |place| is an array of piles
-      else if(typeof t[0] == "number") {
-        // use same template for every pile
-        for(var j = 0; j != place.length; ++j)
-          this._dealSomeCards(place[j], t, cards);
-      }
-      else {
-        // use a different template for each piles
-        for(j = 0; j != place.length; ++j)
-          this._dealSomeCards(place[j], t[j], cards);
+    
+    const bits = dt.split("; ");
+    for(var i = 0; i != bits.length; ++i) {
+      var bit = bits[i];
+      var ch = bit.charAt(0);
+      var lch = ch.toLowerCase();
+      if("pfcrws".indexOf(lch) == -1)
+        throw "BaseCardGame.deal: malformed dealTemplate: '" + ch + "' follows a '; '";
+      var piles = this.pilesByType[lch];
+      bit = bit.slice(2); // drop the leading "x "
+      if(ch == lch) { // separate nums for each pile
+        var numss = bit.split(" ");
+        for(var j = 0; j != numss.length; ++j) this._dealSomeCards(piles[j], numss[j], cards);
+      } else {
+        for(j = 0; j != piles.length; ++j) this._dealSomeCards(piles[j], bit, cards);
       }
     }
 
     // deal any remaining cards to the stock (keeps the templates simple)
-    if(this.stock) this._dealSomeCards(this.stock, [cards.length], cards);
+    if(this.stock) this._dealSomeCards(this.stock, cards.length + "", cards);
   },
 
-  // |nums| is an array [a,b,c,...] of ints.  |a| face-down cards, then |b| face-up cards
-  // then |c| face-down cards (etc., until end of list) will be dealt to |pile|
+  // |nums| is a string of comma-separated ints (e.g. "1,2,3").
   _dealSomeCards: function(pile, nums, cards) {
+    nums = nums.split(",");
     for(var i = 0, faceDown = true; i != nums.length; ++i, faceDown = !faceDown) {
-      var n = nums[i];
+      var n = parseInt(nums[i]);
       for(var j = 0; j != n; ++j) {
         var c = cards.pop();
         if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
@@ -726,22 +744,11 @@ var BaseCardGame = {
 
 
 
-
-
-function makeGameConstructor(proto) {
-  // using the |function| keyword here sometimes results in the same function being returned
-  // for each call of makeGameConstructor, so all games become Sanibel (see bug 7976).
-  var f = new Function();
-  f.prototype = proto;
-  return f;
-}
-
-
 function GameControllerObj(id, proto) {
   this.id = id;
-  this.proto = proto;
   proto.id = id; // cardslib.js still uses this
-  this.constructor = makeGameConstructor(proto);
+  this.constructor = new Function(); // don't use function(){}, see bug 7976
+  this.constructor.prototype = proto;
   this.pastGames = [];
   this.futureGames = [];
 }
@@ -757,7 +764,6 @@ GameControllerObj.prototype = {
   switchTo: function() {
     if(!this.currentGame) this.newGame();
     else Game = this.currentGame;
-
     Game.show();
   },
 

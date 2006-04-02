@@ -6,8 +6,7 @@ Games.maze = {
   layoutTemplate:
     "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
     + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
-
-  dealTemplate: { piles: [0, 1] },
+  dealTemplate: "P 0,1",
 
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces

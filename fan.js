@@ -7,17 +7,12 @@ Games.fan = {
   // xxx this doesn't give the desired numbering of the piles
   layoutTemplate: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
     +"[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]' ]",
+  dealTemplate: "P 0,3", // actually deals 1 card to the final pile
 
   init: function() {
     var cs = this.cards = makeDecks(1);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
     this.kings = [cs[12], cs[25], cs[38], cs[51]];
-  },
-
-  deal: function(cards) {
-    const ps = this.piles;
-    for(var i = 0; i != 17; i++) ps[i].dealTo(cards, 0, 3);
-    ps[17].dealTo(cards, 0, 1);
   },
 
   shuffleImpossible: function(cards) {

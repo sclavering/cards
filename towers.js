@@ -5,7 +5,7 @@ Games.towers = {
 
   layoutTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 
-  dealTemplate: { piles: [0,5], cells: [[],[0,1],[0,1],[]] },
+  dealTemplate: "P 0,5; c 0 0,1 0,1 0",
 
   init: function() {
     var cs = this.cards = makeDecks(1);

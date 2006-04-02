@@ -5,8 +5,7 @@ Games.freecell = {
   pileLayout: FanDownLayout,
 
   layoutTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
-
-  dealTemplate: { piles: [[0,7],[0,7],[0,7],[0,7],[0,6],[0,6],[0,6],[0,6]] },
+  dealTemplate: "p 0,7 0,7 0,7 0,7 0,6 0,6 0,6 0,6",
 
   init: function() {
     const cards = this.cards = makeDecks(1);

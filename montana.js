@@ -8,8 +8,7 @@ const Montana = {
   layoutTemplate:
     "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1] "
     + "[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
-
-  dealTemplate: { piles: [0, 1] },
+  dealTemplate: "P 0,1",
 
   redeals: 2,
   redealsRemaining: 2,

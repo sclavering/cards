@@ -6,9 +6,7 @@ Games.pileon = {
   pilespacerClass: "pileon",
 
   layoutTemplate: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]",
-
-  // last two piles should be empty, but this does work (because [].pop()==undefined)
-  dealTemplate: { piles: [0, 4] },
+  dealTemplate: "P 0,4", // will actually leave last two piles empty
 
   // xxx write getHints()
 

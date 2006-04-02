@@ -6,8 +6,7 @@ Games.acesup = {
   pileType: AcesUpPile,
 
   layoutTemplate: "h2[sl]2p1p1p1p2f2",
-
-  dealTemplate: { piles: [0,1] },
+  dealTemplate: "P 0,1",
 
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high

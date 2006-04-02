@@ -8,10 +8,7 @@ Games.fortythieves = {
 
   layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  [sl] w  ] [2p1p1p1p1p1p1p1p1p1p2]",
 
-  dealTemplate: {
-    piles: [0, 4],
-    waste: [0, 1]
-  },
+  dealTemplate: "P 0,1; W 0,1",
 
   init: function() {
     const cs = this.cards = makeDecks(2);

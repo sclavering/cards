@@ -5,8 +5,7 @@ Games.regiment = {
   pileType: BaseLayout,
 
   layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
-
-  dealTemplate: { piles: [0, 1], reserves: [10, 1] },
+  dealTemplate: "P 0,1; R 10,1",
 
   cards: 2,
 

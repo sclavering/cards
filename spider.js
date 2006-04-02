@@ -55,7 +55,7 @@ const Spider = {
   __proto__: SpiderBase,
   helpId: "spider",
 
-  dealTemplate: { piles: [[5,1],[5,1],[5,1],[5,1],[4,1],[4,1],[4,1],[4,1],[4,1],[4,1]] },
+  dealTemplate: "p 5,1 5,1 5,1 5,1 4,1 4,1 4,1 4,1 4,1 4,1",
 
   getLowestMovableCard: "descending, in suit",
 
@@ -122,7 +122,7 @@ Games.divorce = {
 
   stockType: StockDealToNonemptyPiles,
 
-  dealTemplate: { piles: [0, 5] },
+  dealTemplate: "P 0,5",
 
   init: function() {
     this.cards = makeDecksMod13(2);
@@ -159,8 +159,7 @@ Games.wasp = {
   pileLayout: null,
 
   layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
-
-  dealTemplate: { piles: [[3,4],[3,4],[3,4],[0,7],[0,7],[0,7],[0,7]] },
+  dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
 
   // converted to an array of cards by SpiderBase.init2()
   kings: [12, 25, 38, 51],
@@ -190,8 +189,7 @@ const SimonBase = {
   foundationType: Spider4Foundation,
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
-
-  dealTemplate: { piles: [[0,8],[0,8],[0,8],[0,7],[0,6],[0,5],[0,4],[0,3],[0,2],[0,1]] },
+  dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
 
   // see SpiderBase.init2
   kings: [12, 25, 38, 51],

@@ -7,7 +7,7 @@ Games.unionsquare = {
 
   layoutTemplate: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2",
 
-  dealTemplate: { piles: [0,1] },
+  dealTemplate: "P 0,1",
 
   init: function() {
     var cs = this.cards = makeDecks(2);

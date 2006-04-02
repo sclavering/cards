@@ -7,8 +7,7 @@ Games.mod3 = {
 
   layoutTemplate:
     "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1[sl]1]",
-
-  dealTemplate: { foundations: [0, 1], piles: [0, 1] },
+  dealTemplate: "F 0,1; P 0,1",
 
   cards: null,
 

@@ -7,7 +7,7 @@ Games.whitehead = {
 
   layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]",
 
-  dealTemplate: { piles: [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7]] },
+  dealTemplate: "p 0,1 0,2 0,3 0,4 0,5 0,6 0,7",
 
   init: function() {
     var cs = this.cards = makeDecks(1);

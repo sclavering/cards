@@ -14,7 +14,7 @@ var BaseCardGame = {
   cells: [],
   stock: null,     // the stock pile if the game has one, otherwise null
   waste: null,
-  foundation: null, // if the game has just one foundation this will be it
+  foundation: null, // the last foundation created (usually used in games with just one)
   reserve: null,
   dragDropTargets: null, // a list of piles on which cards can be dropped
 
@@ -99,33 +99,12 @@ var BaseCardGame = {
 
     // xxx kill this
     this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
-
-    // some games expect these
-    if(this.foundations.length == 1) this.foundation = this.foundations[0];
-    if(this.reserves.length == 1) this.reserve = this.reserves[0];
   },
 
   _buildLayout: function(container, nextBoxVertical, template) {
     var box = container;
     var newbox, p;
     var allpiles = this.allpiles;
-    const dropact = this.getActionForDrop
-
-    function makePile(type, impl, layout, arry) {
-      const len = arry ? arry.length : 0;
-      const p = createPile(type, impl, layout);
-      if(p.getActionForDrop==BaseLayout.getActionForDrop && dropact)
-        p.getActionForDrop = dropact;
-      if(arry) arry.push(p);
-      allpiles.push(p);
-      box.appendChild(p);
-      if(len) {
-        const prev = arry[len-1];
-        prev.next = p;
-        p.prev = prev;
-      }
-      return p;
-    }
 
     function startBox(type, className) {
       newbox = document.createElement(type);
@@ -137,7 +116,8 @@ var BaseCardGame = {
     const len = template.length;
     // first char is "h"/"v", not of interest here
     for(var i = 1; i != len; ++i) {
-      switch(template[i]) {
+      var ch = template[i];
+      switch(ch) {
       // start a box
         case "[": // in opposite direction
           startBox(nextBoxVertical ? "vbox" : "hbox", "");
@@ -167,27 +147,17 @@ var BaseCardGame = {
           (box.lastChild || box).setAttribute(blob[0], blob[1]);
           break;
         case "}":
-          throw "BaseCardGame._buildLayout: reached a } in template"
-      // add piles or labels
+          throw "BaseCardGame._buildLayout: reached a } in template (without a { first)";
+      // add piles
         case "p":
-          makePile("pile", this.pileType, this.pileLayout, this.piles);
-          break;
         case "f":
-          this.foundation = makePile("foundation", this.foundationType,
-                                     this.foundationLayout, this.foundations);
-          break;
         case "c":
-          makePile("cell", this.cellType, this.cellLayout, this.cells);
-          break;
         case "r":
-          makePile("reserve", this.reserveType, this.reserveLayout, this.reserves);
-          break;
         case "w":
-          this.waste = makePile("waste", this.wasteType, this.wasteLayout);
-          break;
         case "s":
-          this.stock = makePile("stock", this.stockType, this.stockLayout);
+          box.appendChild(this.__makePile(ch));
           break;
+      // add a label (always for the stock, at present)
         case "l":
           var counter = document.createElement("label");
           counter.className = "stockcounter";
@@ -212,21 +182,39 @@ var BaseCardGame = {
         case "1":
           box.appendChild(document.createElement("flex")); break;
         case "2":
-          box.appendChild(document.createElement("flex2")); break;
         case "3":
-          box.appendChild(document.createElement("flex3")); break;
         case "4":
-          box.appendChild(document.createElement("flex4")); break;
         case "5":
-          box.appendChild(document.createElement("flex5")); break;
+          box.appendChild(document.createElement("flex" + ch)); break;
         default:
-          throw ("BaseCardGame.buildLayout: strange char found: "+template[i]);
+          throw ("BaseCardGame.buildLayout: strange char found: " + ch);
       }
     }
     // sanity check
     if(box != container) throw "BaseCardGame._buildLayout: layout had unclosed box";
   },
 
+  __makePile: function(ch) {
+    const type = {p:"pile", f:"foundation", c:"cell", r:"reserve", w:"waste", s:"stock"}[ch];
+    const obj1 = this[type + "Type"] || null; // e.g. this.pileType
+    const obj2 = this[type + "Layout"] || null; // e.g. this.pileLayout
+    const arry = this[type + "s"] || null; // e.g. this.piles
+    
+    const p = createPile(type, obj1, obj2);
+    this.allpiles.push(p);
+    const len = arry ? arry.length : 0;
+    if(len) {
+      const prev = arry[len - 1];
+      prev.next = p;
+      p.prev = prev;
+    }
+    if(arry) arry.push(p);
+    this[type] = p; // set this.stock, this.waste, etc; don't care about setting this.cell
+    // xxx ew!
+    const dropact = this.getActionForDrop
+    if(p.getActionForDrop==BaseLayout.getActionForDrop && dropact) p.getActionForDrop = dropact;
+    return p;
+  },
 
 
   // === Start Game =======================================
@@ -248,7 +236,6 @@ var BaseCardGame = {
     this.actionsDone = [];
     this.actionsUndone = [];
     this._begin(cards);
-
   },
 
   restore: function() {

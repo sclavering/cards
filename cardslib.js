@@ -1,11 +1,6 @@
 // function for use on Arrays.  this used to be a getter function to hide it from for..in loops, but that does not work anymore in gecko 1.8x
 function flattenOnce(a) { return a.concat.apply([], a); }
 
-
-// constants for colours and suits
-const RED = 0, BLACK = 1;
-const SPADE = 1, HEART = 2, DIAMOND = 3, CLUB = 4;
-
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
 var gStrings = []; // the contents of the stringbundle
@@ -140,152 +135,6 @@ function handleRightClick(e) {
 }
 
 
-
-// takes an array of cards, returns a *new* shuffled array
-function shuffle(cards) {
-  cards = cards.slice(0); // copy
-
-  // shuffle several times, because Math.random() appears to be rather bad.
-  for(var i = 0; i != 5; i++) {
-    // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
-    var n = cards.length;
-    while(n != 0) {
-      // get num from range [0..n)
-      var num = Math.random();
-      while(num==1.0) num = Math.random();
-      num = Math.floor(num * n);
-      // swap
-      n--;
-      var temp = cards[n];
-      cards[n] = cards[num];
-      cards[num] = temp;
-    }
-  }
-
-  return cards;
-}
-
-
-function makeDecks(num) {
-  return makeCardRuns(1, 13, null, num);
-}
-
-
-function makeDecksMod13(num) {
-  var cs = makeDecks(num);
-  for(var i = 0; i != cs.length; i+=13) {
-    var a = cs[i], k = cs[i+12];
-    a.down = k; k.up = a; k.upNumber = 1;
-  }
-  return cs;
-}
-
-
-function makeCardSuits(suits, repeat) {
-  return makeCardRuns(1, 13, suits, repeat);
-}
-
-
-function makeCardRuns(start, finish, suits, repeat) {
-  finish++; // so we make a run [start..finish], not [start..finish)
-  var nums = new Array(finish - start);
-  for(var i = 0; i != nums.length; i++) nums[i] = start+i;
-  return makeCards(nums, suits, repeat);
-}
-
-
-function makeCards(numbers, suits, repeat) {
-  if(!suits) suits = [SPADE, HEART, DIAMOND, CLUB];
-  if(!repeat) repeat = 1;
-  var cards = [], cs, numNums = numbers.length, numSuits = suits.length;
-  // make cards and init |up| and |down| fields
-  for(var r = 0; r != repeat; r++) {
-    for(var s = 0; s != numSuits; s++) {
-      cards.push(cs = new Array(numNums));
-      for(var i = 0; i != numNums; i++) {
-        cs[i] = makeCard(numbers[i], suits[s]);
-        if(i != 0) cs[i-1].up = cs[i], cs[i].down = cs[i-1];
-      }
-    }
-  }
-  // init |twin| fields
-  if(repeat!=1) {
-    const numSets = cards.length;
-    for(s = 0; s != numSets; s++) {
-      var set = cards[s], twins = cards[(s+numSuits) % numSets];
-      for(i = 0; i != numNums; i++) set[i].twin = twins[i];
-    }
-  }
-  return flattenOnce(cards);
-}
-
-// Used for Penguin, Canfield, Demon
-// |cards| should be concatenated series of A-K runs within suit
-// |num| is the number (as displayed) of the cards which should be made to behave like Aces (1's)
-function renumberCards(cards, num) {
-  var neg = 1 - num, pos = 14 - num;
-  for(var i = 0; i != cards.length; ++i) {
-    var c = cards[i], n = c.displayNum, m = n >= num ? neg : pos;
-//    dump("renumbering "+c.displayStr+" to "+(n+m)+"\n");
-    setCardNumber(c, n + m);
-  }
-}
-
-// pass number==14 for a "high" Ace
-function makeCard(number, suit) {
-  var c = document.createElement("image");
-  for(var m in cardMethods) c[m] = cardMethods[m]; // add standard methods
-  c.colour = [,BLACK, RED, RED, BLACK][suit];
-  c.altcolour = c.colour==RED ? BLACK : RED;
-  c.suit = suit;
-  c.suitstr = [,"S", "H", "D", "C"][suit];
-  c.displayNum = number==14 ? 1 : number
-  c.displayStr = c.suitstr + c.displayNum;
-  setCardNumber(c, number);
-  c.setFaceDown();
-  return c;
-}
-
-function setCardNumber(card, number) {
-  card.number = number;
-  card.upNumber = number+1; // card.number==other.number+1 used to be very common
-  card.isAce = number==1 || number==14;
-  card.isQueen = number==12;
-  card.isKing = number==13;
-}
-
-const cardMethods = {
-  isCard: true,
-  isAnyPile: false,
-
-  // pointers to next card up and down in the same suit
-  // for Mod3 3C.up==6C etc.
-  up: null,
-  down: null,
-
-  // null, or a pointer to another card of the same type with the pointer chains forming a loop
-  twin: null,
-
-  toString: function() { return this.displayStr; },
-
-  setFaceUp: function() {
-    this.faceUp = true;
-    this.faceDown = false;
-    this.className = "card " + this.displayStr;
-  },
-
-  setFaceDown: function() {
-    this.faceUp = false;
-    this.faceDown = true;
-    this.className = "card facedown";
-  }
-};
-
-
-
-
-
-
 function createFloatingPile() {
   const pile = gFloatingPile = createPile("stack", BaseLayout, null);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
@@ -326,8 +175,6 @@ function createHighlighter() {
   box.unhighlight();
   return box;
 }
-
-
 
 
 function playGame(game) {

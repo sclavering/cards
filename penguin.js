@@ -23,7 +23,8 @@ Games.penguin = {
       if(!c.isAce) continue;
       cards.splice(i, 1);
       this.foundations[f].addCard(c);
-      c.setFaceUp();
+      c.faceUp = true;
+      c.updateView();
       f++;
     }
 

@@ -12,15 +12,6 @@ Games.freecell = {
     this.foundationBases = [cards[0], cards[13], cards[26], cards[39]];
   },
 
-/* an illegal but predictable deal for debugging FreeCellMover
-  deal: function(cards) {
-    cards = this.cardsAsDealt = this.cards.slice(0);
-    const is = [12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14];
-    for(var i = 0; i != is.length; i++) ps[0].addCard(cards[is[i]].setFaceUp());
-    for(i = 0; i != 4; i++) this.cells[i].appendChild(cards[51-i]);
-  },
-*/
-
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
     for(i = 0; i != 8; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));

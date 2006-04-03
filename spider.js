@@ -171,7 +171,7 @@ Games.wasp = {
       var pile = this.piles[i];
       if(!pile.hasChildNodes()) continue;
       var last = pile.lastChild, down = last.down;
-      if(!down || down.faceDown) continue;
+      if(!down || !down.faceUp) continue;
       var downp = down.parentNode;
       if(downp!=pile && downp.isPile) this.addHint(down, pile);
     }

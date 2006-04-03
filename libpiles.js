@@ -71,7 +71,7 @@ const BaseLayout = {
   fixLayout: function() {},
 
   // transfers the card and all those that follow it
-  // Any replacement implementation *must* call first.parentNode's fixLayout() method
+  // Any replacement implementation *must* call first.parentNode.source's fixLayout() method
   addCards: function(first) {
     var next, card = first, source = first.parentNode.source;
     if(!this.offset) this.offset = source.offset;
@@ -90,7 +90,10 @@ const BaseLayout = {
       var card = cards.pop();
       if(!card) continue;
       this.addCard(card);
-      if(i>=down) card.setFaceUp();
+      if(i >= down) {
+        card.faceUp = true;
+        card.updateView();
+      }
     }
   },
 
@@ -231,13 +234,15 @@ const BasicStock = {
 
   dealCardTo: function(destination) {
     const card = this.lastChild;
-    card.setFaceUp();
+    card.faceUp = true;
+    card.updateView();
     destination.addCards(card);
   },
 
   undealCardFrom: function(source) {
     const card = source.lastChild;
-    card.setFaceDown();
+    card.faceUp = false;
+    card.updateView();
     this.addCards(card);
   },
 
@@ -384,7 +389,7 @@ const Reserve = {
 
 
 function mayTakeFromFreeCellPile(card) {
-  if(card.faceDown) return false;
+  if(!card.faceUp) return false;
   for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
     if(card.colour==next.colour || card.number!=next.upNumber) return false;
   return true;
@@ -399,14 +404,14 @@ function mayTakeSingleCard(card) {
 }
 
 function mayTakeDescendingRun(card) {
-  if(card.faceDown) return false;
+  if(!card.faceUp) return false;
   for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
     if(card.number!=next.upNumber) return false;
   return true;
 }
 
 function mayTakeRunningFlush(card) {
-  if(card.faceDown) return false;
+  if(!card.faceUp) return false;
   for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
     if(card.suit!=next.suit || card.number!=next.upNumber) return false;
   return true;
@@ -417,7 +422,6 @@ function mayAddToGypsyPile(card) {
   return !last || (last.colour!=card.colour && last.number==card.upNumber);
 }
 
-// works fine in mod13 games (e.g. Demon)
 function mayAddToKlondikePile(card) {
   const last = this.lastChild;
   return last ? last.number==card.upNumber && last.colour!=card.colour : card.isKing;
@@ -434,6 +438,12 @@ function mayAddOntoDotUpOrEmpty(card) {
 function mayAddOntoUpNumberOrEmpty(card) {
   return !this.hasChildNodes() || this.lastChild.number==card.upNumber;
 }
+
+function mayAddOntoDotUpOrPutKingInSpace(card) {
+  return this.hasChildNodes() ? card.up == this.lastChild : card.isKing;
+}
+
+
 
 const AcesUpPile = {
   __proto__: FanDownLayout,
@@ -459,9 +469,7 @@ const FanPile = {
   __proto__: FanRightLayout,
   isPile: true,
   mayTakeCard: mayTakeSingleCard,
-  mayAddCard: function(card) {
-    return this.hasChildNodes ? this.lastChild==card.up : card.isKing;
-  }
+  mayAddCard: mayAddOntoDotUpOrPutKingInSpace
 };
 
 const FortyThievesPile = {
@@ -559,10 +567,7 @@ const PenguinPile = {
   __proto__: FanDownLayout,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: function(card) {
-    const last = this.lastChild;
-    return last ? card.up==last : card.isKing;
-  }
+  mayAddCard: mayAddOntoDotUpOrPutKingInSpace
 };
 
 const PileOnPile = {
@@ -667,7 +672,6 @@ const WhiteheadPile = {
     return !lst || lst==card.up || lst==card.on;
   }
 };
-
 
 
 function mayAddCardToKlondikeFoundation(card) {

@@ -267,7 +267,11 @@ var BaseCardGame = {
       this.score += d.score;
       // ugly
       var cs = d.revealedCards;
-      for(var j = 0; j != cs.length; ++j) cs[j].setFaceUp();
+      for(var j = 0; j != cs.length; ++j) {
+        var c = cs[j];
+        c.faceUp = true;
+        c.updateView();
+      }
     }
 
     gScoreDisplay.value = this.score;
@@ -288,7 +292,11 @@ var BaseCardGame = {
     var ps = this.allpiles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      while(p.hasChildNodes()) p.removeChild(p.lastChild).setFaceDown();
+      while(p.hasChildNodes()) {
+        var c = p.removeChild(p.lastChild);
+        c.faceUp = false;
+        c.updateView();
+      }
       p.fixLayout();
     }
   },
@@ -329,8 +337,8 @@ var BaseCardGame = {
       for(var j = 0; j != n; ++j) {
         var c = cards.pop();
         if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
-        if(faceDown) c.setFaceDown();
-        else c.setFaceUp();
+        c.faceUp = !faceDown;
+        c.updateView();
         pile.addCard(c);
       }
     }
@@ -402,7 +410,11 @@ var BaseCardGame = {
     const acts = this.actionsDone, act = acts[acts.length-1];
 
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp();
+    for(var i = 0; i != cs.length; ++i) {
+      var c = cs[i];
+      c.faceUp = true;
+      c.updateView();
+    }
     act.score += cs.length * this.scoreForRevealing;
 
     gScoreDisplay.value = this.score += act.score;
@@ -412,7 +424,7 @@ var BaseCardGame = {
   // overridden by TriPeaks
   getCardsToReveal: function(pile) {
     const card = pile ? pile.lastChild : null;
-    return card && card.faceDown ? [card] : [];
+    return card && !card.faceUp ? [card] : [];
   },
 
   // Action objects (see actions.js) each implement an undo() method.
@@ -430,7 +442,11 @@ var BaseCardGame = {
 
     action.undo();
     const cs = action.revealedCards;
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceDown();
+    for(var i = 0; i != cs.length; ++i) {
+      var c = cs[i];
+      c.faceUp = false;
+      c.updateView();
+    }
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
 
@@ -451,7 +467,11 @@ var BaseCardGame = {
     if(action.redo) action.redo();
     else action.perform();
     const cs = action.revealedCards;
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp();
+    for(var i = 0; i != cs.length; ++i) {
+      var c = cs[i];
+      c.faceUp = true;
+      c.updateView();
+    }
 
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
 

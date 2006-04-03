@@ -127,13 +127,13 @@ var Rules = {
         var f = fs[i];
         if(f.hasChildNodes()) {
           var c = f.lastChild.up;
-          if(c && c.faceUp && !c.nextSibling && c.number <= maxNums[c.suit])
+          if(c && c.faceUp && c.isLast && c.number <= maxNums[c.suit])
             return new Move(c, f);
         } else if(!triedToFillEmpty) {
           triedToFillEmpty = true;
           for(var j = 0; j != numBs; j++) {
             var b = bs[j];
-            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && !b.nextSibling)
+            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && b.isLast)
               return new Move(b, f);
           }
         }
@@ -153,19 +153,19 @@ var Rules = {
         if(last) {
           if(last.isKing) continue;
           var c = last.up, cp = c.parentNode;
-          if(!cp.isFoundation && !cp.isStock && !c.nextSibling) {
+          if(!cp.isFoundation && !cp.isStock && c.isLast) {
             if(c.number <= maxNums[c.suit]) return new Move(c, f);
             continue;
           } else {
             c = c.twin, cp = c.parentNode;
-            if(!cp.isFoundation && !cp.isStock && !c.nextSibling && c.number<=maxNums[c.suit])
+            if(!cp.isFoundation && !cp.isStock && c.isLast && c.number <= maxNums[c.suit])
               return new Move(c, f);
           }
         } else if(!lookedForAces) {
           lookedForAces = true;
           for(var j = 0; j != 8; j++) {
             var a = as[j], ap = a.parentNode;
-            if(!ap.isFoundation && !ap.isStock && !a.nextSibling)
+            if(!ap.isFoundation && !ap.isStock && a.isLast)
               return new Move(a, f)
           }
         }

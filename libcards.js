@@ -113,6 +113,9 @@ const cardProto = {
 
   faceUp: false,
 
+  // to be replaced by a non-DOM version during model/view split
+  get isLast() { return !this.nextSibling; },
+
   toString: function() { return this.displayStr; },
 
   renumber: function(number) {

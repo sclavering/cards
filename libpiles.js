@@ -75,11 +75,9 @@ function yes() { return true; }
 
 function no() { return false; }
 
-function mayTakeSingleCard(card) {
-  return !card.nextSibling && card.faceUp;
-}
+function mayTakeSingleCard(card) { return card.isLast && card.faceUp; }
 
-
+function ifLast(card) { return card.isLast; }
 
 
 const PyramidPileBase = {
@@ -185,7 +183,7 @@ const StockDealToNonemptyPiles = {
 const Waste = {
   __proto__: Pile,
   isWaste: true,
-  mayTakeCard: function(card) { return !card.nextSibling; },
+  mayTakeCard: ifLast,
   mayAddCard: no
 };
 
@@ -195,7 +193,7 @@ const Cell = {
   isCell: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
-    return !this.hasCards && !card.nextSibling;
+    return !this.hasCards && card.isLast;
   }
 };
 
@@ -244,7 +242,7 @@ function mayAddToKlondikePile(card) {
 }
 
 function mayAddSingleCardToEmpty(card) {
-  return !card.nextSibling && !this.hasCards;
+  return card.isLast && !this.hasCards;
 }
 
 function mayAddOntoDotUpOrEmpty(card) {
@@ -301,7 +299,7 @@ const FortyThievesPile = {
 
     // check there are enough spaces to perform the move
 
-    if(!card.nextSibling) return true;
+    if(card.isLast) return true;
 
     var canMove = Game.countEmptyPiles(this, card.parentNode.source);
     if(canMove) canMove = canMove * (canMove + 1) / 2;
@@ -326,7 +324,7 @@ const FreeCellPile = {
 
     // check there are enough cells+spaces to perform the move
 
-    if(!card.nextSibling) return true;
+    if(card.isLast) return true;
 
     var spaces = Game.countEmptyPiles(this, card.parentNode.source);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
@@ -446,9 +444,7 @@ const UnionSquarePile = {
 
   isPile: true,
 
-  mayTakeCard: function(card) {
-    return !card.nextSibling;
-  },
+  mayTakeCard: ifLast,
 
   // Piles built up or down in suit, but not both ways at once.
   mayAddCard: function(card) {
@@ -481,7 +477,7 @@ const WhiteheadPile = {
 
 function mayAddCardToKlondikeFoundation(card) {
   const last = this.lastChild;
-  return !card.nextSibling && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
+  return card.isLast && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
 }
 
 const NoWorryingBackFoundation = {
@@ -494,7 +490,7 @@ const NoWorryingBackFoundation = {
 const WorryingBackFoundation = {
   __proto__: Pile,
   isFoundation: true,
-  mayTakeCard: function(card) { return !card.nextSibling; }
+  mayTakeCard: ifLast
 };
 
 const KlondikeFoundation = {
@@ -551,7 +547,7 @@ const DoubleSolFoundation = {
   __proto__: WorryingBackFoundation,
 
   mayAddCard: function(card) {
-    if(card.nextSibling) return false;
+    if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !card.twin.parentNode.isFoundation;
     var last = this.lastChild, prv = last.previousSibling;
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
@@ -563,9 +559,7 @@ const Mod3Foundation = {
 
   isFoundation: true,
 
-  mayTakeCard: function(card) {
-    return !card.nextSibling;
-  },
+  mayTakeCard: ifLast,
 
   mayAddCard: function(card) {
     if(card.parentNode == this) return false;

@@ -23,7 +23,7 @@ const GypsyBase = {
   getBestDestinationFor: "legal nonempty, or empty",
 
   getFoundationMoveFor: function(card) {
-    if(card.nextSibling) return null;
+    if(!card.isLast) return null;
     if(card.isAce) {
       var twinp = card.twin.parentNode;
       return twinp.isFoundation && !twinp.twin.hasChildNodes() ? twinp.twin : this.firstEmptyFoundation;
@@ -31,7 +31,7 @@ const GypsyBase = {
     var down = card.down, c = down;
     do {
       var p = c.parentNode;
-      if(p.isFoundation && !c.nextSibling) return p;
+      if(p.isFoundation && c.isLast) return p;
       c = c.twin;
     } while(c != down);
     return null;

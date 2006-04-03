@@ -45,9 +45,9 @@ Games.unionsquare = {
     // can now assume twin is not on foundation
     if(card.isAce) return this.firstEmptyFoundation;
     var down = card.down, downp = down.parentNode;
-    if(downp.isFoundation && !down.nextSibling) return downp;
+    if(downp.isFoundation && down.isLast) return downp;
     down = down.twin, downp = down.parentNode;
-    if(downp.isFoundation && !down.nextSibling) return downp;
+    if(downp.isFoundation && down.isLast) return downp;
     return null;
   },
 
@@ -58,9 +58,9 @@ Games.unionsquare = {
       var f = fs[i], len = f.childNodes.length, last = f.lastChild;
       if(len<12 || len==26) continue;
       var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.parentNode;
-      if((cp.isPile || cp.isWaste) && !c.nextSibling) return new Move(c, f);
+      if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
       c = c.twin, cp = c.parentNode;
-      if((cp.isPile || cp.isWaste) && !c.nextSibling) return new Move(c, f);
+      if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
     }
     return null;
   },

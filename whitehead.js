@@ -33,11 +33,11 @@ Games.whitehead = {
     var up = card.up, on = card.on;
     if(up) {
       var p = up.parentNode;
-      if(p.isPile && !up.nextSibling) return p;
+      if(p.isPile && up.isLast) return p;
     }
     if(on) {
       p = on.parentNode;
-      if(p.isPile && !on.nextSibling) return p;
+      if(p.isPile && on.isLast) return p;
     }
     return this.firstEmptyPile;
   },

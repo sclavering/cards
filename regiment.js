@@ -132,14 +132,14 @@ Games.regiment = {
       pile = this.foundations[i], last = pile.lastChild;
       if(last && last.up && last.twin.parentNode.isFoundation) {
         card = last.up.parentNode.isFoundation ? last.twin.up : last.up;
-        if(!card.nextSibling) return new Move(card, pile);
+        if(card.isLast) return new Move(card, pile);
       }
     }
     for(i = 4; i != 8; i++) {
       pile = this.foundations[i], last = pile.lastChild;
       if(last && last.down && last.twin.parentNode.isFoundation) {
         card = last.down.parentNode.isFoundation ? last.twin.down : last.down;
-        if(!card.nextSibling) return new Move(card, pile);
+        if(card.isLast) return new Move(card, pile);
       }
     }
     return null;

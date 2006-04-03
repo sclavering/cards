@@ -53,14 +53,13 @@ Games.doublesol = {
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
         if(!c1 || c1.number > nums[c1.suit]) continue;
-        if(c1.faceUp && !c1.nextSibling) return new Move(c1, f);
-        if(c2 && c2.faceUp && !c2.nextSibling) return new Move(c2, f);
+        if(c1.faceUp && c1.isLast) return new Move(c1, f);
+        if(c2 && c2.faceUp && c2.isLast) return new Move(c2, f);
       } else if(!searchedForAces) {
         searchedForAces = true;
         for(var j = 0; j != 8; j++) {
           var a = as[j];
-          if(a.faceUp && !a.parentNode.isFoundation && !a.twin.parentNode.isFoundation
-              && !a.nextSibling)
+          if(a.faceUp && !a.parentNode.isFoundation && !a.twin.parentNode.isFoundation && a.isLast)
             return new Move(a, f);
         }
       }

@@ -26,7 +26,7 @@ var FreeCellGame = {
     var p = this.getBestDestinationFor(card);
     if(!p) return null;
     var src = card.parentNode.source;
-    return !card.nextSibling ? new Move(card, p)
+    return card.isLast ? new Move(card, p)
         : new FreeCellMoveAction(card, src, p, this.emptyCells, this.getEmptyPiles(p));
   },
 

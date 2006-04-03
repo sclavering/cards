@@ -42,10 +42,10 @@ Games.penguin = {
         if(p) this.addHint(c, p);
       } else {
         var up = c.up, upp = up.parentNode;
-        if(!up.nextSibling && upp.isPile) this.addHint(c, upp);
+        if(up.isLast && upp.isPile) this.addHint(c, upp);
       }
       // remember cards
-      if(i<7) cs[i] = c.nextSibling ? null : c;
+      if(i < 7) cs[i] = c.isLast ? c : null;
     }
     // suggest moving things to cells
     p = this.emptyCell;
@@ -71,9 +71,9 @@ Games.penguin = {
       if(p) return p;
     } else {
       var up = card.up, upp = up.parentNode;
-      if(upp.isPile && !up.nextSibling) return upp;
+      if(upp.isPile && up.isLast) return upp;
     }
-    return card.nextSibling ? null : this.emptyCell;
+    return card.isLast ? this.emptyCell : null;
   },
 
   autoplay: "commonish",

@@ -31,7 +31,7 @@ Games.freecell = {
         empty = p;
       }
     }
-    return (!card.nextSibling && !card.parentNode.isCell && this.emptyCell)
+    return (card.isLast && !card.parentNode.isCell && this.emptyCell)
         || (empty && empty.mayAddCard(card) ? empty : null);
   },
 

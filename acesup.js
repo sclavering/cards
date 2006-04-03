@@ -46,7 +46,7 @@ Games.acesup = {
     if(this.stock.hasChildNodes()) return false;
     for(var i = 0; i != 4; i++) {
       var c = this.piles[i].firstChild;
-      if(!c.isAce || c.nextSibling) return false;
+      if(!c.isAce || !c.isLast) return false;
     }
     return true;
   }

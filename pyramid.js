@@ -20,7 +20,7 @@ const PyramidBase = {
     // The target pile is empty.  This usually means that an empty pile is overlapping a card
     // which the user is trying to click on.
 
-    while(!t.hasChildNodes()) {
+    while(!t.hasCards) {
       var lp = t.leftParent, rp = t.rightParent;
       if(rp && x > rp.boxObject.x) t = rp;
       else if(lp && lp.boxObject.x+lp.boxObject.width > x) t = lp;
@@ -98,6 +98,6 @@ Games.pyramid = {
 
   isWon: function() {
     // won when the tip of the pyramid has been removed
-    return !this.piles[0].hasChildNodes();
+    return !this.piles[0].hasCards;
   }
 };

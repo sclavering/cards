@@ -44,14 +44,14 @@ Games.tripeaks = {
   getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
     const res = [];
     const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;
-    if(lp && !lp.leftChild.hasChildNodes()) res.push(lp.firstChild);
-    if(rp && !rp.rightChild.hasChildNodes()) res.push(rp.firstChild);
+    if(lp && !lp.leftChild.hasCards) res.push(lp.firstChild);
+    if(rp && !rp.rightChild.hasCards) res.push(rp.firstChild);
     return res;
   },
 
   isWon: function() {
     // won when the the peaks are empty
-    for(var i = 0; i != 3; i++) if(this.piles[i].hasChildNodes()) return false;
+    for(var i = 0; i != 3; i++) if(this.piles[i].hasCards) return false;
     return true;
   },
 
@@ -72,7 +72,7 @@ Games.tripeaks = {
     // bonuses for removing a peak card
     var pile = action.source, ps = this.piles;
     if(pile.isPeak)
-      score += (ps[0].hasChildNodes() + ps[1].hasChildNodes() + ps[2].hasChildNodes() == 1) ? 30 : 15;
+      score += (ps[0].hasCards + ps[1].hasCards + ps[2].hasCards == 1) ? 30 : 15;
 
     return score;
   }

@@ -55,7 +55,7 @@ Games.mod3 = {
   getHints: function() {
     for(var i = 0; i != this.allpiles.length; i++) {
       var source = this.allpiles[i];
-      if(source.isStock || !source.hasChildNodes()) continue;
+      if(source.isStock || !source.hasCards) continue;
       var card = source.lastChild;
 
       var row = this.rows[card.row];
@@ -65,7 +65,7 @@ Games.mod3 = {
         // hints are useful if:
         // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
         // - |target| is nonempty, and |card| is the only card in |source|
-        if(source.isFoundation && (target.hasChildNodes() ? card.previousSibling : source.row==target.row)) continue;
+        if(source.isFoundation && (target.hasCards ? card.previousSibling : source.row==target.row)) continue;
         this.addHint(card, target);
       }
     }
@@ -117,10 +117,10 @@ Games.mod3 = {
   },
 
   isWon: function() {
-    if(this.stock.hasChildNodes()) return false;
+    if(this.stock.hasCards) return false;
     const ps = this.piles;
     for(var i = 0; i != 8; i++)
-      if(ps[i].hasChildNodes()) return false
+      if(ps[i].hasCards) return false
     return true;
   }
 }

@@ -25,7 +25,7 @@ Games.freecell = {
     var empty = null;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p.hasChildNodes()) {
+      if(p.hasCards) {
         if(p.mayAddCard(card)) return p;
       } else if(!empty) {
         empty = p;

@@ -24,7 +24,7 @@ const GolfBase = {
 
   isWon: function() {
     const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; ++i) if(ps[i].hasChildNodes()) return false;
+    for(var i = 0; i != num; ++i) if(ps[i].hasCards) return false;
     return true;
   }
 };

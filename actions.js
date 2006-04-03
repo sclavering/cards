@@ -39,14 +39,14 @@ RefillStock.prototype = {
   perform: function() {
     const s = Game.stock, w = Game.waste;
     this.wasteOldNextOffsetMultiplier = w.nextOffsetMultiplier || 0; // draw3 hack
-    while(w.hasChildNodes()) s.undealCardFrom(w);
+    while(w.hasCards) s.undealCardFrom(w);
     w.nextOffsetMultiplier = 0; // draw3 hack    
     s.counter = s.childNodes.length;
   },
   undo: function() {
     const s = Game.stock, w = Game.waste;
     w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.childNodes.length; // draw3 hack
-    while(s.hasChildNodes()) s.dealCardTo(w);
+    while(s.hasCards) s.dealCardTo(w);
     s.counter = 0;
   }
 }
@@ -81,7 +81,7 @@ DealToPiles.prototype = {
 
   perform: function() {
     const s = Game.stock, ps = Game.piles, len = ps.length;
-    for(var i = 0; i != len && s.hasChildNodes(); ++i) s.dealCardTo(ps[i]);
+    for(var i = 0; i != len && s.hasCards; ++i) s.dealCardTo(ps[i]);
     this.dealt = i;
     s.counter--;
   },
@@ -102,8 +102,8 @@ DealToNonEmptyPilesAction.prototype = {
   perform: function() {
     const s = Game.stock, ps = Game.piles, len = ps.length;
     var num = 0;
-    for(var i = 0; i != len && s.hasChildNodes(); ++i) {
-      if(!ps[i].hasChildNodes()) continue;
+    for(var i = 0; i != len && s.hasCards; ++i) {
+      if(!ps[i].hasCards) continue;
       s.dealCardTo(ps[i]);
       this.last = i;
       num++;
@@ -114,7 +114,7 @@ DealToNonEmptyPilesAction.prototype = {
   undo: function() {
     const s = Game.stock, ps = Game.piles;
     for(var i = this.last; i != -1; i--)
-      if(ps[i].hasChildNodes()) s.undealCardFrom(ps[i]);
+      if(ps[i].hasCards) s.undealCardFrom(ps[i]);
     s.counter += this.num;
   }
 }

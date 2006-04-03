@@ -36,7 +36,7 @@ const Montana = {
   getHints: function() {
     for(var i = 0; i != 52; i++) {
       var pile = this.piles[i];
-      if(pile.hasChildNodes()) continue;
+      if(pile.hasCards) continue;
       if(pile.leftp) {
         var card = pile.leftp.lastChild;
         if(card && card.up) this.addHint(card.up, pile);
@@ -52,7 +52,7 @@ const Montana = {
   getBestDestinationFor: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.parentNode.rightp;
-    return pile && !pile.hasChildNodes() ? pile : null;
+    return pile && !pile.hasCards ? pile : null;
   },
 
   redeal: function() {

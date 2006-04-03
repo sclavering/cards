@@ -67,12 +67,12 @@ Games.regiment = {
     var reserve = this.reserve;
     if(reserve==source) return true;
 
-    if(reserve.hasChildNodes()) return false;
+    if(reserve.hasCards) return false;
 
     var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasChildNodes() && prev!=source) prev = prev.prev, prevDist++;
+    while(prev && !prev.hasCards && prev!=source) prev = prev.prev, prevDist++;
     var next = reserve.next, nextDist = 1;
-    while(next && !next.hasChildNodes() && next!=source) next = next.next, nextDist++;
+    while(next && !next.hasCards && next!=source) next = next.next, nextDist++;
 
     // if trying to move from a reserve to the right
     if(source.col > this.col) return next==source && (!prev || prevDist>=nextDist);
@@ -89,7 +89,7 @@ Games.regiment = {
     const ps = parent.isPile ? parent.following : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p.hasChildNodes() && p.mayAddCard(card)) return p;
+      if(p.hasCards && p.mayAddCard(card)) return p;
     }
     // look for an empty pile to move the card to
     if(!parent.isReserve) return null;
@@ -97,9 +97,9 @@ Games.regiment = {
 
     while(prev || next) {
       if(next) {
-        if(next.hasChildNodes()) next = null;
+        if(next.hasCards) next = null;
         else {
-          p = !next.up.hasChildNodes() ? next.up : (!next.down.hasChildNodes() ? next.down : null);
+          p = !next.up.hasCards ? next.up : (!next.down.hasCards ? next.down : null);
           if(p) {
             if(p.mayAddCard(card)) return p;
             else next = null; // another reserve is closer to p; it will be closer to any pile right of p too
@@ -107,9 +107,9 @@ Games.regiment = {
         }
       }
       if(prev) {
-        if(prev.hasChildNodes()) prev = null;
+        if(prev.hasCards) prev = null;
         else {
-          p = !prev.up.hasChildNodes() ? prev.up : (!prev.down.hasChildNodes() ? prev.down : null);
+          p = !prev.up.hasCards ? prev.up : (!prev.down.hasCards ? prev.down : null);
           if(p) {
             if(p.mayAddCard(card)) return p;
             else prev = null;
@@ -124,7 +124,7 @@ Games.regiment = {
     var i, pile, last, card;
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;
-      if(pile.isPile && !pile.hasChildNodes() && this.reserves[pile.col].hasChildNodes())
+      if(pile.isPile && !pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastChild, pile);
     }
 

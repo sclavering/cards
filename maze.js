@@ -23,14 +23,14 @@ Games.maze = {
   getHints: function() {
     for(var i = 0; i != 54; i++) {
       var p = this.piles[i];
-      if(p.hasChildNodes()) continue;
+      if(p.hasCards) continue;
       var c1 = null, p2, c2;
-      if(p.prev.hasChildNodes()) {
+      if(p.prev.hasCards) {
         p2 = p.prev; c1 = p2.lastChild.up;
         if(c1) this.addHint(c1, p);
         else this.addHints2(this.aces, p);
       }
-      if(p.next.hasChildNodes()) {
+      if(p.next.hasCards) {
         p2 = p.next; c2 = p2.lastChild.down;
         if(c2) { if(c2!=c1) this.addHint(c2, p); }
         else this.addHints2(this.queens, p);
@@ -41,18 +41,18 @@ Games.maze = {
   getBestDestinationFor: function(card) {
     if(card.isAce) {
       var start = card.parentNode, pile = start.next;
-      while(pile!=start && (pile.hasChildNodes() || !(pile.next.lastChild==card.up
-          || (pile.prev.hasChildNodes() && pile.prev.lastChild.isQueen)))) pile = pile.next;
-      return !pile.hasChildNodes() ? pile : null;
+      while(pile != start && (pile.hasCards || !(pile.next.lastChild == card.up
+          || (pile.prev.hasCards && pile.prev.lastChild.isQueen)))) pile = pile.next;
+      return !pile.hasCards ? pile : null;
     }
     if(card.isQueen) {
       start = card.parentNode, pile = start.next;
-      while(pile!=start && (pile.hasChildNodes() || !(pile.prev.lastChild==card.down
-          || (pile.next.hasChildNodes() && pile.next.lastChild.isAce)))) pile = pile.next;
-      return !pile.hasChildNodes() ? pile : null;
+      while(pile != start && (pile.hasCards || !(pile.prev.lastChild == card.down
+          || (pile.next.hasCards && pile.next.lastChild.isAce)))) pile = pile.next;
+      return !pile.hasCards ? pile : null;
     }
     var down = card.down.parentNode.next, up = card.up.parentNode.prev;
-    return (!down.hasChildNodes() && down) || (!up.hasChildNodes() && up);
+    return (!down.hasCards && down) || (!up.hasCards && up);
   },
 
   // Autoplay not used

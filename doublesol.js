@@ -47,7 +47,7 @@ Games.doublesol = {
 
     for(var i = 0; i != 4; i++) {
       var f = fs[i];
-      if(f.hasChildNodes()) {
+      if(f.hasCards) {
         var last = f.lastChild, prv = last.previousSibling;
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;

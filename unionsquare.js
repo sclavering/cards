@@ -26,7 +26,7 @@ Games.unionsquare = {
     var empty = null;
     for(var i = 0; i != num; ++i) {
       var q = ps[i];
-      if(q.hasChildNodes()) {
+      if(q.hasCards) {
         if(q.mayAddCard(card)) return q;
       } else if(!empty) {
         empty = q;

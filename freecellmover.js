@@ -34,14 +34,14 @@ var FreeCellGame = {
     var freecells = [];
     const cs = this.cells, num = cs.length;
     for(var i = 0; i != num; i++)
-      if(!cs[i].hasChildNodes()) freecells.push(cs[i]);
+      if(!cs[i].hasCards) freecells.push(cs[i]);
     return freecells;
   },
 
   get numEmptyCells() {
     var cells = 0;
     const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) cells++;
+    for(var i = 0; i != num; i++) if(!cs[i].hasCards) cells++;
     return cells;
   },
 
@@ -53,7 +53,7 @@ var FreeCellGame = {
     const ps = this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p!=ignore1 && !p.hasChildNodes()) spaces.push(p);
+      if(p != ignore1 && !p.hasCards) spaces.push(p);
     }
     return spaces;
   },
@@ -65,7 +65,7 @@ var FreeCellGame = {
     const ps = this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p!=ignore1 && p!=ignore2 && !p.hasChildNodes()) empty++
+      if(p != ignore1 && p != ignore2 && !p.hasCards) empty++
     }
     return empty;
   }

@@ -92,7 +92,7 @@ var Rules = {
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];
-        if(p.hasChildNodes()) {
+        if(p.hasCards) {
           if(p.mayAddCard(card)) return p;
         } else if(!empty) {
           empty = p;
@@ -125,7 +125,7 @@ var Rules = {
       const fs = this.foundations, bs = this.foundationBases, numBs = bs.length;
       for(var i = 0; i != 4; i++) {
         var f = fs[i];
-        if(f.hasChildNodes()) {
+        if(f.hasCards) {
           var c = f.lastChild.up;
           if(c && c.faceUp && c.isLast && c.number <= maxNums[c.suit])
             return new Move(c, f);
@@ -226,7 +226,7 @@ function findEmpty(piles) {
   const num = piles.length;
   for(var i = 0; i != num; i++) {
     var p = piles[i];
-    if(!p.hasChildNodes()) return p;
+    if(!p.hasCards) return p;
   }
   return null;
 }

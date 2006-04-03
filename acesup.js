@@ -36,14 +36,14 @@ Games.acesup = {
     if(f.mayAddCard(card)) return f;
     // return next empty pile
     for(var p = card.parentNode, p2 = p.next; p2 != p; p2 = p2.next)
-      if(!p2.hasChildNodes()) return p2;
+      if(!p2.hasCards) return p2;
     return null;
   },
 
   // no autoplay for this game
 
   isWon: function() {
-    if(this.stock.hasChildNodes()) return false;
+    if(this.stock.hasCards) return false;
     for(var i = 0; i != 4; i++) {
       var c = this.piles[i].firstChild;
       if(!c.isAce || !c.isLast) return false;

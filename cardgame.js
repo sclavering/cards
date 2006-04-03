@@ -294,7 +294,7 @@ var BaseCardGame = {
     var ps = this.allpiles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      while(p.hasChildNodes()) {
+      while(p.hasCards) {
         var c = p.removeChild(p.lastChild);
         c.faceUp = false;
         c.updateView();
@@ -591,7 +591,7 @@ var BaseCardGame = {
     const ps = this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
-      if(p.hasChildNodes() && p.mayAddCard(card)) ds.push(p);
+      if(p.hasCards && p.mayAddCard(card)) ds.push(p);
     }
     if(ds.length) this.addHints(card, ds);
     this.addFoundationHintsFor(card);
@@ -638,19 +638,19 @@ var BaseCardGame = {
 
   get firstEmptyFoundation() {
     var fs = this.foundations, len = fs.length;
-    for(var i = 0; i != len; i++) if(!fs[i].hasChildNodes()) return fs[i];
+    for(var i = 0; i != len; i++) if(!fs[i].hasCards) return fs[i];
     return null;
   },
 
   get firstEmptyPile() {
     var ps = this.piles, len = ps.length;
-    for(var i = 0; i != len; i++) if(!ps[i].hasChildNodes()) return ps[i];
+    for(var i = 0; i != len; i++) if(!ps[i].hasCards) return ps[i];
     return null;
   },
 
   get emptyCell() {
     const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++) if(!cs[i].hasChildNodes()) return cs[i];
+    for(var i = 0; i != num; i++) if(!cs[i].hasCards) return cs[i];
     return null;
   },
 

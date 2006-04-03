@@ -6,7 +6,7 @@ relevant function in this file.
 
 Current choices:
 
-getLowestMovableCard:
+getLowestMovableCard_helper:
   "descending, in suit"
   "descending, alt colours"
   "face up"
@@ -25,33 +25,15 @@ autoplay
 */
 
 var Rules = {
-  getLowestMovableCard: {
-    "descending, in suit":
-    function(pile) {
-      if(!pile.hasChildNodes()) return null;
-      var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.number==card.upNumber && prv.suit==card.suit) {
-        card = prv; prv = card.previousSibling;
-      }
-      return card;
+  getLowestMovableCard_helper: {
+    "descending, in suit": function(card, prv) {
+      return prv.faceUp && card.upNumber == prv.number && card.suit == prv.suit;
     },
-
-    "descending, alt colours":
-    function(pile) {
-      if(!pile.hasChildNodes()) return null;
-      var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp && prv.number==card.upNumber && prv.colour!=card.colour) {
-        card = prv; prv = card.previousSibling;
-      }
-      return card;
+    "descending, alt colours": function(card, prv) {
+      return prv.faceUp && card.upNumber == prv.number && card.colour != prv.colour;
     },
-
-    "face up":
-    function(pile) {
-      if(!pile.hasChildNodes()) return null;
-      var card = pile.lastChild, prv = card.previousSibling;
-      while(prv && prv.faceUp) card = prv, prv = card.previousSibling;
-      return card;
+    "face up": function(card, prv) {
+      return prv.faceUp;
     }
   },
 

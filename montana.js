@@ -130,7 +130,7 @@ MontanaRedealAction.prototype = {
     const map = this.map, rows = Game.rows;
     Game.redealsRemaining++;
 
-    // appendChild(node) will remove node first (per DOM spec), so we needn't bother clearing the layout
+    // addCard() will remove node first (inherited from appendChild), so we needn't do so
     // map[r][0..n] maps to row[r][(13-n)..13]
     for(var r = 0; r != 4; r++) {
       var len = map[r].length, co = 13 - len;

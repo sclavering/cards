@@ -597,6 +597,17 @@ var BaseCardGame = {
     this.addFoundationHintsFor(card);
   },
 
+  addHintsForLowestMovable: function(pile) {
+    this.addHintsFor(this.getLowestMovableCard(pile));
+  },
+
+  getLowestMovableCard: function(pile) {
+    const cs = pile.getCards();
+    if(!cs.length) return null;
+    for(var i = cs.length - 1; i > 0 && this.getLowestMovableCard_helper(cs[i], cs[i-1]); --i);
+    return cs[i];
+  },
+
   addFoundationHintsFor: function(card) {
     if(!card) return;
     const fs = this.foundations, num = fs.length;

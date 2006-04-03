@@ -31,7 +31,7 @@ const KlondikeBase = {
     }
   },
 
-  getLowestMovableCard: "face up",
+  getLowestMovableCard_helper: "face up",
 
   getBestDestinationFor: "legal",
 

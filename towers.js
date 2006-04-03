@@ -14,10 +14,10 @@ Games.towers = {
 
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
-    for(i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
-  getLowestMovableCard: "descending, in suit",
+  getLowestMovableCard_helper: "descending, in suit",
 
   getBestDestinationFor: function(card) {
     var up = card.up;

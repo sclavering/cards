@@ -36,7 +36,7 @@ Games.doublesol = {
     }
   },
 
-  getLowestMovableCard: "face up",
+  getLowestMovableCard_helper: "face up",
 
   getBestDestinationFor: "legal",
 

@@ -15,11 +15,11 @@ Games.fortythieves = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
     this.addHintsFor(this.waste.lastChild);
   },
 
-  getLowestMovableCard: "descending, in suit",
+  getLowestMovableCard_helper: "descending, in suit",
 
   getBestDestinationFor: "legal nonempty, or empty",
 

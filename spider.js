@@ -57,10 +57,10 @@ const Spider = {
 
   dealTemplate: "p 5,1 5,1 5,1 5,1 4,1 4,1 4,1 4,1 4,1 4,1",
 
-  getLowestMovableCard: "descending, in suit",
+  getLowestMovableCard_helper: "descending, in suit",
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   }
 };
 
@@ -128,10 +128,10 @@ Games.divorce = {
     this.cards = makeDecksMod13(2);
   },
 
-  getLowestMovableCard: "descending, in suit",
+  getLowestMovableCard_helper: "descending, in suit",
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
   autoplay: function() {
@@ -194,10 +194,10 @@ const SimonBase = {
   kings: [12, 25, 38, 51],
 
   getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
-  getLowestMovableCard: "descending, in suit"
+  getLowestMovableCard_helper: "descending, in suit"
 };
 
 Games.simon1 = {

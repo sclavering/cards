@@ -26,10 +26,10 @@ const CanfieldBase = {
   getHints: function() {
     this.addHintsFor(this.reserve.lastChild);
     this.addHintsFor(this.waste.lastChild);
-    for(var i = 0; i != 4; i++) this.addHintsFor(this.getLowestMovableCard(this.piles[i]));
+    for(var i = 0; i != 4; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
-  getLowestMovableCard: "face up",
+  getLowestMovableCard_helper: "face up",
 
   getBestDestinationFor: "legal nonempty, or empty",
 

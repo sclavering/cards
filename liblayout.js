@@ -12,9 +12,15 @@ const Layout = {
   nextCardLeft: 0,
   nextCardTop: 0,
 
+  // to be used only within Layout + subtypes.  always use instead of appendChild
+  _addCard: function(card) {
+    card.index = this.childNodes.length;
+    this.appendChild(card);
+  },
+
   // xxx this should be made a "private" function, implemented only by piles not overriding addCards
   addCard: function(card) {
-    this.appendChild(card);
+    this._addCard(card);
     card.top = card.left = card._top = card._left = 0;
   },
 
@@ -41,7 +47,7 @@ function addCardsKeepingTheirLayout(card) {
   var left = card._left, top = card._top - this.nextCardTop;
   for(var next = card.nextSibling; card; card = next) {
     next = card.nextSibling;
-    this.appendChild(card);
+    this._addCard(card);
     card.top = card._top -= top;
     card.left = card._left -= left;
   }
@@ -93,7 +99,7 @@ const FanRightLayout = {
   __proto__: Layout,
 
   addCard: function(card) {
-    this.appendChild(card);
+    this._addCard(card);
     var prev = card.previousSibling;
     card.left = card._left = prev ? prev._left + gHFanOffset : 0;
     card.top = card._top = 0;
@@ -112,7 +118,7 @@ const SlideLayout = {
   className: "slide",
 
   addCard: function(card) {
-    this.appendChild(card);
+    this._addCard(card);
     var prev = card.previousSibling;
     if(!prev) {
       card.top = card.left = card._top = card._left = 0;
@@ -141,7 +147,7 @@ const Deal3WasteLayout = {
   oldChildCount: 0,
   // only ever has to handle one card
   addCards: function(card) {
-    this.appendChild(card);
+    this._addCard(card);
     card.top = card.left = card._top = card._left = 0;
     const mul = Math.max(this.nextOffsetMultiplier++, 0);
     card[this.prop] = card[this.prop2] = mul * this.offset;
@@ -197,7 +203,7 @@ const DoubleSolFoundationLayout = {
     if(l) l.left = l._left = 0;
     while(card) {
       var nxt = card.nextSibling;
-      this.appendChild(card);
+      this._addCard(card);
       card.top = card.left = card._top = card._left = 0;
       card = nxt;
     }
@@ -225,7 +231,7 @@ const SpiderFoundationLayoutBase = {
     var top = last ? last._top + gVFanOffset : 0;
     while(card) {
       var next = card.nextSibling;
-      this.appendChild(card);
+      this._addCard(card);
       card.top = card._top = top;
       card.left = card._left = 0;
       card = next;
@@ -261,7 +267,7 @@ const UnionSquarePileLayout = {
   // First and last card of a pile are visible (so player can see which way it's being built).
   addCards: function(card) {
     var src = card.parentNode;
-    this.appendChild(card);
+    this._addCard(card);
     const prv = card.previousSibling;
     card.top = card._top = 0;
     card.left = card._left = prv ? gHFanOffset : 0;
@@ -289,7 +295,7 @@ const UnionSquareFoundationLayout = {
 
   addCards: function(card) {
     const src = card.parentNode;
-    this.appendChild(card);
+    this._addCard(card);
     card.top = card._top = 0;
     card.left = card._left = this.childNodes.length>13 ? gHFanOffset : 0;
     src.fixLayout();

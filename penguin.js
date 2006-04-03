@@ -63,7 +63,7 @@ Games.penguin = {
     }
   },
 
-  getLowestMovableCard: "descending, in suit",
+  getLowestMovableCard_helper: "descending, in suit",
 
   getBestDestinationFor: function(card) {
     if(card.isKing) {

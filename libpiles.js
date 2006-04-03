@@ -30,6 +30,12 @@ const Pile = {
   isWaste: false,
   isPile: false,
 
+  // will eventually return a real array, and not depend on the DOM
+  getCards: function() {
+    return this.childNodes;
+  },
+  get hasCards() { return this.hasChildNodes(); },
+
   // the pile itself, except for gFloatingPile, where it's a pointer to the pile from which the
   // cards originally came.
   source: null,
@@ -89,7 +95,7 @@ const PyramidPileBase = {
 
   get free() {
     const lc = this.leftChild, rc = this.rightChild;
-    return !lc || (!lc.hasChildNodes() && !rc.hasChildNodes());
+    return !lc || (!lc.hasCards && !rc.hasCards);
   }
 };
 
@@ -123,35 +129,35 @@ const BasicStock = {
 const StockDealToWaste = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new DealToPile(Game.waste) : null;
+    return this.hasCards ? new DealToPile(Game.waste) : null;
   }
 };
 
 const StockDealToWasteOrRefill = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new DealToPile(Game.waste) : new RefillStock();
+    return this.hasCards ? new DealToPile(Game.waste) : new RefillStock();
   }
 };
 
 const Deal3OrRefillStock = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new Deal3Action() : new RefillStock();
+    return this.hasCards ? new Deal3Action() : new RefillStock();
   }
 };
 
 const StockDealToFoundation = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new DealToPile(Game.foundation) : null;
+    return this.hasCards ? new DealToPile(Game.foundation) : null;
   }
 };
 
 const StockDealToPiles = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new DealToPiles(Game.piles) : null;
+    return this.hasCards ? new DealToPiles(Game.piles) : null;
   },
   get counterStart() {
     return Math.ceil(this.childNodes.length / Game.piles.length);
@@ -161,9 +167,9 @@ const StockDealToPiles = {
 const StockDealToPilesIfNoneAreEmpty = {
   __proto__: StockDealToPiles,
   deal: function() {
-    if(!this.hasChildNodes()) return null;
+    if(!this.hasCards) return null;
     const ps = Game.piles, num = ps.length;
-    for(var i = 0; i != num; ++i) if(!ps[i].hasChildNodes()) return null;
+    for(var i = 0; i != num; ++i) if(!ps[i].hasCards) return null;
     return new DealToPiles(ps);
   }
 };
@@ -171,7 +177,7 @@ const StockDealToPilesIfNoneAreEmpty = {
 const StockDealToNonemptyPiles = {
   __proto__: BasicStock,
   deal: function() {
-    return this.hasChildNodes() ? new DealToNonEmptyPilesAction() : null;
+    return this.hasCards ? new DealToNonEmptyPilesAction() : null;
   }
 };
 
@@ -189,7 +195,7 @@ const Cell = {
   isCell: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
-    return !this.hasChildNodes() && !card.nextSibling;
+    return !this.hasCards && !card.nextSibling;
   }
 };
 
@@ -238,19 +244,19 @@ function mayAddToKlondikePile(card) {
 }
 
 function mayAddSingleCardToEmpty(card) {
-  return !card.nextSibling && !this.hasChildNodes();
+  return !card.nextSibling && !this.hasCards;
 }
 
 function mayAddOntoDotUpOrEmpty(card) {
-  return !this.hasChildNodes() || this.lastChild==card.up;
+  return !this.hasCards || this.lastChild==card.up;
 }
 
 function mayAddOntoUpNumberOrEmpty(card) {
-  return !this.hasChildNodes() || this.lastChild.number==card.upNumber;
+  return !this.hasCards || this.lastChild.number==card.upNumber;
 }
 
 function mayAddOntoDotUpOrPutKingInSpace(card) {
-  return this.hasChildNodes() ? card.up == this.lastChild : card.isKing;
+  return this.hasCards ? card.up == this.lastChild : card.isKing;
 }
 
 
@@ -358,7 +364,7 @@ const MazePile = {
   isPile: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
-    if(this.hasChildNodes()) return false;
+    if(this.hasCards) return false;
     var prev = this.prev.lastChild, next = this.next.lastChild;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
@@ -373,7 +379,7 @@ const MontanaPile = {
   mayTakeCard: yes,
   mayAddCard: function(card) {
     const lp = this.leftp;
-    return !this.hasChildNodes() && (card.number==2 ? !lp : card.down.parentNode==lp);
+    return !this.hasCards && (card.number==2 ? !lp : card.down.parentNode==lp);
   }
 };
 
@@ -446,7 +452,7 @@ const UnionSquarePile = {
 
   // Piles built up or down in suit, but not both ways at once.
   mayAddCard: function(card) {
-    if(!this.hasChildNodes()) return true;
+    if(!this.hasCards) return true;
     var last = this.lastChild;
     if(last.suit != card.suit) return false;
     if(this.direction==1) return last.upNumber==card.number;
@@ -546,7 +552,7 @@ const DoubleSolFoundation = {
 
   mayAddCard: function(card) {
     if(card.nextSibling) return false;
-    if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
+    if(!this.hasCards) return card.isAce && !card.twin.parentNode.isFoundation;
     var last = this.lastChild, prv = last.previousSibling;
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
   }
@@ -575,7 +581,7 @@ const UnionSquareFoundation = {
   __proto__: NoWorryingBackFoundation,
 
   mayAddCard: function(card) {
-    if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
+    if(!this.hasCards) return card.isAce && !card.twin.parentNode.isFoundation;
     const last = this.lastChild, pos = this.childNodes.length;
     if(last.suit != card.suit) return false;
     if(pos < 13) return last.upNumber==card.number;

@@ -1,7 +1,7 @@
 const YukonBase = {
   __proto__: BaseCardGame,
 
-  pileType: KlondikePile,
+  pileType: CanfieldPile,
 
   // take a card a find another card on a different pile of opposite colour and one less in rank
   getHintsForCard: function(card) {

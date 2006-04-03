@@ -3,11 +3,8 @@ Games.tripeaks = {
 
   stockType: StockDealToFoundation,
   foundationType: GolfFoundation,
-  pileType: GolfPile,
-  pileLayout: {
-    __proto__: PyramidLayout,
-    isPeak: false
-  },
+  pileType: TriPeaksPile,
+  pileLayout: Layout,
 
   layoutTemplate: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
     +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3[s l]2f3]2",
@@ -31,10 +28,10 @@ Games.tripeaks = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 18; i++) this.piles[i].dealTo(cards, 1, 0);
-    for(i = 18; i != 28; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.foundation.dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
+    for(var i = 0; i != 18; i++) this._dealSomeCards(this.piles[i], cards, [1]);
+    for(i = 18; i != 28; i++) this._dealSomeCards(this.piles[i], cards, [0, 1]);
+    this._dealSomeCards(this.foundation, cards, [0, 1]);
+    this._dealSomeCards(this.stock, cards, [cards.length]);
   },
 
   getBestActionFor: function(card) {

@@ -1,7 +1,6 @@
 Games.penguin = {
   __proto__: BaseCardGame,
 
-  foundationType: KlondikeFoundation,
   pileType: PenguinPile,
 
   layoutTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
@@ -28,7 +27,7 @@ Games.penguin = {
       f++;
     }
 
-    for(i = 0; i != 7; i++) this.piles[i].dealTo(cards, 0, 7);
+    for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], cards, [0, 7]);
   },
 
   getHints: function() {

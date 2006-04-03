@@ -4,11 +4,10 @@ Games.fortythieves = {
   stockType: StockDealToWaste,
   wasteLayout: FanRightLayout,
   pileType: FortyThievesPile,
-  pileLayout: FanDownLayout,
 
   layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  [sl] w  ] [2p1p1p1p1p1p1p1p1p1p2]",
 
-  dealTemplate: "P 0,1; W 0,1",
+  dealTemplate: "P 0,4; W 0,1",
 
   init: function() {
     const cs = this.cards = makeDecks(2);

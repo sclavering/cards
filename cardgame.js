@@ -83,19 +83,21 @@ var BaseCardGame = {
   // is used by, e.g.,  Fan ("P 0,3") to leave the final pile with just 1 card
   dealTemplate: null,
 
-  stockType: null,
-  stockLayout: null,
-  wasteType: Waste,
-  wasteLayout: BaseLayout,
-  foundationType: KlondikeFoundation,
-  foundationLayout: null,
-  cellType: Cell,
-  cellLayout: null,
-  reserveType: Reserve,
-  reserveLayout: null,
-  pileType: null,
-  pileLayout: null,
   pilespacerClass: "",
+
+  pileLayout: FanDownLayout,
+  foundationLayout: Layout,
+  cellLayout: Layout,
+  reserveLayout: Layout,
+  stockLayout: Layout,
+  wasteLayout: Layout,
+
+  pileType: null,
+  foundationType: KlondikeFoundation,
+  cellType: Cell,
+  reserveType: Reserve,
+  stockType: null,
+  wasteType: Waste,
 
   buildLayout: function() {
     // make sure each game type has its own arrays for these
@@ -214,8 +216,8 @@ var BaseCardGame = {
 
   __makePile: function(ch) {
     const type = {p:"pile", f:"foundation", c:"cell", r:"reserve", w:"waste", s:"stock"}[ch];
-    const obj1 = this[type + "Type"] || null; // e.g. this.pileType
-    const obj2 = this[type + "Layout"] || null; // e.g. this.pileLayout
+    const obj1 = this[type + "Type"]; // e.g. this.pileType
+    const obj2 = this[type + "Layout"]; // e.g. this.pileLayout
     const arry = this.pilesByType[ch];
     
     const p = createPile(type, obj1, obj2);
@@ -229,8 +231,8 @@ var BaseCardGame = {
     arry.push(p);
     this[type] = p; // set this.stock, this.waste, etc; don't care about setting this.cell
     // xxx ew!
-    const dropact = this.getActionForDrop
-    if(p.getActionForDrop==BaseLayout.getActionForDrop && dropact) p.getActionForDrop = dropact;
+    const dropact = this.getActionForDrop;
+    if(p.getActionForDrop == Pile.getActionForDrop && dropact) p.getActionForDrop = dropact;
     return p;
   },
 
@@ -318,33 +320,37 @@ var BaseCardGame = {
       var piles = this.pilesByType[lch];
       bit = bit.slice(2); // drop the leading "x "
       if(ch == lch) { // separate nums for each pile
-        var numss = bit.split(" ");
-        for(var j = 0; j != numss.length; ++j) this._dealSomeCards(piles[j], numss[j], cards);
+        var numss = bit.split(" ");        
+        for(var j = 0; j != numss.length; ++j) this._dealSomeCards(piles[j], cards, numss[j]);
       } else {
-        for(j = 0; j != piles.length; ++j) this._dealSomeCards(piles[j], bit, cards);
+        for(j = 0; j != piles.length; ++j) this._dealSomeCards(piles[j], cards, bit);
       }
     }
 
     // deal any remaining cards to the stock (keeps the templates simple)
-    if(this.stock) this._dealSomeCards(this.stock, cards.length + "", cards);
+    if(this.stock) this._dealSomeCards(this.stock, cards, [cards.length]);
   },
 
-  // |nums| is a string of comma-separated ints (e.g. "1,2,3").
-  _dealSomeCards: function(pile, nums, cards) {
-    nums = nums.split(",");
+  // |nums| is an array of ints, or a comma-separated string of ints
+  _dealSomeCards: function(pile, cards, nums) {
+    // without the function(){} round parseInt, all but the first int are parsed as NaN !!!
+    if(typeof nums == "string")
+      nums = nums.split(",").map(function(numStr) { return parseInt(numStr, 10); });
+
+    const cs = [];
     for(var i = 0, faceDown = true; i != nums.length; ++i, faceDown = !faceDown) {
-      var n = parseInt(nums[i]);
+      var n = nums[i];
       for(var j = 0; j != n; ++j) {
         var c = cards.pop();
         if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
         c.faceUp = !faceDown;
         c.updateView();
-        pile.addCard(c);
+        cs.push(c);
       }
     }
+    pile.addCardsFromArray(cs);
     pile.fixLayout();
   },
-
 
   // Games can override with a more interesting function if they wish to eliminate (some) impossible deals.
   // The cards will be shuffled repeatedly until this returns false, after which they are passed to deal(..)

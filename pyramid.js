@@ -39,7 +39,7 @@ const PyramidBase = {
 
 
 const PyramidPile = {
-  __proto__: PyramidLayout,
+  __proto__: PyramidPileBase,
   isPile: true,
   mayTakeCard: function(card) {
     return this.free;
@@ -64,7 +64,6 @@ Games.pyramid = {
   stockType: StockDealToWasteOrRefill,
   wasteType: { __proto__: Waste, free: true },
   foundationType: PyramidFoundation,
-  foundationLayout: BaseLayout,
   pileType: PyramidPile,
 
   layoutTemplate: "h1[s w]1({flex=5}<1p1><4-++p1p++-4><3++p1p1p++3>"

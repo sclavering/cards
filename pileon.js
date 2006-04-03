@@ -2,6 +2,7 @@ Games.pileon = {
   __proto__: BaseCardGame,
 
   pileType: PileOnPile,
+  pileLayout: FanRightLayout,
 
   pilespacerClass: "pileon",
 

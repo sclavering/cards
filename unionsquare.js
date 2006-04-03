@@ -3,7 +3,9 @@ Games.unionsquare = {
 
   stockType: StockDealToWaste,
   foundationType: UnionSquareFoundation,
+  foundationLayout: UnionSquareFoundationLayout,
   pileType: UnionSquarePile,
+  pileLayout: UnionSquarePileLayout,
 
   layoutTemplate: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2",
 

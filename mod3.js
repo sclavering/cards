@@ -3,6 +3,7 @@ Games.mod3 = {
 
   stockType: StockDealToPiles,
   foundationType: Mod3Foundation,
+  foundationLayout: SlideLayout,
   pileType: AcesUpPile,
 
   layoutTemplate:

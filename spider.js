@@ -5,9 +5,9 @@ var SpiderBase = {
   __proto__: BaseCardGame,
 
   stockType: StockDealToPilesIfNoneAreEmpty,
-  foundationType: Spider8Foundation,
+  foundationType: SpiderFoundation,
+  foundationLayout: Spider8FoundationLayout,
   pileType: SpiderPile,
-  pileLayout: FanDownLayout,
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f sl]2",
 
@@ -154,9 +154,8 @@ Games.wasp = {
   __proto__: SpiderBase,
 
   stockType: StockDealToPiles,
-  foundationType: Spider4Foundation,
+  foundationLayout: Spider4FoundationLayout,
   pileType: WaspPile,
-  pileLayout: null,
 
   layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
   dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
@@ -186,7 +185,7 @@ const SimonBase = {
   __proto__: SpiderBase,
   helpId: "simon",
 
-  foundationType: Spider4Foundation,
+  foundationLayout: Spider4FoundationLayout,
 
   layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
   dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",

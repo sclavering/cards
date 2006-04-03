@@ -5,6 +5,7 @@ Games.doublesol = {
 
   stockType: StockDealToWasteOrRefill,
   foundationType: DoubleSolFoundation,
+  foundationLayout: DoubleSolFoundationLayout,
   pileType: KlondikePile,
 
   layoutTemplate: "v[1[sl]1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",

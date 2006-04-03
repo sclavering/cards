@@ -6,7 +6,6 @@ const GolfBase = {
   stockType: StockDealToFoundation,
   foundationType: GolfFoundation,
   pileType: GolfPile,
-  pileLayout: FanDownLayout,
 
   layoutTemplate: "v[3[sl]2f3] [2p1p1p1p1p1p1p2]",
 

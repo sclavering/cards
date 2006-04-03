@@ -2,11 +2,8 @@ const CanfieldBase = {
   __proto__: BaseCardGame,
 
   stockType: StockDealToWasteOrRefill,
-  foundationType: KlondikeFoundation,
   pileType: CanfieldPile,
-  reserveLayout: BaseLayout,
-  reserveFaceDownCards: 12,
-  reserveFaceUpCards: 1,
+  _reserveCards: [12,1],
 
   layoutTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
 
@@ -15,10 +12,10 @@ const CanfieldBase = {
   },
 
   deal: function(cards) {
-    this.foundations[0].dealTo(cards, 0, 1);
-    this.reserve.dealTo(cards, this.reserveFaceDownCards, this.reserveFaceUpCards);
-    for(var i = 0; i != 4; i++) this.piles[i].dealTo(cards, 0, 1);
-    this.stock.dealTo(cards, cards.length, 0);
+    this._dealSomeCards(this.foundations[0], cards, [0, 1]);
+    this._dealSomeCards(this.reserve, cards, this._reserveCards);
+    for(var i = 0; i != 4; i++) this._dealSomeCards(this.piles[i], cards, [0, 1]);
+    this._dealSomeCards(this.stock, cards, [cards.length]);
 
     const cs = this.cards;
     const num = this.foundations[0].firstChild.displayNum;
@@ -51,13 +48,11 @@ Games.canfield3 = {
   helpId: "canfield",
   __proto__: CanfieldBase,
   stockType: Deal3OrRefillStock,
-  wasteType: Deal3VWaste,
-  wasteLayout: null
+  wasteLayout: Deal3VWasteLayout
 };
 
 Games.demon = {
   __proto__: CanfieldBase,
   reserveLayout: FanDownLayout,
-  reserveFaceDownCards: 0,
-  reserveFaceUpCards: 13
+  _reserveCards: [0,13]
 };

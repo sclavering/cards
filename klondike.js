@@ -1,10 +1,8 @@
 const KlondikeBase = {
   __proto__: BaseCardGame,
 
-  foundationType: KlondikeFoundation,
   pileType: KlondikePile,
   stockType: StockDealToWasteOrRefill,
-  wasteLayout: BaseLayout,
 
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1",
 
@@ -68,8 +66,7 @@ Games.klondike1 = {
 Games.klondike3 = {
   __proto__: KlondikeBase,
   stockType: Deal3OrRefillStock,
-  wasteType: Deal3HWaste,
-  wasteLayout: null,
+  wasteLayout: Deal3HWasteLayout,
   layoutTemplate: "v[1[sl]1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 

@@ -2,6 +2,7 @@ Games.fan = {
   __proto__: BaseCardGame,
 
   pileType: FanPile,
+  pileLayout: FanRightLayout,
   foundationType: FanFoundation,
 
   // xxx this doesn't give the desired numbering of the piles

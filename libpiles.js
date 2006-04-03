@@ -1,16 +1,7 @@
-// xxx these need to become cardset dependent
-var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
-var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
-var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
-
-function yes() { return true; }
-function no() { return false; }
-
-// two objects can be supplied to provide the methods + properties for the pile because layouts
-// do not consistently appear with the same mayAddCard/mayTakeCard functions.
-// |layout| may be null
 function createPile(type, impl, layout) {
-  if(!impl) throw "createPile called with impl="+impl;
+  if(!impl) throw "createPile called with impl=" + impl;
+  if(!layout) throw "createPile called with layout=" + layout;
+
   const p = document.createElement(type);
   p.offset = 0; // why?
   for(var m in impl) {
@@ -19,23 +10,18 @@ function createPile(type, impl, layout) {
     else p[m] = impl[m];
   }
   // add any methods+getters not provided by |impl|
-  if(layout) {
-    for(m in layout) {
-      if(m in impl) continue;
-      getter = layout.__lookupGetter__(m);
-      if(getter) p.__defineGetter__(m, getter);
-      else p[m] = layout[m];
-    }
+  for(m in layout) {
+    if(m in impl) throw "createPile: layout has property '" + m + "' which was already provided by impl";
+    getter = layout.__lookupGetter__(m);
+    if(getter) p.__defineGetter__(m, getter);
+    else p[m] = layout[m];
   }
   p.source = p;
   return p;
 }
 
 
-// all piles get these
-const BaseLayout = {
-  isCard: false,
-  isAnyPile: true,
+const Pile = {
   // exactly one of these will be set true
   isFoundation: false,
   isCell: false,
@@ -53,49 +39,9 @@ const BaseLayout = {
   prev: null,
   next: null,
 
-  // pixel offset from top-left corner of pile at which a card being added to the pile should be placed
-  nextCardLeft: 0,
-  nextCardTop: 0,
-
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
-
   getActionForDrop: function(card) { throw "getActionForDrop() not implemented"; },
-
-  // xxx this should be made a "private" function, implemented only by piles not overriding addCards
-  addCard: function(card) {
-    this.appendChild(card);
-    card.top = card.left = card._top = card._left = 0;
-  },
-
-  fixLayout: function() {},
-
-  // transfers the card and all those that follow it
-  // Any replacement implementation *must* call first.parentNode.source's fixLayout() method
-  addCards: function(first) {
-    var next, card = first, source = first.parentNode.source;
-    if(!this.offset) this.offset = source.offset;
-    while(card) {
-      next = card.nextSibling;
-      this.addCard(card);
-      card = next;
-    }
-    this.fixLayout();
-    source.fixLayout();
-  },
-
-  dealTo: function(cards, down, up) {
-    const num = down + up;
-    for(var i = 0; i != num; i++) {
-      var card = cards.pop();
-      if(!card) continue;
-      this.addCard(card);
-      if(i >= down) {
-        card.faceUp = true;
-        card.updateView();
-      }
-    }
-  },
 
   // the sourrounding piles
   get surrounding() {
@@ -109,109 +55,32 @@ const BaseLayout = {
     while(next) { ps.push(next); next = next.next; }
     while(prev) { ps.push(prev); prev = prev.prev; }
     return ps;
+  },
+
+  // future replacement for the nasty DOM-based addCards() (which comes from Layout, or a subtype)
+  addCardsFromArray: function(cards) {
+//    dump("addCardsFromArray: (" + cards.length+") " +cards+"\n");
+    for(var i = 0; i != cards.length; ++i) this.addCard(cards[i]);
   }
 };
 
 
-function addCardsKeepingTheirLayout(card) {
-  var src = card.parentNode.source;
-  var left = card._left, top = card._top - this.nextCardTop;
-  for(var next = card.nextSibling; card; card = next) {
-    next = card.nextSibling;
-    this.appendChild(card);
-    card.top = card._top -= top;
-    card.left = card._left -= left;
-  }
-  // For gFloatingPile - avoids not-repainting artifacts after cards are removed
-  var last = this.lastChild;
-  this.width = last._left + last.boxObject.width;
-  this.height = last._top + last.boxObject.height;
-  src.fixLayout();
-  this.fixLayout();
+function yes() { return true; }
+
+function no() { return false; }
+
+function mayTakeSingleCard(card) {
+  return !card.nextSibling && card.faceUp;
 }
 
 
-const FanDownLayout = {
-  __proto__: BaseLayout,
 
-  // doing this avoids the cards changing layout twice if they come from a packed fan and
-  // this fan ends up packed (once to realyout using this.offset, then again with a new
-  // offset once .fixLayout() is called)
-  addCards: addCardsKeepingTheirLayout,
 
-    get nextCardTop() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._top + (this.offset || gVFanOffset);
-    },
+const PyramidPileBase = {
+  __proto__: Pile,
 
-    fixLayout: function() {
-      if(!this.hasChildNodes()) {
-        this.offset = 0;
-        return;
-      }
+  className: "pyramid-pile", // xxx kill this
 
-      const firstbox = this.firstChild.boxObject;
-      var space = window.innerHeight - firstbox.y - firstbox.height;
-      const offset = Math.min(space / this.childNodes.length, gVFanOffset);
-      var old = this.offset || gVFanOffset;
-      this.offset = offset;
-      var top = 0;
-      var card = this.firstChild;
-      while(card) {
-        card.top = card._top = top;
-        top += offset;
-        card = card.nextSibling;
-      }
-    }
-};
-
-const FanRightLayout = {
-  __proto__: BaseLayout,
-
-    addCard: function(card) {
-      this.appendChild(card);
-      var prev = card.previousSibling;
-      card.left = card._left = prev ? prev._left + gHFanOffset : 0;
-      card.top = card._top = 0;
-    },
-
-    get nextCardLeft() {
-      return this.hasChildNodes() ? this.lastChild._left + gHFanOffset : 0;
-    }
-};
-
-// this really needs modifying to allow for more than 6 cards!
-const SlideLayout = {
-  __proto__: BaseLayout,
-
-  className: "slide",
-
-    addCard: function(card) {
-      this.appendChild(card);
-      var prev = card.previousSibling;
-      if(!prev) {
-        card.top = card.left = card._top = card._left = 0;
-        return;
-      }
-      var offset = this.childNodes.length<6 ? gSlideOffset : 0;
-      card.top = card._top = prev._top + offset
-      card.left = card._left = prev._left + offset;
-    },
-
-    get nextCardLeft() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
-    },
-
-    get nextCardTop() {
-      if(!this.hasChildNodes()) return 0;
-      return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
-    }
-};
-
-const PyramidLayout = {
-  __proto__: BaseLayout,
-  className: "pyramid-pile",
   // set in games' init()s
   leftParent: null,
   rightParent: null,
@@ -227,7 +96,7 @@ const PyramidLayout = {
 
 
 const BasicStock = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isStock: true,
   mayTakeCard: no,
   mayAddCard: no,
@@ -307,70 +176,16 @@ const StockDealToNonemptyPiles = {
 };
 
 
-
 const Waste = {
+  __proto__: Pile,
   isWaste: true,
   mayTakeCard: function(card) { return !card.nextSibling; },
   mayAddCard: no
 };
-
-const Deal3WasteBase = {
-  __proto__: BaseLayout,
-  isWaste: true,
-  nextOffsetMultiplier: 0,
-  oldChildCount: 0,
-  // only ever has to handle one card
-  addCards: function(card) {
-    this.appendChild(card);
-    card.top = card.left = card._top = card._left = 0;
-    const mul = Math.max(this.nextOffsetMultiplier++, 0);
-    card[this.prop] = card[this.prop2] = mul * this.offset;
-    this.oldChildCount++;
-  },
-  packCards: function() {
-    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
-    const numToPack = Math.max(this.nextOffsetMultiplier, 0);
-    for(var i = num - numToPack; i != num; ++i) cs[i][prop] = cs[i][prop2] = 0;
-    this.nextOffsetMultiplier = 0;
-    return numToPack;
-  },
-  unpackCards: function(numToUnpack) {
-    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
-    const offset = this.offset, ixOffset = num - numToUnpack;
-    for(var i = 0; i != numToUnpack; ++i) {
-      const c = cs[ixOffset + i];
-      c[prop] = c[prop2] = i * offset;
-    }
-    this.nextOffsetMultiplier = numToUnpack;
-  },
-  // called after a card is removed, and also at start of game (hence the oldChildCount)
-  fixLayout: function() {
-    this.nextOffsetMultiplier -= this.oldChildCount - this.childNodes.length;
-    this.oldChildCount = this.childNodes.length;
-  },
-  mayTakeCard: function(card) { return !card.nextSibling; },
-  mayAddCard: no
-};
-
-const Deal3HWaste = {
-  __proto__: Deal3WasteBase,
-  className: "draw3h-waste",
-  prop: "left",
-  prop2: "_left",
-  offset: gHFanOffset
-};
-
-const Deal3VWaste = {
-  __proto__: Deal3WasteBase,
-  prop: "top",
-  prop2: "_top",
-  offset: gVFanOffset
-};
-
 
 
 const Cell = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isCell: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
@@ -379,13 +194,12 @@ const Cell = {
 };
 
 
-
 const Reserve = {
+  __proto__: Pile,
   isReserve: true,
-  mayTakeCard: function(card) { return !card.nextSibling; },
+  mayTakeCard: mayTakeSingleCard,
   mayAddCard: no
 };
-
 
 
 function mayTakeFromFreeCellPile(card) {
@@ -397,10 +211,6 @@ function mayTakeFromFreeCellPile(card) {
 
 function mayTakeIfFaceUp(card) {
   return card.faceUp;
-}
-
-function mayTakeSingleCard(card) {
-  return !card.nextSibling && card.faceUp;
 }
 
 function mayTakeDescendingRun(card) {
@@ -446,33 +256,35 @@ function mayAddOntoDotUpOrPutKingInSpace(card) {
 
 
 const AcesUpPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeSingleCard,
   mayAddCard: mayAddSingleCardToEmpty
 };
 
 const BlackWidowPile = {
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeDescendingRun,
   mayAddCard: mayAddOntoUpNumberOrEmpty
 };
 
 const CanfieldPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
   mayAddCard: mayAddToGypsyPile
 };
 
 const FanPile = {
-  __proto__: FanRightLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeSingleCard,
   mayAddCard: mayAddOntoDotUpOrPutKingInSpace
 };
 
 const FortyThievesPile = {
+  __proto__: Pile,
   isPile: true,
 
   mayTakeCard: mayTakeRunningFlush,
@@ -497,6 +309,7 @@ const FortyThievesPile = {
 };
 
 const FreeCellPile = {
+  __proto__: Pile,
   isPile: true,
 
   mayTakeCard: mayTakeFromFreeCellPile,
@@ -519,6 +332,7 @@ const FreeCellPile = {
 };
 
 const GolfPile = {
+  __proto__: Pile,
   isPile: true,
   // don't allow drag_drop because it's slower than just clicking the cards
   mayTakeCard: mayTakeSingleCard,
@@ -526,21 +340,21 @@ const GolfPile = {
 };
 
 const GypsyPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeFromFreeCellPile,
   mayAddCard: mayAddToGypsyPile
 };
 
 const KlondikePile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
   mayAddCard: mayAddToKlondikePile
 };
 
 const MazePile = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
@@ -554,7 +368,7 @@ const MazePile = {
 };
 
 const MontanaPile = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
@@ -564,14 +378,14 @@ const MontanaPile = {
 };
 
 const PenguinPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: mayAddOntoDotUpOrPutKingInSpace
 };
 
 const PileOnPile = {
-  __proto__: FanRightLayout,
+  __proto__: Pile,
   isPile: true,
   className: "fan-right pileon",
   // May move any group of cards all of the same rank.
@@ -592,13 +406,14 @@ const PileOnPile = {
 };
 
 const SpiderPile = {
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: mayAddOntoUpNumberOrEmpty
 };
 
 const TowersPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
@@ -611,35 +426,19 @@ const TowersPile = {
   }
 };
 
+const TriPeaksPile = {
+  __proto__: PyramidPileBase,
+  isPeak: false,
+  isPile: true,
+  // like Golf
+  mayTakeCard: mayTakeSingleCard,
+  mayAddCard: no
+};
+
 const UnionSquarePile = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
 
   isPile: true,
-
-  className: "unionsquare",
-
-  // A record of whether the pile is being built up (1) or down (-1), or neither (0).
-  direction: 0,
-
-  // First and last card of a pile are visible (so player can see which way it's being built).
-  addCards: function(card) {
-    var src = card.parentNode;
-    this.appendChild(card);
-    const prv = card.previousSibling;
-    card.top = card._top = 0;
-    card.left = card._left = prv ? gHFanOffset : 0;
-    if(this.childNodes.length==2)
-      this.direction = card.number==prv.upNumber ? 1 : -1;
-    src.fixLayout();
-  },
-
-  fixLayout: function() {
-    if(this.childNodes.length==1) this.direction = 0;
-  },
-
-  get nextCardLeft() {
-    return this.hasChildNodes() ? gHFanOffset : 0;
-  },
 
   mayTakeCard: function(card) {
     return !card.nextSibling;
@@ -657,14 +456,14 @@ const UnionSquarePile = {
 };
 
 const WaspPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
   mayAddCard: mayAddOntoDotUpOrEmpty
 };
 
 const WhiteheadPile = {
-  __proto__: FanDownLayout,
+  __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
@@ -680,14 +479,14 @@ function mayAddCardToKlondikeFoundation(card) {
 }
 
 const NoWorryingBackFoundation = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isFoundation: true,
   mayTakeCard: no
 };
 
 // "worrying back" is what removing cards from the foundation is called
 const WorryingBackFoundation = {
-  __proto__: BaseLayout,
+  __proto__: Pile,
   isFoundation: true,
   mayTakeCard: function(card) { return !card.nextSibling; }
 };
@@ -711,24 +510,8 @@ const GolfFoundation = {
   }
 };
 
-const BaseSpiderFoundation = {
+const SpiderFoundation = {
   __proto__: NoWorryingBackFoundation,
-
-  addCards: function(card) {
-    var last = this.lastChild;
-    var top = last ? last._top + gVFanOffset : 0;
-    while(card) {
-      var next = card.nextSibling;
-      this.appendChild(card);
-      card.top = card._top = top;
-      card.left = card._left = 0;
-      card = next;
-    }
-  },
-
-  get nextCardTop() {
-    return this.hasChildNodes() ? this.lastChild._top + gVFanOffset : 0;
-  },
 
   // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
   // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
@@ -742,15 +525,6 @@ const BaseSpiderFoundation = {
   }
 };
 
-const Spider4Foundation = {
-  __proto__: BaseSpiderFoundation,
-  className: "foundation4"
-};
-
-const Spider8Foundation = {
-  __proto__: BaseSpiderFoundation,
-  className: "foundation8"
-};
 
 const AcesUpFoundation = {
   __proto__: NoWorryingBackFoundation,
@@ -770,31 +544,6 @@ const AcesUpFoundation = {
 const DoubleSolFoundation = {
   __proto__: WorryingBackFoundation,
 
-  className: "doublesol-foundation",
-
-  addCards: function(card) {
-    const l = this.lastChild;
-    if(l) l.left = l._left = 0;
-    while(card) {
-      var nxt = card.nextSibling;
-      this.appendChild(card);
-      card.top = card.left = card._top = card._left = 0;
-      card = nxt;
-    }
-    const n = this.lastChild;
-    n.left = n._left = l ? gVFanOffset : 0;
-    n.top = n._top = 0;
-  },
-
-  get nextCardLeft() {
-    return this.hasChildNodes() ? gVFanOffset : 0;
-  },
-
-  fixLayout: function() {
-    const l = this.lastChild;
-    if(l) l.left = l._left = gVFanOffset;
-  },
-
   mayAddCard: function(card) {
     if(card.nextSibling) return false;
     if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;
@@ -804,7 +553,7 @@ const DoubleSolFoundation = {
 };
 
 const Mod3Foundation = {
-  __proto__: SlideLayout,
+  __proto__: Pile,
 
   isFoundation: true,
 
@@ -814,8 +563,9 @@ const Mod3Foundation = {
 
   mayAddCard: function(card) {
     if(card.parentNode == this) return false;
-    var last = this.lastChild;
-    return last ? last.inPlace && (card.down==last || card.twin.down==last) : !card.down && card.row==this.row;
+    const last = this.lastChild;
+    return last ? last.inPlace && (card.down==last || card.twin.down==last)
+                : !card.down && card.row==this.row;
   }
 };
 
@@ -823,21 +573,6 @@ const Mod3Foundation = {
 // from the a->k, so that it's clear what card should be plauyed next
 const UnionSquareFoundation = {
   __proto__: NoWorryingBackFoundation,
-
-  className: "unionsquare-f",
-
-  addCards: function(card) {
-    const src = card.parentNode;
-    this.appendChild(card);
-    card.top = card._top = 0;
-    card.left = card._left = this.childNodes.length>13 ? gHFanOffset : 0;
-    src.fixLayout();
-  },
-
-  get nextCardLeft() {
-    return this.childNodes.length>=13 ? gHFanOffset : 0;
-  },
-
 
   mayAddCard: function(card) {
     if(!this.hasChildNodes()) return card.isAce && !card.twin.parentNode.isFoundation;

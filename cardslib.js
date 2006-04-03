@@ -136,7 +136,7 @@ function handleRightClick(e) {
 
 
 function createFloatingPile() {
-  const pile = gFloatingPile = createPile("stack", BaseLayout, null);
+  const pile = gFloatingPile = createPile("stack", {}, Layout);
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;

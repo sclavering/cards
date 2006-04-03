@@ -1,11 +1,10 @@
 Games.regiment = {
   __proto__: BaseCardGame,
 
-  reserveLayout: BaseLayout,
-  pileType: BaseLayout,
-
   layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
   dealTemplate: "P 0,1; R 10,1",
+  pileType: Pile, // xxx ew!
+  pileLayout: Layout,
 
   cards: 2,
 

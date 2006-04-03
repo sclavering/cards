@@ -33,8 +33,6 @@ const YukonBase = {
 Games.yukon = {
   __proto__: YukonBase,
 
-  foundationType: KlondikeFoundation,
-
   layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
 
   dealTemplate: "p 0,1 1,5 2,5 3,5 4,5 5,5 6,5",
@@ -60,7 +58,6 @@ Games.sanibel = {
   __proto__: YukonBase,
 
   stockType: StockDealToWaste,
-  foundationType: KlondikeFoundation,
 
   layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
 

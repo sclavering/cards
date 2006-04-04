@@ -65,16 +65,7 @@ Games.penguin = {
 
   getLowestMovableCard_helper: "descending, in suit",
 
-  getBestDestinationFor: function(card) {
-    if(card.isKing) {
-      var par = card.pile, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
-      if(p) return p;
-    } else {
-      var up = card.up, upp = up.pile;
-      if(upp.isPile && up.isLast) return upp;
-    }
-    return card.isLast ? this.emptyCell : null;
-  },
+  getBestDestinationFor: "towers/penguin",
 
   autoplay: "commonish",
 

@@ -3,25 +3,6 @@ Standard forms for the various member functions that games need to provide.
 
 Set the member to one of the strings below and BaseCardGame.initialise() will replace it with the
 relevant function in this file.
-
-Current choices:
-
-getLowestMovableCard_helper:
-  "descending, in suit"
-  "descending, alt colours"
-  "face up"
-
-isWon:
-  "13 cards on each foundation"
-  "foundation holds all cards"
-
-getBestDestinationFor
-  "to up or nearest space"
-  "down and same suit, or down, or empty"
-
-autoplay
-  "commonish"
-  "commonish 2deck"
 */
 
 const Rules = {
@@ -111,6 +92,18 @@ const Rules = {
         if(p.mayAddCard(card)) return p;
       }
       return null;
+    },
+
+    "towers/penguin":
+    function(card) {
+      if(card.isKing) {
+        const p = card.pile, pile = p.isPile ? findEmpty(p.surrounding) : this.firstEmptyPile;
+        if(pile && pile.mayAddCard(card)) return pile;
+      } else {
+        const up = card.up, upp = up.pile;
+        if(upp.isPile && up.isLast && upp.mayAddCard(card)) return upp;
+      }
+      return card.isLast ? this.emptyCell : null;
     }
   },
 

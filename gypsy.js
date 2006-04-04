@@ -25,12 +25,12 @@ const GypsyBase = {
   getFoundationMoveFor: function(card) {
     if(!card.isLast) return null;
     if(card.isAce) {
-      var twinp = card.twin.parentNode;
+      var twinp = card.twin.pile;
       return twinp.isFoundation && !twinp.twin.hasCards ? twinp.twin : this.firstEmptyFoundation;
     }
     var down = card.down, c = down;
     do {
-      var p = c.parentNode;
+      var p = c.pile;
       if(p.isFoundation && c.isLast) return p;
       c = c.twin;
     } while(c != down);

@@ -15,6 +15,7 @@ const Layout = {
   // to be used only within Layout + subtypes.  always use instead of appendChild
   _addCard: function(card) {
     card.index = this.childNodes.length;
+    card.pile = this;
     this.appendChild(card);
   },
 

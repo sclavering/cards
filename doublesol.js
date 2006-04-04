@@ -25,7 +25,7 @@ Games.doublesol = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.parentNode.isWaste) {
+      if(card.previousSibling || card.pile.isWaste) {
         var pile = this.firstEmptyPile;
         if(pile) this.addHint(card, pile);
       }
@@ -59,7 +59,7 @@ Games.doublesol = {
         searchedForAces = true;
         for(var j = 0; j != 8; j++) {
           var a = as[j];
-          if(a.faceUp && !a.parentNode.isFoundation && !a.twin.parentNode.isFoundation && a.isLast)
+          if(a.faceUp && !a.pile.isFoundation && !a.twin.pile.isFoundation && a.isLast)
             return new Move(a, f);
         }
       }

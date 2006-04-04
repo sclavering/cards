@@ -21,7 +21,7 @@ Games.freecell = {
   // similar to Rules.getBestDestinationFor["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space
   getBestDestinationFor: function(card) {
-    const pr = card.parentNode, ps = pr.isPile ? pr.surrounding : this.piles, num = ps.length;
+    const pr = card.pile, ps = pr.isPile ? pr.surrounding : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
@@ -31,7 +31,7 @@ Games.freecell = {
         empty = p;
       }
     }
-    return (card.isLast && !card.parentNode.isCell && this.emptyCell)
+    return (card.isLast && !card.pile.isCell && this.emptyCell)
         || (empty && empty.mayAddCard(card) ? empty : null);
   },
 

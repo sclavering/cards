@@ -508,7 +508,7 @@ var BaseCardGame = {
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
   // This default version is for Klondike-like games, Spider-like games may need to override it.
   sendToFoundations: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return null;
+    if(!card.pile.mayTakeCard(card)) return null;
     const f = this.getFoundationMoveFor(card);
     return f ? new Move(card, f) : null;
   },
@@ -623,7 +623,7 @@ var BaseCardGame = {
   // === Right-click "intelligent" moving of cards ========
   // Called when the player right-clicks on a card. Games should implement getBestDestinationFor(card)
   getBestActionFor: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return null;
+    if(!card.pile.mayTakeCard(card)) return null;
     const target = this.getBestDestinationFor(card);
     return target ? new Move(card, target) : null;
   },
@@ -677,7 +677,7 @@ var BaseCardGame = {
     this._mouseDownTarget = t;
     this._ex0 = e.pageX;
     this._ey0 = e.pageY;
-    if(!t.isCard || !t.parentNode.mayTakeCard(t)) return;
+    if(!t.isCard || !t.pile.mayTakeCard(t)) return;
     this._mouseNextCard = t;
     gGameStack.onmousemove = this.mouseMove0;
   },

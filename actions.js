@@ -120,11 +120,9 @@ DealToNonEmptyPilesAction.prototype = {
 }
 
 
-// source (optional) is where the card was originally from,
-// not the temp. pile it was probably dragged around in
-function Move(card, destination, source) {
+function Move(card, destination) {
   this.card = card;
-  this.source = source = source || card.parentNode.source;
+  this.source = card.pile.source; // where the card came from, not the temp pile used for moving
   this.destination = destination;
 }
 Move.prototype = {
@@ -143,8 +141,8 @@ Move.prototype = {
 
 
 function RemovePair(card1, card2) {
-  this.c1 = card1; this.p1 = card1.parentNode.source;
-  this.c2 = card2; this.p2 = card2 && card2.parentNode.source;
+  this.c1 = card1; this.p1 = card1.pile.source;
+  this.c2 = card2; this.p2 = card2 && card2.pile.source;
 }
 RemovePair.prototype = {
   synchronous: true,

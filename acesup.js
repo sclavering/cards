@@ -32,10 +32,10 @@ Games.acesup = {
 
   getBestDestinationFor: function(card) {
     const f = this.foundation;
-    if(card.parentNode == f) return null;
+    if(card.pile == f) return null;
     if(f.mayAddCard(card)) return f;
     // return next empty pile
-    for(var p = card.parentNode, p2 = p.next; p2 != p; p2 = p2.next)
+    for(var p = card.pile, p2 = p.next; p2 != p; p2 = p2.next)
       if(!p2.hasCards) return p2;
     return null;
   },

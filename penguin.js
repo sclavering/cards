@@ -41,7 +41,7 @@ Games.penguin = {
         var p = this.firstEmptyPile;
         if(p) this.addHint(c, p);
       } else {
-        var up = c.up, upp = up.parentNode;
+        var up = c.up, upp = up.pile;
         if(up.isLast && upp.isPile) this.addHint(c, upp);
       }
       // remember cards
@@ -67,10 +67,10 @@ Games.penguin = {
 
   getBestDestinationFor: function(card) {
     if(card.isKing) {
-      var par = card.parentNode, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
+      var par = card.pile, p = par.isPile ? findEmpty(par.surrounding) : this.firstEmptyPile;
       if(p) return p;
     } else {
-      var up = card.up, upp = up.parentNode;
+      var up = card.up, upp = up.pile;
       if(upp.isPile && up.isLast) return upp;
     }
     return card.isLast ? this.emptyCell : null;

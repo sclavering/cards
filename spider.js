@@ -26,7 +26,7 @@ var SpiderBase = {
   autoplay: function() {
     const ks = this.kings, num = ks.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
-      var k = ks[i], p = k.parentNode;
+      var k = ks[i], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
     return null;
@@ -34,7 +34,7 @@ var SpiderBase = {
 
   sendToFoundations: function(card) {
     const f = this.foundation;
-    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card)
+    return card.pile.mayTakeCard(card) && f.mayAddCard(card)
         ? new Move(card, f) : null;
   },
 
@@ -171,7 +171,7 @@ Games.wasp = {
       if(!pile.hasCards) continue;
       var last = pile.lastChild, down = last.down;
       if(!down || !down.faceUp) continue;
-      var downp = down.parentNode;
+      var downp = down.pile;
       if(downp!=pile && downp.isPile) this.addHint(down, pile);
     }
   }

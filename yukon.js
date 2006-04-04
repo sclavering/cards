@@ -9,7 +9,7 @@ const YukonBase = {
     const ps = this.piles, len = ps.length;
     for(var i = 0; i != len; i++) {
       var pile = ps[i];
-      if(pile==card.parentNode) continue;
+      if(pile == card.pile) continue;
       var current = pile.lastChild;
       while(current && current.faceUp) {
         if(card.number==current.upNumber && card.colour!=current.colour) {
@@ -17,7 +17,7 @@ const YukonBase = {
           // on a card consecutive and of opposite colour
           var prev = current.previousSibling;
           if(!prev || prev.number!=current.upNumber || prev.colour==current.colour)
-            this.addHint(current,card.parentNode);
+            this.addHint(current, card.pile);
         }
         current = current.previousSibling;
       }

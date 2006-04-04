@@ -32,11 +32,11 @@ Games.whitehead = {
   getBestDestinationFor: function(card) {
     var up = card.up, on = card.on;
     if(up) {
-      var p = up.parentNode;
+      var p = up.pile;
       if(p.isPile && up.isLast) return p;
     }
     if(on) {
-      p = on.parentNode;
+      p = on.pile;
       if(p.isPile && on.isLast) return p;
     }
     return this.firstEmptyPile;

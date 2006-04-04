@@ -89,7 +89,7 @@ Games.pyramid = {
   },
 
   getBestActionFor: function(card) {
-    return card.isKing && card.parentNode.free ? new RemovePair(card, null) : null;
+    return card.isKing && card.pile.free ? new RemovePair(card, null) : null;
   },
 
   // xxx write getHints()

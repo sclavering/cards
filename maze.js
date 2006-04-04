@@ -40,18 +40,18 @@ Games.maze = {
 
   getBestDestinationFor: function(card) {
     if(card.isAce) {
-      var start = card.parentNode, pile = start.next;
+      var start = card.pile, pile = start.next;
       while(pile != start && (pile.hasCards || !(pile.next.lastChild == card.up
           || (pile.prev.hasCards && pile.prev.lastChild.isQueen)))) pile = pile.next;
       return !pile.hasCards ? pile : null;
     }
     if(card.isQueen) {
-      start = card.parentNode, pile = start.next;
+      start = card.pile, pile = start.next;
       while(pile != start && (pile.hasCards || !(pile.prev.lastChild == card.down
           || (pile.next.hasCards && pile.next.lastChild.isAce)))) pile = pile.next;
       return !pile.hasCards ? pile : null;
     }
-    var down = card.down.parentNode.next, up = card.up.parentNode.prev;
+    var down = card.down.pile.next, up = card.up.pile.prev;
     return (!down.hasCards && down) || (!up.hasCards && up);
   },
 

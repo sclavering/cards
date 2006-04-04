@@ -45,13 +45,13 @@ Games.regiment = {
   mayAddCardToAceFoundation: function(card) {
     var last = this.lastChild, twin = card.twin;
     // must not start a second ace foundation for a suit
-    if(card.isAce) return !last && !(twin.parentNode.isFoundation && !twin.previousSibling);
+    if(card.isAce) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
     return last && card.number==last.upNumber && card.suit==last.suit;
   },
 
   mayAddCardToKingFoundation: function(card) {
     var last = this.lastChild, twin = card.twin;
-    if(card.isKing) return !last && !(twin.parentNode.isFoundation && !twin.previousSibling);
+    if(card.isKing) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
     return last && last.number==card.upNumber && card.suit==last.suit;
   },
 
@@ -61,7 +61,7 @@ Games.regiment = {
     if(l) return card.suit==l.suit && (l.number==card.upNumber || card.number==l.upNumber);
 
     // empty piles must be filled from the closest reserve pile
-    var source = card.parentNode.source;
+    var source = card.pile.source;
     if(!source.isReserve) return false;
 
     var reserve = this.reserve;
@@ -85,7 +85,7 @@ Games.regiment = {
   },
 
   getBestDestinationFor: function(card) {
-    const parent = card.parentNode;
+    const parent = card.pile;
     const ps = parent.isPile ? parent.following : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
@@ -130,15 +130,15 @@ Games.regiment = {
 
     for(i = 0; i != 4; i++) {
       pile = this.foundations[i], last = pile.lastChild;
-      if(last && last.up && last.twin.parentNode.isFoundation) {
-        card = last.up.parentNode.isFoundation ? last.twin.up : last.up;
+      if(last && last.up && last.twin.pile.isFoundation) {
+        card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
     for(i = 4; i != 8; i++) {
       pile = this.foundations[i], last = pile.lastChild;
-      if(last && last.down && last.twin.parentNode.isFoundation) {
-        card = last.down.parentNode.isFoundation ? last.twin.down : last.down;
+      if(last && last.down && last.twin.pile.isFoundation) {
+        card = last.down.pile.isFoundation ? last.twin.down : last.down;
         if(card.isLast) return new Move(card, pile);
       }
     }

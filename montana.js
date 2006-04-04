@@ -43,7 +43,7 @@ const Montana = {
       } else {
         for(var j = 0; j != 4; j++) {
           card = this.twos[j];
-          if(card.parentNode.leftp) this.addHint(card, pile);
+          if(card.pile.leftp) this.addHint(card, pile);
         }
       }
     }
@@ -51,7 +51,7 @@ const Montana = {
 
   getBestDestinationFor: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
-    var pile = card.down.parentNode.rightp;
+    var pile = card.down.pile.rightp;
     return pile && !pile.hasCards ? pile : null;
   },
 

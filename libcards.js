@@ -113,6 +113,9 @@ const cardProto = {
 
   faceUp: false,
 
+  pile: null, // the pile the card is in
+  index: -1,  // the position within the pile
+
   // to be replaced by a non-DOM version during model/view split
   get isLast() { return !this.nextSibling; },
 

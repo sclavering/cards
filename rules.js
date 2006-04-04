@@ -63,15 +63,15 @@ var Rules = {
   getBestDestinationFor: {
     "to up or nearest space":
     function(card) {
-      const up = card.up, upp = up && up.parentNode;
+      const up = card.up, upp = up && up.pile;
       if(upp && upp.mayAddCard(card)) return upp;
-      const e = findEmpty(card.parentNode.surrounding);
+      const e = findEmpty(card.pile.surrounding);
       return e && e.mayAddCard(card) ? e : null;
     },
 
     "down and same suit, or down, or empty":
     function(card) {
-      const ps = card.parentNode.surrounding, num = ps.length;
+      const ps = card.pile.surrounding, num = ps.length;
       var maybe = null, empty = null;
       for(var i = 0; i != num; i++) {
         var p = ps[i], last = p.lastChild;
@@ -88,7 +88,7 @@ var Rules = {
 
     "legal nonempty, or empty":
     function(card) {
-      var p = card.parentNode, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
+      var p = card.pile, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];
@@ -104,7 +104,7 @@ var Rules = {
 
     "legal":
     function(card) {
-      var p = card.parentNode, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
+      var p = card.pile, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;
       var empty = null;
       for(var i = 0; i != num; i++) {
         p = ps[i];
@@ -133,7 +133,7 @@ var Rules = {
           triedToFillEmpty = true;
           for(var j = 0; j != numBs; j++) {
             var b = bs[j];
-            if(b.faceUp && !b.parentNode.isFoundation && b.faceUp && b.isLast)
+            if(b.faceUp && !b.pile.isFoundation && b.faceUp && b.isLast)
               return new Move(b, f);
           }
         }
@@ -152,19 +152,19 @@ var Rules = {
         var f = fs[i], last = f.lastChild;
         if(last) {
           if(last.isKing) continue;
-          var c = last.up, cp = c.parentNode;
+          var c = last.up, cp = c.pile;
           if(!cp.isFoundation && !cp.isStock && c.isLast) {
             if(c.number <= maxNums[c.suit]) return new Move(c, f);
             continue;
           } else {
-            c = c.twin, cp = c.parentNode;
+            c = c.twin, cp = c.pile;
             if(!cp.isFoundation && !cp.isStock && c.isLast && c.number <= maxNums[c.suit])
               return new Move(c, f);
           }
         } else if(!lookedForAces) {
           lookedForAces = true;
           for(var j = 0; j != 8; j++) {
-            var a = as[j], ap = a.parentNode;
+            var a = as[j], ap = a.pile;
             if(!ap.isFoundation && !ap.isStock && a.isLast)
               return new Move(a, f)
           }

@@ -22,7 +22,7 @@ Games.unionsquare = {
   // xxx write getHints()
 
   getBestDestinationFor: function(card) {
-    const p = card.parentNode, ps = p.isPile ? p.following : this.piles, num = ps.length;
+    const p = card.pile, ps = p.isPile ? p.following : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; ++i) {
       var q = ps[i];
@@ -36,7 +36,7 @@ Games.unionsquare = {
   },
 
   getFoundationMoveFor: function(card) {
-    const twin = card.twin, twinp = twin.parentNode;
+    const twin = card.twin, twinp = twin.pile;
     if(twinp.isFoundation) {
       if(card.isKing) return twinp;
       // >, not >=, or it'd allow Q,K,Q on foundations
@@ -44,9 +44,9 @@ Games.unionsquare = {
     }
     // can now assume twin is not on foundation
     if(card.isAce) return this.firstEmptyFoundation;
-    var down = card.down, downp = down.parentNode;
+    var down = card.down, downp = down.pile;
     if(downp.isFoundation && down.isLast) return downp;
-    down = down.twin, downp = down.parentNode;
+    down = down.twin, downp = down.pile;
     if(downp.isFoundation && down.isLast) return downp;
     return null;
   },
@@ -57,9 +57,9 @@ Games.unionsquare = {
     for(var i = 0; i != 4; ++i) {
       var f = fs[i], len = f.childNodes.length, last = f.lastChild;
       if(len<12 || len==26) continue;
-      var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.parentNode;
+      var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
-      c = c.twin, cp = c.parentNode;
+      c = c.twin, cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
     }
     return null;

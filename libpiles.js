@@ -301,7 +301,7 @@ const FortyThievesPile = {
 
     if(card.isLast) return true;
 
-    var canMove = Game.countEmptyPiles(this, card.parentNode.source);
+    var canMove = Game.countEmptyPiles(this, card.pile.source);
     if(canMove) canMove = canMove * (canMove + 1) / 2;
     canMove++;
 
@@ -326,7 +326,7 @@ const FreeCellPile = {
 
     if(card.isLast) return true;
 
-    var spaces = Game.countEmptyPiles(this, card.parentNode.source);
+    var spaces = Game.countEmptyPiles(this, card.pile.source);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
     var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
     var numToMove = 0;
@@ -377,7 +377,7 @@ const MontanaPile = {
   mayTakeCard: yes,
   mayAddCard: function(card) {
     const lp = this.leftp;
-    return !this.hasCards && (card.number==2 ? !lp : card.down.parentNode==lp);
+    return !this.hasCards && (card.number == 2 ? !lp : card.down.pile == lp);
   }
 };
 
@@ -518,7 +518,7 @@ const SpiderFoundation = {
   // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
   // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
   mayAddCard: function(card) {
-    const sibs = card.parentNode.childNodes, i = sibs.length - 13;
+    const sibs = card.pile.childNodes, i = sibs.length - 13;
     if(i < 0 || sibs[i]!=card) return false;
     const suit = card.suit; var num;
     do { num = card.number; card = card.nextSibling; }
@@ -548,7 +548,7 @@ const DoubleSolFoundation = {
 
   mayAddCard: function(card) {
     if(!card.isLast) return false;
-    if(!this.hasCards) return card.isAce && !card.twin.parentNode.isFoundation;
+    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     var last = this.lastChild, prv = last.previousSibling;
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
   }
@@ -562,7 +562,7 @@ const Mod3Foundation = {
   mayTakeCard: ifLast,
 
   mayAddCard: function(card) {
-    if(card.parentNode == this) return false;
+    if(card.pile == this) return false;
     const last = this.lastChild;
     return last ? last.inPlace && (card.down==last || card.twin.down==last)
                 : !card.down && card.row==this.row;
@@ -575,7 +575,7 @@ const UnionSquareFoundation = {
   __proto__: NoWorryingBackFoundation,
 
   mayAddCard: function(card) {
-    if(!this.hasCards) return card.isAce && !card.twin.parentNode.isFoundation;
+    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     const last = this.lastChild, pos = this.childNodes.length;
     if(last.suit != card.suit) return false;
     if(pos < 13) return last.upNumber==card.number;

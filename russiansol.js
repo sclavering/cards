@@ -18,7 +18,7 @@ Games.russiansol = {
       if(!pile.hasCards) continue;
       var last = pile.lastChild, down = last.down;
       if(!down || !down.faceUp) continue;
-      var downp = down.parentNode;
+      var downp = down.pile;
       if(downp!=pile && downp.isPile) this.addHint(down, pile);
     }
   },

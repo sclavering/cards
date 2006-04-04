@@ -15,8 +15,8 @@ Games.mod3 = {
   init: function() {
     var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
 
-    function inPlace() { return this.parentNode.isFoundation && !!this.previousSibling; };
-    function inPlace2() { return this.parentNode.row == this.row; }
+    function inPlace() { return this.pile.isFoundation && !!this.previousSibling; };
+    function inPlace2() { return this.pile.row == this.row; }
 
     this.bases = new Array(3);
 
@@ -74,13 +74,13 @@ Games.mod3 = {
   getBestDestinationFor: function(card) {
     if(card.down) {
       var d1 = card.down, d2 = card.twin.down;
-      if(d1.inPlace && d1.isLast) return d1.parentNode;
-      if(d2.inPlace && d2.isLast) return d2.parentNode;
+      if(d1.inPlace && d1.isLast) return d1.pile;
+      if(d2.inPlace && d2.isLast) return d2.pile;
     } else {
       var p = findEmpty(this.rows[card.row]);
       if(p) return p;
     }
-    var parent = card.parentNode;
+    var parent = card.pile;
     return findEmpty(parent.isPile ? parent.surrounding : this.piles);
   },
 
@@ -96,9 +96,9 @@ Games.mod3 = {
           if(!last.inPlace) { shouldFillEmpty = false; continue; }
           if(!last.twin.inPlace) continue;
           var up1 = last.up, up2 = last.twin.up;
-          if(up1 && !up1.inPlace && up1.isLast && !up1.parentNode.isStock)
+          if(up1 && !up1.inPlace && up1.isLast && !up1.pile.isStock)
             return new Move(up1, pile);
-          if(up2 && !up2.inPlace && up2.isLast && !up2.parentNode.isStock)
+          if(up2 && !up2.inPlace && up2.isLast && !up2.pile.isStock)
             return new Move(up2, pile);
         } else if(shouldFillEmpty && !empty) {
           empty = pile;
@@ -109,7 +109,7 @@ Games.mod3 = {
       var bs = this.bases[r];
       for(var i = 0; i != 8; i++) {
         var card = bs[i];
-        if(!card.parentNode.isStock && card.isLast && !card.inPlace)
+        if(!card.pile.isStock && card.isLast && !card.inPlace)
           return new Move(card, empty);
       }
     }

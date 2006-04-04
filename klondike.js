@@ -20,7 +20,7 @@ const KlondikeBase = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.parentNode.isWaste) {
+      if(card.previousSibling || card.pile.isWaste) {
         var pile = this.firstEmptyPile;
         if(pile) this.addHint(card, pile);
       }

@@ -22,10 +22,10 @@ var FreeCellGame = {
   },
 
   getBestActionFor: function(card) {
-    if(!card.parentNode.mayTakeCard(card)) return null;
+    if(!card.pile.mayTakeCard(card)) return null;
     var p = this.getBestDestinationFor(card);
     if(!p) return null;
-    var src = card.parentNode.source;
+    var src = card.pile.source;
     return card.isLast ? new Move(card, p)
         : new FreeCellMoveAction(card, src, p, this.emptyCells, this.getEmptyPiles(p));
   },
@@ -117,7 +117,7 @@ const FreeCellMover = {
 
   // construct the queue of single-card steps for a move and do the first step
   move: function(card, target, cells, spaces) {
-    const sibs = card.parentNode.childNodes; // sibling nodes
+    const sibs = card.pile.childNodes; // sibling nodes
     const group = cells.length + 1;
     const numSpaces = spaces.length;
     for(var fst = sibs.length; sibs[--fst]!=card;); // get index of |card| within |sibs|

@@ -19,7 +19,7 @@ const GolfBase = {
 
   getBestActionFor: function(card) {
     const f = this.foundation;
-    return card.parentNode.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;
+    return card.pile.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;
   },
 
   isWon: function() {

@@ -137,9 +137,9 @@ Games.divorce = {
   autoplay: function() {
     const ps = this.piles, num = ps.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
-      var p = ps[i], n = p.childNodes.length - 13;
+      var p = ps[i], n = p.cards.length - 13;
       if(n < 0) continue;
-      var c = p.childNodes[n];
+      var c = p.cards[n];
       if(p.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
     }
     return null;

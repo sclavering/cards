@@ -610,7 +610,7 @@ var BaseCardGame = {
   },
 
   getLowestMovableCard: function(pile) {
-    const cs = pile.getCards();
+    const cs = pile.cards;
     if(!cs.length) return null;
     for(var i = cs.length - 1; i > 0 && this.getLowestMovableCard_helper(cs[i], cs[i-1]); --i);
     return cs[i];

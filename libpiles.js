@@ -21,7 +21,7 @@ const Pile = {
   isPile: false,
 
   // will eventually return a real array, and not depend on the DOM
-  getCards: function() {
+  get cards() {
     return this.childNodes;
   },
   get hasCards() { return this.hasChildNodes(); },
@@ -110,7 +110,7 @@ const BasicStock = {
   },
 
   get counterStart() {
-    return this.childNodes.length;
+    return this.cards.length;
   }
 };
 
@@ -148,7 +148,7 @@ const StockDealToPiles = {
     return this.hasCards ? new DealToPiles(Game.piles) : null;
   },
   get counterStart() {
-    return Math.ceil(this.childNodes.length / Game.piles.length);
+    return Math.ceil(this.cards.length / Game.piles.length);
   }
 };
 
@@ -395,7 +395,7 @@ const PileOnPile = {
     if(last && last.number!=card.number) return false;
     var num = 1;
     while((card = card.nextSibling)) ++num;
-    return (this.childNodes.length + num) <= 4;
+    return (this.cards.length + num) <= 4;
   }
 };
 
@@ -540,7 +540,7 @@ const SpiderFoundation = {
   // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
   // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
   mayAddCard: function(card) {
-    const sibs = card.pile.childNodes, i = sibs.length - 13;
+    const sibs = card.pile.cards, i = sibs.length - 13;
     if(i < 0 || sibs[i]!=card) return false;
     const suit = card.suit; var num;
     do { num = card.number; card = card.nextSibling; }
@@ -611,7 +611,7 @@ const UnionSquareFoundation = {
 
   mayAddCard: function(card) {
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    const last = this.lastChild, pos = this.childNodes.length;
+    const last = this.lastChild, pos = this.cards.length;
     if(last.suit != card.suit) return false;
     if(pos < 13) return last.upNumber==card.number;
     if(pos > 13) return last.number==card.upNumber;

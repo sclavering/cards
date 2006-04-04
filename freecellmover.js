@@ -117,7 +117,7 @@ const FreeCellMover = {
 
   // construct the queue of single-card steps for a move and do the first step
   move: function(card, target, cells, spaces) {
-    const sibs = card.pile.childNodes; // sibling nodes
+    const sibs = card.pile.cards;
     const group = cells.length + 1;
     const numSpaces = spaces.length;
     for(var fst = sibs.length; sibs[--fst]!=card;); // get index of |card| within |sibs|

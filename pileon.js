@@ -17,7 +17,7 @@ Games.pileon = {
   isWon: function() {
     const ps = this.piles;
     for(var i = 0; i != 15; ++i) {
-      var p = ps[i], cs = p.childNodes;
+      var p = ps[i], cs = p.cards;
       if(!cs.length) continue;
       if(cs.length!=4) return false;
       var num = cs[0].number;

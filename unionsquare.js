@@ -40,7 +40,7 @@ Games.unionsquare = {
     if(twinp.isFoundation) {
       if(card.isKing) return twinp;
       // >, not >=, or it'd allow Q,K,Q on foundations
-      return twinp.childNodes.length>13 && twinp.lastChild.number==card.upNumber ? twinp : null;
+      return twinp.cards.length > 13 && twinp.lastChild.number == card.upNumber ? twinp : null;
     }
     // can now assume twin is not on foundation
     if(card.isAce) return this.firstEmptyFoundation;
@@ -55,7 +55,7 @@ Games.unionsquare = {
   autoplay: function() {
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
-      var f = fs[i], len = f.childNodes.length, last = f.lastChild;
+      var f = fs[i], len = f.cards.length, last = f.lastChild;
       if(len<12 || len==26) continue;
       var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);

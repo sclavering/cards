@@ -41,11 +41,11 @@ RefillStock.prototype = {
     this.wasteOldNextOffsetMultiplier = w.nextOffsetMultiplier || 0; // draw3 hack
     while(w.hasCards) s.undealCardFrom(w);
     w.nextOffsetMultiplier = 0; // draw3 hack    
-    s.counter = s.childNodes.length;
+    s.counter = s.cards.length;
   },
   undo: function() {
     const s = Game.stock, w = Game.waste;
-    w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.childNodes.length; // draw3 hack
+    w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.cards.length; // draw3 hack
     while(s.hasCards) s.dealCardTo(w);
     s.counter = 0;
   }
@@ -59,7 +59,7 @@ Deal3Action.prototype = {
   perform: function() {
     const s = Game.stock, w = Game.waste;
     this.numPacked = w.packCards();
-    const num = this.numMoved = Math.min(s.childNodes.length, 3);
+    const num = this.numMoved = Math.min(s.cards.length, 3);
     for(var i = 0; i != num; ++i) s.dealCardTo(w);
     s.counter -= num;
   },

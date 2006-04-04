@@ -1,9 +1,12 @@
 Games.regiment = {
   __proto__: BaseCardGame,
 
-  layoutTemplate: "v[1f1f1f1f2f1f1f1f1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
+  aceFoundationType: RegimentAceFoundation,
+  kingFoundationType: RegimentKingFoundation,
+
   dealTemplate: "P 0,1; R 10,1",
-  pileType: Pile, // xxx ew!
+  pileType: RegimentPile,
   pileLayout: Layout,
 
   cards: 2,
@@ -11,8 +14,8 @@ Games.regiment = {
   init: function() {
     const cs = this.cards = makeDecks(2);
     const fs = this.foundations, ps = this.piles, rs = this.reserves;
-    const afs = this.aceFoundations = fs.slice(0,4);
-    const kfs = this.kingFoundations = fs.slice(4,8);
+    this.aceFoundations = fs.slice(0,4);
+    this.kingFoundations = fs.slice(4,8);
 
     for(var i = 0; i != 8; i++) {
       rs[i].up = ps[i];
@@ -20,63 +23,14 @@ Games.regiment = {
       rs[i].col = i;
     }
 
-    for(i = 0; i != 4; i++) {
-      afs[i].mayAddCard = this.mayAddCardToAceFoundation;
-      kfs[i].mayAddCard = this.mayAddCardToKingFoundation;
-    }
-
     for(i = 0; i != 16; i++) {
       var p = ps[i], col = p.col = i % 8;
       p.reserve = rs[col];
-      p.isPile = true;
-      p.mayTakeCard = this.mayTakeCardFromPile;
-      p.mayAddCard = this.mayAddCardToPile;
       p.following = ps.slice(i+1).concat(ps.slice(0, i));
     }
 
-    const acepos = [0, 13, 26, 39, 52, 65, 78, 91];
-    const as = this.aces = new Array(8);
-    const ks = this.kings = new Array(8);
-    for(i = 0; i != 8; i++) as[i] = cs[acepos[i]], ks[i] = cs[acepos[i]+12];
-  },
-
-  mayTakeCardFromPile: mayTakeSingleCard,
-
-  mayAddCardToAceFoundation: function(card) {
-    var last = this.lastChild, twin = card.twin;
-    // must not start a second ace foundation for a suit
-    if(card.isAce) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
-    return last && card.number==last.upNumber && card.suit==last.suit;
-  },
-
-  mayAddCardToKingFoundation: function(card) {
-    var last = this.lastChild, twin = card.twin;
-    if(card.isKing) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
-    return last && last.number==card.upNumber && card.suit==last.suit;
-  },
-
-  mayAddCardToPile: function(card) {
-    // piles are built up or down (or both) within suit
-    var l = this.lastChild;
-    if(l) return card.suit==l.suit && (l.number==card.upNumber || card.number==l.upNumber);
-
-    // empty piles must be filled from the closest reserve pile
-    var source = card.pile.source;
-    if(!source.isReserve) return false;
-
-    var reserve = this.reserve;
-    if(reserve==source) return true;
-
-    if(reserve.hasCards) return false;
-
-    var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasCards && prev!=source) prev = prev.prev, prevDist++;
-    var next = reserve.next, nextDist = 1;
-    while(next && !next.hasCards && next!=source) next = next.next, nextDist++;
-
-    // if trying to move from a reserve to the right
-    if(source.col > this.col) return next==source && (!prev || prevDist>=nextDist);
-    return prev==source && (!next || nextDist>=prevDist);
+    this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
+    this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
   },
 
   getHints: function() {

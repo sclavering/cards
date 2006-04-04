@@ -91,7 +91,7 @@ function renumberCards(cards, num) {
 // pass number==14 for a "high" Ace
 function makeCard(number, suit) {
   const card = document.createElement("image");
-  for(var i in cardProto) card[i] = cardProto[i];
+  extendObj(card, cardProto, true);
   card.colour = [,BLACK, RED, RED, BLACK][suit];
   card.altcolour = card.colour==RED ? BLACK : RED;
   card.suit = suit;

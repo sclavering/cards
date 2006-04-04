@@ -1,6 +1,17 @@
 // function for use on Arrays.  this used to be a getter function to hide it from for..in loops, but that does not work anymore in gecko 1.8x
 function flattenOnce(a) { return a.concat.apply([], a); }
 
+function extendObj(obj, stuffToAdd, allowReplacement) {
+  for(var m in stuffToAdd) {
+    if(!allowReplacement && (m in obj)) throw "extendObj: trying to replace an existing property";
+    var getter = stuffToAdd.__lookupGetter__(m);
+    if(getter) obj.__defineGetter__(m, getter);
+    else obj[m] = stuffToAdd[m];
+  }
+}
+
+
+
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
 var gStrings = []; // the contents of the stringbundle

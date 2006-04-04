@@ -175,7 +175,20 @@ var BaseCardGame = {
         case "r":
         case "w":
         case "s":
-          box.appendChild(this.__makePile(ch));
+          var type = {p:"pile", f:"foundation", c:"cell", r:"reserve", w:"waste", s:"stock"}[ch];
+          var obj1 = this[type + "Type"]; // e.g. this.pileType
+          var obj2 = this[type + "Layout"]; // e.g. this.pileLayout
+          var arry = this.pilesByType[ch];
+          box.appendChild(this.__makePile(type, obj1, obj2, arry));
+          break;
+      // xxx kill these later
+        case "a": // an acefoundation
+          var obj1 = this.aceFoundationType, obj2 = this.foundationLayout, arry = this.pilesByType["f"];
+          box.appendChild(this.__makePile("foundation", obj1, obj2, arry));
+          break;
+        case "k":
+          var obj1 = this.kingFoundationType, obj2 = this.foundationLayout, arry = this.pilesByType["f"];
+          box.appendChild(this.__makePile("foundation", obj1, obj2, arry));
           break;
       // add a label (always for the stock, at present)
         case "l":
@@ -214,12 +227,7 @@ var BaseCardGame = {
     if(box != container) throw "BaseCardGame._buildLayout: layout had unclosed box";
   },
 
-  __makePile: function(ch) {
-    const type = {p:"pile", f:"foundation", c:"cell", r:"reserve", w:"waste", s:"stock"}[ch];
-    const obj1 = this[type + "Type"]; // e.g. this.pileType
-    const obj2 = this[type + "Layout"]; // e.g. this.pileLayout
-    const arry = this.pilesByType[ch];
-    
+  __makePile: function(type, obj1, obj2, arry) {
     const p = createPile(type, obj1, obj2);
     this.allpiles.push(p);
     const len = arry ? arry.length : 0;

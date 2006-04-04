@@ -4,18 +4,8 @@ function createPile(type, impl, layout) {
 
   const p = document.createElement(type);
   p.offset = 0; // why?
-  for(var m in impl) {
-    var getter = impl.__lookupGetter__(m);
-    if(getter) p.__defineGetter__(m, getter);
-    else p[m] = impl[m];
-  }
-  // add any methods+getters not provided by |impl|
-  for(m in layout) {
-    if(m in impl) throw "createPile: layout has property '" + m + "' which was already provided by impl";
-    getter = layout.__lookupGetter__(m);
-    if(getter) p.__defineGetter__(m, getter);
-    else p[m] = layout[m];
-  }
+  extendObj(p, impl, true);
+  extendObj(p, layout, false);
   p.source = p;
   return p;
 }
@@ -409,6 +399,38 @@ const PileOnPile = {
   }
 };
 
+const RegimentPile = {
+  __proto__: Pile,
+  isPile: true,
+  reserve: null,
+
+  mayTakeCard: mayTakeSingleCard,
+
+  mayAddCard: function(card) {
+    // piles are built up or down (or both) within suit
+    const l = this.lastChild;
+    if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
+
+    // empty piles must be filled from the closest reserve pile
+    const source = card.pile.source;
+    if(!source.isReserve) return false;
+
+    const reserve = this.reserve;
+    if(reserve == source) return true;
+
+    if(reserve.hasCards) return false;
+
+    var prev = reserve.prev, prevDist = 1;
+    while(prev && !prev.hasCards && prev!=source) prev = prev.prev, prevDist++;
+    var next = reserve.next, nextDist = 1;
+    while(next && !next.hasCards && next!=source) next = next.next, nextDist++;
+
+    // if trying to move from a reserve to the right
+    if(source.col > this.col) return next==source && (!prev || prevDist>=nextDist);
+    return prev==source && (!next || nextDist>=prevDist);
+  }
+};
+
 const SpiderPile = {
   __proto__: Pile,
   isPile: true,
@@ -527,7 +549,6 @@ const SpiderFoundation = {
   }
 };
 
-
 const AcesUpFoundation = {
   __proto__: NoWorryingBackFoundation,
   mayAddCard: function(card) {
@@ -555,17 +576,31 @@ const DoubleSolFoundation = {
 };
 
 const Mod3Foundation = {
-  __proto__: Pile,
-
-  isFoundation: true,
-
-  mayTakeCard: ifLast,
-
+  __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
     if(card.pile == this) return false;
     const last = this.lastChild;
     return last ? last.inPlace && (card.down==last || card.twin.down==last)
                 : !card.down && card.row==this.row;
+  }
+};
+
+const RegimentAceFoundation = {
+  __proto__: WorryingBackFoundation,
+  mayAddCard: function(card) {
+    const last = this.lastChild, twin = card.twin;
+    // must not start a second ace foundation for a suit
+    if(card.isAce) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
+    return last && card.number == last.upNumber && card.suit == last.suit;
+  }
+};
+
+const RegimentKingFoundation = {
+  __proto__: WorryingBackFoundation,
+  mayAddCard: function(card) {
+    const last = this.lastChild, twin = card.twin;
+    if(card.isKing) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
+    return last && last.number == card.upNumber && card.suit == last.suit;
   }
 };
 

@@ -24,7 +24,7 @@ autoplay
   "commonish 2deck"
 */
 
-var Rules = {
+const Rules = {
   getLowestMovableCard_helper: {
     "descending, in suit": function(card, prv) {
       return prv.faceUp && card.upNumber == prv.number && card.suit == prv.suit;

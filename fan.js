@@ -33,7 +33,7 @@ Games.fan = {
     const ps = this.piles, len = ps.length;
 
     for(var i = 0; i != this.piles.length; i++) {
-      var card = this.piles[i].lastChild;
+      var card = this.piles[i].lastCard;
       if(!card) continue;
       var up = card.up;
       if(up) { // not a King

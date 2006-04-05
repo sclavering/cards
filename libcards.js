@@ -60,7 +60,7 @@ function makeCards(numbers, suits, repeat) {
     for(var s = 0; s != numSuits; s++) {
       cards.push(cs = new Array(numNums));
       for(var i = 0; i != numNums; i++) {
-        cs[i] = makeCard(numbers[i], suits[s]);
+        cs[i] = new Card(numbers[i], suits[s]);
         if(i != 0) cs[i-1].up = cs[i], cs[i].down = cs[i-1];
       }
     }
@@ -89,19 +89,16 @@ function renumberCards(cards, num) {
 }
 
 // pass number==14 for a "high" Ace
-function makeCard(number, suit) {
-  const card = document.createElement("image");
-  extendObj(card, cardProto, true);
-  card.colour = [,BLACK, RED, RED, BLACK][suit];
-  card.altcolour = card.colour==RED ? BLACK : RED;
-  card.suit = suit;
-  card.suitstr = [,"S", "H", "D", "C"][suit];
-  card.displayNum = number==14 ? 1 : number
-  card.displayStr = card.suitstr + card.displayNum;
-  card.renumber(number);
-  return card;
+function Card(number, suit) {
+  this.colour = [,BLACK, RED, RED, BLACK][suit];
+  this.altcolour = this.colour == RED ? BLACK : RED;
+  this.suit = suit;
+  this.suitstr = [,"S", "H", "D", "C"][suit];
+  this.displayNum = number == 14 ? 1 : number
+  this.displayStr = this.suitstr + this.displayNum;
+  this.renumber(number);
 }
-const cardProto = {
+Card.prototype = {
   isCard: true,
   isAnyPile: false,
 
@@ -116,6 +113,16 @@ const cardProto = {
   pile: null, // the pile the card is in
   index: -1,  // the position within the pile
 
+  // backward compatibility hacks (from the days of cards being <image> elements)
+  get nextSibling() {
+    const cs = this.pile.cards, i = this.index;
+    return i != cs.length - 1 ? cs[i + 1] : null;
+  },
+  get previousSibling() {
+    const cs = this.pile.cards, i = this.index;
+    return i != 0 ? cs[i - 1] : null;
+  },
+
   // to be replaced by a non-DOM version during model/view split
   get isLast() { return !this.nextSibling; },
 
@@ -129,7 +136,9 @@ const cardProto = {
     this.isQueen = number == 12;
   },
 
-  updateView: function cardView_update() {
-    this.className = "card " + (this.faceUp ? this.displayStr : "facedown");
+  // xxx temporary hack
+  updateView: function() {
+    const p = this.pile;
+    if(p) p.view.update(p, this.index);
   }
-}
+};

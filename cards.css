@@ -51,3 +51,6 @@ toolbarbutton { margin-left: 10px; }
 .pyramid-pile {
   background-image: none;
 }
+
+/* for card <image>s */
+.hidden { display: none }

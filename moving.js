@@ -17,78 +17,79 @@ function toggleAnimation(menuitem) {
 const kAnimationDelay = 30;
 
 function moveCards1(firstCard, target) {
-    var parent = firstCard.parentNode, source = parent.source;
-    var cards = gFloatingPile;
+  const card = firstCard;
+  const pile = card.pile, source = pile.source;
+  const pview = pile.view, pbox = pview.boxObject;
+  const tview = target.view, tbox = tview.boxObject;
 
-    // initial coords
-    var sx = firstCard.boxObject.x - gGameStackLeft;
-    var sy = firstCard.boxObject.y - gGameStackTop;
-    // final coords
-    var tx = target.boxObject.x - gGameStackLeft + target.nextCardLeft;
-    var ty = target.boxObject.y - gGameStackTop + target.nextCardTop;
-    // change in coords
-    var dx = tx - sx;
-    var dy = ty - sy;
+  const px = pview.getCardX(card);
+  const py = pview.getCardY(card);
+  // initial coords
+  const sx = pbox.x + px - gGameStackLeft;
+  const sy = pbox.y + py - gGameStackTop;
+  // final coords
+  const tx = tbox.x - gGameStackLeft + tview.getNextCardX(target);
+  const ty = tbox.y - gGameStackTop + tview.getNextCardY(target);
+  // change in coords
+  const dx = tx - sx;
+  const dy = ty - sy;
 
-    // we'd like to move 55px diagonally per step, but have to settle for the closest distance that
-    // allows a *whole number* of steps, each of the same size
-    var steps = Math.round(Math.sqrt(dx*dx + dy*dy) / 55);
-//    var steps = (dx && dy) ? Math.round(Math.sqrt(dx*dx + dy*dy)) : (dx || dy);
+  // Move 55px diagonally per step, adjusted to whatever value leads to a whole number of steps
+  var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
+  if(steps == 0) {
+    if(pile == gFloatingPile) gFloatingPileNeedsHiding = true;
+    target.addCards(card);
+    done(source);
+    return;
+  }
 
-    if(steps==0) {
-      if(parent==gFloatingPile) gFloatingPileNeedsHiding = true;
-      target.addCards(firstCard);
-      done(source);
-      return;
-    }
+  const stepX = dx / steps;
+  const stepY = dy / steps;
+  steps--; // so it's 0 when the move is complete
 
-    const stepX = dx / steps;
-    const stepY = dy / steps;
-    steps--; // so it's 0 when the move is complete
+  if(pile != gFloatingPile) {
+    gFloatingPile.left = gFloatingPile._left = sx;
+    gFloatingPile.top = gFloatingPile._top = sy;
+    gFloatingPile.addCards(card);
+  }
 
-    if(parent!=gFloatingPile) {
-      cards.left = cards._left = sx;
-      cards.top = cards._top = sy;
-      cards.addCards(firstCard);
-    }
+  var interval = null;
 
-    var interval = null;
+  // We want the cards to be displayed over their destination while the transfer happens.  Without
+  // this function (called via a timer) that doesn't happen.
+  function animDone() {
+    target.addCards(card);
+    gFloatingPileNeedsHiding = true;
+    done(source);
+  };
 
-    // We want the cards to be displayed over their destination while the transfer happens.  Without
-    // this function (called via a timer) that doesn't happen.
-    function animDone() {
-      target.addCards(firstCard);
-      gFloatingPileNeedsHiding = true;
-      done(source);
-    };
-
-    function step() {
-      if(steps) {
-        cards.left = cards._left += stepX;
-        cards.top = cards._top += stepY;
-        steps--;
-      } else {
-        clearInterval(interval);
-        cards.left = cards._left = tx;
-        cards.top = cards._top = ty;
-        const timeout = setTimeout(animDone, 0);
-        interruptAction = function() {
-          clearTimeout(timeout);
-          target.addCards(firstCard);
-          gFloatingPileNeedsHiding = true;
-        };
-      }
-    };
-
-    function interrupt() {
+  function step() {
+    if(steps) {
+      gFloatingPile.left = gFloatingPile._left += stepX;
+      gFloatingPile.top = gFloatingPile._top += stepY;
+      steps--;
+    } else {
       clearInterval(interval);
-      target.addCards(firstCard);
-      gFloatingPileNeedsHiding = true;
-      return source;
-    };
+      gFloatingPile.left = gFloatingPile._left = tx;
+      gFloatingPile.top = gFloatingPile._top = ty;
+      const timeout = setTimeout(animDone, 0);
+      interruptAction = function() {
+        clearTimeout(timeout);
+        target.addCards(card);
+        gFloatingPileNeedsHiding = true;
+      };
+    }
+  };
 
-    interval = setInterval(step, kAnimationDelay);
-    interruptAction = interrupt;
+  function interrupt() {
+    clearInterval(interval);
+    target.addCards(card);
+    gFloatingPileNeedsHiding = true;
+    return source;
+  };
+
+  interval = setInterval(step, kAnimationDelay);
+  interruptAction = interrupt;
 }
 
 

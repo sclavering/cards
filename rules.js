@@ -55,7 +55,7 @@ const Rules = {
       const ps = card.pile.surrounding, num = ps.length;
       var maybe = null, empty = null;
       for(var i = 0; i != num; i++) {
-        var p = ps[i], last = p.lastChild;
+        var p = ps[i], last = p.lastCard;
         if(!last) {
           if(!empty) empty = p;
           continue;
@@ -119,7 +119,7 @@ const Rules = {
       for(var i = 0; i != 4; i++) {
         var f = fs[i];
         if(f.hasCards) {
-          var c = f.lastChild.up;
+          var c = f.lastCard.up;
           if(c && c.faceUp && c.isLast && c.number <= maxNums[c.suit])
             return new Move(c, f);
         } else if(!triedToFillEmpty) {
@@ -142,7 +142,7 @@ const Rules = {
 
       var lookedForAces = false;
       for(var i = 0; i != 8; i++) {
-        var f = fs[i], last = f.lastChild;
+        var f = fs[i], last = f.lastCard;
         if(last) {
           if(last.isKing) continue;
           var c = last.up, cp = c.pile;
@@ -175,7 +175,7 @@ const Rules = {
       const colournums = [1000, 1000]; // colour -> smallest num of that colour on fs
       const colourcounts = [0, 0]; // num of foundation of a given colour
       for(var i = 0; i != 4; ++i) {
-        var c = fs[i].lastChild;
+        var c = fs[i].lastCard;
         if(!c) continue;
         var col = c.colour, num = c.number;
         colourcounts[col]++;
@@ -197,7 +197,7 @@ const Rules = {
       const fs = this.foundations;
       const nums = [20,20], counts = [0,0]; // colour -> foo maps
       for(var i = 0; i != 8; ++i) {
-        var c = fs[i].lastChild;
+        var c = fs[i].lastCard;
         if(!c) continue;
         var colour = c.colour, num = c.number;
         counts[colour]++;

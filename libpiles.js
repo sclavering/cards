@@ -3,10 +3,13 @@ function createPile(type, impl, layout) {
   if(!layout) throw "createPile called with layout=" + layout;
 
   const p = document.createElement(type);
-  p.offset = 0; // why?
+  p.cards = [];
   extendObj(p, impl, true);
-  extendObj(p, layout, false);
+  p.offset = 0; // why?
+  extendObj(p, layout, true);
   p.source = p;
+  p.view = p; // for the moment!
+  if(layout.initLayout) p.initLayout();
   return p;
 }
 
@@ -20,11 +23,13 @@ const Pile = {
   isWaste: false,
   isPile: false,
 
-  // will eventually return a real array, and not depend on the DOM
-  get cards() {
-    return this.childNodes;
-  },
-  get hasCards() { return this.hasChildNodes(); },
+  // cards: [], // actually happens in createPile, so that each pile has a different array
+  get hasCards() { return this.cards.length != 0; },
+
+  // lots of code used firstChild/lastChild -- these are for compatibility.
+  // may be removed, long term
+  get firstCard() { const cs = this.cards; return cs.length ? cs[0] : null; },
+  get lastCard() { const cs = this.cards, l = cs.length; return l ? cs[l - 1] : null; },
 
   // the pile itself, except for gFloatingPile, where it's a pointer to the pile from which the
   // cards originally came.
@@ -53,10 +58,30 @@ const Pile = {
     return ps;
   },
 
-  // future replacement for the nasty DOM-based addCards() (which comes from Layout, or a subtype)
   addCardsFromArray: function(cards) {
-//    dump("addCardsFromArray: (" + cards.length+") " +cards+"\n");
-    for(var i = 0; i != cards.length; ++i) this.addCard(cards[i]);
+    const cs = this.cards, num = cards.length, j0 = cs.length;
+    for(var i = 0, j = j0; i != num; ++i, ++j) {
+      var c = cards[i];
+      c.index = j;
+      c.pile = this;
+      cs[j] = c;
+    }
+    this.view.update(this, j0);
+  },
+
+  // arg is a card within another pile's .cards array.
+  // should add it and all cards with higher index
+  addCards: function(card) {
+    const p = card.pile, pcs = p.cards, ix = card.index;
+    this.addCardsFromArray(pcs.slice(ix));
+    p.cardsRemoved(ix);
+  },
+
+  // notification that all cards from index onward have been removed
+  cardsRemoved: function(index) {
+    dump("cards removed from ix: "+index+ "("+this.cards[index]+")\n");
+    this.cards = this.cards.slice(0, index);
+    this.view.update(this, index);
   }
 };
 
@@ -96,16 +121,14 @@ const BasicStock = {
   mayAddCard: no,
 
   dealCardTo: function(destination) {
-    const card = this.lastChild;
+    const card = this.lastCard;
     card.faceUp = true;
-    card.updateView();
     destination.addCards(card);
   },
 
   undealCardFrom: function(source) {
-    const card = source.lastChild;
+    const card = source.lastCard;
     card.faceUp = false;
-    card.updateView();
     this.addCards(card);
   },
 
@@ -222,12 +245,12 @@ function mayTakeRunningFlush(card) {
 }
 
 function mayAddToGypsyPile(card) {
-  const last = this.lastChild;
+  const last = this.lastCard;
   return !last || (last.colour!=card.colour && last.number==card.upNumber);
 }
 
 function mayAddToKlondikePile(card) {
-  const last = this.lastChild;
+  const last = this.lastCard;
   return last ? last.number==card.upNumber && last.colour!=card.colour : card.isKing;
 }
 
@@ -236,15 +259,15 @@ function mayAddSingleCardToEmpty(card) {
 }
 
 function mayAddOntoDotUpOrEmpty(card) {
-  return !this.hasCards || this.lastChild==card.up;
+  return !this.hasCards || this.lastCard == card.up;
 }
 
 function mayAddOntoUpNumberOrEmpty(card) {
-  return !this.hasCards || this.lastChild.number==card.upNumber;
+  return !this.hasCards || this.lastCard.number == card.upNumber;
 }
 
 function mayAddOntoDotUpOrPutKingInSpace(card) {
-  return this.hasCards ? card.up == this.lastChild : card.isKing;
+  return this.hasCards ? card.up == this.lastCard : card.isKing;
 }
 
 
@@ -284,7 +307,7 @@ const FortyThievesPile = {
   mayTakeCard: mayTakeRunningFlush,
 
   mayAddCard: function(card) {
-    var last = this.lastChild;
+    var last = this.lastCard;
     if(last && (card.suit!=last.suit || card.upNumber!=last.number)) return false;
 
     // check there are enough spaces to perform the move
@@ -309,7 +332,7 @@ const FreeCellPile = {
   mayTakeCard: mayTakeFromFreeCellPile,
 
   mayAddCard: function(card) {
-    var last = this.lastChild;
+    var last = this.lastCard;
     if(last && (last.colour==card.colour || last.number!=card.upNumber)) return false
 
     // check there are enough cells+spaces to perform the move
@@ -353,7 +376,7 @@ const MazePile = {
   mayTakeCard: yes,
   mayAddCard: function(card) {
     if(this.hasCards) return false;
-    var prev = this.prev.lastChild, next = this.next.lastChild;
+    var prev = this.prev.lastCard, next = this.next.lastCard;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
         || (prev && prev==card.down)
@@ -391,7 +414,7 @@ const PileOnPile = {
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
   mayAddCard: function(card) {
-    const last = this.lastChild;
+    const last = this.lastCard;
     if(last && last.number!=card.number) return false;
     var num = 1;
     while((card = card.nextSibling)) ++num;
@@ -408,7 +431,7 @@ const RegimentPile = {
 
   mayAddCard: function(card) {
     // piles are built up or down (or both) within suit
-    const l = this.lastChild;
+    const l = this.lastCard;
     if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
 
     // empty piles must be filled from the closest reserve pile
@@ -443,7 +466,7 @@ const TowersPile = {
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
-    var last = this.lastChild;
+    var last = this.lastCard;
     if(last ? last != card.up : !card.isKing) return false;
     // check if there are enough cells to perform the move
     var toMove = 0;
@@ -470,12 +493,14 @@ const UnionSquarePile = {
 
   // Piles built up or down in suit, but not both ways at once.
   mayAddCard: function(card) {
-    if(!this.hasCards) return true;
-    var last = this.lastChild;
+    const cs = this.cards, num = cs.length;
+    if(!lastCard) return true;
+    const last = cs[num - 1];
     if(last.suit != card.suit) return false;
-    if(this.direction==1) return last.upNumber==card.number;
-    if(this.direction==-1) return last.number==card.upNumber;
-    return last.number==card.upNumber || last.upNumber==card.number;
+    if(num == 1) return last.number == card.upNumber || last.upNumber == card.number;
+    return cs[0].number == cs[1].upNumber // going down?
+        ? last.number == card.upNumber
+        : last.upNumber == card.number;
   }
 };
 
@@ -491,14 +516,14 @@ const WhiteheadPile = {
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
-    const lst = this.lastChild;
+    const lst = this.lastCard;
     return !lst || lst==card.up || lst==card.on;
   }
 };
 
 
 function mayAddCardToKlondikeFoundation(card) {
-  const last = this.lastChild;
+  const last = this.lastCard;
   return card.isLast && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
 }
 
@@ -529,7 +554,7 @@ const GolfFoundation = {
   __proto__: NoWorryingBackFoundation,
 
   mayAddCard: function(card) {
-    const l = this.lastChild;
+    const l = this.lastCard;
     return l.number==card.upNumber || card.number==l.upNumber;
   }
 };
@@ -554,7 +579,7 @@ const AcesUpFoundation = {
   mayAddCard: function(card) {
     const ps = Game.piles;
     for(var i = 0; i != 4; i++) {
-      var top = ps[i].lastChild;
+      var top = ps[i].lastCard;
       if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
       if(top && card.suit==top.suit && card.number<top.number) return true;
     }
@@ -570,7 +595,7 @@ const DoubleSolFoundation = {
   mayAddCard: function(card) {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    var last = this.lastChild, prv = last.previousSibling;
+    var last = this.lastCard, prv = last.previousSibling;
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
   }
 };
@@ -579,7 +604,7 @@ const Mod3Foundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
     if(card.pile == this) return false;
-    const last = this.lastChild;
+    const last = this.lastCard;
     return last ? last.inPlace && (card.down==last || card.twin.down==last)
                 : !card.down && card.row==this.row;
   }
@@ -588,7 +613,7 @@ const Mod3Foundation = {
 const RegimentAceFoundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
-    const last = this.lastChild, twin = card.twin;
+    const last = this.lastCard, twin = card.twin;
     // must not start a second ace foundation for a suit
     if(card.isAce) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
     return last && card.number == last.upNumber && card.suit == last.suit;
@@ -598,7 +623,7 @@ const RegimentAceFoundation = {
 const RegimentKingFoundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
-    const last = this.lastChild, twin = card.twin;
+    const last = this.lastCard, twin = card.twin;
     if(card.isKing) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
     return last && last.number == card.upNumber && card.suit == last.suit;
   }
@@ -611,7 +636,7 @@ const UnionSquareFoundation = {
 
   mayAddCard: function(card) {
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    const last = this.lastChild, pos = this.cards.length;
+    const last = this.lastCard, pos = this.cards.length;
     if(last.suit != card.suit) return false;
     if(pos < 13) return last.upNumber==card.number;
     if(pos > 13) return last.number==card.upNumber;

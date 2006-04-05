@@ -12,7 +12,7 @@ const KlondikeBase = {
   },
 
   getHints: function() {
-    this.getHintsFor(this.waste.lastChild);
+    this.getHintsFor(this.waste.lastCard);
     for(var i = 0; i != 7; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
 

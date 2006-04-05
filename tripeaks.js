@@ -35,7 +35,7 @@ Games.tripeaks = {
   },
 
   getBestActionFor: function(card) {
-    const f = Game.foundation, c = f.lastChild;
+    const f = Game.foundation, c = f.lastCard;
     return card.faceUp && (c.number==card.upNumber || c.upNumber==card.number) && new Move(card, f);
   },
 
@@ -44,8 +44,8 @@ Games.tripeaks = {
   getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
     const res = [];
     const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;
-    if(lp && !lp.leftChild.hasCards) res.push(lp.firstChild);
-    if(rp && !rp.rightChild.hasCards) res.push(rp.firstChild);
+    if(lp && !lp.leftChild.hasCards) res.push(lp.firstCard);
+    if(rp && !rp.rightChild.hasCards) res.push(rp.firstCard);
     return res;
   },
 

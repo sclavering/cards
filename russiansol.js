@@ -16,7 +16,7 @@ Games.russiansol = {
     for(var i = 0; i != 7; i++) {
       var pile = this.piles[i];
       if(!pile.hasCards) continue;
-      var last = pile.lastChild, down = last.down;
+      var last = pile.lastCard, down = last.down;
       if(!down || !down.faceUp) continue;
       var downp = down.pile;
       if(downp!=pile && downp.isPile) this.addHint(down, pile);

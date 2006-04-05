@@ -38,7 +38,7 @@ const Montana = {
       var pile = this.piles[i];
       if(pile.hasCards) continue;
       if(pile.leftp) {
-        var card = pile.leftp.lastChild;
+        var card = pile.leftp.lastCard;
         if(card && card.up) this.addHint(card.up, pile);
       } else {
         for(var j = 0; j != 4; j++) {
@@ -65,10 +65,10 @@ const Montana = {
 
   isWon: function() {
     for(var i = 0; i != 4; i++) {
-      var pile = this.rowStarts[i], card = pile.lastChild, prv;
+      var pile = this.rowStarts[i], card = pile.lastCard, prv;
       if(!card || card.down) return false;
       while(pile.rightp) {
-        pile = pile.rightp; prv = card; card = pile.lastChild;
+        pile = pile.rightp; prv = card; card = pile.lastCard;
         if(prv.up!=card) return false; // this works fine even when prv is a King
       }
     }
@@ -106,7 +106,7 @@ MontanaRedealAction.prototype = {
 
       // set c to the col index at which the first out-of-place card appears, or 12 if there aren't any
       for(var c = 0; c != 12; ++c) {
-        var card = row[c].firstChild;
+        var card = row[c].firstCard;
         if(!card) break;
         if(!suit) suit = card.suit;
         if(suit != card.suit || card.number != c+2) break;
@@ -114,7 +114,7 @@ MontanaRedealAction.prototype = {
 
       // record where cards were
       for(; c != 13; c++) {
-        card = row[c].lastChild;
+        card = row[c].lastCard;
         map[r].push(card);
         // in hard games we want the null's in the array too (so that spaces are placed randomly)
         if(card || hard) cards.push(card);
@@ -130,11 +130,11 @@ MontanaRedealAction.prototype = {
     const map = this.map, rows = Game.rows;
     Game.redealsRemaining++;
 
-    // addCard() will remove node first (inherited from appendChild), so we needn't do so
+    // addCards() will remove node first (inherited from appendChild), so we needn't do so
     // map[r][0..n] maps to row[r][(13-n)..13]
     for(var r = 0; r != 4; r++) {
       var len = map[r].length, co = 13 - len;
-      for(var c = 0; c != len; c++) if(map[r][c]) rows[r][c+co].addCard(map[r][c]);
+      for(var c = 0; c != len; c++) if(map[r][c]) rows[r][c+co].addCards(map[r][c]);
     }
   },
 

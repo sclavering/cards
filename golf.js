@@ -12,7 +12,7 @@ const GolfBase = {
   getHints: function() {
     const f = this.foundation, ps = this.piles;
     for(var i = 0; i != 7; i++) {
-      var card = ps[i].lastChild;
+      var card = ps[i].lastCard;
       if(card && f.mayAddCard(card)) this.addHint(card, f);
     }
   },

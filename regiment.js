@@ -34,8 +34,8 @@ Games.regiment = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 8; i++) this.addHintsFor(this.reserves[i].lastChild);
-    for(i = 0; i != 16; i++) this.addHintsFor(this.piles[i].lastChild);
+    for(var i = 0; i != 8; i++) this.addHintsFor(this.reserves[i].lastCard);
+    for(i = 0; i != 16; i++) this.addHintsFor(this.piles[i].lastCard);
   },
 
   getBestDestinationFor: function(card) {
@@ -79,18 +79,18 @@ Games.regiment = {
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;
       if(pile.isPile && !pile.hasCards && this.reserves[pile.col].hasCards)
-        return new Move(this.reserves[pile.col].lastChild, pile);
+        return new Move(this.reserves[pile.col].lastCard, pile);
     }
 
     for(i = 0; i != 4; i++) {
-      pile = this.foundations[i], last = pile.lastChild;
+      pile = this.foundations[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
         card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
     for(i = 4; i != 8; i++) {
-      pile = this.foundations[i], last = pile.lastChild;
+      pile = this.foundations[i], last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
         card = last.down.pile.isFoundation ? last.twin.down : last.down;
         if(card.isLast) return new Move(card, pile);

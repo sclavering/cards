@@ -84,7 +84,7 @@ Games.pyramid = {
 
   // only used for waste and .piles
   getActionForDrop: function(card) {
-    const c = this.lastChild;
+    const c = this.lastCard;
     return c && card.number + c.number == 13 && this.free ? new RemovePair(card, c) : null;
   },
 

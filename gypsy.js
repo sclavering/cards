@@ -41,7 +41,7 @@ const GypsyBase = {
     const ps = this.piles;
     const nums = this.getAutoplayableNumbers();
     for(var i = 0; i != 8; i++) {
-      var last = ps[i].lastChild;
+      var last = ps[i].lastCard;
       if(!last || last.number > nums[last.suit]) continue;
       var act = this.sendToFoundations(last);
       if(act) return act;

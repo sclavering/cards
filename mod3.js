@@ -56,7 +56,7 @@ Games.mod3 = {
     for(var i = 0; i != this.allpiles.length; i++) {
       var source = this.allpiles[i];
       if(source.isStock || !source.hasCards) continue;
-      var card = source.lastChild;
+      var card = source.lastCard;
 
       var row = this.rows[card.row];
       for(var j = 0; j != 8; j++) {
@@ -90,7 +90,7 @@ Games.mod3 = {
       var shouldFillEmpty = true; // don't do so if any foudations have "junk" in them
       var empty = null; // an empty <foundation>, if we find one
       for(var c = 0; c != 8; c++) {
-        var pile = rs[r][c], last = pile.lastChild;
+        var pile = rs[r][c], last = pile.lastCard;
         // we choose not to autoplay onto a card whose twin isn't in place
         if(last) {
           if(!last.inPlace) { shouldFillEmpty = false; continue; }

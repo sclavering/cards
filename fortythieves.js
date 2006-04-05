@@ -16,7 +16,7 @@ Games.fortythieves = {
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
-    this.addHintsFor(this.waste.lastChild);
+    this.addHintsFor(this.waste.lastCard);
   },
 
   getLowestMovableCard_helper: "descending, in suit",
@@ -31,7 +31,7 @@ Games.fortythieves = {
     const nums = [,20,20,20,20]; // suit -> min number seen on fs
     const counts = [,0,0,0,0]; // suit -> num such fs
     for(var i = 0; i != 8; ++i) {
-      var c = fs[i].lastChild;
+      var c = fs[i].lastCard;
       if(!c) continue;
       var suit = c.suit, num = c.number;
       counts[suit]++;

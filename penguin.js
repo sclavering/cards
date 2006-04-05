@@ -21,9 +21,8 @@ Games.penguin = {
       var c = cards[i];
       if(!c.isAce) continue;
       cards.splice(i, 1);
-      this.foundations[f].addCard(c);
+      this.foundations[f].addCardsFromArray([c]);
       c.faceUp = true;
-      c.updateView();
       f++;
     }
 
@@ -59,7 +58,7 @@ Games.penguin = {
     // cards which are
     for(i = 0; i != 7; i++) {
       if(cs[i]) continue;
-      this.addHint(ps[i].lastChild, p);
+      this.addHint(ps[i].lastCard, p);
     }
   },
 

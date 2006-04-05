@@ -18,7 +18,7 @@ Games.doublesol = {
   },
 
   getHints: function() {
-    this.getHintsFor(this.waste.lastChild);
+    this.getHintsFor(this.waste.lastCard);
     for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
   },
   getHintsFor: function(card) {
@@ -48,7 +48,7 @@ Games.doublesol = {
     for(var i = 0; i != 4; i++) {
       var f = fs[i];
       if(f.hasCards) {
-        var last = f.lastChild, prv = last.previousSibling;
+        var last = f.lastCard, prv = last.previousSibling;
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;

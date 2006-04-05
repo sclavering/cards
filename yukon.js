@@ -10,7 +10,7 @@ const YukonBase = {
     for(var i = 0; i != len; i++) {
       var pile = ps[i];
       if(pile == card.pile) continue;
-      var current = pile.lastChild;
+      var current = pile.lastCard;
       while(current && current.faceUp) {
         if(card.number==current.upNumber && card.colour!=current.colour) {
           // |current| could be moved onto |card|.  test if it's not already
@@ -45,7 +45,7 @@ Games.yukon = {
   getHints: function() {
     // hints in Yukon are weird.  we look at the last card on each pile for targets, then find
     // cards which could be moved there. (this is because any faceUp card can be moved in Yukon)
-    for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastChild);
+    for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastCard);
   },
 
   autoplay: "commonish",
@@ -70,13 +70,13 @@ Games.sanibel = {
 
   getHints: function() {
     const ps = this.piles;
-    var card = this.waste.lastChild;
+    var card = this.waste.lastCard;
     if(card) {
       // xxx would getHintsForCard work?
       for(var i = 0; i != 10; i++)
         if(ps[i].mayAddCard(card)) this.addHint(card, ps[i]);
     }
-    for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastChild);
+    for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastCard);
   },
 
   autoplay: "commonish 2deck",

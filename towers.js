@@ -13,7 +13,7 @@ Games.towers = {
   },
 
   getHints: function() {
-    for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstChild);
+    for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstCard);
     for(i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 

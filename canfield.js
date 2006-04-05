@@ -18,14 +18,14 @@ const CanfieldBase = {
     this._dealSomeCards(this.stock, cards, [cards.length]);
 
     const cs = this.cards;
-    const num = this.foundations[0].firstChild.displayNum;
+    const num = this.foundations[0].firstCard.displayNum;
     renumberCards(cs, num);
     this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
   },
 
   getHints: function() {
-    this.addHintsFor(this.reserve.lastChild);
-    this.addHintsFor(this.waste.lastChild);
+    this.addHintsFor(this.reserve.lastCard);
+    this.addHintsFor(this.waste.lastCard);
     for(var i = 0; i != 4; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 

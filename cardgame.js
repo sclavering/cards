@@ -288,29 +288,15 @@ var BaseCardGame = {
   },
 
   _begin: function(cards) {
-    this.clearGame();
+    // Empty all piles
+    const ps = this.allpiles, num = ps.length;
+    for(var i = 0; i != num; i++) ps[i].cardsRemoved(0);
+
     this.redealsRemaining = this.redeals;
     this.deal(cards);
-    const ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; ++i) ps[i].fixLayout();
     gScoreDisplay.value = this.score = this.initialScore;
     if(this.stock) this.stock.counter = this.stock.counterStart;
   },
-
-  clearGame: function() {
-    // Remove all cards and set them all face down.  Reset piles' stacking offset.
-    var ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      while(p.hasCards) {
-        var c = p.removeChild(p.lastChild);
-        c.faceUp = false;
-        c.updateView();
-      }
-      p.fixLayout();
-    }
-  },
-
 
   // overriding versions should deal out the provided shuffled cards for a new game.
   // piles will already be empty.
@@ -352,12 +338,10 @@ var BaseCardGame = {
         var c = cards.pop();
         if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
         c.faceUp = !faceDown;
-        c.updateView();
         cs.push(c);
       }
     }
     pile.addCardsFromArray(cs);
-    pile.fixLayout();
   },
 
   // Games can override with a more interesting function if they wish to eliminate (some) impossible deals.
@@ -437,7 +421,7 @@ var BaseCardGame = {
 
   // overridden by TriPeaks
   getCardsToReveal: function(pile) {
-    const card = pile ? pile.lastChild : null;
+    const card = pile ? pile.lastCard : null;
     return card && !card.faceUp ? [card] : [];
   },
 
@@ -667,7 +651,9 @@ var BaseCardGame = {
   // === Mouse Handling =======================================
   // Games must implement mouseDown, mouseUp, mouseMove, mouseClick and mouseRightClick
 
-  _mouseNextCard: null, // set on mousedown on a movable card
+  _mouseNextCard: null, // a Card, set on mousedown on a movable card
+  _mouseNextCardX: 0,
+  _mouseNextCardY: 0,
   _mouseDownTarget: null, // always set on mousedown
   _dragInProgress: false,
   _tx: 0, // used in positioning for drag+drop
@@ -680,13 +666,18 @@ var BaseCardGame = {
     if(!t) return;
     // Ideally the second click of a double click would be retargetted at
     // gFloatingPile.source, but that's difficult because the "click" doesn't happen.
-    if(t.parentNode==gFloatingPile) return;
+    if(t.parentNode==gFloatingPile) return; // xxx model/view problem
     if(interruptAction) interrupt();
     this._mouseDownTarget = t;
+    if(!t.isCard) return;
+    const card = t.cardModel;
+    if(!card.pile.mayTakeCard(card)) return;
     this._ex0 = e.pageX;
     this._ey0 = e.pageY;
-    if(!t.isCard || !t.pile.mayTakeCard(t)) return;
-    this._mouseNextCard = t;
+    const box = t.boxObject;
+    this._mouseNextCard = card;
+    this._mouseNextCardX = box.x;
+    this._mouseNextCardY = box.y;
     gGameStack.onmousemove = this.mouseMove0;
   },
 
@@ -696,10 +687,10 @@ var BaseCardGame = {
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
+    fp.top = fp._top = self._mouseNextCardY - gGameStackTop;
+    fp.left = fp._left = self._mouseNextCardX - gGameStackLeft;
     const card = self._mouseNextCard;
-    fp.top = fp._top = card.boxObject.y - gGameStackTop;
-    fp.left = fp._left = card.boxObject.x - gGameStackLeft;
-    fp.source = card.parentNode.source;
+    fp.source = card.pile.source;
     fp.addCards(card);
     self._dragInProgress = true;
     self._tx = ex0 - fp._left;
@@ -716,13 +707,14 @@ var BaseCardGame = {
 
   endDrag: function(e) {
     this._mouseNextCard = null;
+    this._mouseNextCardBox = null;
     this._dragInProgress = false;
 
     const cbox = gFloatingPile.boxObject;
     var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
 
-    var card = gFloatingPile.firstChild;
-    var source = card.parentNode.source;
+    const card = gFloatingPile.firstCard;
+    const source = card.pile.source;
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
     for(var i = 0; i != targets.length; i++) {
@@ -750,6 +742,7 @@ var BaseCardGame = {
     source.addCards(card);
   },
 
+  // xxx model/view disaster
   mouseClick: function(e) {
     gGameStack.onmousemove = null;
     if(this._dragInProgress) {
@@ -764,7 +757,7 @@ var BaseCardGame = {
     var act = null;
     if(t.isStock) act = t.deal();
     else if(p.isStock) act = p.deal();
-    else if(t.isCard) act = Game.getBestActionFor(t);
+    else if(t.isCard) act = Game.getBestActionFor(t.cardModel);
     if(act) doo(act);
   },
 
@@ -772,10 +765,10 @@ var BaseCardGame = {
     if(this._dragInProgress || this._mouseNextCard) return;
     const t = this.getEventTarget(e);
     if(!t) return;
-    const tFloating = t.parentNode==gFloatingPile;
+    const tFloating = t.parentNode==gFloatingPile; // xxx model/view problem
     if(interruptAction) interrupt();
     // it's OK to right-click a card while a *different* one is moving
-    const act = t.isCard && !tFloating ? Game.sendToFoundations(t) : null;
+    const act = t.isCard && !tFloating ? Game.sendToFoundations(t.cardModel) : null;
     if(act) doo(act);
   },
 

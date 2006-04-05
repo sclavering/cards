@@ -3,151 +3,145 @@ var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 
-const Layout = {
+function getCardImageClass(card) {
+  return "card " + (card.faceUp ? card.displayStr : "facedown");
+}
+function cardView_update(card) {
+  this.className = card ? getCardImageClass(card) : "card hidden";
+  // so the drag-drop code can work out what you're starting to drag
+  this.cardModel = card;
+}
+function createCardView(card, x, y) {
+  const v = document.createElement("image");
+  v.isCard = true; // drag-drop depends on this
+  v.isAnyPile = false;
+  v.top = v._top = y;
+  v.left = v._left = x;
+  v.update = cardView_update;
+  v.update(card);
+  return v;
+}
+function appendNewCardView(pile, card, x, y) {
+  pile.appendChild(createCardView(card, x, y));
+}
+
+const _Layout = {
   // these are used in the drag+drop code and similar places, to see what an element is
   isCard: false,
   isAnyPile: true,
 
   // pixel offset from top-left corner of pile at which a card being added to the pile should be placed
-  nextCardLeft: 0,
-  nextCardTop: 0,
+  getNextCardX: function(pile) { return 0; },
+  getNextCardY: function(pile) { return 0; },
 
-  // to be used only within Layout + subtypes.  always use instead of appendChild
-  _addCard: function(card) {
-    card.index = this.childNodes.length;
-    card.pile = this;
-    this.appendChild(card);
+  // Called when the contents of a pile have changed and thus the view needs fixing.
+  // An index of i means that cards 0->i are unchanged, but from i upward cards may have
+  // been added or removed.
+  update: function(pile, index) {
+    throw "_Layout.update not overridden!";
   },
 
-  // xxx this should be made a "private" function, implemented only by piles not overriding addCards
-  addCard: function(card) {
-    this._addCard(card);
-    card.top = card.left = card._top = card._left = 0;
+  // replace with a function if needed
+  initLayout: null,
+
+  // should return the coords of the top-left corner of the card relative to the css-box for this view
+  getCardX: function(card) { return 0; },
+  getCardY: function(card) { return 0; }
+};
+
+// A _Layout where only the top card is ever visible
+const Layout = {
+  __proto__: _Layout,
+  initLayout: function() {
+    this._cardview = this.appendChild(createCardView(null, 0, 0));
   },
-
-  fixLayout: function() {},
-
-  // transfers the card and all those that follow it
-  // Any replacement implementation *must* call first.parentNode.source's fixLayout() method
-  addCards: function(first) {
-    var next, card = first, source = first.parentNode.source;
-    if(!this.offset) this.offset = source.offset;
-    while(card) {
-      next = card.nextSibling;
-      this.addCard(card);
-      card = next;
-    }
-    this.fixLayout();
-    source.fixLayout();
+  
+  update: function(pile, ix) {
+    this._cardview.update(pile.lastCard);
   }
 };
 
 
-function addCardsKeepingTheirLayout(card) {
-  var src = card.parentNode.source;
-  var left = card._left, top = card._top - this.nextCardTop;
-  for(var next = card.nextSibling; card; card = next) {
-    next = card.nextSibling;
-    this._addCard(card);
-    card.top = card._top -= top;
-    card.left = card._left -= left;
-  }
-  // For gFloatingPile - avoids not-repainting artifacts after cards are removed
-  var last = this.lastChild;
-  this.width = last._left + last.boxObject.width;
-  this.height = last._top + last.boxObject.height;
-  src.fixLayout();
-  this.fixLayout();
-}
-
-
 const FanDownLayout = {
-  __proto__: Layout,
+  __proto__: _Layout,
 
-  // doing this avoids the cards changing layout twice if they come from a packed fan and
-  // this fan ends up packed (once to realyout using this.offset, then again with a new
-  // offset once .fixLayout() is called)
-  addCards: addCardsKeepingTheirLayout,
-
-  get nextCardTop() {
-    if(!this.hasChildNodes()) return 0;
-    return this.lastChild._top + (this.offset || gVFanOffset);
+  getNextCardY: function(pile) {
+    return pile.cards.length * (this.offset || gVFanOffset);
   },
 
-  fixLayout: function() {
-    if(!this.hasChildNodes()) {
-      this.offset = 0;
-      return;
-    }
-
+  update: function(pile, index) {
+    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+    const oldoffset = this.offset || gVFanOffset;
+    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
+    for(; i < num; ++i) this.appendChild(createCardView(cs[i], 0, i * oldoffset));
+    for(; i < kids.length; ++i) kids[i].update(null);
+  
+    // the fixLayout of old
+    if(num == 0) { this.offset = 0; return; }
     const firstbox = this.firstChild.boxObject;
-    var space = window.innerHeight - firstbox.y - firstbox.height;
-    const offset = Math.min(space / this.childNodes.length, gVFanOffset);
-    var old = this.offset || gVFanOffset;
-    this.offset = offset;
-    var top = 0;
-    var card = this.firstChild;
-    while(card) {
-      card.top = card._top = top;
-      top += offset;
-      card = card.nextSibling;
-    }
-  }
+    const space = window.innerHeight - firstbox.y - firstbox.height;
+    const offset = this.offset = Math.min(space / kids.length, gVFanOffset);
+    for(var v = 0, top = 0; v != kids.length; ++v, top += offset) kids[v].top = kids[v]._top = top;
+  },
+
+  getCardY: function(card) { return card.index * (this.offset || gVFanOffset); }
 };
 
 
 const FanRightLayout = {
-  __proto__: Layout,
+  __proto__: _Layout,
 
-  addCard: function(card) {
-    this._addCard(card);
-    var prev = card.previousSibling;
-    card.left = card._left = prev ? prev._left + gHFanOffset : 0;
-    card.top = card._top = 0;
+  update: function(pile, index) {
+    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
+    for(; i < num; ++i) this.appendChild(createCardView(cs[i], i * gHFanOffset, 0));
+    for(; i < kids.length; ++i) kids[i].update(null);
   },
 
-  get nextCardLeft() {
-    return this.hasChildNodes() ? this.lastChild._left + gHFanOffset : 0;
-  }
+  getNextCardX: function(pile) {
+    return pile.cards.length * gHFanOffset;
+  },
+
+  getCardX: function(card) { return card.index * gHFanOffset; }
 };
 
 
 // this really needs modifying to allow for more than 6 cards!
 const SlideLayout = {
-  __proto__: Layout,
+  __proto__: _Layout,
 
   className: "slide",
-
-  addCard: function(card) {
-    this._addCard(card);
-    var prev = card.previousSibling;
-    if(!prev) {
-      card.top = card.left = card._top = card._left = 0;
-      return;
-    }
-    var offset = this.childNodes.length<6 ? gSlideOffset : 0;
-    card.top = card._top = prev._top + offset
-    card.left = card._left = prev._left + offset;
+  
+  initLayout: function() {
+    for(var i = 0; i != 6; ++i) appendNewCardView(this, null, i * gSlideOffset, i * gSlideOffset);
   },
 
-  get nextCardLeft() {
-    if(!this.hasChildNodes()) return 0;
-    return this.lastChild._left + (this.childNodes.length<6 ? gSlideOffset : 0);
+  update: function(pile, index) {
+    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+    for(var i = index; i < 5 && i < num; ++i) kids[i].update(cs[i]);
+    for(; i < 5; ++i) kids[i].update(null);
+    kids[5].update(index >= 5 ? cs[num - 1] : null);
   },
 
-  get nextCardTop() {
-    if(!this.hasChildNodes()) return 0;
-    return this.lastChild._top + (this.childNodes.length<6 ? gSlideOffset : 0);
+  getNextCardX: function(pile) {
+    const n = pile.cards.length;
+    return (n > 6 ? 6 : n) * gSlideOffset;
+  },
+  getNextCardY: function(pile) {
+    const n = pile.cards.length;
+    return (n > 6 ? 6 : n) * gSlideOffset;
   }
 };
 
 
-const Deal3WasteLayout = {
-  __proto__: Layout,
+const Deal3WasteLayout = Layout;
+/*
+{
+  __proto__: _Layout,
   nextOffsetMultiplier: 0,
   oldChildCount: 0,
   // only ever has to handle one card
-  addCards: function(card) {
+  _addCards: function(card) {
     this._addCard(card);
     card.top = card.left = card._top = card._left = 0;
     const mul = Math.max(this.nextOffsetMultiplier++, 0);
@@ -176,6 +170,7 @@ const Deal3WasteLayout = {
     this.oldChildCount = this.childNodes.length;
   }
 };
+*/
 
 const Deal3HWasteLayout = {
   __proto__: Deal3WasteLayout,
@@ -193,64 +188,62 @@ const Deal3VWasteLayout = {
 };
 
 
+const _TwoFanLayout = {
+  __proto__: _Layout,
+  _c0: null,
+  _c1: null,
+  initLayout: function() {
+    this._c0 = this.appendChild(createCardView(null, 0, 0));
+    this._c1 = this.appendChild(createCardView(null, gHFanOffset, 0));
+  }
+};
+
 // top *two* cards visible, so you can tell if they have the same number
 const DoubleSolFoundationLayout = {
-  __proto__: Layout,
+  __proto__: _TwoFanLayout,
 
   className: "doublesol-foundation",
 
-  addCards: function(card) {
-    const l = this.lastChild;
-    if(l) l.left = l._left = 0;
-    while(card) {
-      var nxt = card.nextSibling;
-      this._addCard(card);
-      card.top = card.left = card._top = card._left = 0;
-      card = nxt;
-    }
-    const n = this.lastChild;
-    n.left = n._left = l ? gVFanOffset : 0;
-    n.top = n._top = 0;
+  update: function(pile, ix) {
+    const cs = pile.cards, num = cs.length;
+    this._c0.update(num > 1 ? cs[num - 2] : (num ? cs[num - 1] : null));
+    this._c1.update(num > 1 ? cs[num - 1] : null);
   },
 
-  get nextCardLeft() {
-    return this.hasChildNodes() ? gVFanOffset : 0;
-  },
-
-  fixLayout: function() {
-    const l = this.lastChild;
-    if(l) l.left = l._left = gVFanOffset;
+  getNextCardX: function(pile) {
+    return pile.hasCards ? gVFanOffset : 0;
   }
 };
 
 
-const SpiderFoundationLayoutBase = {
-  __proto__: Layout,
+const _SpiderFoundationLayout = {
+  __proto__: _Layout,
 
-  addCards: function(card) {
-    var last = this.lastChild;
-    var top = last ? last._top + gVFanOffset : 0;
-    while(card) {
-      var next = card.nextSibling;
-      this._addCard(card);
-      card.top = card._top = top;
-      card.left = card._left = 0;
-      card = next;
+  // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
+  update: function(pile, index) {
+    const cs = pile.cards, num = cs.length, kids = this.childNodes, vindex = index / 13;
+    if(index == num) { // an A->K run has been 
+      for(var j = vindex; j != kids.length; ++j) kids[j].update(null);
+    } else if(vindex < kids.length) { // an A->K run has been added
+      dump("vindex: "+vindex+"\n");
+      kids[vindex].update(cs[index]);
+    } else { // an A->K run has been added, and we need a new view
+      appendNewCardView(this, cs[index], 0, vindex * gVFanOffset);
     }
   },
 
-  get nextCardTop() {
-    return this.hasChildNodes() ? this.lastChild._top + gVFanOffset : 0;
+  getNextCardY: function(pile) {
+    return pile.cards.length / 13 * gVFanOffset;
   }
 };
 
 const Spider4FoundationLayout = {
-  __proto__: SpiderFoundationLayoutBase,
+  __proto__: _SpiderFoundationLayout,
   className: "foundation4"
 };
 
 const Spider8FoundationLayout = {
-  __proto__: SpiderFoundationLayoutBase,
+  __proto__: _SpiderFoundationLayout,
   className: "foundation8"
 };
 
@@ -258,31 +251,18 @@ const Spider8FoundationLayout = {
 // bottom + top cards visible, so you can tell whether pile is being built up or down
 // xxx this contains bits of the model
 const UnionSquarePileLayout = {
-  __proto__: Layout,
+  __proto__: _TwoFanLayout,
 
   className: "unionsquare",
 
-  // A record of whether the pile is being built up (1) or down (-1), or neither (0).
-  direction: 0,
-
-  // First and last card of a pile are visible (so player can see which way it's being built).
-  addCards: function(card) {
-    var src = card.parentNode;
-    this._addCard(card);
-    const prv = card.previousSibling;
-    card.top = card._top = 0;
-    card.left = card._left = prv ? gHFanOffset : 0;
-    if(this.childNodes.length==2)
-      this.direction = card.number==prv.upNumber ? 1 : -1;
-    src.fixLayout();
+  update: function(pile, index) {
+    const cs = pile.cards, num = cs.length;
+    this._c0.update(num ? cs[0] : null);
+    this._c1.update(num > 1 ? cs[num - 1] : null);
   },
 
-  fixLayout: function() {
-    if(this.childNodes.length==1) this.direction = 0;
-  },
-
-  get nextCardLeft() {
-    return this.hasChildNodes() ? gHFanOffset : 0;
+  getNextCardX: function(pile) {
+    return pile.hasCards ? gHFanOffset : 0;
   }
 };
 
@@ -290,20 +270,18 @@ const UnionSquarePileLayout = {
 // built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
 // from the a->k, so that it's clear what card should be plauyed next
 const UnionSquareFoundationLayout = {
-  __proto__: Layout,
+  __proto__: _TwoFanLayout,
 
   className: "unionsquare-f",
 
-  addCards: function(card) {
-    const src = card.parentNode;
-    this._addCard(card);
-    card.top = card._top = 0;
-    card.left = card._left = this.childNodes.length>13 ? gHFanOffset : 0;
-    src.fixLayout();
+  update: function(pile, ix) {
+    const cs = pile.cards, num = cs.length;
+    this._c0.update(cs.length > 13 ? cs[12] : (cs.length ? cs[0] : null));
+    this._c1.update(cs.length > 13 ? cs[num - 1] : null);
   },
 
-  get nextCardLeft() {
-    return this.childNodes.length>=13 ? gHFanOffset : 0;
+  getNextCardX: function(pile) {
+    return pile.cards.length >= 13 ? gHFanOffset : 0;
   }
 };
 

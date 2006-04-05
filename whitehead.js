@@ -23,7 +23,7 @@ Games.whitehead = {
   },
 
   getHints: function() {
-    this.addHintsFor(this.waste.lastChild);
+    this.addHintsFor(this.waste.lastCard);
     for(var i = 0; i != 7; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
@@ -49,7 +49,7 @@ Games.whitehead = {
     const suitmap = [,CLUB,DIAMOND,HEART,SPADE]; // other suit of same colour
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
-      var c = fs[i].lastChild;
+      var c = fs[i].lastCard;
       if(c) nums[suitmap[c.suit]] = c.upNumber;
     }
     return nums;

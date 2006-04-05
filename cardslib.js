@@ -146,15 +146,17 @@ function handleRightClick(e) {
 }
 
 
+//const floatingPileImpl = {
+//  __proto__: Pile,
+  
 function createFloatingPile() {
-  const pile = gFloatingPile = createPile("stack", {}, Layout);
+  const pile = gFloatingPile = createPile("stack", Pile, FanDownLayout); // xxx ????
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   pile.hide = function() {
     this.width = this.height = 0;
     this.top = this.left = this._top = this._left = -1000;
     gFloatingPileNeedsHiding = false;
   };
-  pile.addCards = addCardsKeepingTheirLayout;
   gGameStack.appendChild(pile);
   pile.hide();
 }

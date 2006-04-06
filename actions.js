@@ -22,12 +22,10 @@ DealToPile.prototype = {
   perform: function() {
     const s = Game.stock;
     s.dealCardTo(this.to);
-    s.counter--;
   },
   undo: function() {
     const s = Game.stock;
     s.undealCardFrom(this.to);
-    s.counter++;
   }
 }
 
@@ -41,13 +39,11 @@ RefillStock.prototype = {
     this.wasteOldNextOffsetMultiplier = w.nextOffsetMultiplier || 0; // draw3 hack
     while(w.hasCards) s.undealCardFrom(w);
     w.nextOffsetMultiplier = 0; // draw3 hack    
-    s.counter = s.cards.length;
   },
   undo: function() {
     const s = Game.stock, w = Game.waste;
     w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.cards.length; // draw3 hack
     while(s.hasCards) s.dealCardTo(w);
-    s.counter = 0;
   }
 }
 
@@ -61,12 +57,10 @@ Deal3Action.prototype = {
     this.numPacked = w.packCards();
     const num = this.numMoved = Math.min(s.cards.length, 3);
     for(var i = 0; i != num; ++i) s.dealCardTo(w);
-    s.counter -= num;
   },
 
   undo: function() {
     const s = Game.stock, w = Game.waste;
-    s.counter += this.numMoved;
     for(var i = this.numMoved; i != 0; --i) s.undealCardFrom(w);
     w.unpackCards(this.numPacked);
   }
@@ -83,12 +77,10 @@ DealToPiles.prototype = {
     const s = Game.stock, ps = Game.piles, len = ps.length;
     for(var i = 0; i != len && s.hasCards; ++i) s.dealCardTo(ps[i]);
     this.dealt = i;
-    s.counter--;
   },
   undo: function() {
     const s = Game.stock, ps = Game.piles;
     for(var i = this.dealt; i != 0; i--) s.undealCardFrom(ps[i-1]);
-    s.counter++;
   }
 }
 
@@ -109,13 +101,11 @@ DealToNonEmptyPilesAction.prototype = {
       num++;
     }
     this.num = num;
-    s.counter -= num;
   },
   undo: function() {
     const s = Game.stock, ps = Game.piles;
     for(var i = this.last; i != -1; i--)
       if(ps[i].hasCards) s.undealCardFrom(ps[i]);
-    s.counter += this.num;
   }
 }
 

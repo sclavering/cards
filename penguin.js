@@ -21,8 +21,8 @@ Games.penguin = {
       var c = cards[i];
       if(!c.isAce) continue;
       cards.splice(i, 1);
-      this.foundations[f].addCardsFromArray([c]);
       c.faceUp = true;
+      this.foundations[f].addCardsFromArray([c]);
       f++;
     }
 
@@ -37,8 +37,7 @@ Games.penguin = {
       if(!c) continue;
       // suggest moving to a pile
       if(c.isAce) {
-        var p = this.firstEmptyPile;
-        if(p) this.addHint(c, p);
+        this.addHintToFirstEmpty(c);
       } else {
         var up = c.up, upp = up.pile;
         if(up.isLast && upp.isPile) this.addHint(c, upp);
@@ -52,7 +51,6 @@ Games.penguin = {
     // cards that aren't in a seq.
     for(i = 0; i != 7; i++) {
       c = cs[i];
-      if(!c) continue;
       this.addHint(c, p);
     }
     // cards which are

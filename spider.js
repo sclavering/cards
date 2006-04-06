@@ -9,7 +9,7 @@ var SpiderBase = {
   foundationLayout: Spider8FoundationLayout,
   pileType: SpiderPile,
 
-  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f sl]2",
+  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f s]2",
 
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 

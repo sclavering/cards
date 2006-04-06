@@ -5,7 +5,7 @@ Games.acesup = {
   foundationType: AcesUpFoundation,
   pileType: AcesUpPile,
 
-  layoutTemplate: "h2[sl]2p1p1p1p2f2",
+  layoutTemplate: "h2s2p1p1p1p2f2",
   dealTemplate: "P 0,1",
 
   init: function() {
@@ -24,10 +24,7 @@ Games.acesup = {
     }
     const p = this.firstEmptyPile;
     if(!p) return;
-    for(i = 0; i != 4; i++) {
-      c = ps[i].lastCard;
-      if(c) this.addHint(c, p);
-    }
+    for(i = 0; i != 4; i++) this.addHint(ps[i].lastCard, p)
   },
 
   getBestDestinationFor: function(card) {
@@ -45,8 +42,8 @@ Games.acesup = {
   isWon: function() {
     if(this.stock.hasCards) return false;
     for(var i = 0; i != 4; i++) {
-      var c = this.piles[i].firstCard;
-      if(!c.isAce || !c.isLast) return false;
+      var cs = this.piles[i].cards;
+      if(cs.length != 1 || !cs[0].isAce) return false;
     }
     return true;
   }

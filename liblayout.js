@@ -22,7 +22,7 @@ function createCardView(card, x, y) {
   return v;
 }
 function appendNewCardView(pile, card, x, y) {
-  pile.appendChild(createCardView(card, x, y));
+  return pile.appendChild(createCardView(card, x, y));
 }
 
 const _Layout = {
@@ -285,3 +285,22 @@ const UnionSquareFoundationLayout = {
   }
 };
 
+
+// a layout for Stocks, including a counter
+const StockLayout = {
+  __proto__: Layout,
+  _tagName: "vbox",
+  initLayout: function() {
+    this._cardview = appendNewCardView(this, null, 0, 0);
+    this._cardview.isCard = false;
+    this.appendChild(document.createElement("space"));
+    this._counterlabel = this.appendChild(document.createElement("label"));
+    this._counterlabel.className = "stockcounter";
+    this._cardview.stockModel = this; // xxx should be the model, not this view
+  },
+
+  update: function(pile, ix) {
+    this._cardview.className = pile.hasCards ? "card facedown" : "stock-placeholder";
+    this._counterlabel.setAttribute("value", pile.counterValue);
+  }
+};

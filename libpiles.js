@@ -2,7 +2,7 @@ function createPile(type, impl, layout) {
   if(!impl) throw "createPile called with impl=" + impl;
   if(!layout) throw "createPile called with layout=" + layout;
 
-  const p = document.createElement(type);
+  const p = document.createElement(layout._tagName || type);
   p.cards = [];
   extendObj(p, impl, true);
   p.offset = 0; // why?
@@ -74,12 +74,11 @@ const Pile = {
   addCards: function(card) {
     const p = card.pile, pcs = p.cards, ix = card.index;
     this.addCardsFromArray(pcs.slice(ix));
-    p.cardsRemoved(ix);
+    p.removeCardsAfter(ix);
   },
 
-  // notification that all cards from index onward have been removed
-  cardsRemoved: function(index) {
-    dump("cards removed from ix: "+index+ "("+this.cards[index]+")\n");
+  // Should generally not be called except by pile impls.
+  removeCardsAfter: function(index) {
     this.cards = this.cards.slice(0, index);
     this.view.update(this, index);
   }
@@ -132,7 +131,7 @@ const BasicStock = {
     this.addCards(card);
   },
 
-  get counterStart() {
+  get counterValue() {
     return this.cards.length;
   }
 };
@@ -170,7 +169,7 @@ const StockDealToPiles = {
   deal: function() {
     return this.hasCards ? new DealToPiles(Game.piles) : null;
   },
-  get counterStart() {
+  get counterValue() {
     return Math.ceil(this.cards.length / Game.piles.length);
   }
 };

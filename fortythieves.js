@@ -5,7 +5,7 @@ Games.fortythieves = {
   wasteLayout: FanRightLayout,
   pileType: FortyThievesPile,
 
-  layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  [sl] w  ] [2p1p1p1p1p1p1p1p1p1p2]",
+  layoutTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]",
 
   dealTemplate: "P 0,4; W 0,1",
 

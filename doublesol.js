@@ -8,7 +8,7 @@ Games.doublesol = {
   foundationLayout: DoubleSolFoundationLayout,
   pileType: KlondikePile,
 
-  layoutTemplate: "v[1[sl]1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
 
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
 
@@ -25,10 +25,7 @@ Games.doublesol = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.pile.isWaste) {
-        var pile = this.firstEmptyPile;
-        if(pile) this.addHint(card, pile);
-      }
+      if(card.previousSibling || card.pile.isWaste) this.addHintToFirstEmpty(card);
       this.addFoundationHintsFor(card);
     } else {
       // only looks at foundations and *nonempty* spaces

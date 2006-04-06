@@ -89,7 +89,7 @@ var BaseCardGame = {
   foundationLayout: Layout,
   cellLayout: Layout,
   reserveLayout: Layout,
-  stockLayout: Layout,
+  stockLayout: StockLayout,
   wasteLayout: Layout,
 
   pileType: null,
@@ -113,9 +113,6 @@ var BaseCardGame = {
     this._buildLayout(box, !containerIsVbox, this.layoutTemplate);
     box.className = "game";
     gGameStack.insertBefore(box, gGameStack.firstChild);
-
-    // prevents JS strict warnings for games with no visible counter ???
-    if(this.stock) this.stock.counter = 0;
 
     // xxx kill this
     this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
@@ -189,17 +186,6 @@ var BaseCardGame = {
         case "k":
           var obj1 = this.kingFoundationType, obj2 = this.foundationLayout, arry = this.pilesByType["f"];
           box.appendChild(this.__makePile("foundation", obj1, obj2, arry));
-          break;
-      // add a label (always for the stock, at present)
-        case "l":
-          var counter = document.createElement("label");
-          counter.className = "stockcounter";
-          box.appendChild(counter);
-          var s = this.stock;
-          s._counter = counter;
-          s.__defineGetter__("counter", function() { return this._counter._value; });
-          s.__defineSetter__("counter", function(val) {
-            const c = this._counter; return c.value = c._value = val; });
           break;
       // add spaces
         case "-":
@@ -288,14 +274,11 @@ var BaseCardGame = {
   },
 
   _begin: function(cards) {
-    // Empty all piles
     const ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; i++) ps[i].cardsRemoved(0);
-
+    for(var i = 0; i != num; i++) ps[i].removeCardsAfter(0); // clear the view
     this.redealsRemaining = this.redeals;
     this.deal(cards);
     gScoreDisplay.value = this.score = this.initialScore;
-    if(this.stock) this.stock.counter = this.stock.counterStart;
   },
 
   // overriding versions should deal out the provided shuffled cards for a new game.
@@ -556,6 +539,7 @@ var BaseCardGame = {
 
   // takes the card to suggest moving, and the destination to suggest moving to (generally a pile)
   addHint: function(source, dest) {
+    if(!source || !dest) return;
     this.hintSources.push(source);
     this.hintDestinations.push(dest);
   },
@@ -566,6 +550,12 @@ var BaseCardGame = {
       this.hintSources.push(source);
       this.hintDestinations.push(dests[i]);
     }
+  },
+
+  addHintToFirstEmpty: function(card) {
+    if(!card) return;
+    const p = this.firstEmptyPile;
+    if(p) this.addHint(card, p);
   },
 
   // many sources, one destination
@@ -666,7 +656,7 @@ var BaseCardGame = {
     if(!t) return;
     // Ideally the second click of a double click would be retargetted at
     // gFloatingPile.source, but that's difficult because the "click" doesn't happen.
-    if(t.parentNode==gFloatingPile) return; // xxx model/view problem
+    if(t.parentNode == gFloatingPile) return; // xxx model/view problem
     if(interruptAction) interrupt();
     this._mouseDownTarget = t;
     if(!t.isCard) return;
@@ -742,7 +732,6 @@ var BaseCardGame = {
     source.addCards(card);
   },
 
-  // xxx model/view disaster
   mouseClick: function(e) {
     gGameStack.onmousemove = null;
     if(this._dragInProgress) {
@@ -753,11 +742,8 @@ var BaseCardGame = {
     if(!t) return;
     this._mouseDownTarget = null;
     this._mouseNextCard = null;
-    const p = t.parentNode;
-    var act = null;
-    if(t.isStock) act = t.deal();
-    else if(p.isStock) act = p.deal();
-    else if(t.isCard) act = Game.getBestActionFor(t.cardModel);
+    const act = t.isCard ? Game.getBestActionFor(t.cardModel)
+        : t.stockModel ? t.stockModel.deal() : null;
     if(act) doo(act);
   },
 
@@ -765,7 +751,7 @@ var BaseCardGame = {
     if(this._dragInProgress || this._mouseNextCard) return;
     const t = this.getEventTarget(e);
     if(!t) return;
-    const tFloating = t.parentNode==gFloatingPile; // xxx model/view problem
+    const tFloating = t.parentNode == gFloatingPile; // xxx model/view problem
     if(interruptAction) interrupt();
     // it's OK to right-click a card while a *different* one is moving
     const act = t.isCard && !tFloating ? Game.sendToFoundations(t.cardModel) : null;

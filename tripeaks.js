@@ -7,7 +7,7 @@ Games.tripeaks = {
   pileLayout: Layout,
 
   layoutTemplate: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
-    +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3[s l]2f3]2",
+    +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3s2f3]2",
 
   init: function() {
     this.cards = makeDecksMod13(1);

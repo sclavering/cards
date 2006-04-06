@@ -20,10 +20,7 @@ const KlondikeBase = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.pile.isWaste) {
-        var pile = this.firstEmptyPile;
-        if(pile) this.addHint(card, pile);
-      }
+      if(card.previousSibling || card.pile.isWaste) this.addHintToFirstEmpty(card);
       this.addFoundationHintsFor(card);
     } else {
       // only looks at foundations and *nonempty* spaces
@@ -59,7 +56,7 @@ const KlondikeBase = {
 Games.klondike1 = {
   __proto__: KlondikeBase,
   helpId: "klondike",
-  layoutTemplate: "v[1[sl]1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  layoutTemplate: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 
 
@@ -67,7 +64,7 @@ Games.klondike3 = {
   __proto__: KlondikeBase,
   stockType: Deal3OrRefillStock,
   wasteLayout: Deal3HWasteLayout,
-  layoutTemplate: "v[1[sl]1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  layoutTemplate: "v[1s1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 
 
@@ -77,7 +74,7 @@ Games.doubleklondike = {
     const cs = this.cards = makeDecks(2);
     this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
   },
-  layoutTemplate: "v[1[sl]1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
   autoplay: "commonish 2deck",
   getAutoplayableNumbers: "gypsy"

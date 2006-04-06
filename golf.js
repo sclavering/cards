@@ -7,7 +7,7 @@ const GolfBase = {
   foundationType: GolfFoundation,
   pileType: GolfPile,
 
-  layoutTemplate: "v[3[sl]2f3] [2p1p1p1p1p1p1p2]",
+  layoutTemplate: "v[3s2f3] [2p1p1p1p1p1p1p2]",
 
   getHints: function() {
     const f = this.foundation, ps = this.piles;

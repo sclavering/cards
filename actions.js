@@ -36,13 +36,10 @@ RefillStock.prototype = {
 
   perform: function() {
     const s = Game.stock, w = Game.waste;
-    this.wasteOldNextOffsetMultiplier = w.nextOffsetMultiplier || 0; // draw3 hack
     while(w.hasCards) s.undealCardFrom(w);
-    w.nextOffsetMultiplier = 0; // draw3 hack    
   },
   undo: function() {
     const s = Game.stock, w = Game.waste;
-    w.nextOffsetMultiplier = this.wasteOldNextOffsetMultiplier - s.cards.length; // draw3 hack
     while(s.hasCards) s.dealCardTo(w);
   }
 }
@@ -54,15 +51,19 @@ Deal3Action.prototype = {
 
   perform: function() {
     const s = Game.stock, w = Game.waste;
-    this.numPacked = w.packCards();
-    const num = this.numMoved = Math.min(s.cards.length, 3);
+    this.old_deal3v = w.deal3v;
+    this.old_deal3t = w.deal3t;
+    const cs = s.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
+    this.numMoved = w.deal3v = num;
+    w.deal3t = w.cards.length + num;
     for(var i = 0; i != num; ++i) s.dealCardTo(w);
   },
 
   undo: function() {
-    const s = Game.stock, w = Game.waste;
-    for(var i = this.numMoved; i != 0; --i) s.undealCardFrom(w);
-    w.unpackCards(this.numPacked);
+    const s = Game.stock, w = Game.waste, num = this.numMoved;
+    w.deal3v = this.old_deal3v;
+    w.deal3t = this.old_deal3t;
+    for(var i = 0; i != num; ++i) s.undealCardFrom(w);
   }
 }
 

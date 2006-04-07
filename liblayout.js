@@ -134,58 +134,30 @@ const SlideLayout = {
 };
 
 
-const Deal3WasteLayout = Layout;
-/*
-{
+const _Deal3WasteLayout = {
   __proto__: _Layout,
-  nextOffsetMultiplier: 0,
-  oldChildCount: 0,
-  // only ever has to handle one card
-  _addCards: function(card) {
-    this._addCard(card);
-    card.top = card.left = card._top = card._left = 0;
-    const mul = Math.max(this.nextOffsetMultiplier++, 0);
-    card[this.prop] = card[this.prop2] = mul * this.offset;
-    this.oldChildCount++;
+  _isHorizontal: false,
+  
+  initLayout: function() {
+    const h = this._isHorizontal, ho = h * gHFanOffset, vo = !h * gVFanOffset;
+    for(var i = 0; i != 3; ++i) appendNewCardView(this, null, i * ho, i * vo);
   },
-  packCards: function() {
-    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
-    const numToPack = Math.max(this.nextOffsetMultiplier, 0);
-    for(var i = num - numToPack; i != num; ++i) cs[i][prop] = cs[i][prop2] = 0;
-    this.nextOffsetMultiplier = 0;
-    return numToPack;
-  },
-  unpackCards: function(numToUnpack) {
-    const cs = this.childNodes, num = cs.length, prop = this.prop, prop2 = this.prop2;
-    const offset = this.offset, ixOffset = num - numToUnpack;
-    for(var i = 0; i != numToUnpack; ++i) {
-      const c = cs[ixOffset + i];
-      c[prop] = c[prop2] = i * offset;
-    }
-    this.nextOffsetMultiplier = numToUnpack;
-  },
-  // called after a card is removed, and also at start of game (hence the oldChildCount)
-  fixLayout: function() {
-    this.nextOffsetMultiplier -= this.oldChildCount - this.childNodes.length;
-    this.oldChildCount = this.childNodes.length;
+
+  update: function(pile, index) {
+    const v = pile.deal3v, t = pile.deal3t, cs = pile.cards, kids = this.childNodes;
+    const visible = Math.max(1, v - (t - cs.length));
+    const ixOffset = cs.length - visible;
+    for(var i = 0; i != 3; ++i) kids[i].update(cs[ixOffset + i] || null);
   }
 };
-*/
 
 const Deal3HWasteLayout = {
-  __proto__: Deal3WasteLayout,
+  __proto__: _Deal3WasteLayout,
   className: "draw3h-waste",
-  prop: "left",
-  prop2: "_left",
-  offset: gHFanOffset
+  _isHorizontal: true
 };
 
-const Deal3VWasteLayout = {
-  __proto__: Deal3WasteLayout,
-  prop: "top",
-  prop2: "_top",
-  offset: gVFanOffset
-};
+const Deal3VWasteLayout = _Deal3WasteLayout;
 
 
 const _TwoFanLayout = {

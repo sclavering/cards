@@ -196,7 +196,11 @@ const Waste = {
   __proto__: Pile,
   isWaste: true,
   mayTakeCard: ifLast,
-  mayAddCard: no
+  mayAddCard: no,
+
+  // Things to make draw3 waste piles work
+  deal3visible: 0, // The number of cards that should have been visible after the last deal.
+  deal3num: 0      // The number of cards on this pile after the last deal.
 };
 
 

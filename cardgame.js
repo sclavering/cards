@@ -465,20 +465,11 @@ var BaseCardGame = {
     return null;
   },
 
-
-
-  // === Testing if moves are allowed =====================
-
-  // xxx document me!
-
-  // a single version for all types of piles suffices at present
+  // This is copied onto all piles.
+  // It should return an Action appropriate for the card being dropped on the pile.
   getActionForDrop: function(card) {
     return this.mayAddCard(card) ? new Move(card, this) : null;
   },
-
-
-
-  // === Moving between piles =============================
 
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
   // This default version is for Klondike-like games, Spider-like games may need to override it.

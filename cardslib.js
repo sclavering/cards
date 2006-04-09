@@ -95,14 +95,7 @@ function init() {
   if(useAnimation) animationMenuItem.setAttribute("checked","true");
   else animationMenuItem.removeAttribute("checked");
 
-  gHintHighlighter = createHighlighter();
-  gHintHighlighter.showHint = function(from, to) {
-    to = to.lastChild || to; // |to| could be a pile
-    this.highlight(from);
-    const thisthis = this; // because |this| within these functions would refer to the wrong thing
-    setTimeout(function(){thisthis.highlight(to);}, 350);
-    setTimeout(function(){thisthis.unhighlight();}, 800);
-  };
+  createHintHighlighter();
 
   // We use onmouseup rather than onclick because in Fx1.5mac (at least) there is no click event 
   // if you hold the mouse in one place for a few seconds between moving it and releasing the btn.
@@ -162,32 +155,39 @@ function createFloatingPile() {
 }
 
 
-function createHighlighter() {
-  var box = document.createElement("box");
-  box.className = "card-highlight";
-  box.isHighlighter = true;
-  gGameStack.appendChild(box);
-  box.unhighlight = function() {
-    this.top = this.left = this._top = this._left = -1000;
-    this.width = this.height = 0;
-  };
-  box.highlight = function(card) {
-    // card might be a pile really
-    const box = card.boxObject;
-    this.top = this._top = box.y - gGameStackTop;
-    this.left = this._left = box.x - gGameStackLeft;
-    if(card.isCard) {
-      const box2 = card.parentNode.lastChild.boxObject;
-      this.height = box2.y + box2.height - box.y;
-      this.width = box.width;
-    } else {
-      this.height = gCardHeight;
-      this.width = gCardWidth;
-    }
-  };
+function createHintHighlighter() {
+  const box = gHintHighlighter = document.createElement("box");
+  for(var i in _hintHighlighter) box[i] = _hintHighlighter[i];
   box.unhighlight();
+  gGameStack.appendChild(box);
   return box;
 }
+const _hintHighlighter = {
+  className: "card-highlight",
+  unhighlight: function() {
+    this.top = this.left = -1000;
+    this.width = this.height = 0;
+  },
+  highlight: function(thing) { // a Card or a pile
+    const card = thing instanceof Card ? thing : null;
+    const pile = card ? card.pile : thing;
+//    dump("highlight card: "+card+" pile: "+pile);
+    const view = pile.view, box = view.boxObject;
+    const bounds = view.getHighlightBounds(card);
+//    dump(" bounds: x:"+bounds.x+" y:"+bounds.y+" w:"+bounds.width+" h:"+bounds.height+"\n");
+    this.top = box.y - gGameStackTop + bounds.y;
+    this.left = box.x - gGameStackLeft + bounds.x;
+    this.width = bounds.width;
+    this.height = bounds.height;
+  },
+  showHint: function(from, to) {
+    const dest = !to.isCard && to.hasCards ? to.lastCard : to;
+    this.highlight(from);
+    const self = this;
+    setTimeout(function() { self.highlight(dest); }, 350);
+    setTimeout(function() { self.unhighlight(); }, 800);
+  }
+};
 
 
 function playGame(game) {

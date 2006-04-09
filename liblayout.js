@@ -30,9 +30,10 @@ const _Layout = {
   isCard: false,
   isAnyPile: true,
 
-  // pixel offset from top-left corner of pile at which a card being added to the pile should be placed
-  getNextCardX: function(pile) { return 0; },
-  getNextCardY: function(pile) { return 0; },
+  // Passed the index of a card in the pile or the length of the pile (i.e. the index of
+  // the next card to be added to the pile).  Should return the pixel offset from the
+  // top-left corner of the pile.
+  getCardOffsets: function(ix) { return { x: 0, y: 0 }; },
 
   // Called when the contents of a pile have changed and thus the view needs fixing.
   // An index of i means that cards 0->i are unchanged, but from i upward cards may have
@@ -44,30 +45,39 @@ const _Layout = {
   // replace with a function if needed
   initLayout: null,
 
-  // should return the coords of the top-left corner of the card relative to the css-box for this view
-  getCardX: function(card) { return 0; },
-  getCardY: function(card) { return 0; }
+  // Get the position + dimensions for a box that covers the card and any subsequent cards.
+  // If the card is null then it should instead be a box highlighting the pile itself.
+  // Coords are relative to top-left corner of the boxObject for this layout
+  getHighlightBounds: function(card) {
+    var x = 0, y = 0, w = gCardWidth, h = gCardHeight;
+    if(card) {
+      var o = this.getCardOffsets(card.index);
+      x = o.x;
+      y = o.y;
+      var o2 = this.getCardOffsets(card.pile.cards.length - 1);
+      w += o2.x - x;
+      h += o2.y - y;
+    }
+    return { x: x, y: y, width: w, height: h };
+  }
 };
+
 
 // A _Layout where only the top card is ever visible
 const Layout = {
   __proto__: _Layout,
   initLayout: function() {
-    this._cardview = this.appendChild(createCardView(null, 0, 0));
+    this.appendChild(createCardView(null, 0, 0));
   },
   
   update: function(pile, ix) {
-    this._cardview.update(pile.lastCard);
+    this.firstChild.update(pile.lastCard);
   }
 };
 
 
 const FanDownLayout = {
   __proto__: _Layout,
-
-  getNextCardY: function(pile) {
-    return pile.cards.length * (this.offset || gVFanOffset);
-  },
 
   update: function(pile, index) {
     const cs = pile.cards, num = cs.length, kids = this.childNodes;
@@ -84,7 +94,10 @@ const FanDownLayout = {
     for(var v = 0, top = 0; v != kids.length; ++v, top += offset) kids[v].top = kids[v]._top = top;
   },
 
-  getCardY: function(card) { return card.index * (this.offset || gVFanOffset); }
+  getCardOffsets: function(ix) {
+    const y = ix * (this.offset || gVFanOffset);
+    return { x: 0, y: y };
+  }
 };
 
 
@@ -98,11 +111,9 @@ const FanRightLayout = {
     for(; i < kids.length; ++i) kids[i].update(null);
   },
 
-  getNextCardX: function(pile) {
-    return pile.cards.length * gHFanOffset;
-  },
-
-  getCardX: function(card) { return card.index * gHFanOffset; }
+  getCardOffsets: function(ix) {
+    return { x: ix * gHFanOffset, y: 0 };
+  }
 };
 
 
@@ -123,13 +134,9 @@ const SlideLayout = {
     kids[5].update(index >= 5 ? cs[num - 1] : null);
   },
 
-  getNextCardX: function(pile) {
-    const n = pile.cards.length;
-    return (n > 6 ? 6 : n) * gSlideOffset;
-  },
-  getNextCardY: function(pile) {
-    const n = pile.cards.length;
-    return (n > 6 ? 6 : n) * gSlideOffset;
+  getCardOffsets: function(ix) {
+    const offset = (ix > 6 ? 6 : ix) * gSlideOffset;
+    return { x: offset, y: offset };
   }
 };
 
@@ -148,6 +155,16 @@ const _Deal3WasteLayout = {
     const visible = Math.max(1, v - (t - cs.length));
     const ixOffset = cs.length - visible;
     for(var i = 0; i != 3; ++i) kids[i].update(cs[ixOffset + i] || null);
+  },
+
+  // this assumes only the last card will ever be asked about
+  // (which will be when it's the subject of a hint)
+  getCardOffsets: function(ix) {
+    for(var i = 2; i >= 0; --i) {
+      if(this.childNodes[i].cardModel) break;
+    }
+    const x = i * gHFanOffset;
+    return { x: x, y: 0 };
   }
 };
 
@@ -182,8 +199,9 @@ const DoubleSolFoundationLayout = {
     this._c1.update(num > 1 ? cs[num - 1] : null);
   },
 
-  getNextCardX: function(pile) {
-    return pile.hasCards ? gVFanOffset : 0;
+  getCardOffsets: function(ix) {
+    const x = ix > 0 ? gVFanOffset : 0;
+    return { x: x, y: 0 };
   }
 };
 
@@ -204,8 +222,9 @@ const _SpiderFoundationLayout = {
     }
   },
 
-  getNextCardY: function(pile) {
-    return pile.cards.length / 13 * gVFanOffset;
+  getCardOffsets: function(ix) {
+    const y = ix / 13 * gVFanOffset;
+    return { x: 0, y: y };
   }
 };
 
@@ -221,7 +240,6 @@ const Spider8FoundationLayout = {
 
 
 // bottom + top cards visible, so you can tell whether pile is being built up or down
-// xxx this contains bits of the model
 const UnionSquarePileLayout = {
   __proto__: _TwoFanLayout,
 
@@ -233,8 +251,9 @@ const UnionSquarePileLayout = {
     this._c1.update(num > 1 ? cs[num - 1] : null);
   },
 
-  getNextCardX: function(pile) {
-    return pile.hasCards ? gHFanOffset : 0;
+  getCardOffsets: function(ix) {
+    const x = ix > 0 ? gHFanOffset : 0;
+    return { x: x, y: 0 };
   }
 };
 
@@ -252,8 +271,9 @@ const UnionSquareFoundationLayout = {
     this._c1.update(cs.length > 13 ? cs[num - 1] : null);
   },
 
-  getNextCardX: function(pile) {
-    return pile.cards.length >= 13 ? gHFanOffset : 0;
+  getCardOffsets: function(ix) {
+    const x = ix >= 13 ? gHFanOffset : 0;
+    return { x: x, y: 0 };
   }
 };
 

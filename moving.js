@@ -22,14 +22,16 @@ function moveCards1(firstCard, target) {
   const pview = pile.view, pbox = pview.boxObject;
   const tview = target.view, tbox = tview.boxObject;
 
-  const px = pview.getCardX(card);
-  const py = pview.getCardY(card);
+  const offset = pview.getCardOffsets(card.index);
+  const px = offset.x;
+  const py = offset.y;
   // initial coords
   const sx = pbox.x + px - gGameStackLeft;
   const sy = pbox.y + py - gGameStackTop;
   // final coords
-  const tx = tbox.x - gGameStackLeft + tview.getNextCardX(target);
-  const ty = tbox.y - gGameStackTop + tview.getNextCardY(target);
+  const finalOffset = tview.getCardOffsets(target.cards.length);
+  const tx = tbox.x - gGameStackLeft + finalOffset.x;
+  const ty = tbox.y - gGameStackTop + finalOffset.y;
   // change in coords
   const dx = tx - sx;
   const dy = ty - sy;

@@ -430,8 +430,6 @@ var BaseCardGame = {
     }
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
-
-    if("undoNext" in action && action.undoNext) this.undo();
   },
 
   redo: function() {
@@ -455,8 +453,6 @@ var BaseCardGame = {
     }
 
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
-
-    if("redoNext" in action && action.redoNext) this.redo();
   },
 
   // called after each move (unless interrupted by user).
@@ -483,6 +479,18 @@ var BaseCardGame = {
   getFoundationMoveFor: function(card) {
     const fs = this.foundations, len = fs.length;
     for(var i = 0, f = fs[0]; i != len; f = fs[++i]) if(f.mayAddCard(card)) return f;
+    return null;
+  },
+
+  // Called when a user right-clicks on a card.  Should return an Action (or null).
+  // Generally it's easier to override getBestDestinationFor instead of getBestActionFor
+  getBestActionFor: function(card) {
+    if(!card.pile.mayTakeCard(card)) return null;
+    const target = this.getBestDestinationFor(card);
+    return target ? new Move(card, target) : null;
+  },
+
+  getBestDestinationFor: function(card) {
     return null;
   },
 
@@ -589,20 +597,6 @@ var BaseCardGame = {
       var f = fs[i];
       if(f.mayAddCard(card)) this.addHint(card, f);
     }
-  },
-
-
-
-  // === Right-click "intelligent" moving of cards ========
-  // Called when the player right-clicks on a card. Games should implement getBestDestinationFor(card)
-  getBestActionFor: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
-    const target = this.getBestDestinationFor(card);
-    return target ? new Move(card, target) : null;
-  },
-
-  getBestDestinationFor: function(card) {
-    return null;
   },
 
 

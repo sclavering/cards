@@ -48,7 +48,8 @@ var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
 var gGameStackLeft = 0;
 
-var gFloatingPile = null;
+// Actually just a Layout, not a Pile.  (Name predates MV-split.)
+var gFloatingPile = null; 
 var gFloatingPileNeedsHiding = false; // see done()
 
 const CI = Components.interfaces;
@@ -139,17 +140,36 @@ function handleRightClick(e) {
 }
 
 
-//const floatingPileImpl = {
-//  __proto__: Pile,
-  
-function createFloatingPile() {
-  const pile = gFloatingPile = createPile("stack", Pile, FanDownLayout); // xxx ????
+const FloatingPile = {
+  pile: null, // will be a fake, because the view expects it
+
+  // coords relative to window corner
+  // card is the lowest-index card to be shown
+  show: function(card, x, y) {
+    const p = card.pile, ix = card.index;
+    const cs = this.pile.cards = p.cards.slice(ix);
+    this.update(0, cs.length);
+    this.top = this._top = y - gGameStackTop;
+    this.left = this._left = x - gGameStackLeft;
+    // hide the cards in their real pile
+    p.view.update(ix, ix);
+  },
+
   // putting the pile where it's not visible is faster than setting it's |hidden| property
-  pile.hide = function() {
+  hide: function() {
     this.width = this.height = 0;
     this.top = this.left = this._top = this._left = -1000;
     gFloatingPileNeedsHiding = false;
-  };
+    // do these really matter?
+    this.pile.cards = [];
+    this.update(0, 0);
+  }
+};
+
+function createFloatingPile() {
+  FloatingPile.__proto__ = FanDownLayout;
+  const pile = gFloatingPile = createPileLayout("stack", FloatingPile);
+  pile.pile = { __proto__: Pile, cards: [] };
   gGameStack.appendChild(pile);
   pile.hide();
 }

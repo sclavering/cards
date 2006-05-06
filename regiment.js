@@ -2,8 +2,12 @@ Games.regiment = {
   __proto__: BaseCardGame,
 
   layoutTemplate: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
-  aceFoundationType: RegimentAceFoundation,
-  kingFoundationType: RegimentKingFoundation,
+
+  customTemplateFun: function(ch) {
+    const layout = this.foundationLayout, arry = this.pilesByType["f"];
+    const pileType = { "a": RegimentAceFoundation, "k": RegimentKingFoundation }[ch];
+    return pileType ? this.__makePile("foundation", pileType, layout, arry) : null;
+  },
 
   dealTemplate: "P 0,1; R 10,1",
   pileType: RegimentPile,

@@ -1,3 +1,13 @@
+function createPileLayout(tagName, layout) {
+  if(!layout) throw "createPileLayout called with layout=" + layout;
+  const l = document.createElement(layout._tagName || tagName);
+  l.offset = 0;
+  extendObj(l, layout, true);
+  if(layout.initLayout) l.initLayout();
+  return l;
+}
+
+
 // xxx these just need to die (and be done in CSS)
 var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
@@ -27,7 +37,7 @@ function appendNewCardView(pile, card, x, y) {
 
 const _Layout = {
   // these are used in the drag+drop code and similar places, to see what an element is
-  isCard: false,
+  isCard: false, // read as "is card *view*"
   isAnyPile: true,
 
   // Passed the index of a card in the pile or the length of the pile (i.e. the index of
@@ -38,8 +48,17 @@ const _Layout = {
   // Called when the contents of a pile have changed and thus the view needs fixing.
   // An index of i means that cards 0->i are unchanged, but from i upward cards may have
   // been added or removed.
-  update: function(pile, index) {
+  // When dragging some cards around they are *not* removed from the original pile, only hidden
+  // from view.  This is done by passing a lastIx value: no card at index >= to that should be
+  // shown.  Ordinarily lastIx == pile.cards.length
+  update: function(index, lastIx) {
     throw "_Layout.update not overridden!";
+  },
+
+  // Attach this view to a Pile
+  displayPile: function(pile) {
+    this.pile = pile;
+    this.update(0, pile.cards.length);
   },
 
   // replace with a function if needed
@@ -70,8 +89,8 @@ const Layout = {
     this.appendChild(createCardView(null, 0, 0));
   },
   
-  update: function(pile, ix) {
-    this.firstChild.update(pile.lastCard);
+  update: function(index, lastIx) {
+    this.firstChild.update(lastIx ? this.pile.lastCard : null);
   }
 };
 
@@ -79,8 +98,8 @@ const Layout = {
 const FanDownLayout = {
   __proto__: _Layout,
 
-  update: function(pile, index) {
-    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
     const oldoffset = this.offset || gVFanOffset;
     for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
     for(; i < num; ++i) this.appendChild(createCardView(cs[i], 0, i * oldoffset));
@@ -104,8 +123,8 @@ const FanDownLayout = {
 const FanRightLayout = {
   __proto__: _Layout,
 
-  update: function(pile, index) {
-    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
     for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
     for(; i < num; ++i) this.appendChild(createCardView(cs[i], i * gHFanOffset, 0));
     for(; i < kids.length; ++i) kids[i].update(null);
@@ -127,8 +146,8 @@ const SlideLayout = {
     for(var i = 0; i != 6; ++i) appendNewCardView(this, null, i * gSlideOffset, i * gSlideOffset);
   },
 
-  update: function(pile, index) {
-    const cs = pile.cards, num = cs.length, kids = this.childNodes;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
     for(var i = index; i < 5 && i < num; ++i) kids[i].update(cs[i]);
     for(; i < 5; ++i) kids[i].update(null);
     kids[5].update(index >= 5 ? cs[num - 1] : null);
@@ -150,9 +169,9 @@ const _Deal3WasteLayout = {
     for(var i = 0; i != 3; ++i) appendNewCardView(this, null, i * ho, i * vo);
   },
 
-  update: function(pile, index) {
-    const v = pile.deal3v, t = pile.deal3t, cs = pile.cards, kids = this.childNodes;
-    const visible = Math.max(1, v - (t - cs.length));
+  update: function(index, lastIx) {
+    const p = this.pile, v = p.deal3v, t = p.deal3t, cs = p.cards, kids = this.childNodes;
+    const visible = Math.max(1, v - (t - lastIx));
     const ixOffset = cs.length - visible;
     for(var i = 0; i != 3; ++i) kids[i].update(cs[ixOffset + i] || null);
   },
@@ -193,8 +212,8 @@ const DoubleSolFoundationLayout = {
 
   className: "doublesol-foundation",
 
-  update: function(pile, ix) {
-    const cs = pile.cards, num = cs.length;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx;
     this._c0.update(num > 1 ? cs[num - 2] : (num ? cs[num - 1] : null));
     this._c1.update(num > 1 ? cs[num - 1] : null);
   },
@@ -210,8 +229,8 @@ const _SpiderFoundationLayout = {
   __proto__: _Layout,
 
   // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
-  update: function(pile, index) {
-    const cs = pile.cards, num = cs.length, kids = this.childNodes, vindex = index / 13;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx, kids = this.childNodes, vindex = index / 13;
     if(index == num) { // an A->K run has been 
       for(var j = vindex; j != kids.length; ++j) kids[j].update(null);
     } else if(vindex < kids.length) { // an A->K run has been added
@@ -245,8 +264,8 @@ const UnionSquarePileLayout = {
 
   className: "unionsquare",
 
-  update: function(pile, index) {
-    const cs = pile.cards, num = cs.length;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx;
     this._c0.update(num ? cs[0] : null);
     this._c1.update(num > 1 ? cs[num - 1] : null);
   },
@@ -265,8 +284,8 @@ const UnionSquareFoundationLayout = {
 
   className: "unionsquare-f",
 
-  update: function(pile, ix) {
-    const cs = pile.cards, num = cs.length;
+  update: function(index, lastIx) {
+    const cs = this.pile.cards, num = lastIx;
     this._c0.update(cs.length > 13 ? cs[12] : (cs.length ? cs[0] : null));
     this._c1.update(cs.length > 13 ? cs[num - 1] : null);
   },
@@ -288,11 +307,15 @@ const StockLayout = {
     this.appendChild(document.createElement("space"));
     this._counterlabel = this.appendChild(document.createElement("label"));
     this._counterlabel.className = "stockcounter";
-    this._cardview.stockModel = this; // xxx should be the model, not this view
   },
 
-  update: function(pile, ix) {
-    this._cardview.className = pile.hasCards ? "card facedown" : "stock-placeholder";
-    this._counterlabel.setAttribute("value", pile.counterValue);
+  displayPile: function(pile) {
+    this._cardview.stockModel = this.pile = pile;
+    this.update(0, pile.cards.length);
+  },
+
+  update: function(index, lastIx) {
+    this._cardview.className = lastIx ? "card facedown" : "stock-placeholder";
+    this._counterlabel.setAttribute("value", this.pile.counterValue);
   }
 };

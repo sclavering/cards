@@ -17,43 +17,37 @@ function toggleAnimation(menuitem) {
 const kAnimationDelay = 30;
 
 function moveCards1(firstCard, target) {
-  const card = firstCard;
-  const pile = card.pile, source = pile.source;
-  const pview = pile.view, pbox = pview.boxObject;
-  const tview = target.view, tbox = tview.boxObject;
+  const card = firstCard, origin = card.pile;
 
-  const offset = pview.getCardOffsets(card.index);
-  const px = offset.x;
-  const py = offset.y;
-  // initial coords
-  const sx = pbox.x + px - gGameStackLeft;
-  const sy = pbox.y + py - gGameStackTop;
-  // final coords
+  // show the cards in the floating pile if they aren't already
+  const cs = gFloatingPile.pile.cards;
+  if(!cs.length || cs[0] !== card) {
+    const pview = origin.view, pbox = pview.boxObject;
+    const offset = pview.getCardOffsets(card.index);
+    gFloatingPile.show(card, pbox.x + offset.x, pbox.y + offset.y);
+  }
+
+  // final coords (relative to gGameStack)
+  const tview = target.view, tbox = tview.boxObject;
   const finalOffset = tview.getCardOffsets(target.cards.length);
   const tx = tbox.x - gGameStackLeft + finalOffset.x;
   const ty = tbox.y - gGameStackTop + finalOffset.y;
   // change in coords
-  const dx = tx - sx;
-  const dy = ty - sy;
+  const dx = tx - gFloatingPile._left;
+  const dy = ty - gFloatingPile._top;
 
   // Move 55px diagonally per step, adjusted to whatever value leads to a whole number of steps
   var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
   if(steps == 0) {
-    if(pile == gFloatingPile) gFloatingPileNeedsHiding = true;
+    gFloatingPileNeedsHiding = true;
     target.addCards(card);
-    done(source);
+    done(origin);
     return;
   }
 
   const stepX = dx / steps;
   const stepY = dy / steps;
   steps--; // so it's 0 when the move is complete
-
-  if(pile != gFloatingPile) {
-    gFloatingPile.left = gFloatingPile._left = sx;
-    gFloatingPile.top = gFloatingPile._top = sy;
-    gFloatingPile.addCards(card);
-  }
 
   var interval = null;
 
@@ -62,7 +56,7 @@ function moveCards1(firstCard, target) {
   function animDone() {
     target.addCards(card);
     gFloatingPileNeedsHiding = true;
-    done(source);
+    done(origin);
   };
 
   function step() {
@@ -87,7 +81,7 @@ function moveCards1(firstCard, target) {
     clearInterval(interval);
     target.addCards(card);
     gFloatingPileNeedsHiding = true;
-    return source;
+    return origin;
   };
 
   interval = setInterval(step, kAnimationDelay);
@@ -97,7 +91,7 @@ function moveCards1(firstCard, target) {
 
 
 function moveCards2(card, to) {
-  const source = card.parentNode.source;
+  const source = card.parentNode;
   to.addCards(card);
   const t = setTimeout(done, kAnimationDelay, source);
   interruptAction = function() {

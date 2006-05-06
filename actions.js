@@ -114,7 +114,7 @@ DealToNonEmptyPilesAction.prototype = {
 function Move(card, destination) {
 //  dump("created a Move: "+card+" to "+destination.localName+"("+destination.lastCard+")\n");
   this.card = card;
-  this.source = card.pile.source; // where the card came from, not the temp pile used for moving
+  this.source = card.pile;
   this.destination = destination;
 }
 Move.prototype = {
@@ -133,8 +133,8 @@ Move.prototype = {
 
 
 function RemovePair(card1, card2) {
-  this.c1 = card1; this.p1 = card1.pile.source;
-  this.c2 = card2; this.p2 = card2 && card2.pile.source;
+  this.c1 = card1; this.p1 = card1.pile;
+  this.c2 = card2; this.p2 = card2 && card2.pile;
 }
 RemovePair.prototype = {
   synchronous: true,

@@ -25,9 +25,8 @@ var FreeCellGame = {
     if(!card.pile.mayTakeCard(card)) return null;
     var p = this.getBestDestinationFor(card);
     if(!p) return null;
-    var src = card.pile.source;
     return card.isLast ? new Move(card, p)
-        : new FreeCellMoveAction(card, src, p, this.emptyCells, this.getEmptyPiles(p));
+        : new FreeCellMoveAction(card, p, this.emptyCells, this.getEmptyPiles(p));
   },
 
   get emptyCells() {
@@ -73,9 +72,9 @@ var FreeCellGame = {
 
 
 
-function FreeCellMoveAction(card, source, destination, cells, spaces) {
+function FreeCellMoveAction(card, destination, cells, spaces) {
   this.card = card;
-  this.source = source;
+  this.source = card.pile;
   this.destination = destination;
   this.cells = cells;
   this.spaces = spaces;

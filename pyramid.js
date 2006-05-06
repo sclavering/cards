@@ -32,7 +32,7 @@ const PyramidBase = {
       if(t.boxObject.y+t.boxObject.height < y) return null;
     }
     // we're interested in cards, not piles
-    t = t.firstChild;
+    t = t.firstCard;
     return t;
   }
 };

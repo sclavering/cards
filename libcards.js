@@ -1,6 +1,7 @@
 // constants for colours and suits
 const RED = 0, BLACK = 1;
-const SPADE = 1, HEART = 2, DIAMOND = 3, CLUB = 4;
+const SPADE = "S", HEART = "H", DIAMOND = "D", CLUB = "C";
+const SUITS = [SPADE, HEART, DIAMOND, CLUB];
 
 
 // takes an array of cards, returns a *new* shuffled array
@@ -91,15 +92,12 @@ function renumberCards(cards, num) {
 // pass number==14 for a "high" Ace
 function Card(number, suit) {
   this.colour = [,BLACK, RED, RED, BLACK][suit];
-  this.altcolour = this.colour == RED ? BLACK : RED;
   this.suit = suit;
-  this.suitstr = [,"S", "H", "D", "C"][suit];
   this.displayNum = number == 14 ? 1 : number
-  this.displayStr = this.suitstr + this.displayNum;
+  this.displayStr = suit + this.displayNum;
   this.renumber(number);
 }
 Card.prototype = {
-  isCard: true,
   isAnyPile: false,
 
   // Pointers to next card up and down in the same suit. For Mod3 3C.up==6C etc.
@@ -126,7 +124,8 @@ Card.prototype = {
   // to be replaced by a non-DOM version during model/view split
   get isLast() { return !this.nextSibling; },
 
-  toString: function() { return this.displayStr; },
+  // this is necessary so that somePile.build[card] works correctly
+  toString: function() { return this.str; },
 
   renumber: function(number) {
     this.number = number;
@@ -134,11 +133,13 @@ Card.prototype = {
     this.isAce = number == 1 || number == 14;
     this.isKing = number == 13;
     this.isQueen = number == 12;
+    this.str = this.suit + number;
   },
 
-  // xxx temporary hack
-  updateView: function() {
+  // pass a boolean
+  setFaceUp: function(val) {
+    this.faceUp = val;
     const p = this.pile;
-    if(p) p.view.update(p, this.index);
+    if(p) p.updateView(this.index);
   }
 };

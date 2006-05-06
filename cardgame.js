@@ -59,7 +59,7 @@ var BaseCardGame = {
   initCards: function() {
     // see comments above
     if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
-    else if(!("isCard" in this.cards[0])) this.cards = makeCardSuits.apply(null, this.cards);
+    else if(!(this.cards[0] instanceof Card)) this.cards = makeCardSuits.apply(null, this.cards);
   },
 
   // a string, starting with "v" or "h" (depending on wether outer element should be a <vbox> or an
@@ -178,15 +178,6 @@ var BaseCardGame = {
           var arry = this.pilesByType[ch];
           box.appendChild(this.__makePile(type, obj1, obj2, arry));
           break;
-      // xxx kill these later
-        case "a": // an acefoundation
-          var obj1 = this.aceFoundationType, obj2 = this.foundationLayout, arry = this.pilesByType["f"];
-          box.appendChild(this.__makePile("foundation", obj1, obj2, arry));
-          break;
-        case "k":
-          var obj1 = this.kingFoundationType, obj2 = this.foundationLayout, arry = this.pilesByType["f"];
-          box.appendChild(this.__makePile("foundation", obj1, obj2, arry));
-          break;
       // add spaces
         case "-":
           box.appendChild(document.createElement("halfpilespacer")); break;
@@ -206,15 +197,27 @@ var BaseCardGame = {
         case "5":
           box.appendChild(document.createElement("flex" + ch)); break;
         default:
-          throw ("BaseCardGame.buildLayout: strange char found: " + ch);
+          var customNode = this.customTemplateFun(ch);
+          if(!customNode) throw ("BaseCardGame.buildLayout: strange char found: " + ch);
+          box.appendChild(customNode);
       }
     }
     // sanity check
     if(box != container) throw "BaseCardGame._buildLayout: layout had unclosed box";
   },
 
-  __makePile: function(type, obj1, obj2, arry) {
-    const p = createPile(type, obj1, obj2);
+  // Can be overridden to extend the layout template language.
+  // Takes a non-standard char and returns a node to append, or null for unknown chars.
+  customTemplateFun: function(ch) {
+    return null;
+  },
+
+  __makePile: function(type, impl, layoutImpl, arry) {
+    const view = createPileLayout(type, layoutImpl);
+    const p = createPile(impl);
+    p.view = view;
+    view.displayPile(p);
+    
     this.allpiles.push(p);
     const len = arry ? arry.length : 0;
     if(len) {
@@ -227,7 +230,7 @@ var BaseCardGame = {
     // xxx ew!
     const dropact = this.getActionForDrop;
     if(p.getActionForDrop == Pile.getActionForDrop && dropact) p.getActionForDrop = dropact;
-    return p;
+    return view;
   },
 
 
@@ -261,13 +264,8 @@ var BaseCardGame = {
       if("redo" in d) d.redo();
       else d.perform();
       this.score += d.score;
-      // ugly
       var cs = d.revealedCards;
-      for(var j = 0; j != cs.length; ++j) {
-        var c = cs[j];
-        c.faceUp = true;
-        c.updateView();
-      }
+      for(var j = 0; j != cs.length; ++j) cs[j].setFaceUp(true);
     }
 
     gScoreDisplay.value = this.score;
@@ -391,11 +389,7 @@ var BaseCardGame = {
     const acts = this.actionsDone, act = acts[acts.length-1];
 
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
-    for(var i = 0; i != cs.length; ++i) {
-      var c = cs[i];
-      c.faceUp = true;
-      c.updateView();
-    }
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
 
     gScoreDisplay.value = this.score += act.score;
@@ -423,11 +417,7 @@ var BaseCardGame = {
 
     action.undo();
     const cs = action.revealedCards;
-    for(var i = 0; i != cs.length; ++i) {
-      var c = cs[i];
-      c.faceUp = false;
-      c.updateView();
-    }
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(false);
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
   },
@@ -446,11 +436,7 @@ var BaseCardGame = {
     if(action.redo) action.redo();
     else action.perform();
     const cs = action.revealedCards;
-    for(var i = 0; i != cs.length; ++i) {
-      var c = cs[i];
-      c.faceUp = true;
-      c.updateView();
-    }
+    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
 
     if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
   },
@@ -638,10 +624,7 @@ var BaseCardGame = {
 
   mouseDown: function(e) {
     const t = this.getEventTarget(e);
-    if(!t) return;
-    // Ideally the second click of a double click would be retargetted at
-    // gFloatingPile.source, but that's difficult because the "click" doesn't happen.
-    if(t.parentNode == gFloatingPile) return; // xxx model/view problem
+    if(!t || t.parentNode == gFloatingPile) return;
     if(interruptAction) interrupt();
     this._mouseDownTarget = t;
     if(!t.isCard) return;
@@ -662,15 +645,11 @@ var BaseCardGame = {
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    fp.top = fp._top = self._mouseNextCardY - gGameStackTop;
-    fp.left = fp._left = self._mouseNextCardX - gGameStackLeft;
     const card = self._mouseNextCard;
-    fp.source = card.pile.source;
-    fp.addCards(card);
+    gFloatingPile.show(card, self._mouseNextCardX, self._mouseNextCardY);
     self._dragInProgress = true;
     self._tx = ex0 - fp._left;
     self._ty = ey0 - fp._top;
-    self._mouseNextCard = null;
     gGameStack.onmousemove = self.mouseMove;
   },
 
@@ -681,6 +660,8 @@ var BaseCardGame = {
   },
 
   endDrag: function(e) {
+    const card = this._mouseNextCard;
+
     this._mouseNextCard = null;
     this._mouseNextCardBox = null;
     this._dragInProgress = false;
@@ -688,15 +669,13 @@ var BaseCardGame = {
     const cbox = gFloatingPile.boxObject;
     var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
 
-    const card = gFloatingPile.firstCard;
-    const source = card.pile.source;
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
     for(var i = 0; i != targets.length; i++) {
       var target = targets[i];
-      if(target==source) continue;
+      if(target == card.pile) continue;
 
-      var tbox = target.boxObject;
+      var tbox = target.view.boxObject;
       var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
       if(!overlaps) continue;
@@ -714,7 +693,7 @@ var BaseCardGame = {
 
     // ordering here may be important (not-repainting fun)
     gFloatingPile.hide();
-    source.addCards(card);
+    card.pile.updateView(card.index); // make the cards visible again
   },
 
   mouseClick: function(e) {

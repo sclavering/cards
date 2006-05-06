@@ -1,18 +1,6 @@
-function createPile(type, impl, layout) {
-  if(!impl) throw "createPile called with impl=" + impl;
-  if(!layout) throw "createPile called with layout=" + layout;
-
-  const p = document.createElement(layout._tagName || type);
-  p.cards = [];
-  extendObj(p, impl, true);
-  p.offset = 0; // why?
-  extendObj(p, layout, true);
-  p.source = p;
-  p.view = p; // for the moment!
-  if(layout.initLayout) p.initLayout();
-  return p;
+function createPile(impl) {
+  return { __proto__: impl, cards: [] };
 }
-
 
 const Pile = {
   // exactly one of these will be set true
@@ -31,10 +19,6 @@ const Pile = {
   get firstCard() { const cs = this.cards; return cs.length ? cs[0] : null; },
   get lastCard() { const cs = this.cards, l = cs.length; return l ? cs[l - 1] : null; },
 
-  // the pile itself, except for gFloatingPile, where it's a pointer to the pile from which the
-  // cards originally came.
-  source: null,
-
   // previous and next pile of the same type
   // BaseCardGame.buildLayout() forms these into doubly-linked non-circular lists
   prev: null,
@@ -46,8 +30,7 @@ const Pile = {
 
   // the sourrounding piles
   get surrounding() {
-    delete this.surrounding; // so we can replace the getter with an ordinary property
-    var ps = this.surrounding = [];
+    const ps = [];
     var prev = this.prev, next = this.next;
     while(prev && next) {
       ps.push(next); ps.push(prev);
@@ -55,6 +38,11 @@ const Pile = {
     }
     while(next) { ps.push(next); next = next.next; }
     while(prev) { ps.push(prev); prev = prev.prev; }
+    // trickery to avoid the getter for future accesses.  not really sure its worth it
+    const proto = this.__proto__;
+    this.__proto__ = {};
+    this.surrounding = ps;
+    this.__proto__ = proto;
     return ps;
   },
 
@@ -66,7 +54,7 @@ const Pile = {
       c.pile = this;
       cs[j] = c;
     }
-    this.view.update(this, j0);
+    this.updateView(j0);
   },
 
   // arg is a card within another pile's .cards array.
@@ -80,7 +68,11 @@ const Pile = {
   // Should generally not be called except by pile impls.
   removeCardsAfter: function(index) {
     this.cards = this.cards.slice(0, index);
-    this.view.update(this, index);
+    this.updateView(index);
+  },
+
+  updateView: function(index) {
+    this.view.update(index, this.cards.length);
   }
 };
 
@@ -113,7 +105,7 @@ const PyramidPileBase = {
 
 
 
-const BasicStock = {
+const _Stock = {
   __proto__: Pile,
   isStock: true,
   mayTakeCard: no,
@@ -137,35 +129,35 @@ const BasicStock = {
 };
 
 const StockDealToWaste = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new DealToPile(Game.waste) : null;
   }
 };
 
 const StockDealToWasteOrRefill = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new DealToPile(Game.waste) : new RefillStock();
   }
 };
 
 const Deal3OrRefillStock = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new Deal3Action() : new RefillStock();
   }
 };
 
 const StockDealToFoundation = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new DealToPile(Game.foundation) : null;
   }
 };
 
 const StockDealToPiles = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new DealToPiles(Game.piles) : null;
   },
@@ -185,7 +177,7 @@ const StockDealToPilesIfNoneAreEmpty = {
 };
 
 const StockDealToNonemptyPiles = {
-  __proto__: BasicStock,
+  __proto__: _Stock,
   deal: function() {
     return this.hasCards ? new DealToNonEmptyPilesAction() : null;
   }
@@ -317,7 +309,7 @@ const FortyThievesPile = {
 
     if(card.isLast) return true;
 
-    var canMove = Game.countEmptyPiles(this, card.pile.source);
+    var canMove = Game.countEmptyPiles(this, card.pile);
     if(canMove) canMove = canMove * (canMove + 1) / 2;
     canMove++;
 
@@ -342,7 +334,7 @@ const FreeCellPile = {
 
     if(card.isLast) return true;
 
-    var spaces = Game.countEmptyPiles(this, card.pile.source);
+    var spaces = Game.countEmptyPiles(this, card.pile);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
     var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
     var numToMove = 0;
@@ -438,7 +430,7 @@ const RegimentPile = {
     if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
 
     // empty piles must be filled from the closest reserve pile
-    const source = card.pile.source;
+    const source = card.pile;
     if(!source.isReserve) return false;
 
     const reserve = this.reserve;

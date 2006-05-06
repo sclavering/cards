@@ -86,11 +86,11 @@ const _Layout = {
 const Layout = {
   __proto__: _Layout,
   initLayout: function() {
-    this.appendChild(createCardView(null, 0, 0));
+    appendNewCardView(this, null, 0, 0);
   },
   
   update: function(index, lastIx) {
-    this.firstChild.update(lastIx ? this.pile.lastCard : null);
+    this.firstChild.update(lastIx ? this.pile.cards[lastIx - 1] : null);
   }
 };
 
@@ -102,7 +102,7 @@ const FanDownLayout = {
     const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
     const oldoffset = this.offset || gVFanOffset;
     for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) this.appendChild(createCardView(cs[i], 0, i * oldoffset));
+    for(; i < num; ++i) appendNewCardView(this, cs[i], 0, i * oldoffset);
     for(; i < kids.length; ++i) kids[i].update(null);
   
     // the fixLayout of old
@@ -126,7 +126,7 @@ const FanRightLayout = {
   update: function(index, lastIx) {
     const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
     for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) this.appendChild(createCardView(cs[i], i * gHFanOffset, 0));
+    for(; i < num; ++i) appendNewCardView(this, cs[i], i * gHFanOffset, 0);
     for(; i < kids.length; ++i) kids[i].update(null);
   },
 
@@ -201,8 +201,8 @@ const _TwoFanLayout = {
   _c0: null,
   _c1: null,
   initLayout: function() {
-    this._c0 = this.appendChild(createCardView(null, 0, 0));
-    this._c1 = this.appendChild(createCardView(null, gHFanOffset, 0));
+    this._c0 = appendNewCardView(this, null, 0, 0);
+    this._c1 = appendNewCardView(this, null, gHFanOffset, 0);
   }
 };
 

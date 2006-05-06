@@ -45,8 +45,8 @@ Games.whitehead = {
   autoplay: "commonish",
 
   getAutoplayableNumbers: function() {
-    const nums = [,2,2,2,2]; // can always play an Ace or two
-    const suitmap = [,CLUB,DIAMOND,HEART,SPADE]; // other suit of same colour
+    const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
+    const suitmap = { S: CLUB, H: DIAMOND, D: HEART, C: SPADE }; // other suit of same colour
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
       var c = fs[i].lastCard;

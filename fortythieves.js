@@ -28,8 +28,8 @@ Games.fortythieves = {
   // can autoplay 5D when both 4Ds played.  can autoplay any Ace
   getAutoplayableNumbers: function() {
     const fs = this.foundations;
-    const nums = [,20,20,20,20]; // suit -> min number seen on fs
-    const counts = [,0,0,0,0]; // suit -> num such fs
+    const nums = { S: 20, H: 20, D: 20, C: 20}; // suit -> lowest rank seen on fs
+    const counts = { S: 0, H: 0, D: 0, C: 0 }; // suit -> num of such on fs
     for(var i = 0; i != 8; ++i) {
       var c = fs[i].lastCard;
       if(!c) continue;

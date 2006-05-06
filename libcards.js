@@ -1,5 +1,6 @@
 // constants for colours and suits
-const RED = 0, BLACK = 1;
+// May also be seen without quotes, since they're used as object field-names.
+const RED = "R", BLACK = "B";
 const SPADE = "S", HEART = "H", DIAMOND = "D", CLUB = "C";
 const SUITS = [SPADE, HEART, DIAMOND, CLUB];
 
@@ -91,7 +92,7 @@ function renumberCards(cards, num) {
 
 // pass number==14 for a "high" Ace
 function Card(number, suit) {
-  this.colour = [,BLACK, RED, RED, BLACK][suit];
+  this.colour = { S: BLACK, H: RED, D: RED, C: BLACK }[suit];
   this.suit = suit;
   this.displayNum = number == 14 ? 1 : number
   this.displayStr = suit + this.displayNum;

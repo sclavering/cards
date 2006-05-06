@@ -168,12 +168,13 @@ const Rules = {
   },
 
   // returns a suit -> number map
+  // If result.S = x then any spade with rank >=x may be autoplayed
   getAutoplayableNumbers: {
     // can play 5H if 4C and 4S played.  can play any Ace or 2
     "klondike": function() {
       const fs = this.foundations;
-      const colournums = [1000, 1000]; // colour -> smallest num of that colour on fs
-      const colourcounts = [0, 0]; // num of foundation of a given colour
+      const colournums = { R: 1000, B: 1000 }; // colour -> smallest num of that colour on fs
+      const colourcounts = { R: 0, B: 0 }; // num of foundation of a given colour
       for(var i = 0; i != 4; ++i) {
         var c = fs[i].lastCard;
         if(!c) continue;
@@ -181,21 +182,19 @@ const Rules = {
         colourcounts[col]++;
         if(colournums[col] > num) colournums[col] = num;
       }
-      if(colourcounts[0] < 2) colournums[0] = 1;
-      if(colourcounts[1] < 2) colournums[1] = 1;
-      // suit -> num map
-      const rednum = colournums[RED] + 1, blacknum = colournums[BLACK] + 1;
-//      dump("decided can move red "+blacknum+"s and black "+rednum+"s\n");
-      return [, rednum, blacknum, blacknum, rednum];
+      if(colourcounts.R < 2) colournums.R = 1;
+      if(colourcounts.B < 2) colournums.B = 1;
+      const black = colournums.R + 1, red = colournums.B + 1;
+      return { S: black, H: red, D: red, C: black };
     },
 
     "any": function() {
-      return [,13,13,13,13];
+      return { S: 13, H: 13, D: 13, C: 13 };
     },
 
     gypsy: function() {
       const fs = this.foundations;
-      const nums = [20,20], counts = [0,0]; // colour -> foo maps
+      const nums = { R: 20, B: 20 }, counts = { R: 0, B: 0 }; // colour -> foo maps
       for(var i = 0; i != 8; ++i) {
         var c = fs[i].lastCard;
         if(!c) continue;
@@ -205,8 +204,8 @@ const Rules = {
       }
       if(counts[0] != 4) nums[0] = 0;
       if(counts[1] != 4) nums[1] = 0;
-      const black = nums[RED] + 1, red = nums[BLACK] + 1;
-      return [,black,red,red,black];
+      const black = nums.R + 1, red = nums.B + 1;
+      return { S: black, H: red, D: red, C: black };
     }
   }
 }

@@ -1,10 +1,8 @@
 Games.towers = {
   __proto__: FreeCellGame,
 
+  layout: TowersLayout,
   pileType: TowersPile,
-
-  layoutTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
-
   dealTemplate: "P 0,5; c 0 0,1 0,1 0",
 
   init: function() {

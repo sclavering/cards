@@ -1,11 +1,8 @@
 Games.maze = {
   __proto__: BaseCardGame,
 
+  layout: MazeLayout,
   pileType: MazePile,
-
-  layoutTemplate:
-    "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
-    + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
   dealTemplate: "P 0,1",
 
   init: function() {

@@ -1,13 +1,10 @@
 Games.mod3 = {
   __proto__: BaseCardGame,
 
+  layout: Mod3Layout,
   stockType: StockDealToPiles,
   foundationType: Mod3Foundation,
-  foundationLayout: SlideLayout,
   pileType: AcesUpPile,
-
-  layoutTemplate:
-    "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1s1]",
   dealTemplate: "F 0,1; P 0,1",
 
   cards: null,
@@ -53,10 +50,11 @@ Games.mod3 = {
   },
 
   getHints: function() {
-    for(var i = 0; i != this.allpiles.length; i++) {
-      var source = this.allpiles[i];
-      if(source.isStock || !source.hasCards) continue;
+    const ps = this.dragDropTargets, num = ps.length;
+    for(var i = 0; i != num; ++i) {
+      var source = ps[i];
       var card = source.lastCard;
+      if(!card) continue;
 
       var row = this.rows[card.row];
       for(var j = 0; j != 8; j++) {

@@ -1,321 +1,260 @@
-function createPileLayout(tagName, layout) {
-  if(!layout) throw "createPileLayout called with layout=" + layout;
-  const l = document.createElement(layout._tagName || tagName);
-  l.offset = 0;
-  extendObj(l, layout, true);
-  if(layout.initLayout) l.initLayout();
-  return l;
-}
-
-
-// xxx these just need to die (and be done in CSS)
-var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
-var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
-var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
-
-function getCardImageClass(card) {
-  return "card " + (card.faceUp ? card.displayStr : "facedown");
-}
-function cardView_update(card) {
-  this.className = card ? getCardImageClass(card) : "card hidden";
-  // so the drag-drop code can work out what you're starting to drag
-  this.cardModel = card;
-}
-function createCardView(card, x, y) {
-  const v = document.createElement("image");
-  v.isCard = true; // drag-drop depends on this
-  v.isAnyPile = false;
-  v.top = v._top = y;
-  v.left = v._left = x;
-  v.update = cardView_update;
-  v.update(card);
-  return v;
-}
-function appendNewCardView(pile, card, x, y) {
-  return pile.appendChild(createCardView(card, x, y));
-}
-
-const _Layout = {
-  // these are used in the drag+drop code and similar places, to see what an element is
-  isCard: false, // read as "is card *view*"
-  isAnyPile: true,
-
-  // Passed the index of a card in the pile or the length of the pile (i.e. the index of
-  // the next card to be added to the pile).  Should return the pixel offset from the
-  // top-left corner of the pile.
-  getCardOffsets: function(ix) { return { x: 0, y: 0 }; },
-
-  // Called when the contents of a pile have changed and thus the view needs fixing.
-  // An index of i means that cards 0->i are unchanged, but from i upward cards may have
-  // been added or removed.
-  // When dragging some cards around they are *not* removed from the original pile, only hidden
-  // from view.  This is done by passing a lastIx value: no card at index >= to that should be
-  // shown.  Ordinarily lastIx == pile.cards.length
-  update: function(index, lastIx) {
-    throw "_Layout.update not overridden!";
-  },
-
-  // Attach this view to a Pile
-  displayPile: function(pile) {
-    this.pile = pile;
-    this.update(0, pile.cards.length);
-  },
-
-  // replace with a function if needed
-  initLayout: null,
-
-  // Get the position + dimensions for a box that covers the card and any subsequent cards.
-  // If the card is null then it should instead be a box highlighting the pile itself.
-  // Coords are relative to top-left corner of the boxObject for this layout
-  getHighlightBounds: function(card) {
-    var x = 0, y = 0, w = gCardWidth, h = gCardHeight;
-    if(card) {
-      var o = this.getCardOffsets(card.index);
-      x = o.x;
-      y = o.y;
-      var o2 = this.getCardOffsets(card.pile.cards.length - 1);
-      w += o2.x - x;
-      h += o2.y - y;
-    }
-    return { x: x, y: y, width: w, height: h };
-  }
-};
-
-
-// A _Layout where only the top card is ever visible
 const Layout = {
-  __proto__: _Layout,
-  initLayout: function() {
-    appendNewCardView(this, null, 0, 0);
-  },
-  
-  update: function(index, lastIx) {
-    this.firstChild.update(lastIx ? this.pile.cards[lastIx - 1] : null);
-  }
-};
+  // a string, starting with "v" or "h" (depending on wether outer element should be a <vbox>
+  // or an <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined below
+  template: null,
 
+  pilespacerClass: "",
 
-const FanDownLayout = {
-  __proto__: _Layout,
+  // The View impl. to use when encountering the corresponding letters in .template.
+  // Layouts can use abitrary new letters by having correspondingly-named fields.
+  // Usual meanings are p: pile, f: foundation, c: cell, r: reserve, s: stock, w: waste
+  p: FanDownView,
+  f: View,
+  c: View,
+  r: View,
+  s: StockView,
+  w: View,
 
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    const oldoffset = this.offset || gVFanOffset;
-    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) appendNewCardView(this, cs[i], 0, i * oldoffset);
-    for(; i < kids.length; ++i) kids[i].update(null);
-  
-    // the fixLayout of old
-    if(num == 0) { this.offset = 0; return; }
-    const firstbox = this.firstChild.boxObject;
-    const space = window.innerHeight - firstbox.y - firstbox.height;
-    const offset = this.offset = Math.min(space / kids.length, gVFanOffset);
-    for(var v = 0, top = 0; v != kids.length; ++v, top += offset) kids[v].top = kids[v]._top = top;
+  // will become a letter -> node-array map
+  nodes: {},
+
+  // the root XUL element for this layout
+  _node: null,
+
+  show: function() {
+    if(!this._node) throw "layout not init()'d";
+    this._node.hidden = false;
   },
 
-  getCardOffsets: function(ix) {
-    const y = ix * (this.offset || gVFanOffset);
-    return { x: 0, y: y };
-  }
-};
-
-
-const FanRightLayout = {
-  __proto__: _Layout,
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) appendNewCardView(this, cs[i], i * gHFanOffset, 0);
-    for(; i < kids.length; ++i) kids[i].update(null);
+  hide: function() {
+    this._node.hidden = true;
   },
 
-  getCardOffsets: function(ix) {
-    return { x: ix * gHFanOffset, y: 0 };
-  }
-};
+  init: function() {
+    if(this._node) return;
 
+    const template = this.template, len = template.length;
+    const nodes = this.nodes = {};
+    const containerIsVbox = template[0] == "v";
+    const container = this._node = document.createElement(containerIsVbox ? "vbox" : "hbox");
+    container.className = "game";
+    gGameStack.insertBefore(container, gGameStack.firstChild);
 
-// this really needs modifying to allow for more than 6 cards!
-const SlideLayout = {
-  __proto__: _Layout,
+    var box = container;
+    var nextBoxVertical = !containerIsVbox;
+    var newbox, p;
 
-  className: "slide",
-  
-  initLayout: function() {
-    for(var i = 0; i != 6; ++i) appendNewCardView(this, null, i * gSlideOffset, i * gSlideOffset);
-  },
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    for(var i = index; i < 5 && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < 5; ++i) kids[i].update(null);
-    kids[5].update(index >= 5 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const offset = (ix > 6 ? 6 : ix) * gSlideOffset;
-    return { x: offset, y: offset };
-  }
-};
-
-
-const _Deal3WasteLayout = {
-  __proto__: _Layout,
-  _isHorizontal: false,
-  
-  initLayout: function() {
-    const h = this._isHorizontal, ho = h * gHFanOffset, vo = !h * gVFanOffset;
-    for(var i = 0; i != 3; ++i) appendNewCardView(this, null, i * ho, i * vo);
-  },
-
-  update: function(index, lastIx) {
-    const p = this.pile, v = p.deal3v, t = p.deal3t, cs = p.cards, kids = this.childNodes;
-    const visible = Math.max(1, v - (t - lastIx));
-    const ixOffset = cs.length - visible;
-    for(var i = 0; i != 3; ++i) kids[i].update(cs[ixOffset + i] || null);
-  },
-
-  // this assumes only the last card will ever be asked about
-  // (which will be when it's the subject of a hint)
-  getCardOffsets: function(ix) {
-    for(var i = 2; i >= 0; --i) {
-      if(this.childNodes[i].cardModel) break;
+    function startBox(type, className) {
+      newbox = document.createElement(type);
+      newbox.className = className;
+      box.appendChild(newbox);
+      box = newbox;
     }
-    const x = i * gHFanOffset;
-    return { x: x, y: 0 };
-  }
-};
 
-const Deal3HWasteLayout = {
-  __proto__: _Deal3WasteLayout,
-  className: "draw3h-waste",
-  _isHorizontal: true
-};
-
-const Deal3VWasteLayout = _Deal3WasteLayout;
-
-
-const _TwoFanLayout = {
-  __proto__: _Layout,
-  _c0: null,
-  _c1: null,
-  initLayout: function() {
-    this._c0 = appendNewCardView(this, null, 0, 0);
-    this._c1 = appendNewCardView(this, null, gHFanOffset, 0);
-  }
-};
-
-// top *two* cards visible, so you can tell if they have the same number
-const DoubleSolFoundationLayout = {
-  __proto__: _TwoFanLayout,
-
-  className: "doublesol-foundation",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(num > 1 ? cs[num - 2] : (num ? cs[num - 1] : null));
-    this._c1.update(num > 1 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix > 0 ? gVFanOffset : 0;
-    return { x: x, y: 0 };
-  }
-};
-
-
-const _SpiderFoundationLayout = {
-  __proto__: _Layout,
-
-  // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes, vindex = index / 13;
-    if(index == num) { // an A->K run has been 
-      for(var j = vindex; j != kids.length; ++j) kids[j].update(null);
-    } else if(vindex < kids.length) { // an A->K run has been added
-      dump("vindex: "+vindex+"\n");
-      kids[vindex].update(cs[index]);
-    } else { // an A->K run has been added, and we need a new view
-      appendNewCardView(this, cs[index], 0, vindex * gVFanOffset);
+    // first char is "h"/"v", not of interest here
+    for(var i = 1; i != len; ++i) {
+      var ch = template[i];
+      switch(ch) {
+      // start a box
+        case "[": // in opposite direction
+          startBox(nextBoxVertical ? "vbox" : "hbox", "");
+          nextBoxVertical = !nextBoxVertical;
+          break;
+        case "`": // in current direction (used by Fan)
+          startBox(nextBoxVertical ? "hbox" : "vbox", "");
+          break;
+        case "(":
+          startBox("vbox", "pyramid-rows"); break;
+        case "<":
+          startBox("hbox", "pyramid-row"); break;
+      // finish a box
+        case "]":
+          nextBoxVertical = !nextBoxVertical;
+          // fall through
+        case ">":
+        case ")":
+        case "'":
+          box = box.parentNode;
+          break;
+      // annotations: "{attrname=val}", applies to most-recent pile or box
+        case "{":
+          var i0 = i;
+          while(template[i] != "}") ++i;
+          var blob = template.substring(i0 + 1, i).split("=");
+          (box.lastChild || box).setAttribute(blob[0], blob[1]);
+          break;
+        case "}":
+          throw "BaseCardGame._buildLayout: reached a } in template (without a { first)";
+      // add spaces
+        case "-":
+          box.appendChild(document.createElement("halfpilespacer")); break;
+        case "+":
+        case "#":
+          p = document.createElement("pilespacer");
+          p.className = this.pilespacerClass;
+          box.appendChild(p);
+          break;
+        case " ":
+          box.appendChild(document.createElement("space")); break;
+        case "1":
+          box.appendChild(document.createElement("flex")); break;
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+          box.appendChild(document.createElement("flex" + ch)); break;
+      // add pile views
+        case "p":
+        case "f":
+        case "c":
+        case "r":
+        case "w":
+        case "s":
+        default:
+          var viewType = this[ch] || null;
+          if(!viewType) throw "Layout._build: unrecognised char '" + ch + "' found in template";
+          var node = createPileView(viewType);
+          box.appendChild(node);
+          if(nodes[ch]) nodes[ch].push(node);
+          else nodes[ch] = [node];
+      }
     }
-  },
-
-  getCardOffsets: function(ix) {
-    const y = ix / 13 * gVFanOffset;
-    return { x: 0, y: y };
-  }
-};
-
-const Spider4FoundationLayout = {
-  __proto__: _SpiderFoundationLayout,
-  className: "foundation4"
-};
-
-const Spider8FoundationLayout = {
-  __proto__: _SpiderFoundationLayout,
-  className: "foundation8"
-};
-
-
-// bottom + top cards visible, so you can tell whether pile is being built up or down
-const UnionSquarePileLayout = {
-  __proto__: _TwoFanLayout,
-
-  className: "unionsquare",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(num ? cs[0] : null);
-    this._c1.update(num > 1 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix > 0 ? gHFanOffset : 0;
-    return { x: x, y: 0 };
+    // sanity check
+    if(box != container) throw "Layout._build: layout had unclosed box";
   }
 };
 
 
-// built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
-// from the a->k, so that it's clear what card should be plauyed next
-const UnionSquareFoundationLayout = {
-  __proto__: _TwoFanLayout,
-
-  className: "unionsquare-f",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(cs.length > 13 ? cs[12] : (cs.length ? cs[0] : null));
-    this._c1.update(cs.length > 13 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix >= 13 ? gHFanOffset : 0;
-    return { x: x, y: 0 };
-  }
-};
-
-
-// a layout for Stocks, including a counter
-const StockLayout = {
+const AcesUpLayout = {
   __proto__: Layout,
-  _tagName: "vbox",
-  initLayout: function() {
-    this._cardview = appendNewCardView(this, null, 0, 0);
-    this._cardview.isCard = false;
-    this.appendChild(document.createElement("space"));
-    this._counterlabel = this.appendChild(document.createElement("label"));
-    this._counterlabel.className = "stockcounter";
-  },
+  template: "h2s2p1p1p1p2f2"
+};
 
-  displayPile: function(pile) {
-    this._cardview.stockModel = this.pile = pile;
-    this.update(0, pile.cards.length);
-  },
+const CanfieldLayout = {
+  __proto__: Layout,
+  template: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2"
+};
 
-  update: function(index, lastIx) {
-    this._cardview.className = lastIx ? "card facedown" : "stock-placeholder";
-    this._counterlabel.setAttribute("value", this.pile.counterValue);
-  }
+const DoubleSolLayout = {
+  __proto__: Layout,
+  f: DoubleSolFoundationView,
+  template: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
+};
+
+const FanLayout = {
+  __proto__: Layout,
+  p: FanRightView,
+  template: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
+      + "[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]' ]"
+};
+
+const FortyThievesLayout = {
+  __proto__: Layout,
+  w: FanRightView,
+  template: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]"
+};
+
+const FreeCellLayout = {
+  __proto__: Layout,
+  template: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]"
+};
+
+const GolfLayout = {
+  __proto__: Layout,
+  template: "v[3s2f3] [2p1p1p1p1p1p1p2]"
+};
+
+const GypsyLayout = {
+  __proto__: Layout,
+  template: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2"
+};
+
+const KlondikeLayout = {
+  __proto__: Layout,
+  template: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
+};
+
+const KlondikeDraw3Layout = {
+  __proto__: Layout,
+  w: Deal3HWasteView,
+  template: "v[1s1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
+};
+
+const DoubleKlondikeLayout = {
+  __proto__: Layout,
+  template: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
+};
+
+const MazeLayout = {
+  __proto__: Layout,
+  template: "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
+      + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
+};
+
+const Mod3Layout = {
+  __proto__: Layout,
+  f: SlideView,
+  template: "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1]"
+      + " [1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
+};
+
+const MontanaLayout = {
+  __proto__: Layout,
+  template: "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
+      + " [1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
+};
+
+const PenguinLayout = {
+  __proto__: Layout,
+  template: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2"
+};
+
+const PileOnLayout = {
+  __proto__: Layout,
+  p: FanRightView,
+  pilespacerClass: "pileon",
+  template: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]"
+};
+
+const RegimentLayout = {
+  __proto__: Layout,
+  a: View, // ace/king foundations
+  k: View,
+  p: View,
+  template: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]"
+};
+
+const RussianLayout = {
+  __proto__: Layout,
+  template: "h1p1p1p1p1p1p1p1[f f f f]1"
+};
+
+const SimonLayout = {
+  __proto__: Layout,
+  f: Spider4FoundationView,
+  template: "h2p1p1p1p1p1p1p1p1p1p2f2"
+};
+
+const SpiderLayout = {
+  __proto__: Layout,
+  f: Spider8FoundationView,
+  template: "h2p1p1p1p1p1p1p1p1p1p2[f s]2"
+};
+
+const TowersLayout = {
+  __proto__: Layout,
+  template: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
+};
+
+const UnionSquareLayout = {
+  __proto__: Layout,
+  f: UnionSquareFoundationView,
+  p: UnionSquarePileView,
+  template: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2"
+};
+
+const WaspLayout = {
+  __proto__: Layout,
+  f: Spider4FoundationView,
+  template: "h2p1p1p1p1p1p1p2[f s]2"
 };

@@ -1,11 +1,10 @@
 Games.acesup = {
   __proto__: BaseCardGame,
 
+  layout: AcesUpLayout,
   stockType: StockDealToPiles,
   foundationType: AcesUpFoundation,
   pileType: AcesUpPile,
-
-  layoutTemplate: "h2s2p1p1p1p2f2",
   dealTemplate: "P 0,1",
 
   init: function() {

@@ -15,6 +15,7 @@
 
 <script type="application/x-javascript" src="cardslib.js"/>
 <script type="application/x-javascript" src="libcards.js"/>
+<script type="application/x-javascript" src="libviews.js"/>
 <script type="application/x-javascript" src="liblayout.js"/>
 <script type="application/x-javascript" src="libpiles.js"/>
 <script type="application/x-javascript" src="moving.js"/>

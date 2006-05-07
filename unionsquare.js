@@ -1,14 +1,10 @@
 Games.unionsquare = {
   __proto__: BaseCardGame,
 
+  layout: UnionSquareLayout,
   stockType: StockDealToWaste,
   foundationType: UnionSquareFoundation,
-  foundationLayout: UnionSquareFoundationLayout,
   pileType: UnionSquarePile,
-  pileLayout: UnionSquarePileLayout,
-
-  layoutTemplate: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2",
-
   dealTemplate: "P 0,1",
 
   init: function() {

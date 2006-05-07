@@ -89,8 +89,6 @@ function ifLast(card) { return card.isLast; }
 const PyramidPileBase = {
   __proto__: Pile,
 
-  className: "pyramid-pile", // xxx kill this
-
   // set in games' init()s
   leftParent: null,
   rightParent: null,

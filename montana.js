@@ -2,12 +2,8 @@ const Montana = {
   __proto__: BaseCardGame,
 
   helpId: "montana",
-
+  layout: MontanaLayout,
   pileType: MontanaPile,
-
-  layoutTemplate:
-    "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1] "
-    + "[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
   dealTemplate: "P 0,1",
 
   redeals: 2,

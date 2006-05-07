@@ -1,13 +1,9 @@
 Games.fan = {
   __proto__: BaseCardGame,
 
+  layout: FanLayout,
   pileType: FanPile,
-  pileLayout: FanRightLayout,
   foundationType: FanFoundation,
-
-  // xxx this doesn't give the desired numbering of the piles
-  layoutTemplate: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
-    +"[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]' ]",
   dealTemplate: "P 0,3", // actually deals 1 card to the final pile
 
   init: function() {

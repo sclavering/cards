@@ -4,12 +4,10 @@
 var SpiderBase = {
   __proto__: BaseCardGame,
 
+  layout: SpiderLayout,
   stockType: StockDealToPilesIfNoneAreEmpty,
   foundationType: SpiderFoundation,
-  foundationLayout: Spider8FoundationLayout,
   pileType: SpiderPile,
-
-  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f s]2",
 
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
@@ -153,11 +151,9 @@ Games.divorce = {
 Games.wasp = {
   __proto__: SpiderBase,
 
+  layout: WaspLayout,
   stockType: StockDealToPiles,
-  foundationLayout: Spider4FoundationLayout,
   pileType: WaspPile,
-
-  layoutTemplate: "h2p1p1p1p1p1p1p2[f s]2",
   dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
 
   // converted to an array of cards by SpiderBase.init2()
@@ -184,10 +180,7 @@ Games.wasp = {
 const SimonBase = {
   __proto__: SpiderBase,
   helpId: "simon",
-
-  foundationLayout: Spider4FoundationLayout,
-
-  layoutTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
+  layout: SimonLayout,
   dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
 
   // see SpiderBase.init2

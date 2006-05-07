@@ -2,12 +2,10 @@ const GolfBase = {
   __proto__: BaseCardGame,
 
   helpId: "golf",
-
+  layout: GolfLayout,
   stockType: StockDealToFoundation,
   foundationType: GolfFoundation,
   pileType: GolfPile,
-
-  layoutTemplate: "v[3s2f3] [2p1p1p1p1p1p1p2]",
 
   getHints: function() {
     const f = this.foundation, ps = this.piles;

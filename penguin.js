@@ -1,9 +1,8 @@
 Games.penguin = {
   __proto__: BaseCardGame,
 
+  layout: PenguinLayout,
   pileType: PenguinPile,
-
-  layoutTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
 
   init: function() {
     this.cards = makeDecksMod13(1);

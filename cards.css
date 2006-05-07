@@ -1,7 +1,6 @@
 @import url(chrome://global/skin/);
 
 /* custom elements */
-foundation, cell, reserve, stock, waste, pile { display: -moz-stack; }
 flex { -moz-box-flex: 1; }
 flex2 { -moz-box-flex: 2; }
 flex3 { -moz-box-flex: 3; }

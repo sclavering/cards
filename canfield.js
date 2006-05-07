@@ -1,11 +1,10 @@
 const CanfieldBase = {
   __proto__: BaseCardGame,
 
+  layout: CanfieldLayout,
   stockType: StockDealToWasteOrRefill,
   pileType: CanfieldPile,
   _reserveCards: [12,1],
-
-  layoutTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
 
   init: function() {
     this.cards = makeDecksMod13(1);
@@ -48,11 +47,11 @@ Games.canfield3 = {
   helpId: "canfield",
   __proto__: CanfieldBase,
   stockType: Deal3OrRefillStock,
-  wasteLayout: Deal3VWasteLayout
+  wasteView: Deal3VWasteView
 };
 
 Games.demon = {
   __proto__: CanfieldBase,
-  reserveLayout: FanDownLayout,
+  reserveView: FanDownView,
   _reserveCards: [0,13]
 };

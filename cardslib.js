@@ -48,7 +48,7 @@ var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
 var gGameStackLeft = 0;
 
-// Actually just a Layout, not a Pile.  (Name predates MV-split.)
+// Actually just a View, not a Pile.  (Name predates MV-split.)
 var gFloatingPile = null; 
 var gFloatingPileNeedsHiding = false; // see done()
 
@@ -167,11 +167,11 @@ const FloatingPile = {
 };
 
 function createFloatingPile() {
-  FloatingPile.__proto__ = FanDownLayout;
-  const pile = gFloatingPile = createPileLayout("stack", FloatingPile);
-  pile.pile = { __proto__: Pile, cards: [] };
-  gGameStack.appendChild(pile);
-  pile.hide();
+  FloatingPile.__proto__ = FanDownView;
+  gFloatingPile = createPileView(FloatingPile);
+  gFloatingPile.pile = { __proto__: Pile, cards: [] };
+  gGameStack.appendChild(gFloatingPile);
+  gFloatingPile.hide();
 }
 
 

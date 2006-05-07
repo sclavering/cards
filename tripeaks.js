@@ -4,7 +4,7 @@ Games.tripeaks = {
   stockType: StockDealToFoundation,
   foundationType: GolfFoundation,
   pileType: TriPeaksPile,
-  pileLayout: Layout,
+  pileView: View,
 
   layoutTemplate: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
     +"<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3s2f3]2",

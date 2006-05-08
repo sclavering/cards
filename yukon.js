@@ -7,19 +7,18 @@ const YukonBase = {
   getHintsForCard: function(card) {
     if(!card) return;
     const ps = this.piles, len = ps.length;
+    const num = card.number, colour = card.colour;
     for(var i = 0; i != len; i++) {
       var pile = ps[i];
       if(pile == card.pile) continue;
-      var current = pile.lastCard;
-      while(current && current.faceUp) {
-        if(card.number==current.upNumber && card.colour!=current.colour) {
-          // |current| could be moved onto |card|.  test if it's not already
-          // on a card consecutive and of opposite colour
-          var prev = current.previousSibling;
-          if(!prev || prev.number!=current.upNumber || prev.colour==current.colour)
-            this.addHint(current, card.pile);
-        }
-        current = current.previousSibling;
+      var cs = pile.cards;
+      for(var j = cs.length - 1; j >= 0; --j) {
+        var c = cs[j];
+        if(!c.faceUp) break;
+        if(num != c.upNumber || colour == c.colour) continue; // couldn't go on card
+        var d = j > 0 ? cs[j - 1] : null;
+        if(d && d.number == c.upNumber && d.colour != c.colour) continue; // not worth moving
+        this.addHint(c, card.pile);
       }
     }
   },
@@ -33,8 +32,7 @@ const YukonBase = {
 Games.yukon = {
   __proto__: YukonBase,
 
-  layoutTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
-
+  layout: YukonLayout,
   dealTemplate: "p 0,1 1,5 2,5 3,5 4,5 5,5 6,5",
 
   init: function() {
@@ -57,10 +55,8 @@ Games.yukon = {
 Games.sanibel = {
   __proto__: YukonBase,
 
+  layout: SanibelLayout,
   stockType: StockDealToWaste,
-
-  layoutTemplate: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
-
   dealTemplate: "P 3,7",
 
   init: function() {

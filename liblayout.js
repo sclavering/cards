@@ -216,6 +216,12 @@ const PileOnLayout = {
   template: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]"
 };
 
+const PyramidLayout = {
+  __proto__: Layout,
+  layoutTemplate: "h1[s w]1({flex=5}<1p1><4-++p1p++-4><3++p1p1p++3>"
+      + "<3-+p1p1p1p+-3><2+p1p1p1p1p+2><2-p1p1p1p1p1p-2><1p1p1p1p1p1p1p1>)1f1"
+};
+
 const RegimentLayout = {
   __proto__: Layout,
   a: View, // ace/king foundations
@@ -229,6 +235,11 @@ const RussianLayout = {
   template: "h1p1p1p1p1p1p1p1[f f f f]1"
 };
 
+const SanibelLayout = {
+  __proto__: Layout,
+  template: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
+};
+
 const SimonLayout = {
   __proto__: Layout,
   f: Spider4FoundationView,
@@ -239,6 +250,13 @@ const SpiderLayout = {
   __proto__: Layout,
   f: Spider8FoundationView,
   template: "h2p1p1p1p1p1p1p1p1p1p2[f s]2"
+};
+
+const TriPeaksLayout = {
+  __proto__: Layout,
+  p: View,
+  template: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
+     + "<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3s2f3]2"
 };
 
 const TowersLayout = {
@@ -258,3 +276,9 @@ const WaspLayout = {
   f: Spider4FoundationView,
   template: "h2p1p1p1p1p1p1p2[f s]2"
 };
+
+const YukonLayout = {
+  __proto__: Layout,
+  template: "h1p1p1p1p1p1p1p1[f f f f]1"
+};
+

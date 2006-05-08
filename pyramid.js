@@ -61,13 +61,11 @@ const PyramidFoundation = {
 Games.pyramid = {
   __proto__: PyramidBase,
 
+  layout: PyramidLayout,
   stockType: StockDealToWasteOrRefill,
   wasteType: { __proto__: Waste, free: true },
   foundationType: PyramidFoundation,
   pileType: PyramidPile,
-
-  layoutTemplate: "h1[s w]1({flex=5}<1p1><4-++p1p++-4><3++p1p1p++3>"
-    +"<3-+p1p1p1p+-3><2+p1p1p1p1p+2><2-p1p1p1p1p1p-2><1p1p1p1p1p1p1p1>)1f1",
   dealTemplate: "P 0,1",
 
   init: function() {

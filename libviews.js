@@ -84,7 +84,6 @@ const _View = {
   }
 };
 
-
 // A _View where only the top card is ever visible
 const View = {
   __proto__: _View,
@@ -96,7 +95,6 @@ const View = {
     this.firstChild.update(lastIx ? this.pile.cards[lastIx - 1] : null);
   }
 };
-
 
 const FanDownView = {
   __proto__: _View,
@@ -122,7 +120,6 @@ const FanDownView = {
   }
 };
 
-
 const FanRightView = {
   __proto__: _View,
 
@@ -138,6 +135,10 @@ const FanRightView = {
   }
 };
 
+const PileOnView = {
+  __proto__: FanRightView,
+  className: "pileon pile"
+};
 
 // this really needs modifying to allow for more than 6 cards!
 const SlideView = {
@@ -161,7 +162,6 @@ const SlideView = {
     return { x: offset, y: offset };
   }
 };
-
 
 const _Deal3WasteView = {
   __proto__: _View,
@@ -198,7 +198,6 @@ const Deal3HWasteView = {
 
 const Deal3VWasteView = _Deal3WasteView;
 
-
 const _TwoFanView = {
   __proto__: _View,
   _c0: null,
@@ -226,7 +225,6 @@ const DoubleSolFoundationView = {
     return { x: x, y: 0 };
   }
 };
-
 
 const _SpiderFoundationView = {
   __proto__: _View,
@@ -260,7 +258,6 @@ const Spider8FoundationView = {
   className: "pile foundation8"
 };
 
-
 // bottom + top cards visible, so you can tell whether pile is being built up or down
 const UnionSquarePileView = {
   __proto__: _TwoFanView,
@@ -278,7 +275,6 @@ const UnionSquarePileView = {
     return { x: x, y: 0 };
   }
 };
-
 
 // built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
 // from the a->k, so that it's clear what card should be plauyed next
@@ -298,7 +294,6 @@ const UnionSquareFoundationView = {
     return { x: x, y: 0 };
   }
 };
-
 
 // a layout for Stocks, including a counter
 const StockView = {

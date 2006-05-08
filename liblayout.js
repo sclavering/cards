@@ -211,7 +211,7 @@ const PenguinLayout = {
 
 const PileOnLayout = {
   __proto__: Layout,
-  p: FanRightView,
+  p: PileOnView,
   pilespacerClass: "pileon",
   template: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]"
 };

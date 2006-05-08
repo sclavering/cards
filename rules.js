@@ -202,8 +202,8 @@ const Rules = {
         counts[colour]++;
         if(nums[colour] > num) nums[colour] = num;
       }
-      if(counts[0] != 4) nums[0] = 0;
-      if(counts[1] != 4) nums[1] = 0;
+      if(counts.R != 4) nums.R = 0;
+      if(counts.B != 4) nums.B = 0;
       const black = nums.R + 1, red = nums.B + 1;
       return { S: black, H: red, D: red, C: black };
     }

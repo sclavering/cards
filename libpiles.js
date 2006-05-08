@@ -18,6 +18,13 @@ const Pile = {
   // may be removed, long term
   get firstCard() { const cs = this.cards; return cs.length ? cs[0] : null; },
   get lastCard() { const cs = this.cards, l = cs.length; return l ? cs[l - 1] : null; },
+  
+  getCard: function(ix) {
+    const cs = this.cards, len = cs.length;
+    if(ix >= 0) return ix < len ? cs[ix] : null;
+    ix = -ix;
+    return ix < len ? cs[len - ix] : null;
+  },
 
   // previous and next pile of the same type
   // BaseCardGame.buildLayout() forms these into doubly-linked non-circular lists
@@ -214,8 +221,9 @@ const Reserve = {
 
 function mayTakeFromFreeCellPile(card) {
   if(!card.faceUp) return false;
-  for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-    if(card.colour==next.colour || card.number!=next.upNumber) return false;
+  const cs = card.pile.cards, num = cs.length;
+  for(var i = card.index, j = i + 1; j != num; ++i, ++j) 
+    if(cs[i].colour == cs[j].colour || cs[i].number != cs[j].upNumber) return false;
   return true;
 }
 
@@ -225,15 +233,17 @@ function mayTakeIfFaceUp(card) {
 
 function mayTakeDescendingRun(card) {
   if(!card.faceUp) return false;
-  for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-    if(card.number!=next.upNumber) return false;
+  const cs = card.pile.cards, num = cs.length;
+  for(var i = card.index, j = i + 1; j != num; ++i, ++j) 
+    if(cs[i].number != cs[j].upNumber) return false;
   return true;
 }
 
 function mayTakeRunningFlush(card) {
   if(!card.faceUp) return false;
-  for(var next = card.nextSibling; next; card = next, next = next.nextSibling)
-    if(card.suit!=next.suit || card.number!=next.upNumber) return false;
+  const cs = card.pile.cards, num = cs.length;
+  for(var i = card.index, j = i + 1; j != num; ++i, ++j) 
+    if(cs[i].suit != cs[j].suit || cs[i].number != cs[j].upNumber) return false;
   return true;
 }
 
@@ -311,10 +321,8 @@ const FortyThievesPile = {
     if(canMove) canMove = canMove * (canMove + 1) / 2;
     canMove++;
 
-    var toMove = 0;
-    for(var next = card; next; next = next.nextSibling) toMove++;
-
-    return (toMove <= canMove) ? true : 0;
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= canMove ? true : 0;
   }
 };
 
@@ -335,9 +343,8 @@ const FreeCellPile = {
     var spaces = Game.countEmptyPiles(this, card.pile);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
     var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
-    var numToMove = 0;
-    for(var next = card; next; next = next.nextSibling) numToMove++;
-    return (numToMove <= canMove) ? true : 0;
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= canMove ? true : 0;
   }
 };
 
@@ -400,8 +407,8 @@ const PileOnPile = {
   className: "fan-right pileon",
   // May move any group of cards all of the same rank.
   mayTakeCard: function(card) {
-    const num = card.number;
-    while((card = card.nextSibling)) if(card.number!=num) return false;
+    const num = card.number, cs = card.pile.cards, len = cs.length;
+    for(var i = card.index + 1; i != len; ++i) if(cs[i].number != num) return false;
     return true;
   },
   // May put a card/group in a space, or on another card of the same number.
@@ -409,9 +416,8 @@ const PileOnPile = {
   mayAddCard: function(card) {
     const last = this.lastCard;
     if(last && last.number!=card.number) return false;
-    var num = 1;
-    while((card = card.nextSibling)) ++num;
-    return (this.cards.length + num) <= 4;
+    const numCards = card.pile.cards.length - card.index;
+    return this.cards.length + numCards <= 4;
   }
 };
 
@@ -461,10 +467,8 @@ const TowersPile = {
   mayAddCard: function(card) {
     var last = this.lastCard;
     if(last ? last != card.up : !card.isKing) return false;
-    // check if there are enough cells to perform the move
-    var toMove = 0;
-    for(var next = card; next; next = next.nextSibling) toMove++;
-    return (toMove <= 1 + Game.numEmptyCells) ? true : 0;
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= 1 + Game.numEmptyCells ? true : 0;
   }
 };
 
@@ -558,12 +562,11 @@ const SpiderFoundation = {
   // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
   // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
   mayAddCard: function(card) {
-    const sibs = card.pile.cards, i = sibs.length - 13;
-    if(i < 0 || sibs[i]!=card) return false;
-    const suit = card.suit; var num;
-    do { num = card.number; card = card.nextSibling; }
-    while(card && card.suit==suit && num==card.upNumber);
-    return !card; // all cards should be part of the run
+    const cs = card.pile.cards, len = cs.length, suit = card.suit;
+    if(card.index != len - 13) return false;
+    for(var i = card.index, j = i + 1; j != len; ++i, ++j)
+      if(cs[i].suit != cs[j].suit || cs[i].number != cs[j].upNumber) return false;
+    return true;
   }
 };
 
@@ -571,10 +574,10 @@ const AcesUpFoundation = {
   __proto__: NoWorryingBackFoundation,
   mayAddCard: function(card) {
     const ps = Game.piles;
+    const suit = card.suit, num = card.number, src = card.pile;
     for(var i = 0; i != 4; i++) {
-      var top = ps[i].lastCard;
-      if(top==card) top = top.previousSibling; // only relevant when |card| was middle-clicked
-      if(top && card.suit==top.suit && card.number<top.number) return true;
+      var p = ps[i], c = p.getCard(p == src ? card.index - 1 : -1);
+      if(c && suit == c.suit && num < c.number) return true;
     }
     return false;
   }
@@ -588,7 +591,7 @@ const DoubleSolFoundation = {
   mayAddCard: function(card) {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    var last = this.lastCard, prv = last.previousSibling;
+    const last = this.getCard(-1), prv = this.getCard(-2);
     return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
   }
 };
@@ -608,7 +611,7 @@ const RegimentAceFoundation = {
   mayAddCard: function(card) {
     const last = this.lastCard, twin = card.twin;
     // must not start a second ace foundation for a suit
-    if(card.isAce) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
+    if(card.isAce) return !last && !(twin.pile.isFoundation && twin.isFirst);
     return last && card.number == last.upNumber && card.suit == last.suit;
   }
 };
@@ -617,7 +620,7 @@ const RegimentKingFoundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
     const last = this.lastCard, twin = card.twin;
-    if(card.isKing) return !last && !(twin.pile.isFoundation && !twin.previousSibling);
+    if(card.isKing) return !last && !(twin.pile.isFoundation && twin.isFirst);
     return last && last.number == card.upNumber && card.suit == last.suit;
   }
 };

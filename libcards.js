@@ -112,18 +112,8 @@ Card.prototype = {
   pile: null, // the pile the card is in
   index: -1,  // the position within the pile
 
-  // backward compatibility hacks (from the days of cards being <image> elements)
-  get nextSibling() {
-    const cs = this.pile.cards, i = this.index;
-    return i != cs.length - 1 ? cs[i + 1] : null;
-  },
-  get previousSibling() {
-    const cs = this.pile.cards, i = this.index;
-    return i != 0 ? cs[i - 1] : null;
-  },
-
-  // to be replaced by a non-DOM version during model/view split
-  get isLast() { return !this.nextSibling; },
+  get isLast() { return this.index == this.pile.cards.length - 1; },
+  get isFirst() { return this.index == 0; },
 
   // this is necessary so that somePile.build[card] works correctly
   toString: function() { return this.str; },

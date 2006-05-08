@@ -22,7 +22,7 @@ Games.doublesol = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.pile.isWaste) this.addHintToFirstEmpty(card);
+      if(!card.isFirst || card.pile.isWaste) this.addHintToFirstEmpty(card);
       this.addFoundationHintsFor(card);
     } else {
       // only looks at foundations and *nonempty* spaces
@@ -42,7 +42,7 @@ Games.doublesol = {
     for(var i = 0; i != 4; i++) {
       var f = fs[i];
       if(f.hasCards) {
-        var last = f.lastCard, prv = last.previousSibling;
+        var last = f.getCard(-1), prv = f.getCard(-2);
         var c1 = null, c2 = null;
         if(prv==last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;

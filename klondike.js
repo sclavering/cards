@@ -20,7 +20,7 @@ const KlondikeBase = {
     if(!card) return;
     if(card.isKing) {
       // suggest just one move to an empty pile, and only if the king is on something else
-      if(card.previousSibling || card.pile.isWaste) this.addHintToFirstEmpty(card);
+      if(!card.isFirst || card.pile.isWaste) this.addHintToFirstEmpty(card);
       this.addFoundationHintsFor(card);
     } else {
       // only looks at foundations and *nonempty* spaces

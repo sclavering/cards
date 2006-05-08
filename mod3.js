@@ -12,7 +12,7 @@ Games.mod3 = {
   init: function() {
     var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
 
-    function inPlace() { return this.pile.isFoundation && !!this.previousSibling; };
+    function inPlace() { return this.pile.isFoundation && !this.isFirst; };
     function inPlace2() { return this.pile.row == this.row; }
 
     this.bases = new Array(3);
@@ -63,7 +63,7 @@ Games.mod3 = {
         // hints are useful if:
         // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
         // - |target| is nonempty, and |card| is the only card in |source|
-        if(source.isFoundation && (target.hasCards ? card.previousSibling : source.row==target.row)) continue;
+        if(source.isFoundation && (target.hasCards ? !card.isFirst : source.row==target.row)) continue;
         this.addHint(card, target);
       }
     }

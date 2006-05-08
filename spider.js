@@ -93,19 +93,16 @@ Games.blackwidow = {
   cards: 2,
 
   getHints: function() {
+    const ps = this.piles;
     for(var i = 0; i != 10; i++) {
-      var card = this.piles[i].lastCard;
-      while(card && card.faceUp) {
-        var prv = card.previousSibling;
-        if(!prv || !prv.faceUp) {
-          this.addHintsFor(card);
-        } else if(prv.number!=card.upNumber) {
-          this.addHintsFor(card);
-          break;
-        } else if(prv.suit!=card.suit) {
-          this.addHintsFor(card);
-        } // otherwise it's from the same suit, so don't suggest moving
-        card = prv;
+      var p = ps[i], cs = p.cards;
+      for(var j = cs.length; j;) {
+        var card = cs[--j];
+        if(!card.faceUp) break;
+        var prv = p.getCard(j - 1);
+        if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
+        this.addHintsFor(card);
+        if(prv.number != card.upNumber) break;
       }
     }
   }

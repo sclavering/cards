@@ -34,7 +34,7 @@ Games.fan = {
       var up = card.up;
       if(up) { // not a King
         if(up.isLast) this.addHint(card, up.pile);
-      } else if(card.previousSibling) { // is a King, not in a space already
+      } else if(!card.isFirst) { // is a King, not in a space already
         this.addHintToFirstEmpty(card);
       }
     }

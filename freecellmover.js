@@ -4,7 +4,7 @@ var FreeCellGame = {
 
   // overridden to deal with FreeCellMover (and revealing cards is unnecessary)
   done: function(pile, wasInterrupted) {
-    const acts = this.actionsDone, act = acts[acts.length-1];
+    const act = this.actionList[this.actionPtr - 1];
     gScoreDisplay.value = this.score += act.score;
 
     act.revealedCards = []; //BaseCardGame.undo/redo/restore all require this

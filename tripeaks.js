@@ -60,8 +60,8 @@ Games.tripeaks = {
       return -5;
     }
 
-    var done = this.actionsDone;
-    var prev = done.length>1 ? done[done.length-2] : null;
+    const acts = this.actionList, ptr = this.actionPtr;
+    const prev = ptr > 1 ? acts[ptr - 2] : null;
 
     // it's a Move
     var score = action.streakLength = prev ? prev.streakLength + 1 : 1;

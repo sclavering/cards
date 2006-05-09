@@ -132,17 +132,15 @@ var BaseCardGame = {
     }
     this.cardsAsDealt = cards.slice(0); // copy of array
 
-    this.actionsDone = [];
-    this.actionsUndone = [];
+    this.actionList = [];
     this._begin(cards);
   },
 
   restore: function() {
     this._begin(this.cardsAsDealt.slice(0)); // deal() destroys the array, so use a copy
-
-    var done = this.actionsDone;
-    for(var i = 0; i != done.length; i++) {
-      var d = done[i];
+    const acts = this.actionList, numDone = this.actionPtr;
+    for(var i = 0; i != numDone; ++i) {
+      var d = acts[i];
       if("redo" in d) d.redo();
       else d.perform();
       this.score += d.score;
@@ -246,18 +244,16 @@ var BaseCardGame = {
 
 
   // === Move tracking and Undoing ========================
-  // All actions/moves that are undoable should be implemented as Action objects
-  // (see actions.js), and passed to doo().
-  actionsDone: [],
-  actionsUndone: [],
 
+  actionList: [],
+  actionPtr: 0,
   canUndo: false,
   canRedo: false,
 
   doo: function(action) {
-    this.actionsDone.push(action);
+    if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
+    this.actionList[this.actionPtr++] = action;
     this.canUndo = true;
-    if(this.canRedo) this.actionsUndone = [];
     this.canRedo = false;
     action.score = this.getScoreFor(action);
     this.hintsReady = false;
@@ -268,12 +264,10 @@ var BaseCardGame = {
   //   wasInterrupted - indicates no animations should be started here
   // Returns a bool. indicating whether an animation was triggered.
   done: function(pile, wasInterrupted) {
-    const acts = this.actionsDone, act = acts[acts.length-1];
-
+    const act = this.actionList[this.actionPtr - 1];
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
-
     gScoreDisplay.value = this.score += act.score;
     return false;
   },
@@ -284,15 +278,11 @@ var BaseCardGame = {
     return card && !card.faceUp ? [card] : [];
   },
 
-  // Action objects (see actions.js) each implement an undo() method.
-  // This just picks the right object, and adjusts the game score etc.
   undo: function() {
-    const done = this.actionsDone
-    const action = done.pop();
-    this.actionsUndone.push(action);
-
+    const ptr = --this.actionPtr;
+    const action = this.actionList[ptr];
     this.canRedo = true;
-    this.canUndo = done.length != 0;
+    this.canUndo = ptr != 0;
 
     gScoreDisplay.value = this.score -= action.score;
     this.hintsReady = false;
@@ -305,12 +295,11 @@ var BaseCardGame = {
   },
 
   redo: function() {
-    const undone = this.actionsUndone;
-    const action = undone.pop();
-    this.actionsDone.push(action);
-
+    const acts = this.actionList;
+    const action = acts[this.actionPtr];
+    const ptr = ++this.actionPtr;
     this.canUndo = true;
-    this.canRedo = undone.length != 0;
+    this.canRedo = acts.length > ptr;
 
     gScoreDisplay.value = this.score += action.score;
     this.hintsReady = false;

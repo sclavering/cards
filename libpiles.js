@@ -498,9 +498,8 @@ const UnionSquarePile = {
 
   // Piles built up or down in suit, but not both ways at once.
   mayAddCard: function(card) {
-    const cs = this.cards, num = cs.length;
-    if(!lastCard) return true;
-    const last = cs[num - 1];
+    const cs = this.cards, num = cs.length, last = this.lastCard;
+    if(!last) return true;
     if(last.suit != card.suit) return false;
     if(num == 1) return last.number == card.upNumber || last.upNumber == card.number;
     return cs[0].number == cs[1].upNumber // going down?

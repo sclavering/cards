@@ -5,12 +5,8 @@ Games.fan = {
   pileType: FanPile,
   foundationType: FanFoundation,
   dealTemplate: "P 0,3", // actually deals 1 card to the final pile
-
-  init: function() {
-    var cs = this.cards = makeDecks(1);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-    this.kings = [cs[12], cs[25], cs[38], cs[51]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
+  cards: 1,
 
   shuffleImpossible: function(cards) {
     for(var p = 49; p != 1; p -= 3) {

@@ -5,11 +5,8 @@ Games.fortythieves = {
   stockType: StockDealToWaste,
   pileType: FortyThievesPile,
   dealTemplate: "P 0,4; W 0,1",
-
-  init: function() {
-    const cs = this.cards = makeDecks(2);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
+  cards: 2,
 
   getHints: function() {
     for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);

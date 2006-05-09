@@ -5,11 +5,7 @@ Games.russiansol = {
   pileType: WaspPile,
   foundationType: FanFoundation,
   dealTemplate: "p 0,1 1,5 2,5 3,5 4,5 5,5 6,5",
-
-  init: function() {
-    var cs = this.cards = makeDecks(1);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
 
   getHints: function() {
     for(var i = 0; i != 7; i++) {

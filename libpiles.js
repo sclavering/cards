@@ -11,6 +11,9 @@ const Pile = {
   isWaste: false,
   isPile: false,
 
+  // the index in Game.piles/Game.foundations/etc. at which this pile appears
+  index: -1,
+
   // cards: [], // actually happens in createPile, so that each pile has a different array
   get hasCards() { return this.cards.length != 0; },
 
@@ -22,8 +25,8 @@ const Pile = {
   getCard: function(ix) {
     const cs = this.cards, len = cs.length;
     if(ix >= 0) return ix < len ? cs[ix] : null;
-    ix = -ix;
-    return ix < len ? cs[len - ix] : null;
+    ix = len + ix;
+    return ix >= 0 ? cs[ix] : null;
   },
 
   // previous and next pile of the same type
@@ -45,12 +48,17 @@ const Pile = {
     }
     while(next) { ps.push(next); next = next.next; }
     while(prev) { ps.push(prev); prev = prev.prev; }
-    // trickery to avoid the getter for future accesses.  not really sure its worth it
-    const proto = this.__proto__;
-    this.__proto__ = {};
-    this.surrounding = ps;
-    this.__proto__ = proto;
-    return ps;
+    return overrideGetter(this, "surrounding", ps);
+  },
+
+  get following() {
+    const ps = [];
+    for(var p = this.next; p && p != this; p = p.next) ps.push(p);
+    if(!p) { // next/prev links have *not* been formed into a loop
+      for(var fst = this; fst.prev; fst = fst.prev);
+      for(p = fst; p != this; p = p.next) ps.push(p);
+    }
+    return overrideGetter(this, "following", ps);
   },
 
   addCardsFromArray: function(cards) {
@@ -573,10 +581,13 @@ const SpiderFoundation = {
 const AcesUpFoundation = {
   __proto__: NoWorryingBackFoundation,
   mayAddCard: function(card) {
-    const ps = Game.piles;
     const suit = card.suit, num = card.number, src = card.pile;
-    for(var i = 0; i != 4; i++) {
-      var p = ps[i], c = p.getCard(p == src ? card.index - 1 : -1);
+    var c = src.getCard(-2); // the card beneath |card|
+    dump(c ? ("-2: "+c+" "+(suit == c.suit)+" "+(num < c.number)+"\n") : "no -2");
+    if(c && suit == c.suit && num < c.number) return true;
+    const ps = src.following;
+    for(var i = 0; i != 3; ++i) {
+      var c = ps[i].lastCard;
       if(c && suit == c.suit && num < c.number) return true;
     }
     return false;

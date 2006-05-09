@@ -4,11 +4,8 @@ Games.freecell = {
   layout: FreeCellLayout,
   pileType: FreeCellPile,
   dealTemplate: "p 0,7 0,7 0,7 0,7 0,6 0,6 0,6 0,6",
-
-  init: function() {
-    const cards = this.cards = makeDecks(1);
-    this.foundationBases = [cards[0], cards[13], cards[26], cards[39]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
+  cards: 1,
 
   getHints: function() {
     for(var i = 0; i != 4; ++i) this.addHintsFor(this.cells[i].firstCard);

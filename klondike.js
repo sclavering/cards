@@ -3,13 +3,9 @@ const KlondikeBase = {
 
   pileType: KlondikePile,
   stockType: StockDealToWasteOrRefill,
-
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1",
-
-  init: function() {
-    const cs = this.cards = makeDecks(1);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
+  cards: 1,
 
   getHints: function() {
     this.getHintsFor(this.waste.lastCard);
@@ -69,12 +65,10 @@ Games.klondike3 = {
 
 Games.doubleklondike = {
   __proto__: KlondikeBase,
-  init: function() {
-    const cs = this.cards = makeDecks(2);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
   layout: DoubleKlondikeLayout,
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
+  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
+  cards: 2,
   autoplay: "commonish 2deck",
   getAutoplayableNumbers: "gypsy"
 };

@@ -9,22 +9,16 @@ var SpiderBase = {
   foundationType: SpiderFoundation,
   pileType: SpiderPile,
 
+  // Indices of kings within this.cards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
-
-  init2: function() {
-    // replace the array of indices with a *new* array of cards
-    const ki = this.kings, num = ki.length, cs = this.cards;
-    const ks = this.kings = new Array(num);
-    for(var i = 0; i != num; i++) ks[i] = cs[ki[i]];
-  },
 
   getBestDestinationFor: "down and same suit, or down, or empty",
 
   // this sucks
   autoplay: function() {
-    const ks = this.kings, num = ks.length, f = this.foundation;
+    const cs = this.cards, ixs = this.kings, num = ks.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
-      var k = ks[i], p = k.pile;
+      var k = cs[ixs[i]], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
     return null;
@@ -153,7 +147,6 @@ Games.wasp = {
   pileType: WaspPile,
   dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
 
-  // converted to an array of cards by SpiderBase.init2()
   kings: [12, 25, 38, 51],
 
   getBestDestinationFor: "to up or nearest space",
@@ -180,7 +173,6 @@ const SimonBase = {
   layout: SimonLayout,
   dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
 
-  // see SpiderBase.init2
   kings: [12, 25, 38, 51],
 
   getHints: function() {

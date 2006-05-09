@@ -115,7 +115,8 @@ const Rules = {
       const maxNums = this.getAutoplayableNumbers();
       var triedToFillEmpty = false;
       // numBs matters for Penguin
-      const fs = this.foundations, bs = this.foundationBases, numBs = bs.length;
+      const fs = this.foundations, cs = this.cards;
+      const ixs = this.foundationBaseIndexes, numIxs = ixs.length;
       for(var i = 0; i != 4; i++) {
         var f = fs[i];
         if(f.hasCards) {
@@ -124,8 +125,8 @@ const Rules = {
             return new Move(c, f);
         } else if(!triedToFillEmpty) {
           triedToFillEmpty = true;
-          for(var j = 0; j != numBs; j++) {
-            var b = bs[j];
+          for(var j = 0; j != numIxs; j++) {
+            var b = cs[ixs[j]];
             if(b.faceUp && !b.pile.isFoundation && b.faceUp && b.isLast)
               return new Move(b, f);
           }
@@ -137,7 +138,7 @@ const Rules = {
     // like above, but for 2 decks
     "commonish 2deck":
     function() {
-      const fs = this.foundations, as = this.foundationBases;
+      const fs = this.foundations, cs = this.cards, ixs = this.foundationBaseIndexes;
       const maxNums = this.getAutoplayableNumbers();
 
       var lookedForAces = false;
@@ -157,9 +158,9 @@ const Rules = {
         } else if(!lookedForAces) {
           lookedForAces = true;
           for(var j = 0; j != 8; j++) {
-            var a = as[j], ap = a.pile;
+            var a = cs[ixs[j]], ap = a.pile;
             if(!ap.isFoundation && !ap.isStock && a.isLast)
-              return new Move(a, f)
+              return new Move(a, f);
           }
         }
       }

@@ -32,8 +32,6 @@ var BaseCardGame = {
   // Games which need to do some additional initialisation should override this.
   // It is called the first time the game is played.
   init: function() {},
-  // xxx called after initCards() (unlike init()). will kill this later
-  init2: function() {},
 
   show: function() {
     // some other game may have been using the layout, so need to reassociate piles+views
@@ -58,7 +56,6 @@ var BaseCardGame = {
     this.createPiles();
     this.init();
     this.initCards();
-    this.init2();
   },
 
   _pileMap: { p: "pile", f: "foundation", c: "cell", r: "reserve", s: "stock", w: "waste" },

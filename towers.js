@@ -4,11 +4,7 @@ Games.towers = {
   layout: TowersLayout,
   pileType: TowersPile,
   dealTemplate: "P 0,5; c 0 0,1 0,1 0",
-
-  init: function() {
-    var cs = this.cards = makeDecks(1);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
 
   getHints: function() {
     for(var i = 0; i != 4; i++) this.addHintsFor(this.cells[i].firstCard);

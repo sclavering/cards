@@ -10,7 +10,13 @@ function extendObj(obj, stuffToAdd, allowReplacement) {
   }
 }
 
-
+function overrideGetter(obj, prop, val) {
+  const proto = obj.__proto__;
+  obj.__proto__ = {};
+  obj[prop] = val;
+  obj.__proto__ = proto;
+  return val;
+}
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 

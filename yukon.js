@@ -34,11 +34,8 @@ Games.yukon = {
 
   layout: YukonLayout,
   dealTemplate: "p 0,1 1,5 2,5 3,5 4,5 5,5 6,5",
-
-  init: function() {
-    const cs = this.cards = makeDecks(1);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
+  cards: 1,
 
   getHints: function() {
     // hints in Yukon are weird.  we look at the last card on each pile for targets, then find
@@ -58,11 +55,8 @@ Games.sanibel = {
   layout: SanibelLayout,
   stockType: StockDealToWaste,
   dealTemplate: "P 3,7",
-
-  init: function() {
-    var cs = this.cards = makeDecks(2);
-    this.foundationBases = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-  },
+  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
+  cards: 2,
 
   getHints: function() {
     const ps = this.piles;

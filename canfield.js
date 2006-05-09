@@ -19,7 +19,7 @@ const CanfieldBase = {
     const cs = this.cards;
     const num = this.foundations[0].firstCard.displayNum;
     renumberCards(cs, num);
-    this.foundationBases = [cs[num-1], cs[num+12], cs[num+25], cs[num+38]];
+    this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },
 
   getHints: function() {

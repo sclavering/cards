@@ -42,14 +42,7 @@ const Layout = {
 
     var box = container;
     var nextBoxVertical = !containerIsVbox;
-    var newbox, p;
-
-    function startBox(type, className) {
-      newbox = document.createElement(type);
-      newbox.className = className;
-      box.appendChild(newbox);
-      box = newbox;
-    }
+    var p;
 
     // first char is "h"/"v", not of interest here
     for(var i = 1; i != len; ++i) {
@@ -57,23 +50,17 @@ const Layout = {
       switch(ch) {
       // start a box
         case "[": // in opposite direction
-          startBox(nextBoxVertical ? "vbox" : "hbox", "");
           nextBoxVertical = !nextBoxVertical;
+          // fall through
+        case "<": // in current direction
+          var old = box;
+          old.appendChild(box = document.createElement(nextBoxVertical ? "hbox" : "vbox"));
           break;
-        case "`": // in current direction (used by Fan)
-          startBox(nextBoxVertical ? "hbox" : "vbox", "");
-          break;
-        case "(":
-          startBox("vbox", "pyramid-rows"); break;
-        case "<":
-          startBox("hbox", "pyramid-row"); break;
       // finish a box
         case "]":
           nextBoxVertical = !nextBoxVertical;
           // fall through
         case ">":
-        case ")":
-        case "'":
           box = box.parentNode;
           break;
       // annotations: "{attrname=val}", applies to most-recent pile or box
@@ -84,7 +71,7 @@ const Layout = {
           (box.lastChild || box).setAttribute(blob[0], blob[1]);
           break;
         case "}":
-          throw "BaseCardGame._buildLayout: reached a } in template (without a { first)";
+          throw "Layout.init: reached a } in template (without a { first)";
       // add spaces
         case "-":
           box.appendChild(document.createElement("halfpilespacer")); break;
@@ -144,8 +131,8 @@ const DoubleSolLayout = {
 const FanLayout = {
   __proto__: Layout,
   p: FanRightView,
-  template: "v[3f1f1f1f3] [ `{flex=1}{equalsize=always}[{flex=1}p p p p]"
-      + "[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]' ]"
+  template: "v[3f1f1f1f3] [ <{flex=1}{equalsize=always}[{flex=1}p p p p]"
+      + "[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]> ]"
 };
 
 const FortyThievesLayout = {
@@ -218,8 +205,8 @@ const PileOnLayout = {
 
 const PyramidLayout = {
   __proto__: Layout,
-  layoutTemplate: "h1[s w]1({flex=5}<1p1><4-++p1p++-4><3++p1p1p++3>"
-      + "<3-+p1p1p1p+-3><2+p1p1p1p1p+2><2-p1p1p1p1p1p-2><1p1p1p1p1p1p1p1>)1f1"
+  template: "h1[s w]1[{flex=5}{class=pyramid}[1p1][4-++p1p++-4][3++p1p1p++3]"
+      + "[3-+p1p1p1p+-3][2+p1p1p1p1p+2][2-p1p1p1p1p1p-2][1p1p1p1p1p1p1p1]]1f1"
 };
 
 const RegimentLayout = {
@@ -255,8 +242,8 @@ const SpiderLayout = {
 const TriPeaksLayout = {
   __proto__: Layout,
   p: View,
-  template: "v(<41-2+2p2+2+2p2+2+2p2+2-14><42+2p2p2+2p2p2+2p2p2+24>"
-     + "<41-2p2p2p2p2p2p2p2p2p2-14><42p2p2p2p2p2p2p2p2p2p24>)3[3s2f3]2"
+  template: "v<{class=pyramid}[41-2+2p2+2+2p2+2+2p2+2-14][42+2p2p2+2p2p2+2p2p2+24]"
+     + "[41-2p2p2p2p2p2p2p2p2p2-14][42p2p2p2p2p2p2p2p2p2p24]>3[3s2f3]2"
 };
 
 const TowersLayout = {

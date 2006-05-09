@@ -14,9 +14,8 @@ var SpiderBase = {
 
   getBestDestinationFor: "down and same suit, or down, or empty",
 
-  // this sucks
   autoplay: function() {
-    const cs = this.cards, ixs = this.kings, num = ks.length, f = this.foundation;
+    const cs = this.cards, ixs = this.kings, num = ixs.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
       var k = cs[ixs[i]], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);

@@ -7,12 +7,7 @@ Games.unionsquare = {
   pileType: UnionSquarePile,
   dealTemplate: "P 0,1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-
-  init: function() {
-    var cs = this.cards = makeDecks(2);
-    const ps = this.piles;
-    for(var i = 0; i != 16; ++i) ps[i].following = ps.slice(i+1).concat(ps.slice(0, i));
-  },
+  cards: 2,
 
   // xxx write getHints()
 

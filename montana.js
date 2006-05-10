@@ -3,7 +3,8 @@ const Montana = {
 
   helpId: "montana",
   layout: MontanaLayout,
-  pileType: MontanaPile,
+  pilesToBuild: "52p",
+  pileTypes: { p: MontanaPile },
   dealTemplate: "P 0,1",
 
   redeals: 2,

@@ -2,8 +2,8 @@ Games.whitehead = {
   __proto__: BaseCardGame,
 
   layout: KlondikeLayout,
-  stockType: StockDealToWaste,
-  pileType: WhiteheadPile,
+  pilesToBuild: "s w 4f 7p",
+  pileTypes: { s: StockDealToWaste, p: WhiteheadPile },
   dealTemplate: "p 0,1 0,2 0,3 0,4 0,5 0,6 0,7",
   foundationBaseIndexes: [0, 13, 26, 39],
 

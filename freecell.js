@@ -2,7 +2,8 @@ Games.freecell = {
   __proto__: FreeCellGame,
 
   layout: FreeCellLayout,
-  pileType: FreeCellPile,
+  pilesToBuild: "4c 4f 8p",
+  pileTypes: { p: FreeCellPile },
   dealTemplate: "p 0,7 0,7 0,7 0,7 0,6 0,6 0,6 0,6",
   foundationBaseIndexes: [0, 13, 26, 39],
   cards: 1,

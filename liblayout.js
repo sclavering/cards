@@ -15,8 +15,7 @@ const Layout = {
   s: StockView,
   w: View,
 
-  // will become a letter -> node-array map
-  nodes: {},
+  views: [],
 
   // the root XUL element for this layout
   _node: null,
@@ -34,7 +33,7 @@ const Layout = {
     if(this._node) return;
 
     const template = this.template, len = template.length;
-    const nodes = this.nodes = {};
+    const views = this.views = [];
     const containerIsVbox = template[0] == "v";
     const container = this._node = document.createElement(containerIsVbox ? "vbox" : "hbox");
     container.className = "game";
@@ -102,8 +101,7 @@ const Layout = {
           if(!viewType) throw "Layout._build: unrecognised char '" + ch + "' found in template";
           var node = createPileView(viewType);
           box.appendChild(node);
-          if(nodes[ch]) nodes[ch].push(node);
-          else nodes[ch] = [node];
+          views.push(node);
       }
     }
     // sanity check
@@ -153,7 +151,7 @@ const GolfLayout = {
 
 const GypsyLayout = {
   __proto__: Layout,
-  template: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] sl]2"
+  template: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] s]2"
 };
 
 const KlondikeLayout = {

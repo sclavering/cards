@@ -2,11 +2,9 @@ Games.mod3 = {
   __proto__: BaseCardGame,
 
   layout: Mod3Layout,
-  stockType: StockDealToPiles,
-  foundationType: Mod3Foundation,
-  pileType: AcesUpPile,
+  pilesToBuild: "24f 8p s",
+  pileTypes: { s: StockDealToPiles, f: Mod3Foundation, p: AcesUpPile },
   dealTemplate: "F 0,1; P 0,1",
-
   cards: null,
 
   init: function() {

@@ -2,9 +2,9 @@ Games.regiment = {
   __proto__: BaseCardGame,
 
   layout: RegimentLayout,
+  pilesToBuild: "4a 4k 8p 8r 8p",
+  pileTypes: { a: RegimentAceFoundation, k: RegimentKingFoundation, p: RegimentPile },
   dealTemplate: "P 0,1; R 10,1",
-  pileType: RegimentPile,
-
   cards: 2,
 
   init: function() {
@@ -78,15 +78,16 @@ Games.regiment = {
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
 
+    const afs = this.pilsByType.a, kfs = this.pilsByType.k;
     for(i = 0; i != 4; i++) {
-      pile = this.foundations[i], last = pile.lastCard;
+      pile = afs[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
         card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
     for(i = 4; i != 8; i++) {
-      pile = this.foundations[i], last = pile.lastCard;
+      pile = kfs[i], last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
         card = last.down.pile.isFoundation ? last.twin.down : last.down;
         if(card.isLast) return new Move(card, pile);

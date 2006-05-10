@@ -2,7 +2,8 @@ Games.pileon = {
   __proto__: BaseCardGame,
 
   layout: PileOnLayout,
-  pileType: PileOnPile,
+  pilesToBuild: "15p",
+  pileTypes: { p: PileOnPile },
   dealTemplate: "P 0,4", // will actually leave last two piles empty
 
   // xxx write getHints()

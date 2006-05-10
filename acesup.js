@@ -2,9 +2,8 @@ Games.acesup = {
   __proto__: BaseCardGame,
 
   layout: AcesUpLayout,
-  stockType: StockDealToPiles,
-  foundationType: AcesUpFoundation,
-  pileType: AcesUpPile,
+  pilesToBuild: "s 4p f",
+  pileTypes: { s: StockDealToPiles, f: AcesUpFoundation, p: AcesUpPile },
   dealTemplate: "P 0,1",
 
   init: function() {

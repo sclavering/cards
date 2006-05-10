@@ -17,13 +17,16 @@ var BaseCardGame = {
   // a Layout object from liblayout.js
   layout: null,
 
-  pileType: null,
-  foundationType: KlondikeFoundation,
-  cellType: Cell,
-  reserveType: Reserve,
-  stockType: null,
-  wasteType: Waste,
+  // pilesToBuild should be something like "4c 4f 8p".  "4f" means create 4 piles using pileTypes.f
+  // as the bases.  The entire string leads to 16 piles of various kinds being created, with the
+  // order of creation deciding the correspondence with the elements of this.layout.views.
+  pilesToBuild: null,
+  // When accessing this field, the code will walk up the __proto__ chain for the game such that
+  // overriding the entire object will effectively only override individual fields.
+  pileTypes: { f: KlondikeFoundation, c: Cell, r: Reserve, w: Waste },
 
+  _pilesToBuildLetters: [],
+  _pilesToBuildClasses: [],
 
   // === Start/Finish Playing =============================
   // Games may override init(), and nothing else.
@@ -53,41 +56,67 @@ var BaseCardGame = {
     // replace strings with functions (see rules.js)
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
     this.layout.init();
+    this.initPilesToBuild();
     this.createPiles();
     this.init();
     this.initCards();
   },
 
-  _pileMap: { p: "pile", f: "foundation", c: "cell", r: "reserve", s: "stock", w: "waste" },
+  // Parse the string representation to create an array of letters and of classes
+  initPilesToBuild: function() {
+    const map = this.pileTypes;
+    for(var obj = this.__proto__; obj; obj = obj.__proto__) {
+      if(!obj.pileTypes) continue;
+      var map2 = obj.pileTypes;
+      for(var letter in map2) if(!map[letter]) map[letter] = map2[letter];
+    }
+  
+    const bits = this.pilesToBuild.split(" ");
+    const letters = this._pilesToBuildLetters = [];
+    const classes = this._pilesToBuildClasses = [];
+    for(var i = 0; i != bits.length; ++i) {
+      var matches = bits[i].match(/(\d*)(\w)/);
+      var num = parseInt(matches[1]) || 1; // ""->NaN.  (NaN || 1) == 1
+      var letter = matches[2], clas = map[letter];
+      for(var j = 0; j != num; ++j) classes.push(clas), letters.push(letter);
+    }
+  },
 
   createPiles: function() {
     const dropact = this.getActionForDrop;
-    const nodes = this.layout.nodes, map = this._pileMap;
+    const views = this.layout.views, numV = views.length;
+    const letters = this._pilesToBuildLetters, num = letters.length;
+    const classes = this._pilesToBuildClasses;
     const bytype = this.pilesByType = {};
     const all = this.allpiles = [];
-    for(var letter in nodes) {
-      var views = nodes[letter];
-      var pileType = map[letter];
-      var impl = this[pileType + "Type"];
-      var arry = this[pileType + "s"] = bytype[letter] = [];
-      // create corresponding piles
-      for(var i = 0; i != views.length; ++i) {
-        var pile = arry[i] = createPile(impl);
-        all.push(pile);
-        var view = views[i];
-        pile.view = view;
-        view.displayPile(pile);
-        // xxx ew!
-        if(pile.getActionForDrop == Pile.getActionForDrop && dropact) pile.getActionForDrop = dropact;
-      }
-      // ensure this.stock etc. are set
-      this[pileType] = arry[0];
-      // form linked lists of piles
-      for(i = 1; i != arry.length; ++i) {
-        arry[i].prev = arry[i - 1];
-        arry[i - 1].next = arry[i];
-      }
+    if(num != numV) throw "game is trying to create " + num + " piles for " + numV + " views!";
+
+    for(var i = 0; i != num; ++i) {
+      var letter = letters[i], impl = classes[i], view = views[i];
+      var pile = createPile(impl);
+      all.push(pile);
+      var view = views[i];
+      pile.view = view;
+      view.displayPile(pile);
+      // xxx ew!
+      if(pile.getActionForDrop == Pile.getActionForDrop && dropact) pile.getActionForDrop = dropact;
+      if(bytype[letter]) bytype[letter].push(pile);
+      else bytype[letter] = [pile];
     }
+
+    for each(var set in bytype)
+      for(i = 1; i != set.length; ++i) set[i].prev = set[i-1], set[i-1].next = set[i];
+
+    // xxx would be nice to kill all of these
+    this.piles = bytype.p || [];
+    this.foundations = bytype.f || [];
+    this.cells = bytype.c || [];
+    this.reserves = bytype.r || [];
+    this.stock = bytype.s ? bytype.s[0] : null;
+    this.waste = bytype.w ? bytype.w[0] : null;
+    this.foundation = bytype.f ? bytype.f[0] : null;
+    this.reserve = bytype.r ? bytype.r[0] : null;
+    
     // xxx kill!
     this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
   },

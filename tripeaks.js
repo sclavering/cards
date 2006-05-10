@@ -2,9 +2,8 @@ Games.tripeaks = {
   __proto__: PyramidBase,
 
   layout: TriPeaksLayout,
-  stockType: StockDealToFoundation,
-  foundationType: GolfFoundation,
-  pileType: TriPeaksPile,
+  pilesToBuild: "28p s w",
+  pileTypes: { s: StockDealToFoundation, f: GolfFoundation, p: TriPeaksPile },
 
   init: function() {
     this.cards = makeDecksMod13(1);

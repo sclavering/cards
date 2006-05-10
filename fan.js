@@ -2,8 +2,8 @@ Games.fan = {
   __proto__: BaseCardGame,
 
   layout: FanLayout,
-  pileType: FanPile,
-  foundationType: FanFoundation,
+  pilesToBuild: "4f 18p",
+  pileTypes: { p: FanPile, f: FanFoundation },
   dealTemplate: "P 0,3", // actually deals 1 card to the final pile
   foundationBaseIndexes: [0, 13, 26, 39],
   cards: 1,

@@ -3,8 +3,8 @@ const GypsyBase = {
 
   helpId: "gypsy",
   layout: GypsyLayout,
-  stockType: StockDealToPiles,
-  pileType: GypsyPile,
+  pilesToBuild: "8p 8f s",
+  pileTypes: { s: StockDealToPiles, p: GypsyPile },
   dealTemplate: "P 2,1",
 
   init: function() {

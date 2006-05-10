@@ -2,7 +2,8 @@ Games.penguin = {
   __proto__: BaseCardGame,
 
   layout: PenguinLayout,
-  pileType: PenguinPile,
+  pilesToBuild: "c p c p c p c p c p c p c p 4f",
+  pileTypes: { p: PenguinPile },
 
   init: function() {
     this.cards = makeDecksMod13(1);

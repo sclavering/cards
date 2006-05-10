@@ -5,9 +5,8 @@ var SpiderBase = {
   __proto__: BaseCardGame,
 
   layout: SpiderLayout,
-  stockType: StockDealToPilesIfNoneAreEmpty,
-  foundationType: SpiderFoundation,
-  pileType: SpiderPile,
+  pilesToBuild: "10p f s",
+  pileTypes: { s: StockDealToPilesIfNoneAreEmpty, f: SpiderFoundation, p: SpiderPile },
 
   // Indices of kings within this.cards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
@@ -80,9 +79,7 @@ Games.spider4 = {
 Games.blackwidow = {
   __proto__: Spider,
   helpId: null,
-
-  pileType: BlackWidowPile,
-
+  pileTypes: { p: BlackWidowPile },
   cards: 2,
 
   getHints: function() {
@@ -107,9 +104,7 @@ Games.blackwidow = {
 
 Games.divorce = {
   __proto__: SpiderBase,
-
-  stockType: StockDealToNonemptyPiles,
-
+  pileTypes: { s: StockDealToNonemptyPiles },
   dealTemplate: "P 0,5",
 
   init: function() {
@@ -142,8 +137,8 @@ Games.wasp = {
   __proto__: SpiderBase,
 
   layout: WaspLayout,
-  stockType: StockDealToPiles,
-  pileType: WaspPile,
+  pilesToBuild: "7p f s",
+  pileTypes: { s: StockDealToPiles, p: WaspPile },
   dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
 
   kings: [12, 25, 38, 51],
@@ -169,6 +164,7 @@ Games.wasp = {
 const SimonBase = {
   __proto__: SpiderBase,
   helpId: "simon",
+  pilesToBuild: "10p f",
   layout: SimonLayout,
   dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
 

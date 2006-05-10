@@ -2,8 +2,8 @@ Games.fortythieves = {
   __proto__: FreeCellGame,
 
   layout: FortyThievesLayout,
-  stockType: StockDealToWaste,
-  pileType: FortyThievesPile,
+  pilesToBuild: "8f s w 10p",
+  pileTypes: { s: StockDealToWaste, p: FortyThievesPile },
   dealTemplate: "P 0,4; W 0,1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
@@ -31,7 +31,7 @@ Games.fortythieves = {
       counts[suit]++;
       if(nums[suit] > num) nums[suit] = num;
     }
-    for(i = 1; i != 5; ++i) {
+    for(i in counts) {
       if(counts[i] < 2) nums[i] = 1;
       else nums[i]++;
     }

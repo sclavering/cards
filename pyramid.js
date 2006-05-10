@@ -57,15 +57,14 @@ const PyramidFoundation = {
   mayAddCard: no
 };
 
+const PyramidWaste = { __proto__: Waste, free: true };
 
 Games.pyramid = {
   __proto__: PyramidBase,
 
   layout: PyramidLayout,
-  stockType: StockDealToWasteOrRefill,
-  wasteType: { __proto__: Waste, free: true },
-  foundationType: PyramidFoundation,
-  pileType: PyramidPile,
+  pilesToBuild: "s w 28p f",
+  pileTypes: { s: StockDealToWasteOrRefill, w: PyramidWaste, f: PyramidFoundation, p: PyramidPile },
   dealTemplate: "P 0,1",
 
   init: function() {

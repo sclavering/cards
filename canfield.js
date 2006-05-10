@@ -2,8 +2,8 @@ const CanfieldBase = {
   __proto__: BaseCardGame,
 
   layout: CanfieldLayout,
-  stockType: StockDealToWasteOrRefill,
-  pileType: CanfieldPile,
+  pilesToBuild: "s p f p f p f p f p r",
+  pileTypes: { s: StockDealToWasteOrRefill, p: CanfieldPile },
   _reserveCards: [12,1],
 
   init: function() {
@@ -46,7 +46,7 @@ Games.canfield = {
 Games.canfield3 = {
   helpId: "canfield",
   __proto__: CanfieldBase,
-  stockType: Deal3OrRefillStock,
+  pileTypes: { s: Deal3OrRefillStock },
   wasteView: Deal3VWasteView
 };
 

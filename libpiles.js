@@ -582,7 +582,6 @@ const AcesUpFoundation = {
   mayAddCard: function(card) {
     const suit = card.suit, num = card.number, src = card.pile;
     var c = src.getCard(-2); // the card beneath |card|
-    dump(c ? ("-2: "+c+" "+(suit == c.suit)+" "+(num < c.number)+"\n") : "no -2");
     if(c && suit == c.suit && num < c.number) return true;
     const ps = src.following;
     for(var i = 0; i != 3; ++i) {

@@ -136,13 +136,13 @@ window.addEventListener("load", init, false);
 
 
 function handleMouseDown(e) {
-  if(e.button==0) Game.mouseDown(e);
+  if(e.button==0) Game.layout.mouseDown(e);
 }
 function handleMouseClick(e) {
-  if(e.button==0) Game.mouseClick(e);
+  if(e.button==0) Game.layout.mouseClick(e);
 }
 function handleRightClick(e) {
-  Game.mouseRightClick(e);
+  Game.layout.mouseRightClick(e);
 }
 
 

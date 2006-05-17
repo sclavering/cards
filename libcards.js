@@ -99,8 +99,6 @@ function Card(number, suit) {
   this.renumber(number);
 }
 Card.prototype = {
-  isAnyPile: false,
-
   // Pointers to next card up and down in the same suit. For Mod3 3C.up==6C etc.
   up: null,
   down: null,

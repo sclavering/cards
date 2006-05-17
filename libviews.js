@@ -18,12 +18,11 @@ function getCardImageClass(card) {
 function cardView_update(card) {
   this.className = card ? getCardImageClass(card) : "card hidden";
   // so the drag-drop code can work out what you're starting to drag
-  this.cardModel = card;
+  this.cardIndex = card ? card.index : -1;
 }
 function createCardView(card, x, y) {
   const v = document.createElement("image");
   v.isCard = true; // drag-drop depends on this
-  v.isAnyPile = false;
   v.top = v._top = y;
   v.left = v._left = x;
   v.update = cardView_update;
@@ -37,7 +36,7 @@ function appendNewCardView(pile, card, x, y) {
 const _View = {
   // these are used in the drag+drop code and similar places, to see what an element is
   isCard: false, // read as "is card *view*"
-  isAnyPile: true,
+  isPileView: true,
 
   // override if desired
   _tagName: "stack",
@@ -81,6 +80,12 @@ const _View = {
       h += o2.y - y;
     }
     return { x: x, y: y, width: w, height: h };
+  },
+
+  // Takes an event (mousedown or contextmenu, at present) and returns a Card
+  getTargetCard: function(event) {
+    const t = event.target;
+    return t == this ? null : this.pile.cards[t.cardIndex];
   }
 };
 
@@ -93,6 +98,10 @@ const View = {
   
   update: function(index, lastIx) {
     this.firstChild.update(lastIx ? this.pile.cards[lastIx - 1] : null);
+  },
+
+  getTargetCard: function(event) {
+    return this.pile.lastCard;
   }
 };
 
@@ -183,7 +192,7 @@ const _Deal3WasteView = {
   // (which will be when it's the subject of a hint)
   getCardOffsets: function(ix) {
     for(var i = 2; i >= 0; --i) {
-      if(this.childNodes[i].cardModel) break;
+      if(this.childNodes[i].cardIndex != -1) break;
     }
     const x = i * gHFanOffset;
     return { x: x, y: 0 };
@@ -235,7 +244,6 @@ const _SpiderFoundationView = {
     if(index == num) { // an A->K run has been 
       for(var j = vindex; j != kids.length; ++j) kids[j].update(null);
     } else if(vindex < kids.length) { // an A->K run has been added
-      dump("vindex: "+vindex+"\n");
       kids[vindex].update(cs[index]);
     } else { // an A->K run has been added, and we need a new view
       appendNewCardView(this, cs[index], 0, vindex * gVFanOffset);
@@ -305,11 +313,6 @@ const StockView = {
     this.appendChild(document.createElement("space"));
     this._counterlabel = this.appendChild(document.createElement("label"));
     this._counterlabel.className = "stockcounter";
-  },
-
-  displayPile: function(pile) {
-    this._cardview.stockModel = this.pile = pile;
-    this.update(0, pile.cards.length);
   },
 
   update: function(index, lastIx) {

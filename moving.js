@@ -18,14 +18,7 @@ const kAnimationDelay = 30;
 
 function moveCards1(firstCard, target) {
   const card = firstCard, origin = card.pile;
-
-  // show the cards in the floating pile if they aren't already
-  const cs = gFloatingPile.pile.cards;
-  if(!cs.length || cs[0] !== card) {
-    const pview = origin.view, pbox = pview.boxObject;
-    const offset = pview.getCardOffsets(card.index);
-    gFloatingPile.show(card, pbox.x + offset.x, pbox.y + offset.y);
-  }
+  gFloatingPile.showForMove(card);
 
   // final coords (relative to gGameStack)
   const tview = target.view, tbox = tview.boxObject;

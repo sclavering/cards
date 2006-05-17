@@ -88,6 +88,11 @@ const Pile = {
 
   updateView: function(index) {
     this.view.update(index, this.cards.length);
+  },
+
+  // card may be null if the pile is empty
+  getClickAction: function(card) {
+    return card ? Game.getBestActionFor(card) : null;
   }
 };
 
@@ -138,6 +143,10 @@ const _Stock = {
 
   get counterValue() {
     return this.cards.length;
+  },
+
+  getClickAction: function(card) {
+    return this.deal();
   }
 };
 

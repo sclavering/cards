@@ -104,15 +104,6 @@ function init() {
 
   createHintHighlighter();
 
-  // We use onmouseup rather than onclick because in Fx1.5mac (at least) there is no click event 
-  // if you hold the mouse in one place for a few seconds between moving it and releasing the btn.
-  gGameStack.onmouseup = handleMouseClick;
-  gGameStack.onmousedown = handleMouseDown;
-  // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-
-  // clicks (no down or click events), so it's easiest to do all right-click
-  // detection this way. NB: middle-click only gives a click event (no up/down).
-  gGameStack.oncontextmenu = handleRightClick;
-
   // make controllers for each game type
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
 
@@ -135,30 +126,22 @@ function init() {
 window.addEventListener("load", init, false);
 
 
-function handleMouseDown(e) {
-  if(e.button==0) Game.layout.mouseDown(e);
-}
-function handleMouseClick(e) {
-  if(e.button==0) Game.layout.mouseClick(e);
-}
-function handleRightClick(e) {
-  Game.layout.mouseRightClick(e);
-}
-
 
 const FloatingPile = {
   pile: null, // will be a fake, because the view expects it
 
-  // coords relative to window corner
-  // card is the lowest-index card to be shown
-  show: function(card, x, y) {
-    const p = card.pile, ix = card.index;
-    const cs = this.pile.cards = p.cards.slice(ix);
-    this.update(0, cs.length);
-    this.top = this._top = y - gGameStackTop;
-    this.left = this._left = x - gGameStackLeft;
-    // hide the cards in their real pile
-    p.view.update(ix, ix);
+  showForMove: function(card) {
+    const cs = this.pile.cards;
+    if(cs.length && cs[0] == card) gGameStack.onmousemove = null;
+    else this._show(card);
+  },
+
+  // (ex, ey) are window-relative coords of mouse ptr at start of drag
+  showForDragDrop: function(card, ex, ey) {
+    this._show(card);
+    this._tx = ex - this._left// - gGameStackLeft;
+    this._ty = ey - this._top// - gGameStackTop;
+    gGameStack.onmousemove = this.onmousemove;
   },
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
@@ -169,6 +152,26 @@ const FloatingPile = {
     // do these really matter?
     this.pile.cards = [];
     this.update(0, 0);
+  },
+
+  // card is the lowest-index card to be shown
+  _show: function(card) {
+    const pview = card.pile.view, pbox = pview.boxObject;
+    const offsets = pview.getCardOffsets(card.index);
+    const x = pbox.x + offsets.x, y = pbox.y + offsets.y;
+    const p = card.pile, ix = card.index;
+    const cs = this.pile.cards = p.cards.slice(ix);
+    this.update(0, cs.length);
+    this.top = this._top = y - gGameStackTop;
+    this.left = this._left = x - gGameStackLeft;
+    // hide the cards in their real pile
+    p.view.update(ix, ix);
+  },
+
+  onmousemove: function(e) {
+    const self = gFloatingPile; // this==window
+    self.top = self._top = e.pageY - self._ty;
+    self.left = self._left = e.pageX - self._tx;
   }
 };
 
@@ -197,10 +200,8 @@ const _hintHighlighter = {
   highlight: function(thing) { // a Card or a pile
     const card = thing instanceof Card ? thing : null;
     const pile = card ? card.pile : thing;
-//    dump("highlight card: "+card+" pile: "+pile);
     const view = pile.view, box = view.boxObject;
     const bounds = view.getHighlightBounds(card);
-//    dump(" bounds: x:"+bounds.x+" y:"+bounds.y+" w:"+bounds.width+" h:"+bounds.height+"\n");
     this.top = box.y - gGameStackTop + bounds.y;
     this.left = box.x - gGameStackLeft + bounds.x;
     this.width = bounds.width;
@@ -320,6 +321,7 @@ function restartGame() {
 
 
 function doo(action) { // "do" is a reserved word
+  if(!action) return;
   // enable undo + disable redo (but avoid doing so unnecessarily)
   if(!Game.canUndo && !GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
   if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.setAttribute("disabled","true");

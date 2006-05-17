@@ -23,6 +23,7 @@ const Layout = {
   show: function() {
     if(!this._node) throw "layout not init()'d";
     this._node.hidden = false;
+    this._resetHandlers();
   },
 
   hide: function() {
@@ -108,62 +109,45 @@ const Layout = {
     if(box != container) throw "Layout._build: layout had unclosed box";
   },
 
-  // === Mouse Handling =======================================
-  // Games must implement mouseDown, mouseUp, mouseMove, mouseClick and mouseRightClick
 
-  _mouseNextCard: null, // a Card, set on mousedown on a movable card
-  _mouseNextCardX: 0,
-  _mouseNextCardY: 0,
-  _mouseDownTarget: null, // always set on mousedown
-  _dragInProgress: false,
-  _tx: 0, // used in positioning for drag+drop
-  _ty: 0,
+  // === Mouse Handling ====================================
+  // Notes:
+  // Use onmouseup rather than onclick because in Fx1.5mac (at least) there is no click event if you
+  // hold the mouse in one place for a few seconds between moving it and releasing the btn.
+  //
+  // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-clicks (no down or
+  // click events), so it's easiest to do all right-click detection this way.
+  // Fx "20051107 (1.5)" (actually auto-updated, I think, to 1.5.0.3) does do Down events!
+
   _ex0: 0, // coords of mousedown event
   _ey0: 0,
+  _eventTargets: null, // or a [card, pile] pair after mousedown and until mouseup
 
-  mouseDown: function(e) {
-    const t = this.getEventTarget(e);
-    if(!t || t.parentNode == gFloatingPile) return;
+  onmousedown: function(e) {
+    if(e.button) return;
+    const self = Game.layout;
+    const et = self._eventTargets = self._getTargetCardAndPile(e), card = et[0];
+    if(!card || !card.pile.mayTakeCard(card)) return;
     if(interruptAction) interrupt();
-    this._mouseDownTarget = t;
-    if(!t.isCard) return;
-    const card = t.cardModel;
-    if(!card.pile.mayTakeCard(card)) return;
-    this._ex0 = e.pageX;
-    this._ey0 = e.pageY;
-    const box = t.boxObject;
-    this._mouseNextCard = card;
-    this._mouseNextCardX = box.x;
-    this._mouseNextCardY = box.y;
-    gGameStack.onmousemove = this.mouseMove0;
+    self._ex0 = e.pageX;
+    self._ey0 = e.pageY;
+    gGameStack.onmousemove = self.beginDrag;
   },
 
-  mouseMove0: function(e) {
-    const fp = gFloatingPile, self = Game.layout; // this==window
+  beginDrag: function(e) {
+    const self = Game.layout; // this==window
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    const card = self._mouseNextCard;
-    gFloatingPile.show(card, self._mouseNextCardX, self._mouseNextCardY);
-    self._dragInProgress = true;
-    self._tx = ex0 - fp._left;
-    self._ty = ey0 - fp._top;
-    gGameStack.onmousemove = self.mouseMove;
-  },
-
-  mouseMove: function(e) {
-    const fp = gFloatingPile, self = Game.layout; // this==window
-    fp.top = fp._top = e.pageY - self._ty;
-    fp.left = fp._left = e.pageX - self._tx;
+    gFloatingPile.showForDragDrop(self._eventTargets[0], ex0, ey0);
+    gGameStack.onmouseup = self.endDrag;
+    gGameStack.oncontextmenu = null;
   },
 
   endDrag: function(e) {
-    const card = this._mouseNextCard;
-
-    this._mouseNextCard = null;
-    this._mouseNextCardBox = null;
-    this._dragInProgress = false;
+    const self = Game.layout, et = self._eventTargets, card = et[0], pile = et[1];
+    self._resetHandlers();
 
     const cbox = gFloatingPile.boxObject;
     var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
@@ -195,35 +179,34 @@ const Layout = {
     card.pile.updateView(card.index); // make the cards visible again
   },
 
-  mouseClick: function(e) {
-    gGameStack.onmousemove = null;
-    if(this._dragInProgress) {
-      this.endDrag(e);
-      return;
-    }
-    const t = this._mouseDownTarget;
-    if(!t) return;
-    this._mouseDownTarget = null;
-    this._mouseNextCard = null;
-    const act = t.isCard ? Game.getBestActionFor(t.cardModel)
-        : t.stockModel ? t.stockModel.deal() : null;
-    if(act) doo(act);
+  onmouseup: function(e) {
+    const self = Game.layout, et = self._eventTargets;
+    if(!et) return; // on Mac, a click+hold (right-click equiv.) may have intervened
+    const card = et[0], pile = et[1];
+    if(pile) doo(pile.getClickAction(card));
+    self._resetHandlers();
   },
 
-  mouseRightClick: function(e) {
-    if(this._dragInProgress || this._mouseNextCard) return;
-    const t = this.getEventTarget(e);
-    if(!t) return;
-    const tFloating = t.parentNode == gFloatingPile; // xxx model/view problem
+  rightClick: function(e) {
+    const self = Game.layout;
+    const card = self._getTargetCardAndPile(e)[0];
     if(interruptAction) interrupt();
-    // it's OK to right-click a card while a *different* one is moving
-    const act = t.isCard && !tFloating ? Game.sendToFoundations(t.cardModel) : null;
-    if(act) doo(act);
+    if(card) doo(Game.sendToFoundations(card));
+    self._resetHandlers();
   },
 
-  // Pyramid + TriPeaks need to do something different
-  getEventTarget: function(event) {
-    return event.target;
+  _resetHandlers: function(e) {
+    this._eventTargets = null;
+    gGameStack.oncontextmenu = this.rightClick;
+    gGameStack.onmousedown = this.onmousedown;
+    gGameStack.onmouseup = this.onmouseup;
+    gGameStack.onmousemove = null;
+  },
+
+  _getTargetCardAndPile: function(e) {
+    for(var t = e.target; t && !t.isPileView; t = t.parentNode);
+    if(!t || t == gFloatingPile) return [null, null];
+    return [t.getTargetCard(e), t.pile];
   }
 };
 

@@ -106,6 +106,124 @@ const Layout = {
     }
     // sanity check
     if(box != container) throw "Layout._build: layout had unclosed box";
+  },
+
+  // === Mouse Handling =======================================
+  // Games must implement mouseDown, mouseUp, mouseMove, mouseClick and mouseRightClick
+
+  _mouseNextCard: null, // a Card, set on mousedown on a movable card
+  _mouseNextCardX: 0,
+  _mouseNextCardY: 0,
+  _mouseDownTarget: null, // always set on mousedown
+  _dragInProgress: false,
+  _tx: 0, // used in positioning for drag+drop
+  _ty: 0,
+  _ex0: 0, // coords of mousedown event
+  _ey0: 0,
+
+  mouseDown: function(e) {
+    const t = this.getEventTarget(e);
+    if(!t || t.parentNode == gFloatingPile) return;
+    if(interruptAction) interrupt();
+    this._mouseDownTarget = t;
+    if(!t.isCard) return;
+    const card = t.cardModel;
+    if(!card.pile.mayTakeCard(card)) return;
+    this._ex0 = e.pageX;
+    this._ey0 = e.pageY;
+    const box = t.boxObject;
+    this._mouseNextCard = card;
+    this._mouseNextCardX = box.x;
+    this._mouseNextCardY = box.y;
+    gGameStack.onmousemove = this.mouseMove0;
+  },
+
+  mouseMove0: function(e) {
+    const fp = gFloatingPile, self = Game.layout; // this==window
+    // ignore very tiny movements of the mouse during a click
+    // (otherwise clicking without dragging is rather difficult)
+    const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
+    if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
+    const card = self._mouseNextCard;
+    gFloatingPile.show(card, self._mouseNextCardX, self._mouseNextCardY);
+    self._dragInProgress = true;
+    self._tx = ex0 - fp._left;
+    self._ty = ey0 - fp._top;
+    gGameStack.onmousemove = self.mouseMove;
+  },
+
+  mouseMove: function(e) {
+    const fp = gFloatingPile, self = Game.layout; // this==window
+    fp.top = fp._top = e.pageY - self._ty;
+    fp.left = fp._left = e.pageX - self._tx;
+  },
+
+  endDrag: function(e) {
+    const card = this._mouseNextCard;
+
+    this._mouseNextCard = null;
+    this._mouseNextCardBox = null;
+    this._dragInProgress = false;
+
+    const cbox = gFloatingPile.boxObject;
+    var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
+
+    // try dropping cards on each possible target
+    var targets = Game.dragDropTargets;
+    for(var i = 0; i != targets.length; i++) {
+      var target = targets[i];
+      if(target == card.pile) continue;
+
+      var tbox = target.view.boxObject;
+      var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
+      var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
+      if(!overlaps) continue;
+      var act = target.getActionForDrop(card);
+      if(!act) continue;
+      if(act instanceof ErrorMsg) {
+        act.show();
+        break;
+      } else {
+        gFloatingPileNeedsHiding = true;
+        doo(act);
+        return;
+      }
+    }
+
+    // ordering here may be important (not-repainting fun)
+    gFloatingPile.hide();
+    card.pile.updateView(card.index); // make the cards visible again
+  },
+
+  mouseClick: function(e) {
+    gGameStack.onmousemove = null;
+    if(this._dragInProgress) {
+      this.endDrag(e);
+      return;
+    }
+    const t = this._mouseDownTarget;
+    if(!t) return;
+    this._mouseDownTarget = null;
+    this._mouseNextCard = null;
+    const act = t.isCard ? Game.getBestActionFor(t.cardModel)
+        : t.stockModel ? t.stockModel.deal() : null;
+    if(act) doo(act);
+  },
+
+  mouseRightClick: function(e) {
+    if(this._dragInProgress || this._mouseNextCard) return;
+    const t = this.getEventTarget(e);
+    if(!t) return;
+    const tFloating = t.parentNode == gFloatingPile; // xxx model/view problem
+    if(interruptAction) interrupt();
+    // it's OK to right-click a card while a *different* one is moving
+    const act = t.isCard && !tFloating ? Game.sendToFoundations(t.cardModel) : null;
+    if(act) doo(act);
+  },
+
+  // Pyramid + TriPeaks need to do something different
+  getEventTarget: function(event) {
+    return event.target;
   }
 };
 

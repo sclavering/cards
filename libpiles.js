@@ -14,6 +14,9 @@ const Pile = {
   // the index in Game.piles/Game.foundations/etc. at which this pile appears
   index: -1,
 
+  // Controls whether cards can be dropped onto this pile.  (mayAddCard will still be called if true)
+  canDrop: true,
+
   // cards: [], // actually happens in createPile, so that each pile has a different array
   get hasCards() { return this.cards.length != 0; },
 
@@ -36,7 +39,11 @@ const Pile = {
 
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
-  getActionForDrop: function(card) { throw "getActionForDrop() not implemented"; },
+
+  // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
+  getActionForDrop: function(card) {
+    return this.mayAddCard(card) ? new Move(card, this) : null;
+  },
 
   // the sourrounding piles
   get surrounding() {
@@ -106,26 +113,10 @@ function mayTakeSingleCard(card) { return card.isLast && card.faceUp; }
 function ifLast(card) { return card.isLast; }
 
 
-const PyramidPileBase = {
-  __proto__: Pile,
-
-  // set in games' init()s
-  leftParent: null,
-  rightParent: null,
-  leftChild: null,
-  rightChild: null,
-
-  get free() {
-    const lc = this.leftChild, rc = this.rightChild;
-    return !lc || (!lc.hasCards && !rc.hasCards);
-  }
-};
-
-
-
 const _Stock = {
   __proto__: Pile,
   isStock: true,
+  canDrop: false,
   mayTakeCard: no,
   mayAddCard: no,
 
@@ -209,12 +200,22 @@ const StockDealToNonemptyPiles = {
 const Waste = {
   __proto__: Pile,
   isWaste: true,
+  canDrop: false,
   mayTakeCard: ifLast,
   mayAddCard: no,
 
   // Things to make draw3 waste piles work
   deal3visible: 0, // The number of cards that should have been visible after the last deal.
   deal3num: 0      // The number of cards on this pile after the last deal.
+};
+
+const PyramidWaste = {
+  __proto__: Waste,
+  canDrop: true,
+  getActionForDrop: function(card) {
+    const c = this.lastCard;
+    return c && card.number + c.number == 13 ? new RemovePair(card, c) : null;
+  }
 };
 
 
@@ -231,6 +232,7 @@ const Cell = {
 const Reserve = {
   __proto__: Pile,
   isReserve: true,
+  canDrop: false,
   mayTakeCard: mayTakeSingleCard,
   mayAddCard: no
 };
@@ -343,8 +345,18 @@ const FortyThievesPile = {
   }
 };
 
-const FreeCellPile = {
+const _FreeCellPile = {
   __proto__: Pile,
+  // mayAddCard returns 0 to mean "legal, but not enough cells+spaces to do the move"
+  getActionForDrop: function(card) {
+    const may = this.mayAddCard(card);
+    if(may) return new Move(card, this);
+    return may === 0 ? new ErrorMsg("notEnoughSpaces") : null;
+  }
+};
+
+const FreeCellPile = {
+  __proto__: _FreeCellPile,
   isPile: true,
 
   mayTakeCard: mayTakeFromFreeCellPile,
@@ -438,6 +450,36 @@ const PileOnPile = {
   }
 };
 
+const _PyramidPile = { // used by TriPeaks too
+  __proto__: Pile,
+  isPile: true,
+
+  // set in games' init()s
+  leftParent: null,
+  rightParent: null,
+  leftChild: null,
+  rightChild: null,
+
+  mayAddCard: no
+};
+
+const PyramidPile = {
+  __proto__: _PyramidPile,
+  mayTakeCard: function(card) {
+    const lc = this.leftChild, rc = this.rightChild;
+    return !lc || (!lc.hasCards && !rc.hasCards);
+  },
+  getActionForDrop: function(card) {
+    const c = this.firstCard;
+    if(!c || card.number + c.number != 13) return null;
+    const l = this.leftChild, lc = l && l.firstCard;
+    const r = this.rightChild, rc = r && r.firstCard;
+    // can move if the only card covering this is the card being dragged
+    // (which remains part of its source pile during dragging)
+    return !l || ((!lc || lc == card) && (!rc || rc == card)) ? new RemovePair(card, c) : null;
+  }
+};
+
 const RegimentPile = {
   __proto__: Pile,
   isPile: true,
@@ -478,7 +520,7 @@ const SpiderPile = {
 };
 
 const TowersPile = {
-  __proto__: Pile,
+  __proto__: _FreeCellPile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
@@ -490,12 +532,8 @@ const TowersPile = {
 };
 
 const TriPeaksPile = {
-  __proto__: PyramidPileBase,
-  isPeak: false,
-  isPile: true,
-  // like Golf
-  mayTakeCard: mayTakeSingleCard,
-  mayAddCard: no
+  __proto__: _PyramidPile,
+  mayTakeCard: no
 };
 
 const UnionSquarePile = {
@@ -622,6 +660,14 @@ const Mod3Foundation = {
     return last ? last.inPlace && (card.down==last || card.twin.down==last)
                 : !card.down && card.row==this.row;
   }
+};
+
+const PyramidFoundation = {
+  __proto__: NoWorryingBackFoundation,
+  getActionForDrop: function(card) {
+    return card.isKing ? new RemovePair(card, null) : null;
+  },
+  mayAddCard: no
 };
 
 const RegimentAceFoundation = {

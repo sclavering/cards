@@ -10,7 +10,7 @@ redo() should be synchronous if present.  if not present perform() is used inste
 
 the "action" member is used for scoring.
 
-Game.getActionForDrop might return an ErrorMsg instead of a real Action
+somePile.getActionForDrop might return an ErrorMsg instead of a real Action
 */
 
 function DealToPile(pile) {

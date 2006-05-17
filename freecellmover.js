@@ -15,12 +15,6 @@ var FreeCellGame = {
     return false;
   },
 
-  // mayAddCard returns 0 to mean "legal, but not enough cells+spaces to do the move"
-  getActionForDrop: function(card) {
-    const may = this.mayAddCard(card);
-    return may ? new Move(card, this) : may===0 ? new ErrorMsg("notEnoughSpaces") : null;
-  },
-
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
     var p = this.getBestDestinationFor(card);

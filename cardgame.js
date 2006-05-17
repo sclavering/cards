@@ -83,23 +83,22 @@ var BaseCardGame = {
   },
 
   createPiles: function() {
-    const dropact = this.getActionForDrop;
     const views = this.layout.views, numV = views.length;
     const letters = this._pilesToBuildLetters, num = letters.length;
     const classes = this._pilesToBuildClasses;
     const bytype = this.pilesByType = {};
     const all = this.allpiles = [];
+    const dragDropTargets = this.dragDropTargets = []; // ew!
     if(num != numV) throw "game is trying to create " + num + " piles for " + numV + " views!";
 
     for(var i = 0; i != num; ++i) {
       var letter = letters[i], impl = classes[i], view = views[i];
       var pile = createPile(impl);
       all.push(pile);
+      if(pile.canDrop) dragDropTargets.push(pile);
       var view = views[i];
       pile.view = view;
       view.displayPile(pile);
-      // xxx ew!
-      if(pile.getActionForDrop == Pile.getActionForDrop && dropact) pile.getActionForDrop = dropact;
       if(bytype[letter]) bytype[letter].push(pile);
       else bytype[letter] = [pile];
     }
@@ -116,9 +115,6 @@ var BaseCardGame = {
     this.waste = bytype.w ? bytype.w[0] : null;
     this.foundation = bytype.f ? bytype.f[0] : null;
     this.reserve = bytype.r ? bytype.r[0] : null;
-    
-    // xxx kill!
-    this.dragDropTargets = this.cells.concat(this.foundations, this.piles);
   },
 
   initCards: function() {
@@ -345,12 +341,6 @@ var BaseCardGame = {
   // Should return an Action, or null.  Generally shouldn't handle revealing of cards
   autoplay: function(pileWhichHasHadCardsRemoved) {
     return null;
-  },
-
-  // This is copied onto all piles.
-  // It should return an Action appropriate for the card being dropped on the pile.
-  getActionForDrop: function(card) {
-    return this.mayAddCard(card) ? new Move(card, this) : null;
   },
 
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.

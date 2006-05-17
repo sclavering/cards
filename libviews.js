@@ -22,7 +22,6 @@ function cardView_update(card) {
 }
 function createCardView(card, x, y) {
   const v = document.createElement("image");
-  v.isCard = true; // drag-drop depends on this
   v.top = v._top = y;
   v.left = v._left = x;
   v.update = cardView_update;
@@ -35,7 +34,6 @@ function appendNewCardView(pile, card, x, y) {
 
 const _View = {
   // these are used in the drag+drop code and similar places, to see what an element is
-  isCard: false, // read as "is card *view*"
   isPileView: true,
 
   // override if desired
@@ -309,7 +307,6 @@ const StockView = {
   _tagName: "vbox",
   initView: function() {
     this._cardview = appendNewCardView(this, null, 0, 0);
-    this._cardview.isCard = false;
     this.appendChild(document.createElement("space"));
     this._counterlabel = this.appendChild(document.createElement("label"));
     this._counterlabel.className = "stockcounter";

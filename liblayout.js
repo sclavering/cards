@@ -210,6 +210,51 @@ const Layout = {
   }
 };
 
+const _PyramidLayout = {
+  __proto__: Layout,
+
+  _getTargetCardAndPile: function(e) {
+    const nulls = [null, null];
+    var t = e.target, parent = t.parentNode;
+
+    if(t == gFloatingPile || parent == gFloatingPile) return nulls;
+
+    // occupied pile, foundation, or stock
+    if(parent.pile) return [parent.getTargetCard(e), parent.pile];
+
+    // get from a <flex/> or spacer to the pile it covers
+    if(!t.pile) {
+      // if t is a spacer between two piles we change t to the pile on the row above
+      t = t.previousSibling;
+      if(!t || !t.pile) return nulls; // spacer is left of the pyramid
+      var rp = t.pile.rightParent, rpbox = rp && rp.view.boxObject;
+      // spacer on right of pyramid, or if click was not in region overlapping row above
+      if(!rp || rpbox.y + rpbox.height < y) return nulls;
+      t = rp.view;
+    }
+
+    const x = e.pageX, y = e.pageY;
+    // The target pile is empty.  This usually means that an empty pile is overlapping a card
+    // which the user is trying to click on.
+    var p = t.pile;
+    while(!p.hasCards) {
+      var lp = p.leftParent, lbox = lp && lp.view.boxObject;
+      var rp = p.rightParent, rbox = rp && rp.view.boxObject;
+      if(rp && x > rbox.x) p = rp;
+      else if(lp && lbox.x + lbox.width > x) p = lp;
+      // is it the pile directly above?
+      else if(lp && lp.rightParent) p = lp.rightParent;
+      // user is probably being stupid
+      else return nulls;
+      // are we too low down anyway?
+      var box = p.view.boxObject;
+      if(box.y + box.height < y) return nulls;
+    }
+    
+    return [p.firstCard, p];
+  }
+};
+
 
 const AcesUpLayout = {
   __proto__: Layout,
@@ -303,7 +348,7 @@ const PileOnLayout = {
 };
 
 const PyramidLayout = {
-  __proto__: Layout,
+  __proto__: _PyramidLayout,
   template: "h1[s w]1[{flex=5}{class=pyramid}[1p1][4-++p1p++-4][3++p1p1p++3]"
       + "[3-+p1p1p1p+-3][2+p1p1p1p1p+2][2-p1p1p1p1p1p-2][1p1p1p1p1p1p1p1]]1f1"
 };
@@ -339,7 +384,7 @@ const SpiderLayout = {
 };
 
 const TriPeaksLayout = {
-  __proto__: Layout,
+  __proto__: _PyramidLayout,
   p: View,
   template: "v<{class=pyramid}[41-2+2p2+2+2p2+2+2p2+2-14][42+2p2p2+2p2p2+2p2p2+24]"
      + "[41-2p2p2p2p2p2p2p2p2p2-14][42p2p2p2p2p2p2p2p2p2p24]>3[3s2f3]2"

@@ -47,7 +47,7 @@ toolbarbutton { margin-left: 10px; }
 
 .card-highlight { background: darkgray; -moz-opacity: 0.3; }
 
-.pyramid-pile {
+.pyramid .pile {
   background-image: none;
 }
 

@@ -1,8 +1,8 @@
 Games.tripeaks = {
-  __proto__: PyramidBase,
+  __proto__: BaseCardGame,
 
   layout: TriPeaksLayout,
-  pilesToBuild: "28p s w",
+  pilesToBuild: "28p s f",
   pileTypes: { s: StockDealToFoundation, f: GolfFoundation, p: TriPeaksPile },
 
   init: function() {
@@ -18,9 +18,7 @@ Games.tripeaks = {
       r.leftParent = p;
     }
 
-    ps[0].isPeak = ps[1].isPeak = ps[2].isPeak = true;
-
-    this.foundation.free = true;
+    for(i = 0; i != 28; ++i) ps[i].isPeak = i < 3;
   },
 
   deal: function(cards) {

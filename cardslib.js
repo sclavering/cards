@@ -208,7 +208,7 @@ const _hintHighlighter = {
     this.height = bounds.height;
   },
   showHint: function(from, to) {
-    const dest = !to.isCard && to.hasCards ? to.lastCard : to;
+    const dest = to.isAnyPile && to.hasCards ? to.lastCard : to;
     this.highlight(from);
     const self = this;
     setTimeout(function() { self.highlight(dest); }, 350);

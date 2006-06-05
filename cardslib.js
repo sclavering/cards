@@ -198,7 +198,7 @@ const _hintHighlighter = {
     this.width = this.height = 0;
   },
   highlight: function(thing) { // a Card or a pile
-    const card = thing instanceof Card ? thing : null;
+    const card = thing instanceof Card ? thing : thing.lastCard;
     const pile = card ? card.pile : thing;
     const view = pile.view, box = view.boxObject;
     const bounds = view.getHighlightBounds(card);

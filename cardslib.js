@@ -141,7 +141,7 @@ const FloatingPile = {
     this._show(card);
     this._tx = ex - this._left// - gGameStackLeft;
     this._ty = ey - this._top// - gGameStackTop;
-    gGameStack.onmousemove = this.onmousemove;
+    gGameStack.onmousemove = this._move;
   },
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
@@ -168,7 +168,9 @@ const FloatingPile = {
     p.view.update(ix, ix);
   },
 
-  onmousemove: function(e) {
+  // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view
+  _move: function(e) {
+    dump("fp._move\n")
     const self = gFloatingPile; // this==window
     self.top = self._top = e.pageY - self._ty;
     self.left = self._left = e.pageX - self._tx;

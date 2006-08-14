@@ -39,7 +39,15 @@ const KlondikeBase = {
   getScoreFor: function(act) {
     if(act instanceof RefillStock) return -100;
     if(!(act instanceof Move)) return 0;
-    const s = act.source, d = act.destination;
+    const c = act.card, s = act.source, d = act.destination, ps = this.piles;
+    // If a card on the waste *could* be moved down to the playing piles (for 5 points)
+    // then award those points event when moving it directly to the foundations.
+    if(s.isWaste && d.isFoundation) {
+      for(var i = 0; i != ps.length; ++i)
+        if(ps[i].mayAddCard(c)) 
+          return 15;
+      return 10;
+    }
     if(d.isFoundation) return s.isFoundation ? 0 : 10;
     if(s.isFoundation) return -15;
     return s.isWaste ? 5 : 0;

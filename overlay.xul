@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://cards/locale/cards.dtd">
 
 <overlay id="CardsOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <menupopup id="menu_ToolsPopup">
   <menuitem id="cards-launch" label="&play-cards;" insertbefore="devToolsSeparator"
+      oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
+</menupopup>
+<menupopup id="windowPopup">
+  <menuitem id="cards-launch" label="&play-cards;" insertbefore="sep-window-list"
       oncommand="toOpenWindowByType('cardgames-main','chrome://cards/content/');"/>
 </menupopup>
 

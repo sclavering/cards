@@ -89,8 +89,7 @@ function init() {
   }
 
   // restore choice of cardset
-  try { var cardset = gPrefs.getCharPref("cardset"); }
-  catch(e) { cardset = "normal"; }
+  var cardset = loadPref("cardset") || "normal";
   useCardSet(cardset);
   document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
@@ -108,14 +107,14 @@ function init() {
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
 
   // work out which game was played last
-  game = "klondike1";
-  try { game = gPrefs.getCharPref("current-game"); } catch(e) {}
-  if(!(game in Games)) game = "klondike1"; // just in case pref gets corrupted
+  var game = loadPref("current-game");
+  if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
 
   // build the games menu
-  var gamesInMenu = ["freecell","fan","divorce","gypsy4","klondike1","mod3","penguin","pileon",
-      "russiansol","simon4","spider2","spider4","unionsquare","wasp","whitehead","yukon"];
-  try { gamesInMenu = gPrefs.getCharPref("gamesInMenu").split(","); } catch(e) {}
+  var gamesInMenu = loadPref("gamesInMenu")
+      || "freecell,fan,divorce,gypsy4,klondike1,mod3,penguin,pileon,russiansol"
+          + ",simon4,spider2,spider4,unionsquare,wasp,whitehead,yukon";
+  gamesInMenu = gamesInMenu.split(",");
   buildGamesMenu(gamesInMenu, game);
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
@@ -124,6 +123,19 @@ function init() {
 }
 
 window.addEventListener("load", init, false);
+
+
+function loadPref(name) {
+  try {
+    return gPrefs.getCharPref(name);
+  } catch(e) {}
+  return null;
+}
+
+function savePref(name, val) {
+//   alert("saving: "+name+"="+val);
+  gPrefs.setCharPref(name, val);
+}
 
 
 
@@ -170,7 +182,6 @@ const FloatingPile = {
 
   // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view
   _move: function(e) {
-    dump("fp._move\n")
     const self = gFloatingPile; // this==window
     self.top = self._top = e.pageY - self._ty;
     self.left = self._left = e.pageX - self._tx;
@@ -222,7 +233,7 @@ const _hintHighlighter = {
 function playGame(game) {
   if(GameController) GameController.switchFrom();
 
-  gPrefs.setCharPref("current-game",game);
+  savePref("current-game", game);
   document.title = gStrings["game."+game];
 
   GameController = Games[game];
@@ -254,7 +265,7 @@ function showGameSelector() {
 
 
 function gameSelectorClosing(selected, ticked) {
-  gPrefs.setCharPref("gamesInMenu", ticked.join(","));
+  savePref("gamesInMenu", ticked.join(","));
   buildGamesMenu(ticked, selected);
   playGame(selected);
 }
@@ -446,7 +457,7 @@ function useCardSet(set) {
     if(isCardset.test(sheet.href)) sheet.disabled = !rightCardset.test(sheet.href);
   }
   // save pref
-  gPrefs.setCharPref("cardset", set);
+  savePref("cardset", set);
   // xxx evilish hack
   var isSmallSet = set=="small";
   gCardHeight = isSmallSet ? 80 : 96;

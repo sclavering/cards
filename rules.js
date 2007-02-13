@@ -117,52 +117,27 @@ const Rules = {
       // numBs matters for Penguin
       const fs = this.foundations, cs = this.cards;
       const ixs = this.foundationBaseIndexes, numIxs = ixs.length;
-      for(var i = 0; i != 4; i++) {
-        var f = fs[i];
-        if(f.hasCards) {
-          var c = f.lastCard.up;
-          if(c && c.faceUp && c.isLast && c.number <= maxNums[c.suit])
-            return new Move(c, f);
-        } else if(!triedToFillEmpty) {
-          triedToFillEmpty = true;
-          for(var j = 0; j != numIxs; j++) {
-            var b = cs[ixs[j]];
-            if(b.faceUp && !b.pile.isFoundation && b.faceUp && b.isLast)
-              return new Move(b, f);
-          }
+      // Try to put Aces (or whatever) on empty foundations.
+      const empty = findEmpty(fs); // used to check move legality
+      if(empty) {
+        for(var j = 0; j != numIxs; ++j) {
+          var b = cs[ixs[j]];
+          if(!b.pile.isFoundation && b.pile.mayTakeCard(b) && empty.mayAddCard(b))
+            return new Move(b, this.getFoundationForAce(b));
         }
       }
-      return null;
-    },
-
-    // like above, but for 2 decks
-    "commonish 2deck":
-    function() {
-      const fs = this.foundations, cs = this.cards, ixs = this.foundationBaseIndexes;
-      const maxNums = this.getAutoplayableNumbers();
-
-      var lookedForAces = false;
-      for(var i = 0; i != 8; i++) {
-        var f = fs[i], last = f.lastCard;
-        if(last) {
-          if(last.isKing) continue;
-          var c = last.up, cp = c.pile;
-          if(!cp.isFoundation && !cp.isStock && c.isLast) {
-            if(c.number <= maxNums[c.suit]) return new Move(c, f);
-            continue;
-          } else {
-            c = c.twin, cp = c.pile;
-            if(!cp.isFoundation && !cp.isStock && c.isLast && c.number <= maxNums[c.suit])
-              return new Move(c, f);
-          }
-        } else if(!lookedForAces) {
-          lookedForAces = true;
-          for(var j = 0; j != 8; j++) {
-            var a = cs[ixs[j]], ap = a.pile;
-            if(!ap.isFoundation && !ap.isStock && a.isLast)
-              return new Move(a, f);
-          }
-        }
+      // Now try non-empty foundations
+      for(var i = 0; i != fs.length; i++) {
+        var f = fs[i];
+        if(!f.hasCards) continue;
+        var c = f.lastCard.up;
+        if(!c || c.number > maxNums[c.suit]) continue;
+        if(!c.pile.isFoundation && c.pile.mayTakeCard(c) && f.mayAddCard(c))
+          return new Move(c, f);
+        // for two-deck games
+        c = c.twin;
+        if(c && !c.pile.isFoundation && c.pile.mayTakeCard(c) && f.mayAddCard(c))
+          return new Move(c, f);
       }
       return null;
     }
@@ -212,10 +187,10 @@ const Rules = {
 }
 
 
-
 // Other useful functions for individual games to use
 
 function findEmpty(piles) {
+  dump(Components.stack+"\n");
   const num = piles.length;
   for(var i = 0; i != num; i++) {
     var p = piles[i];

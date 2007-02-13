@@ -88,33 +88,37 @@ var BaseCardGame = {
     const classes = this._pilesToBuildClasses;
     const bytype = this.pilesByType = {};
     const all = this.allpiles = [];
-    const dragDropTargets = this.dragDropTargets = []; // ew!
     if(num != numV) throw "game is trying to create " + num + " piles for " + numV + " views!";
 
     for(var i = 0; i != num; ++i) {
       var letter = letters[i], impl = classes[i], view = views[i];
       var pile = createPile(impl);
       all.push(pile);
-      if(pile.canDrop) dragDropTargets.push(pile);
       var view = views[i];
       pile.view = view;
       view.displayPile(pile);
       if(bytype[letter]) bytype[letter].push(pile);
       else bytype[letter] = [pile];
     }
+    // xxx existince is rather icky, but yay list comprehensions
+    this.dragDropTargets = [f for each(f in this.allpiles) if(f.canDrop)];
 
     for each(var set in bytype)
       for(i = 1; i != set.length; ++i) set[i].prev = set[i-1], set[i-1].next = set[i];
 
+    var p;
     // xxx would be nice to kill all of these
-    this.piles = bytype.p || [];
-    this.foundations = bytype.f || [];
-    this.cells = bytype.c || [];
-    this.reserves = bytype.r || [];
+    this.piles = [p for each(p in all) if(p.isPile)];
+    this.cells = [p for each(p in all) if(p.isCell)];
+    this.reserves = [p for each(p in all) if(p.isReserve)];
+    this.foundations = [p for each(p in all) if(p.isFoundation)];
+    for(i in this.foundations) this.foundations[i].index = i;
     this.stock = bytype.s ? bytype.s[0] : null;
     this.waste = bytype.w ? bytype.w[0] : null;
     this.foundation = bytype.f ? bytype.f[0] : null;
     this.reserve = bytype.r ? bytype.r[0] : null;
+
+    this.loadPreferredFoundationSuits();
   },
 
   initCards: function() {
@@ -200,7 +204,7 @@ var BaseCardGame = {
       var piles = this.pilesByType[lch];
       bit = bit.slice(2); // drop the leading "x "
       if(ch == lch) { // separate nums for each pile
-        var numss = bit.split(" ");        
+        var numss = bit.split(" ");
         for(var j = 0; j != numss.length; ++j) this._dealSomeCards(piles[j], cards, numss[j]);
       } else {
         for(j = 0; j != piles.length; ++j) this._dealSomeCards(piles[j], cards, bit);
@@ -313,7 +317,7 @@ var BaseCardGame = {
     this.hintsReady = false;
 
     action.undo();
-    const cs = action.revealedCards;
+    const cs = action.revealedCards || [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(false);
 
     if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
@@ -476,6 +480,102 @@ var BaseCardGame = {
   },
 
 
+
+  // == Preferred foundations for different suits =========
+  // Different people like to order the suits in different ways.  We support
+  // this by remembering any explicit choice of foundation on a per-suit basis,
+  // using a pref of the form: "S:3,4;H:5" (meaning Spades should go first to
+  // foundation 3, then to foundation 4, and Hearts should go to foundation 5).
+  // If the user explicitly drags an Ace to a foundation, that will become the
+  // new front-most element of the preference list, and the last element may be
+  // discarded.  If no preference is recorded, we try to find a foundation that
+  // isn't preferred for some other suit, and optionally also based on aethetic
+  // choice (e.g. placing identical suits side-by-side in Gypsy).
+
+  // xxx maybe this should be merged in part with the autoplay stuff above, and
+  // sendToFoundations/getFoundationMoveFor in particular.
+
+  // xxx in a sane world, we'd just set this based on the cards in use
+  // Controls how many piles are tracked as being the preferred destination for
+  // Aces (or other base card) for a given suit
+  numPreferredFoundationsPerSuit: 1,
+
+  // Suit -> foundation *index* list
+  _preferredFoundationIndexesBySuit: {},
+  // foundation index -> suit map, with null for "don't care"
+  _preferredSuitForFoundationIndex: {},
+  // An array of foundations for which there is no preferred suit
+  _unpreferredFoundations: null,
+
+  // Should return the best possible foundation to put the Ace (or other
+  // foundation base card) on.  This version tries for the preffered foundation
+  // for the suit, then for a foundation not preferred by any suit, and then
+  // for any empty foundation.  (The latter part shouldn't be reached unless
+  // the code managing the preferences goes wrong, but meh.)
+  getFoundationForAce: function(card) {
+    const suit = card.suit, fs = this.foundations;
+    const prefs = [fs[i] for each(i in this._preferredFoundationIndexesBySuit[suit])];
+    const unpref = this._unpreferredFoundations;
+    return findEmpty(prefs) || findEmpty(unpref) || findEmpty(fs);
+  },
+
+  // Call at startup
+  loadPreferredFoundationSuits: function(card, foundation) {
+    const byIx = this._preferredSuitForFoundationIndex = [null for(ix in this.foundations)];
+    const bySuit = this._preferredFoundationIndexesBySuit = {
+      S: [], H: [], D: [], C: [] // names must match SPADE/HEART/DIAMOND/CLUB consts
+    };
+    const pref = this.loadPref("suits_preferred_foundations");
+    const max = this.numPreferredFoundationsPerSuit;
+    const isNum = function(x) { return !isNaN(x); };
+    this._unpreferredFoundations = []; // fallback. we'll search all foundations anyway
+    if(!pref) return;
+    for each(var blob in pref.split(";")) { // blob: "S:1,3"
+      let [suit, numsBlob] = blob.split(":");
+      if(!numsBlob) continue;
+      bySuit[suit] = numsBlob.split(",").map(parseInt,10).filter(isNum).slice(0, max);
+      for each(i in bySuit[suit]) byIx[i] = suit;
+    }
+    const fs = this.foundations;
+    this._unpreferredFoundations = [fs[i] for(i in fs) if(!byIx[i])];
+  },
+
+  setPreferredFoundationSuit: function(card, foundation) {
+    const suit = card.suit;
+    const fs = this.foundations;
+    const bySuit = this._preferredFoundationIndexesBySuit;
+    const byIx = this._preferredSuitForFoundationIndex;
+    const oldsuit = byIx[foundation.index];
+    if(oldsuit == suit) return;
+    // Clear old mapping for the new pile
+    const fIndex = foundation.index;
+    if(oldsuit) bySuit[oldsuit] = bySuit[oldsuit].filter(function(x) { return x != fIndex });
+    // If explicitly removed from a foundation, clear that mapping
+    if(card.pile.isFoundation) {
+      const oldIndex = card.pile.index;
+      bySuit[suit] = bySuit[suit].filter(function(x) { return x != oldIndex });
+      byIx[oldIndex] = null;
+    }
+    // Evict oldest mapping(s) for this suit if necessary
+    const max = this.numPreferredFoundationsPerSuit;
+    for(var i = max; i < bySuit[suit].length; ++i) byIx[bySuit[suit][i]] = null;
+    bySuit[suit] = bySuit[suit].slice(0, max);
+    // Set new mapping
+    bySuit[suit].unshift(fIndex);
+    byIx[fIndex] = suit;
+    this._unpreferredFoundations = [fs[i] for(i in fs) if(!byIx[i])];
+    // Record in prefs
+    const bits = [s + ":" + bySuit[s].join(",") for(s in bySuit)];
+    const val = bits.join(";");
+    this.savePref("suits_preferred_foundations", val);
+  },
+
+  loadPref: function(name) {
+    return loadPref(this.id + "." + name);
+  },
+  savePref: function(name, val) {
+    savePref(this.id + "." + name, val);
+  },
 
   // === Miscellany =======================================
 

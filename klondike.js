@@ -78,6 +78,6 @@ Games.doubleklondike = {
   dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
-  autoplay: "commonish 2deck",
+  numPreferredFoundationsPerSuit: 2, // == num foundations of a given suit
   getAutoplayableNumbers: "gypsy"
 };

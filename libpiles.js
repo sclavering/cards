@@ -14,7 +14,8 @@ const Pile = {
   // the index in Game.piles/Game.foundations/etc. at which this pile appears
   index: -1,
 
-  // Controls whether cards can be dropped onto this pile.  (mayAddCard will still be called if true)
+  // Controls whether cards can *ever* be dropped onto this pile
+  // (mayAddCard will still be called if true)
   canDrop: true,
 
   // cards: [], // actually happens in createPile, so that each pile has a different array
@@ -42,7 +43,9 @@ const Pile = {
 
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
   getActionForDrop: function(card) {
-    return this.mayAddCard(card) ? new Move(card, this) : null;
+    const act = this.mayAddCard(card) ? new Move(card, this) : null;
+    if(this.isFoundation && act) Game.setPreferredFoundationSuit(card, this); // xxx ick!!
+    return act;
   },
 
   // the sourrounding piles

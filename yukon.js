@@ -25,6 +25,8 @@ const YukonBase = {
 
   getBestDestinationFor: "legal nonempty, or empty",
 
+  autoplay: "commonish",
+
   isWon: "13 cards on each foundation"
 };
 
@@ -43,8 +45,6 @@ Games.yukon = {
     // cards which could be moved there. (this is because any faceUp card can be moved in Yukon)
     for(var i = 0; i != 7; i++) this.getHintsForCard(this.piles[i].lastCard);
   },
-
-  autoplay: "commonish",
 
   getAutoplayableNumbers: "klondike"
 };
@@ -70,8 +70,6 @@ Games.sanibel = {
     }
     for(i = 0; i != 10; i++) this.getHintsForCard(ps[i].lastCard);
   },
-
-  autoplay: "commonish 2deck",
 
   getAutoplayableNumbers: "gypsy"
 };

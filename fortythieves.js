@@ -17,7 +17,7 @@ Games.fortythieves = {
 
   getBestDestinationFor: "legal nonempty, or empty",
 
-  autoplay: "commonish 2deck",
+  autoplay: "commonish",
 
   // can autoplay 5D when both 4Ds played.  can autoplay any Ace
   getAutoplayableNumbers: function() {

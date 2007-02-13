@@ -21,7 +21,7 @@
 <script type="application/x-javascript" src="moving.js"/>
 <script type="application/x-javascript" src="rules.js"/>
 <script type="application/x-javascript" src="actions.js"/>
-<script type="application/x-javascript" src="cardgame.js"/>
+<script type="application/javascript;version=1.7" src="cardgame.js"/>
 <script type="application/x-javascript" src="freecellmover.js"/>
 
 <script type="application/x-javascript" src="acesup.js"/>
@@ -39,7 +39,7 @@
 <script type="application/x-javascript" src="penguin.js"/>
 <script type="application/x-javascript" src="pileon.js"/>
 <script type="application/x-javascript" src="pyramid.js"/>
-<script type="application/x-javascript" src="regiment.js"/>
+<script type="application/javascript;version=1.7" src="regiment.js"/>
 <script type="application/x-javascript" src="russiansol.js"/>
 <script type="application/x-javascript" src="spider.js"/>
 <script type="application/x-javascript" src="towers.js"/>

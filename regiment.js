@@ -78,7 +78,7 @@ Games.regiment = {
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
 
-    const afs = this.pilsByType.a, kfs = this.pilsByType.k;
+    const afs = this.pilesByType.a, kfs = this.pilesByType.k;
     for(i = 0; i != 4; i++) {
       pile = afs[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
@@ -86,7 +86,7 @@ Games.regiment = {
         if(card.isLast) return new Move(card, pile);
       }
     }
-    for(i = 4; i != 8; i++) {
+    for(i = 0; i != 4; i++) {
       pile = kfs[i], last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
         card = last.down.pile.isFoundation ? last.twin.down : last.down;

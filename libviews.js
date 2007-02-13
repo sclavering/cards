@@ -117,7 +117,7 @@ const FanDownView = {
     if(num == 0) { this.offset = 0; return; }
     const firstbox = this.firstChild.boxObject;
     const space = window.innerHeight - firstbox.y - firstbox.height;
-    const offset = this.offset = Math.min(space / kids.length, gVFanOffset);
+    const offset = this.offset = Math.min(space / cs.length, gVFanOffset);
     for(var v = 0, top = 0; v != kids.length; ++v, top += offset) kids[v].top = kids[v]._top = top;
   },
 

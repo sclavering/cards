@@ -275,8 +275,13 @@ const DoubleSolLayout = {
 const FanLayout = {
   __proto__: Layout,
   p: FanRightView,
-  template: "v[3f1f1f1f3] [ <{flex=1}{equalsize=always}[{flex=1}p p p p]"
-      + "[{flex=1}p p p p][{flex=1}p p p p][{flex=1}p p p][{flex=1}p p p]> ]"
+  // Using width=0 makes the columns change width less often (only when they
+  // must, rather than whenever the widest pile in the column changes). This is
+  // presumably because flex allocates *spare* space, or something, but who
+  // really knows with XUL?
+  // Tested on: ... rv:1.8.1.3) Gecko/20061201 Firefox/2.0.0.3 (Ubuntu-feisty)
+  template: "v[3f1f1f1f3] [ [{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p p]"
+      + "[{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p][{flex=1}p p p]]"
 };
 
 const FortyThievesLayout = {

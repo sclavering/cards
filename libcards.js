@@ -113,6 +113,10 @@ Card.prototype = {
   get isLast() { return this.index == this.pile.cards.length - 1; },
   get isFirst() { return this.index == 0; },
 
+  isA: function(suit, number) {
+    return this.suit == suit && this.number == number;
+  },
+
   // this is necessary so that somePile.build[card] works correctly
   toString: function() { return this.str; },
 

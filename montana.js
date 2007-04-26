@@ -88,61 +88,57 @@ Games.montana = {
 
 function MontanaRedealAction(hardGame) {
   this.isHardGame = hardGame;
-  this.map = [[],[],[],[]];
 }
 MontanaRedealAction.prototype = {
   synchronous: true,
 
+  // Pile-index -> Card maps from before and after the redeal. nulls for empty piles
+  _pre_map: null,
+  _post_map: null,
+
   perform: function() {
-    const hard = this.isHardGame, map = this.map, rows = Game.rows, cards = [];
+    var c, i, p, r, row;
+    const rows = Game.rows;
+    const easy = this.isHardGame ? 0 : 1;
 
-    // remove cards
-    for(var r = 0; r != 4; r++) {
-      var row = rows[r];
-      var suit = null;
+    // store old card locations
+    const map = [[p.firstCard for each(p in row)] for each(row in rows)];
+    this._pre_map = [].concat.apply([], map);
 
-      // set c to the col index at which the first out-of-place card appears, or 12 if there aren't any
-      for(var c = 0; c != 12; ++c) {
-        var card = row[c].firstCard;
-        if(!card) break;
-        if(!suit) suit = card.suit;
-        if(suit != card.suit || card.number != c+2) break;
-      }
-
-      // record where cards were
-      for(; c != 13; c++) {
-        card = row[c].lastCard;
-        map[r].push(card);
-        // in hard games we want the null's in the array too (so that spaces are placed randomly)
-        if(card || hard) cards.push(card);
-      }
+    // decide which cards need to move
+    function get_last_good_col(row) {
+      const first_in_row = row[0].firstCard;
+      const suit = first_in_row ? first_in_row.suit : null;
+      for(var c = 0; row[c].hasCards && row[c].firstCard.isA(suit, c + 2);) ++c;
+      return c;
     }
+    const col_indexes = [get_last_good_col(row) for each(row in rows)];
 
-    // shuffle and deal
-    this.shuffled = shuffle(cards);
+    // decide post-redeal layout
+    var to_shuffle = [].concat.apply([], [map[i].slice(col_indexes[i]) for(i in map)]);
+    if(easy) to_shuffle = [c for each(c in to_shuffle) if(c)]; // filter nulls
+    const shuffled = shuffle(to_shuffle);
+    const newmaptails = [shuffled.splice(0, 13 - col_indexes[i] + easy) for(i in map)];
+    if(easy) newmaptails.iter(function(tail) { tail.unshift(null); });
+    const postmap = [map[i].slice(0, col_indexes[i]).concat(newmaptails[i]) for(i in map)];
+    this._post_map = [].concat.apply([], postmap);
+
     this.redo();
   },
 
-  undo: function() {
-    const map = this.map, rows = Game.rows;
-    Game.redealsRemaining++;
+  _change: function(map) {
+    const ps = Game.piles;
+    for(var i = 0; i != 52; ++i) ps[i].removeCardsAfter(0);
+    for(i = 0; i != 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
+  },
 
-    // addCards() will remove node first (inherited from appendChild), so we needn't do so
-    // map[r][0..n] maps to row[r][(13-n)..13]
-    for(var r = 0; r != 4; r++) {
-      var len = map[r].length, co = 13 - len;
-      for(var c = 0; c != len; c++) if(map[r][c]) rows[r][c+co].addCards(map[r][c]);
-    }
+  undo: function() {
+    Game.redealsRemaining++;
+    this._change(this._pre_map);
   },
 
   redo: function() {
     Game.redealsRemaining--;
-    const map = this.map, cards = this.shuffled.slice(0), rows = Game.rows;
-
-    // in easy games the spaces go at the start of rows, in hard games they occur randomly
-    var easy = this.isHardGame ? 0 : 1;
-    for(var r = 0; r != 4; r++)
-      for(var c = 13 - map[r].length + easy; c != 13; c++)
-        rows[r][c].dealTo(cards, 0, 1);
+    this._change(this._post_map);
   }
 }

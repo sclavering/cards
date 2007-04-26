@@ -190,7 +190,6 @@ const Rules = {
 // Other useful functions for individual games to use
 
 function findEmpty(piles) {
-  dump(Components.stack+"\n");
   const num = piles.length;
   for(var i = 0; i != num; i++) {
     var p = piles[i];

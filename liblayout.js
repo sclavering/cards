@@ -281,7 +281,7 @@ const FanLayout = {
   // really knows with XUL?
   // Tested on: ... rv:1.8.1.3) Gecko/20061201 Firefox/2.0.0.3 (Ubuntu-feisty)
   template: "v[3f1f1f1f3] [ [{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p p]"
-      + "[{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p][{flex=1}p p p]]"
+      + "[{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p][{flex=1}{width=0}p p p]]"
 };
 
 const FortyThievesLayout = {

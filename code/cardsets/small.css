@@ -1,0 +1,108 @@
+.pile, pilespacer, .stock-placeholder {
+  min-width: 59px;
+  min-height: 80px;
+}
+.pile, .stock-placeholder {
+  background: url(small-pile.png) no-repeat;
+}
+halfpilespacer {
+  min-width: 30px;
+  min-height: 40px;
+}
+
+/* lets us see a few edges if there are some but not all the cards. */
+.slide {
+  min-width: 69px;
+  min-height: 90px;
+  background: url(small-pile.png) no-repeat;
+}
+
+.draw3h-waste {
+  min-width: 118px;
+}
+
+.pileon {
+  min-width: 95px; /* 59px + 3 * gHFanOffset */
+}
+
+.unionsquare,
+.unionsquare-f,
+.doublesol-foundation {
+  min-width: 81px; /* 59px + gHFanOffset */
+}
+
+.foundation4, .foundation8 {
+  border: 1px dotted white;
+  background: none;
+  min-width: 61px; /* 59px for cards + 2px of border */
+}
+.foundation4 {
+  min-height: 152px; /* 80px + 2px + 3 * gVFanOffset */
+}
+.foundation8 {
+  min-height: 236px; /* 80px + 2px + 7 * gVFanOffset */
+}
+
+.pyramid > * { margin-bottom: -58px; }
+.pyramid { padding-bottom: 58px; }
+
+
+.card { list-style-image: url(small-cards.png); }
+
+.facedown { -moz-image-region: rect(0 826px 80px 767px); }
+
+.S1  { -moz-image-region: rect(0  59px 80px     0); }
+.S2  { -moz-image-region: rect(0 118px 80px  59px); }
+.S3  { -moz-image-region: rect(0 177px 80px 118px); }
+.S4  { -moz-image-region: rect(0 236px 80px 177px); }
+.S5  { -moz-image-region: rect(0 295px 80px 236px); }
+.S6  { -moz-image-region: rect(0 354px 80px 295px); }
+.S7  { -moz-image-region: rect(0 413px 80px 354px); }
+.S8  { -moz-image-region: rect(0 472px 80px 413px); }
+.S9  { -moz-image-region: rect(0 531px 80px 472px); }
+.S10 { -moz-image-region: rect(0 590px 80px 531px); }
+.S11 { -moz-image-region: rect(0 649px 80px 590px); }
+.S12 { -moz-image-region: rect(0 708px 80px 649px); }
+.S13 { -moz-image-region: rect(0 767px 80px 708px); }
+
+.H1  { -moz-image-region: rect(80px  59px 160px     0); }
+.H2  { -moz-image-region: rect(80px 118px 160px  59px); }
+.H3  { -moz-image-region: rect(80px 177px 160px 118px); }
+.H4  { -moz-image-region: rect(80px 236px 160px 177px); }
+.H5  { -moz-image-region: rect(80px 295px 160px 236px); }
+.H6  { -moz-image-region: rect(80px 354px 160px 295px); }
+.H7  { -moz-image-region: rect(80px 413px 160px 354px); }
+.H8  { -moz-image-region: rect(80px 472px 160px 413px); }
+.H9  { -moz-image-region: rect(80px 531px 160px 472px); }
+.H10 { -moz-image-region: rect(80px 590px 160px 531px); }
+.H11 { -moz-image-region: rect(80px 649px 160px 590px); }
+.H12 { -moz-image-region: rect(80px 708px 160px 649px); }
+.H13 { -moz-image-region: rect(80px 767px 160px 708px); }
+
+.D1  { -moz-image-region: rect(160px  59px 240px     0); }
+.D2  { -moz-image-region: rect(160px 118px 240px  59px); }
+.D3  { -moz-image-region: rect(160px 177px 240px 118px); }
+.D4  { -moz-image-region: rect(160px 236px 240px 177px); }
+.D5  { -moz-image-region: rect(160px 295px 240px 236px); }
+.D6  { -moz-image-region: rect(160px 354px 240px 295px); }
+.D7  { -moz-image-region: rect(160px 413px 240px 354px); }
+.D8  { -moz-image-region: rect(160px 472px 240px 413px); }
+.D9  { -moz-image-region: rect(160px 531px 240px 472px); }
+.D10 { -moz-image-region: rect(160px 590px 240px 531px); }
+.D11 { -moz-image-region: rect(160px 649px 240px 590px); }
+.D12 { -moz-image-region: rect(160px 708px 240px 649px); }
+.D13 { -moz-image-region: rect(160px 767px 240px 708px); }
+
+.C1  { -moz-image-region: rect(240px  59px 320px     0); }
+.C2  { -moz-image-region: rect(240px 118px 320px  59px); }
+.C3  { -moz-image-region: rect(240px 177px 320px 118px); }
+.C4  { -moz-image-region: rect(240px 236px 320px 177px); }
+.C5  { -moz-image-region: rect(240px 295px 320px 236px); }
+.C6  { -moz-image-region: rect(240px 354px 320px 295px); }
+.C7  { -moz-image-region: rect(240px 413px 320px 354px); }
+.C8  { -moz-image-region: rect(240px 472px 320px 413px); }
+.C9  { -moz-image-region: rect(240px 531px 320px 472px); }
+.C10 { -moz-image-region: rect(240px 590px 320px 531px); }
+.C11 { -moz-image-region: rect(240px 649px 320px 590px); }
+.C12 { -moz-image-region: rect(240px 708px 320px 649px); }
+.C13 { -moz-image-region: rect(240px 767px 320px 708px); }

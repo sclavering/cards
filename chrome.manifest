@@ -1,0 +1,4 @@
+overlay chrome://browser/content/browser.xul chrome://cards/content/overlay.xul
+content cards jar:cards.zip!/content/cards/
+locale cards en jar:cards.zip!/en/
+locale cards ru jar:cards.zip!/lang/ru/

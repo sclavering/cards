@@ -1,0 +1,53 @@
+<!ENTITY window.title "Cards">
+
+<!ENTITY score-label "Score: ">
+
+<!ENTITY deals-left "Deals left: ">
+<!ENTITY cards-left "Cards left: ">
+
+
+<!-- label for item shown in Firefox Tools menu and Seamonkey Window menu -->
+<!ENTITY play-cards "Cards">
+
+
+<!-- for the "Select Game" dialogue (and related menuitem) -->
+<!ENTITY showallgames "All Games...">
+
+<!ENTITY selectgame "Select Game">
+<!ENTITY selectgame.checkboxes "Ticked games will appear in the Game menu.">
+
+
+<!-- toolbar buttons, and key associated with them -->
+<!ENTITY gamesMenu.label "Game">
+<!ENTITY gamesMenu.tooltip "Select which card game you wish to play">
+
+<!ENTITY newgame.label "New">
+<!ENTITY newgame.tooltip "Start a new game">
+<!ENTITY key.newgame "N">
+
+<!ENTITY restart.label "Restart">
+<!ENTITY restart.tooltip "Restart the current game">
+<!ENTITY key.restart "R">
+
+<!ENTITY undo.label "Undo">
+<!ENTITY undo.tooltip "Undo the last action performed">
+<!ENTITY key.undo "Z">
+
+<!ENTITY redo.label "Redo">
+<!ENTITY redo.tooltip "Redo the last action undone">
+
+<!ENTITY hint.label "Hint">
+<!ENTITY hint.tooltip "Suggest a move">
+<!ENTITY key.hint "H">
+
+<!ENTITY redeal.label "Redeal">
+<!ENTITY redeal.tooltip "Redeal remaining cards">
+<!ENTITY key.redeal "d">
+
+<!ENTITY help.label "Help">
+<!ENTITY help.tooltip "Show the rules for this game">
+
+<!ENTITY options.label "Settings">
+<!ENTITY cardset.small "Small Cards">
+<!ENTITY cardset.normal "Normal Cards">
+<!ENTITY animation.label "Use Animation">

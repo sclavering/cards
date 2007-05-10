@@ -1,0 +1,53 @@
+﻿<!ENTITY window.title "Пасьянсы">
+
+<!ENTITY score-label "Очки: ">
+
+<!ENTITY deals-left "Осталось раздач: ">
+<!ENTITY cards-left "Осталось карт: ">
+
+
+<!-- label for item shown in Firefox Tools menu and Seamonkey Window menu -->
+<!ENTITY play-cards "Пасьянсы">
+
+
+<!-- for the "Select Game" dialogue (and related menuitem) -->
+<!ENTITY showallgames "Все игры...">
+
+<!ENTITY selectgame "Выберите игры">
+<!ENTITY selectgame.checkboxes "Отмеченные игры будут показаны в меню Игра.">
+
+
+<!-- toolbar buttons, and key associated with them -->
+<!ENTITY gamesMenu.label "Игра">
+<!ENTITY gamesMenu.tooltip "Выберите, в какую карточную игру вы хотите сыграть">
+
+<!ENTITY newgame.label "Новая">
+<!ENTITY newgame.tooltip "Начать новую игру">
+<!ENTITY key.newgame "Н">
+
+<!ENTITY restart.label "Начать снова">
+<!ENTITY restart.tooltip "Начать текущую игру снова">
+<!ENTITY key.restart "ч">
+
+<!ENTITY undo.label "Отменить ход">
+<!ENTITY undo.tooltip "Отменить последний сделанный ход">
+<!ENTITY key.undo "О">
+
+<!ENTITY redo.label "Повторить ход">
+<!ENTITY redo.tooltip "Повторить отменённый ход">
+
+<!ENTITY hint.label "Подсказка">
+<!ENTITY hint.tooltip "Предлагаемый ход">
+<!ENTITY key.hint "П">
+
+<!ENTITY redeal.label "Пересдать">
+<!ENTITY redeal.tooltip "Раздать карты ещё раз">
+<!ENTITY key.redeal "р">
+
+<!ENTITY help.label "Справка">
+<!ENTITY help.tooltip "Показать правила текущей игры">
+
+<!ENTITY options.label "Настройки">
+<!ENTITY cardset.small "Маленькие карты">
+<!ENTITY cardset.normal "Обычные карты">
+<!ENTITY animation.label "Использовать анимацию">

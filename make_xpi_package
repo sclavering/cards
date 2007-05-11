@@ -1,2 +1,2 @@
-zip -ur0 cards.zip content en lang -x '*CVS*'
+zip -ur0 cards.zip code lang
 zip -ur9 cards.xpi cards.zip install.rdf chrome.manifest

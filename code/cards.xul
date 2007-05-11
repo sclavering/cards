@@ -13,40 +13,41 @@
   persist="screenX screenY width height sizemode"
   >
 
-<script type="application/x-javascript" src="cardslib.js"/>
-<script type="application/x-javascript" src="libcards.js"/>
-<script type="application/x-javascript" src="libviews.js"/>
-<script type="application/x-javascript" src="liblayout.js"/>
-<script type="application/x-javascript" src="libpiles.js"/>
-<script type="application/x-javascript" src="moving.js"/>
-<script type="application/x-javascript" src="rules.js"/>
-<script type="application/x-javascript" src="actions.js"/>
-<script type="application/javascript;version=1.7" src="cardgame.js"/>
-<script type="application/x-javascript" src="freecellmover.js"/>
+<script src="main.js"/>
 
-<script type="application/x-javascript" src="acesup.js"/>
-<script type="application/x-javascript" src="canfield.js"/>
-<script type="application/x-javascript" src="doublesol.js"/>
-<script type="application/x-javascript" src="fan.js"/>
-<script type="application/x-javascript" src="fortythieves.js"/>
-<script type="application/x-javascript" src="freecell.js"/>
-<script type="application/x-javascript" src="golf.js"/>
-<script type="application/x-javascript" src="gypsy.js"/>
-<script type="application/x-javascript" src="klondike.js"/>
-<script type="application/x-javascript" src="maze.js"/>
-<script type="application/x-javascript" src="mod3.js"/>
-<script type="application/x-javascript;version=1.7" src="montana.js"/>
-<script type="application/x-javascript" src="penguin.js"/>
-<script type="application/x-javascript" src="pileon.js"/>
-<script type="application/x-javascript" src="pyramid.js"/>
-<script type="application/javascript;version=1.7" src="regiment.js"/>
-<script type="application/x-javascript" src="russiansol.js"/>
-<script type="application/x-javascript" src="spider.js"/>
-<script type="application/x-javascript" src="towers.js"/>
-<script type="application/x-javascript" src="tripeaks.js"/>
-<script type="application/x-javascript" src="unionsquare.js"/>
-<script type="application/x-javascript" src="whitehead.js"/>
-<script type="application/x-javascript" src="yukon.js"/>
+<script src="lib-cards.js"/>
+<script src="lib-views.js"/>
+<script src="lib-layouts.js"/>
+<script src="lib-piles.js"/>
+<script src="lib-animation.js"/>
+<script src="lib-rules.js"/>
+<script src="lib-actions.js"/>
+<script type="application/javascript;version=1.7" src="lib-game.js"/>
+<script src="lib-freecell-move-sequencer.js"/>
+
+<script src="game-acesup.js"/>
+<script src="game-canfield.js"/>
+<script src="game-doublesol.js"/>
+<script src="game-fan.js"/>
+<script src="game-fortythieves.js"/>
+<script src="game-freecell.js"/>
+<script src="game-golf.js"/>
+<script src="game-gypsy.js"/>
+<script src="game-klondike.js"/>
+<script src="game-maze.js"/>
+<script src="game-mod3.js"/>
+<script type="application/x-javascript;version=1.7" src="game-montana.js"/>
+<script src="game-penguin.js"/>
+<script src="game-pileon.js"/>
+<script src="game-pyramid.js"/>
+<script type="application/javascript;version=1.7" src="game-regiment.js"/>
+<script src="game-russiansol.js"/>
+<script src="game-spider.js"/>
+<script src="game-towers.js"/>
+<script src="game-tripeaks.js"/>
+<script src="game-unionsquare.js"/>
+<script src="game-whitehead.js"/>
+<script src="game-yukon.js"/>
 
 <commandset id="cards-commands">
   <command id="cmd:newgame" oncommand="newGame();"/>

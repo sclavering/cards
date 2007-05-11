@@ -4,8 +4,8 @@ const kPackage = "/cardgames.mozdev.org/cards";
 const kVersion = "0.99";
 
 const kJarFile = "cards.zip";
-const kContentFolder = "content/cards/";
-const kLocaleFolders  = ["en/"];
+const kContentFolder = "code/";
+const kLocaleFolders  = ["lang/en/"];
 const kSkinFolder = "";
 
 function die(err) {

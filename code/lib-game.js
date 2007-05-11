@@ -1,4 +1,4 @@
-var BaseCardGame = {
+const BaseCardGame = {
   // This becomes an array of all the cards a game uses, either explicitly in the game's init(), or
   // by initialise() if it is a number (of decks to be created) or an array [[suits], repeat]
   cards: 1,

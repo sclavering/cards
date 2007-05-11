@@ -1,7 +1,7 @@
 // Spider, Black Widow, Grounds for Divorce, Wasp, and Simple Simon
 // ids: blackwidow, divorce, wasp, spider-1suit, spider-2suits, spider, simon-1suit, simon-2suits, simon
 
-var SpiderBase = {
+const SpiderBase = {
   __proto__: BaseCardGame,
 
   layout: SpiderLayout,

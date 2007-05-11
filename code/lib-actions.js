@@ -8,8 +8,6 @@ undo() should always be synchronous.
 
 redo() should be synchronous if present.  if not present perform() is used instead, and should be synchronous
 
-the "action" member is used for scoring.
-
 somePile.getActionForDrop might return an ErrorMsg instead of a real Action
 */
 

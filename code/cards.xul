@@ -91,8 +91,6 @@
     <menupopup id="options-popup" oncommand="useCardSet(event.originalTarget.value);">
       <menuitem type="radio" label="&cardset.small;" value="small" id="cardset-small"/>
       <menuitem type="radio" label="&cardset.normal;" value="normal" id="cardset-normal"/>
-      <menuseparator/>
-      <menuitem type="checkbox" id="animation" label="&animation.label;" oncommand="toggleAnimation(this); event.stopPropagation();"/>
     </menupopup>
   </toolbarbutton>
   <flex/>

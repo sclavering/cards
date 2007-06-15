@@ -1,22 +1,8 @@
-var moveCards = null; // function pointer
-
 var interruptAction = null; // null except during animation, when it's a function
-
-
-function enableAnimation(enable) {
-  moveCards = enable ? moveCards1 : moveCards2;
-}
-
-function toggleAnimation(menuitem) {
-  var enable = menuitem.getAttribute("checked")=="true";
-  enableAnimation(enable);
-  gPrefs.setBoolPref("use-animation",enable);
-}
-
 
 const kAnimationDelay = 30;
 
-function moveCards1(firstCard, target) {
+function moveCards(firstCard, target) {
   const card = firstCard, origin = card.pile;
   gFloatingPile.showForMove(card);
 

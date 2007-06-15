@@ -93,14 +93,6 @@ function init() {
   useCardSet(cardset);
   document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
-  // restore animation pref
-  var useAnimation = true;
-  try { useAnimation = gPrefs.getBoolPref("use-animation"); } catch(e) {}
-  enableAnimation(useAnimation);
-  var animationMenuItem = document.getElementById("animation");
-  if(useAnimation) animationMenuItem.setAttribute("checked","true");
-  else animationMenuItem.removeAttribute("checked");
-
   createHintHighlighter();
 
   // make controllers for each game type

@@ -2,7 +2,7 @@ const CanfieldBase = {
   __proto__: BaseCardGame,
 
   layout: CanfieldLayout,
-  pilesToBuild: "s p f p f p f p f p r",
+  pilesToBuild: "s w f p f p f p f p r",
   pileTypes: { s: StockDealToWasteOrRefill, p: CanfieldPile },
   _reserveCards: [12,1],
 

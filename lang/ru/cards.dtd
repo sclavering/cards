@@ -2,10 +2,6 @@
 
 <!ENTITY score-label "Очки: ">
 
-<!ENTITY deals-left "Осталось раздач: ">
-<!ENTITY cards-left "Осталось карт: ">
-
-
 <!-- label for item shown in Firefox Tools menu and Seamonkey Window menu -->
 <!ENTITY play-cards "Пасьянсы">
 

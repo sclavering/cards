@@ -251,12 +251,36 @@ const Deal3HWasteView = {
 const Deal3VWasteView = _Deal3WasteView;
 
 const _TwoFanView = {
-  __proto__: _View,
-  _c0: null,
-  _c1: null,
-  initView: function() {
-    this._c0 = appendNewCardView(this, null, 0, 0);
-    this._c1 = appendNewCardView(this, null, gHFanOffset, 0);
+  __proto__: _CanvasView,
+
+  className: "pile hfan2",
+
+  update: function(index, lastIndex) {
+    // setting dimensions clears it
+    this._canvas.width = gCardWidth + gHFanOffset;
+    this._canvas.height = gCardHeight;
+    const ixs = this._getTwoCardIndicesToShow(lastIndex);
+    const cs = this.pile.cards, l = ixs[0], r = ixs[1];
+    if(cs[l]) canvasDrawCard(this._context, cs[l], 0, 0);
+    if(cs[r]) canvasDrawCard(this._context, cs[r], gHFanOffset, 0);
+  },
+
+  getCardOffsets: function(ix) {
+    // ask for ixs to show *as if any extra cards had alread been added*
+    const ixs = this._getTwoCardIndicesToShow(ix + 1);
+    const x = ixs[1] != -1 && ix >= ixs[1] ? 1 : 0;
+    return { x: x * gHFanOffset, y: 0 };
+  },
+
+  getTargetCard: function(event) {
+    // fixme!
+  },
+
+  // Should return a 2-element array of indices into this.cards (-1 for blank).
+  // 'num' is the number of cards in the stack, though like _View.update's
+  // lastIndex arg, it may lie if cards from this pile are mid-drag.
+  _getTwoCardIndicesToShow: function(num) {
+    throw "_getTwoCardIndicesToShow needs implementing when extending _TwoFanView";
   }
 };
 
@@ -264,17 +288,9 @@ const _TwoFanView = {
 const DoubleSolFoundationView = {
   __proto__: _TwoFanView,
 
-  className: "pile doublesol-foundation",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(num > 1 ? cs[num - 2] : (num ? cs[num - 1] : null));
-    this._c1.update(num > 1 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix > 0 ? gVFanOffset : 0;
-    return { x: x, y: 0 };
+  _getTwoCardIndicesToShow: function(num) {
+    if(num > 1) return [num - 2, num - 1];
+    return [0, -1];
   }
 };
 
@@ -313,36 +329,18 @@ const Spider8FoundationView = {
 const UnionSquarePileView = {
   __proto__: _TwoFanView,
 
-  className: "pile unionsquare",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(num ? cs[0] : null);
-    this._c1.update(num > 1 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix > 0 ? gHFanOffset : 0;
-    return { x: x, y: 0 };
+  _getTwoCardIndicesToShow: function(num) {
+    return [num ? 0 : -1, num > 1 ? num - 1 : -1];
   }
 };
 
-// built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
-// from the a->k, so that it's clear what card should be plauyed next
+// Built A->K, and then K->A on top of those. We show the top card of each 13.
 const UnionSquareFoundationView = {
   __proto__: _TwoFanView,
 
-  className: "pile unionsquare-f",
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx;
-    this._c0.update(cs.length > 13 ? cs[12] : (cs.length ? cs[0] : null));
-    this._c1.update(cs.length > 13 ? cs[num - 1] : null);
-  },
-
-  getCardOffsets: function(ix) {
-    const x = ix >= 13 ? gHFanOffset : 0;
-    return { x: x, y: 0 };
+  _getTwoCardIndicesToShow: function(num) {
+    if(num > 13) return [12, num];
+    return [num, -1];
   }
 };
 

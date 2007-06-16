@@ -13,6 +13,9 @@ halfpilespacer {
   width: 71px;
   height: 96px;
 }
+.hfan2 > canvas {
+  width: 83px; /* gCardWidth + gHFanOffset */
+}
 
 /* lets us see a few edges if there are some but not all the cards. */
 .slide {
@@ -27,12 +30,6 @@ halfpilespacer {
 
 .pileon {
   min-width: 107px; /* 71px + 3 * gHFanOffset */
-}
-
-.unionsquare,
-.unionsquare-f,
-.doublesol-foundation {
-  min-width: 93px; /* 71px + gHFanOffset */
 }
 
 .foundation4, .foundation8 {

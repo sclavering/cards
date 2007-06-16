@@ -25,9 +25,7 @@ halfpilespacer {
   min-width: 95px; /* 59px + 3 * gHFanOffset */
 }
 
-.unionsquare,
-.unionsquare-f,
-.doublesol-foundation {
+.hfan2 > canvas {
   min-width: 81px; /* 59px + gHFanOffset */
 }
 

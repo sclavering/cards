@@ -404,7 +404,7 @@ const UnionSquareLayout = {
   __proto__: Layout,
   f: UnionSquareFoundationView,
   p: UnionSquarePileView,
-  template: "h2[s w]2[[p1p1p1p] [p1p1p1p] [p1p1p1p] [p1p1p1p]]2[f f f f]2"
+  template: "h2[s w]2[p p p p] [p p p p] [p p p p] [p p p p]2[f f f f]2"
 };
 
 const WaspLayout = {

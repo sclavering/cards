@@ -8,7 +8,7 @@ function moveCards(firstCard, target) {
 
   // final coords (relative to gGameStack)
   const tview = target.view, tbox = tview.boxObject;
-  const finalOffset = tview.getCardOffsets(target.cards.length);
+  const finalOffset = tview.getAddedCardOffsets(card);
   const tx = tbox.x - gGameStackLeft + finalOffset.x;
   const ty = tbox.y - gGameStackTop + finalOffset.y;
   // change in coords

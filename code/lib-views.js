@@ -11,6 +11,8 @@ function createPileView(viewType) {
 var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
+var gCardHeight = 96;
+var gCardWidth = 71;
 
 function getCardImageClass(card) {
   return "card " + (card.faceUp ? card.displayStr : "facedown");
@@ -31,6 +33,21 @@ function createCardView(card, x, y) {
 function appendNewCardView(pile, card, x, y) {
   return pile.appendChild(createCardView(card, x, y));
 }
+// draw a card onto an <html:canvas>
+function canvasDrawCard(canvasContext, card, x, y) {
+  const row = {S:0,H:1,D:2,C:3}[card.suit]; // suits are letters
+  const col = card.number - 1;
+  canvasDrawCardsImageElement(canvasContext, col, row, x, y);
+}
+// draw part of the big grid of images onto a <html:canvas> 2d context
+// rx,ry are the row/column index of the card image in the grid (not pixels)
+// dx,dy are the pixel destination coords
+function canvasDrawCardsImageElement(canvasContext, rx, ry, dx, dy) {
+  const w = gCardWidth, h = gCardHeight;
+  // img, sx, sy, sw, sh, dx, dy, dw, dh
+  canvasContext.drawImage(gCardsImg, rx * w, ry * h, w, h, dx, dy, w, h);
+}
+
 
 const _View = {
   // these are used in the drag+drop code and similar places, to see what an element is
@@ -93,15 +110,37 @@ const _View = {
   }
 };
 
-// A _View where only the top card is ever visible
-const View = {
+// Uses <xul:box><html:canvas/></xul:box> to draw.  The box is because other
+// code expects a .boxObject of views, and to allow control of whether the
+// canvas should be stretched or not.
+const _CanvasView = {
   __proto__: _View,
+  _tagName: "vbox",
+
   initView: function() {
-    appendNewCardView(this, null, 0, 0);
+    const HTMLns = "http://www.w3.org/1999/xhtml";
+    this._canvas = document.createElementNS(HTMLns, "canvas");
+    this.appendChild(this._canvas);
+    this._context = this._canvas.getContext("2d");
   },
-  
-  update: function(index, lastIx) {
-    this.firstChild.update(lastIx ? this.pile.cards[lastIx - 1] : null);
+
+  // _View's version would just fail with a cryptic warning.
+  getTargetCard: function(event) {
+    throw "getTargetCard not implemented for a canvas-based view";
+  }
+}
+
+// A view where only the top card is ever visible (used for foundations).
+const View = {
+  __proto__: _CanvasView,
+
+  update: function(index, lastIndex) {
+    // setting the size also clears the canvas
+    this._canvas.width = gCardWidth;
+    this._canvas.height = gCardHeight;
+    const card = lastIndex ? this.pile.cards[lastIndex - 1] : null;
+    if(card) canvasDrawCard(this._context, card, 0, 0);
+//     else this._context.drawImage(gPileImg, 0, 0);
   },
 
   getTargetCard: function(event) {
@@ -310,16 +349,18 @@ const UnionSquareFoundationView = {
 // a layout for Stocks, including a counter
 const StockView = {
   __proto__: View,
-  _tagName: "vbox",
+
   initView: function() {
-    this._cardview = appendNewCardView(this, null, 0, 0);
+    StockView.__proto__.initView.apply(this);
     this.appendChild(document.createElement("space"));
     this._counterlabel = this.appendChild(document.createElement("label"));
     this._counterlabel.className = "stockcounter";
   },
 
   update: function(index, lastIx) {
-    this._cardview.className = lastIx ? "card facedown" : "stock-placeholder";
+    this._canvas.width = gCardWidth;
+    this._canvas.height = gCardHeight;
+    if(lastIx) canvasDrawCardsImageElement(this._context, 13, 0, 0, 0);
     this._counterlabel.setAttribute("value", this.pile.counterValue);
   }
 };

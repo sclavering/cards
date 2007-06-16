@@ -42,6 +42,8 @@ var gCmdHint = "cmd:hint";
 var gCmdRedeal = "cmd:redeal";
 
 // other bits of UI
+var gCardsImg = "img-cards"; // <html:img> for use by <html:canvas>es
+var gPileImg = "img-pile";
 var gMessageBox = "message";
 var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
@@ -63,9 +65,10 @@ const CC = Components.classes;
 
 
 function init() {
-  const things = ["gCmdNewGame","gCmdRestartGame","gCmdUndo","gCmdRedo","gCmdHint",
-      "gCmdRedeal","gMessageBox","gMessageLine1","gMessageLine2","gOptionsMenu",
-      "gGameSelector","gScorePanel","gScoreDisplay","gGameStack","gGameMenuPopup"];
+  const things = ["gCmdNewGame", "gCmdRestartGame", "gCmdUndo", "gCmdRedo",
+    "gCmdHint", "gCmdRedeal", "gMessageBox", "gMessageLine1", "gMessageLine2",
+    "gOptionsMenu", "gGameSelector", "gScorePanel", "gScoreDisplay",
+    "gGameStack", "gGameMenuPopup", "gCardsImg", "gPileImg"];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);

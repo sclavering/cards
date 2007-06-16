@@ -9,6 +9,10 @@ halfpilespacer {
   min-width: 35px;
   min-height: 96px;
 }
+.pile > canvas {
+  width: 71px;
+  height: 96px;
+}
 
 /* lets us see a few edges if there are some but not all the cards. */
 .slide {

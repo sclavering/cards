@@ -73,7 +73,7 @@
 <script src="main.js"/>
 
 <script src="lib-cards.js"/>
-<script src="lib-views.js"/>
+<script type="application/javascript;version=1.7" src="lib-views.js"/>
 <script src="lib-layouts.js"/>
 <script src="lib-piles.js"/>
 <script src="lib-animation.js"/>

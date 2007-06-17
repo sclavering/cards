@@ -135,53 +135,95 @@ const View = {
   }
 };
 
-const FanDownView = {
+function range(N) {
+  for(var i = 0; i < N; ++i) yield i;
+}
+
+const _FanView = {
   __proto__: _CanvasView,
-  offset: gVFanOffset,
+  // Pixel offsets between cards used during the last update() call.
+  // Needed by getTargetCard().
+  _hOffset: 0,
+  _vOffset: 0,
+  // For the default _getLayoutOffsets.  Views would override one or both.
+  _basicVOffset: 0,
+  _basicHOffset: 0,
 
   update: function(index, lastIx) {
-    this._canvas.width = this.boxObject.width;
+    const box = this.boxObject;
+    this._canvas.width = box.width;
     this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = this.boxObject.height;
-    const space = this.boxObject.height; // always set to flex, or given explicit height
-    const fanSpace = space - gCardHeight;
+    this._canvas.height = box.height;
+    const ixs = this.getVisibleCardIndexes(lastIx), num = ixs.length;
+    const off = this._getLayoutOffsets(box.width, box.height, num);
+    // use an int offset where possible to avoid fuzzy card borders
+    const h = this._hOffset = off[0] < 1 ? off[0] : Math.floor(off[0]);
+    const v = this._vOffset = off[1] < 1 ? off[1] : Math.floor(off[1]);
     const cs = this.pile.cards;
-    const floatOffset = Math.min(fanSpace / cs.length, gVFanOffset);
-    // Use an int offset to avoid fuzzy cards/borders if using float coords
-    const offset = this.offset = Math.floor(floatOffset);
-    for(var i = 0; i != lastIx; ++i)
-      this._context.drawImage(cs[i].image, 0, offset * i);
+    for(var i = 0; i != num; ++i)
+      this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
   },
 
+  // See _View.update for meaning of lastIx.
+  // This exists to allow games to show a subset of the cards in a pile.
+  getVisibleCardIndexes: function(ix) {
+    return [i for(i in range(ix))];
+  },
+
+  // xxx this may not work right.  it's written to work for the animation-
+  // destination case, not the hint-highlighting case.
   getCardOffsets: function(ix) {
-    const y = ix * this.offset;
-    return { x: 0, y: y };
+    // what would be shown if that ix existed?
+    const ixs = this.getVisibleCardIndexes(ix + 1);
+    var visualIx = ixs.indexOf(ix);
+    return { x: visualIx * this._hOffset, y: visualIx * this._vOffset };
   },
 
   getTargetCard: function(event) {
-    const y = event.pageY - this._canvas.offsetTop;
     const cs = this.pile.cards;
-    const ix = Math.floor(y / this.offset);
-    const last = cs.length - 1;
-    dump("vfand.getTargetCard y:"+y+" ix:"+ix+"\n")
-    if(ix <= last) return cs[ix];
-    return y < last * this.offset + gCardHeight ? cs[last] : null;
+    const ixs = this.getVisibleCardIndexes(cs.length);
+    const visualIx = this._getTargetCardVisualIndex(event, ixs.length);
+    return cs[ixs[visualIx]] || null;
+  },
+
+  // handles only purely-horizontal or purely-vertical fans
+  _getTargetCardVisualIndex: function(event, numVisible) {
+    var pos, offset, cardsize;
+    if(this._hOffset) {
+      pos = event.pageX - this._canvas.offsetLeft;
+      offset = this._hOffset;
+      cardsize = gCardHeight;
+    } else {
+      pos = event.pageY - this._canvas.offsetTop;
+      offset = this._vOffset;
+      cardsize = gCardWidth;
+    }
+    const ix = Math.floor(pos / offset);
+    const last = numVisible - 1;
+    if(ix <= last) return ix;
+    return pos < last * offset + cardsize ? last : -1;
+  },
+
+  // Given the pixel width and height of the pile view (usually set by either
+  // explicit CSS sizes or by using XUL flex) and the number of cards being
+  // shown in the pile, return a [horizontal, vertical] pair of pixel offsets.
+  _getLayoutOffsets: function(width, height, num) {
+    var h = this._basicHOffset, v = this._basicVOffset;
+    if(num <= 1) return [h, v]; // avoid NaN in the next bit
+    h = Math.min((width - gCardWidth) / (num - 1), h);
+    v = Math.min((height - gCardHeight) / (num - 1), v);
+    return [h, v];
   }
 };
 
+const FanDownView = {
+  __proto__: _FanView,
+  _basicVOffset: gVFanOffset
+}
+
 const FanRightView = {
-  __proto__: _View,
-
-  update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) appendNewCardView(this, cs[i], i * gHFanOffset, 0);
-    for(; i < kids.length; ++i) kids[i].update(null);
-  },
-
-  getCardOffsets: function(ix) {
-    return { x: ix * gHFanOffset, y: 0 };
-  }
+  __proto__: _FanView,
+  _basicHOffset: gHFanOffset
 };
 
 const PileOnView = {

@@ -16,6 +16,8 @@ halfpilespacer {
 .hfan2 > canvas {
   width: 83px; /* gCardWidth + gHFanOffset */
 }
+.foundation4 > canvas { height: 162px; } /* gCardHeight + 3 * gVFanOffset */
+.foundation8 > canvas { height: 250px; } /* gCardHeight + 7 * gVFanOffset */
 
 /* lets us see a few edges if there are some but not all the cards. */
 .slide {
@@ -37,12 +39,7 @@ halfpilespacer {
   background: none;
   min-width: 73px; /* 71px for cards + 2px of border */
 }
-.foundation4 {
-  min-height: 168px; /* 96px + 2px + 3 * gVFanOffset */
-}
-.foundation8 {
-  min-height: 252px; /* 96px + 2px + 7 * gVFanOffset */
-}
+
 
 .pyramid > * { margin-bottom: -60px; }
 .pyramid { padding-bottom: 60px; }

@@ -301,33 +301,38 @@ const DoubleSolFoundationView = {
 };
 
 const _SpiderFoundationView = {
-  __proto__: _View,
+  __proto__: _CanvasView,
+  _maxNum: 4, // override with the max number of cards to be shown
 
   // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
   update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes, vindex = index / 13;
-    if(index == num) { // an A->K run has been 
-      for(var j = vindex; j != kids.length; ++j) kids[j].update(null);
-    } else if(vindex < kids.length) { // an A->K run has been added
-      kids[vindex].update(cs[index]);
-    } else { // an A->K run has been added, and we need a new view
-      appendNewCardView(this, cs[index], 0, vindex * gVFanOffset);
-    }
+    this._canvas.width = gCardWidth;
+    this._canvas.height = gCardHeight + gVFanOffset * (this._maxNum - 1);
+    const cs = this.pile.cards;
+    for(var i = 0, c = 12; c <= lastIx; ++i, c += 13)
+      this._context.drawImage(images[cs[c]], 0, i * gVFanOffset);
   },
 
   getCardOffsets: function(ix) {
     const y = ix / 13 * gVFanOffset;
     return { x: 0, y: y };
+  },
+
+  // correct impl is not required by any of the games using this view
+  getTargetCard: function(event) {
+    return null;
   }
 };
 
 const Spider4FoundationView = {
   __proto__: _SpiderFoundationView,
+  _maxNum: 4,
   className: "pile foundation4"
 };
 
 const Spider8FoundationView = {
   __proto__: _SpiderFoundationView,
+  _maxNum: 8,
   className: "pile foundation8"
 };
 

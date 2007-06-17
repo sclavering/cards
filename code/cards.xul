@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://cards/content/cards.css" type="text/css"?>
-<?xml-stylesheet href="chrome://cards/content/cardsets/normal.css" type="text/css" title="normal"?>
-<?xml-stylesheet href="chrome://cards/content/cardsets/small.css" type="text/css" title="small"?>
+<?xml-stylesheet href="chrome://cards/content/cardsets/normal.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
 
@@ -145,12 +144,6 @@
   <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
   <toolbarbutton command="cmd:redeal"  label="&redeal.label;"  tooltiptext="&redeal.tooltip;"/>
   <toolbarbutton command="cmd.help"    label="&help.label;"    tooltiptext="&help.tooltip;"/>
-  <toolbarbutton id="options-menu" type="menu" label="&options.label;">
-    <menupopup id="options-popup" oncommand="useCardSet(event.originalTarget.value);">
-      <menuitem type="radio" label="&cardset.small;" value="small" id="cardset-small"/>
-      <menuitem type="radio" label="&cardset.normal;" value="normal" id="cardset-normal"/>
-    </menupopup>
-  </toolbarbutton>
   <flex/>
   <vbox id="score-panel" align="center" pack="center"><hbox>
     <label value="&score-label;"/>

@@ -30,9 +30,6 @@ var gGamesInMenu = []; // array of ids of games shown in Games menu
 
 var gHintHighlighter = null;
 
-var gCardHeight = 0; // cards' heights in pixels (set in useCardSet)
-var gCardWidth = 0;
-
 // <command/> elements
 var gCmdNewGame = "cmd:newgame";
 var gCmdRestartGame = "cmd:restart";
@@ -94,11 +91,6 @@ function init() {
     var property = bundle.getNext().QueryInterface(CI.nsIPropertyElement);
     gStrings[property.key] = property.value;
   }
-
-  // restore choice of cardset
-  var cardset = loadPref("cardset") || "normal";
-  useCardSet(cardset);
-  document.getElementById("cardset-"+cardset).setAttribute("checked","true");
 
   createHintHighlighter();
 
@@ -439,26 +431,4 @@ function doneShowingMessage() {
   window.onclick = null;
   gMessageBox.hidden = true;
   if(gMessageCallback) gMessageCallback();
-}
-
-
-function useCardSet(set) {
-  // xxx As of Fx 1.0 (on Ubuntu Linux 4.10) stylesheets in XUL still lose their titles'
-  // if Cards is run more than once (without closing Firefox in between)
-  const isCardset = /\/cardsets\/[^.]*\.css$/;
-  const rightCardset = new RegExp(set+".css$");
-  const sheets = document.styleSheets, num = sheets.length;
-  for(var i = 0; i != num; i++) {
-    var sheet = sheets[i];
-    // the right way
-    //if(sheet.title) sheet.disabled = sheet.title!=set;
-    // the unpleasant hack
-    if(isCardset.test(sheet.href)) sheet.disabled = !rightCardset.test(sheet.href);
-  }
-  // save pref
-  savePref("cardset", set);
-  // xxx evilish hack
-  var isSmallSet = set=="small";
-  gCardHeight = isSmallSet ? 80 : 96;
-  gCardWidth = isSmallSet ? 59 : 71;
 }

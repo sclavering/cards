@@ -34,13 +34,6 @@ halfpilespacer {
   min-width: 107px; /* 71px + 3 * gHFanOffset */
 }
 
-.foundation4, .foundation8 {
-  border: 1px dotted white;
-  background: none;
-  min-width: 73px; /* 71px for cards + 2px of border */
-}
-
-
 .pyramid > * { margin-bottom: -60px; }
 .pyramid { padding-bottom: 60px; }
 

@@ -295,39 +295,21 @@ const DoubleSolFoundationView = {
 };
 
 const _SpiderFoundationView = {
-  __proto__: _CanvasView,
-  _maxNum: 4, // override with the max number of cards to be shown
-
-  // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
-  update: function(index, lastIx) {
-    this._canvas.width = gCardWidth;
-    this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = gCardHeight + gVFanOffset * (this._maxNum - 1);
-    const cs = this.pile.cards;
-    for(var i = 0, c = 12; c <= lastIx; ++i, c += 13)
-      this._context.drawImage(cs[c].image, 0, i * gVFanOffset);
-  },
-
-  getCardOffsets: function(ix) {
-    const y = ix / 13 * gVFanOffset;
-    return { x: 0, y: y };
-  },
-
-  // correct impl is not required by any of the games using this view
-  getTargetCard: function(event) {
-    return null;
+  __proto__: FanDownView,
+  getVisibleCardIndexes: function(lastIx) {
+    const ixs = [], cs = this.pile.cards;
+    for(var i = 0; i < lastIx; i += 13) ixs.push(i);
+    return ixs;
   }
 };
 
 const Spider4FoundationView = {
   __proto__: _SpiderFoundationView,
-  _maxNum: 4,
   className: "pile foundation4"
 };
 
 const Spider8FoundationView = {
   __proto__: _SpiderFoundationView,
-  _maxNum: 8,
   className: "pile foundation8"
 };
 

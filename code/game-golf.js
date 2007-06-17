@@ -4,7 +4,7 @@ const GolfBase = {
   helpId: "golf",
   layout: GolfLayout,
   pilesToBuild: "s f 7p",
-  pileTypes: { s: StockDealToFoundation, p: GolfFoundation, p: GolfPile },
+  pileTypes: { s: StockDealToFoundation, f: GolfFoundation, p: GolfPile },
 
   getHints: function() {
     const f = this.foundation, ps = this.piles;

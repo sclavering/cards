@@ -233,31 +233,13 @@ const PileOnView = {
 
 // this really needs modifying to allow for more than 6 cards!
 const SlideView = {
-  __proto__: _CanvasView,
-
+  __proto__: _FanView,
   className: "pile slide",
-
-  update: function(index, lastIx) {
-    this._canvas.width = gCardWidth + gSlideExtraSpace;
-    this._canvas.height = 0;
-    this._canvas.height = gCardHeight + gSlideExtraSpace;
-    const cs = this.pile.cards;
-    for(var i = 0; i < 5 && i < lastIx; ++i)
-      this._context.drawImage(cs[i].image, i * gSlideOffset, i * gSlideOffset);
-    const last = lastIx - 1;
-    if(last >= 5)
-      this._context.drawImage(cs[last].image, last * gSlideOffset, last * gSlideOffset);
-  },
-
-  getCardOffsets: function(ix) {
-    const offset = (ix > 6 ? 6 : ix) * gSlideOffset;
-    return { x: offset, y: offset };
-  },
-
-  // only the top card is ever of interest in a slide pile
+  _basicHOffset: gSlideOffset,
+  _basicVOffset: gSlideOffset,
+  // Only used in mod3, where this simple version is adequate.
   getTargetCard: function(event) {
-    const cs = this.pile.cards, num = cs.length;
-    return num ? cs[num - 1] : null;
+    return this.pile.lastCard;
   }
 };
 

@@ -13,6 +13,7 @@ var gHFanOffset = 12; // num pixels between left edges of two cards in a horizon
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
 var gCardHeight = 96;
 var gCardWidth = 71;
+var gSlideExtraSpace = 10;
 
 function getCardImageClass(card) {
   return "card " + (card.faceUp ? card.displayStr : "facedown");
@@ -190,24 +191,31 @@ const PileOnView = {
 
 // this really needs modifying to allow for more than 6 cards!
 const SlideView = {
-  __proto__: _View,
+  __proto__: _CanvasView,
 
   className: "pile slide",
-  
-  initView: function() {
-    for(var i = 0; i != 6; ++i) appendNewCardView(this, null, i * gSlideOffset, i * gSlideOffset);
-  },
 
   update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    for(var i = index; i < 5 && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < 5; ++i) kids[i].update(null);
-    kids[5].update(index >= 5 ? cs[num - 1] : null);
+    this._canvas.width = gCardWidth + gSlideExtraSpace;
+    this._canvas.height = 0;
+    this._canvas.height = gCardHeight + gSlideExtraSpace;
+    const cs = this.pile.cards;
+    for(var i = 0; i < 5 && i < lastIx; ++i)
+      this._context.drawImage(cs[i].image, i * gSlideOffset, i * gSlideOffset);
+    const last = lastIx - 1;
+    if(last >= 5)
+      this._context.drawImage(cs[last].image, last * gSlideOffset, last * gSlideOffset);
   },
 
   getCardOffsets: function(ix) {
     const offset = (ix > 6 ? 6 : ix) * gSlideOffset;
     return { x: offset, y: offset };
+  },
+
+  // only the top card is ever of interest in a slide pile
+  getTargetCard: function(event) {
+    const cs = this.pile.cards, num = cs.length;
+    return num ? cs[num - 1] : null;
   }
 };
 

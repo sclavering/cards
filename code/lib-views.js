@@ -33,12 +33,6 @@ function createCardView(card, x, y) {
 function appendNewCardView(pile, card, x, y) {
   return pile.appendChild(createCardView(card, x, y));
 }
-// draw a card onto an <html:canvas>
-function canvasDrawCard(canvasContext, card, x, y) {
-  const row = {S:0,H:1,D:2,C:3}[card.suit]; // suits are letters
-  const col = card.number - 1;
-  canvasDrawCardsImageElement(canvasContext, col, row, x, y);
-}
 // draw part of the big grid of images onto a <html:canvas> 2d context
 // rx,ry are the row/column index of the card image in the grid (not pixels)
 // dx,dy are the pixel destination coords
@@ -139,7 +133,7 @@ const View = {
     this._canvas.width = gCardWidth;
     this._canvas.height = gCardHeight;
     const card = lastIndex ? this.pile.cards[lastIndex - 1] : null;
-    if(card) canvasDrawCard(this._context, card, 0, 0);
+    if(card) this._context.drawImage(images[card], 0, 0);
 //     else this._context.drawImage(gPileImg, 0, 0);
   },
 
@@ -261,8 +255,8 @@ const _TwoFanView = {
     this._canvas.height = gCardHeight;
     const ixs = this._getTwoCardIndicesToShow(lastIndex);
     const cs = this.pile.cards, l = ixs[0], r = ixs[1];
-    if(cs[l]) canvasDrawCard(this._context, cs[l], 0, 0);
-    if(cs[r]) canvasDrawCard(this._context, cs[r], gHFanOffset, 0);
+    if(cs[l]) this._context.drawImage(images[cs[l]], 0, 0);
+    if(cs[r]) this._context.drawImage(images[cs[r]], gHFanOffset, 0);
   },
 
   getCardOffsets: function(ix) {
@@ -358,7 +352,7 @@ const StockView = {
   update: function(index, lastIx) {
     this._canvas.width = gCardWidth;
     this._canvas.height = gCardHeight;
-    if(lastIx) canvasDrawCardsImageElement(this._context, 13, 0, 0, 0);
+    if(lastIx) this._context.drawImage(images.facedowncard, 0, 0);
     this._counterlabel.setAttribute("value", this.pile.counterValue);
   }
 };

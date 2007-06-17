@@ -42,8 +42,6 @@ var gCmdHint = "cmd:hint";
 var gCmdRedeal = "cmd:redeal";
 
 // other bits of UI
-var gCardsImg = "img-cards"; // <html:img> for use by <html:canvas>es
-var gPileImg = "img-pile";
 var gMessageBox = "message";
 var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
@@ -55,6 +53,9 @@ var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
 var gGameStackTop = 0;    // ... and its coords
 var gGameStackLeft = 0;
+
+// <html:img>s for use by canvases.  Keys are typically of the form "S3"
+const images = {};
 
 // Actually just a View, not a Pile.  (Name predates MV-split.)
 var gFloatingPile = null; 
@@ -68,11 +69,14 @@ function init() {
   const things = ["gCmdNewGame", "gCmdRestartGame", "gCmdUndo", "gCmdRedo",
     "gCmdHint", "gCmdRedeal", "gMessageBox", "gMessageLine1", "gMessageLine2",
     "gOptionsMenu", "gGameSelector", "gScorePanel", "gScoreDisplay",
-    "gGameStack", "gGameMenuPopup", "gCardsImg", "gPileImg"];
+    "gGameStack", "gGameMenuPopup"];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
   }
+
+  const images_el = document.getElementById("images");
+  for each(var img in images_el.childNodes) images[img.id] = img;
 
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;

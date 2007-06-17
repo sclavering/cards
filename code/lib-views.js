@@ -121,8 +121,8 @@ const View = {
   __proto__: _CanvasView,
 
   update: function(index, lastIndex) {
-    // setting the size also clears the canvas
     this._canvas.width = gCardWidth;
+    this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
     const card = lastIndex ? this.pile.cards[lastIndex - 1] : null;
     if(card) this._context.drawImage(card.image, 0, 0);
@@ -246,6 +246,7 @@ const _TwoFanView = {
   update: function(index, lastIndex) {
     // setting dimensions clears it
     this._canvas.width = gCardWidth + gHFanOffset;
+    this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = gCardHeight;
     const ixs = this._getTwoCardIndicesToShow(lastIndex);
     const cs = this.pile.cards, l = ixs[0], r = ixs[1];
@@ -299,6 +300,7 @@ const _SpiderFoundationView = {
   // only one A->K run will be added, but many may be removed (e.g. when clearing a game)
   update: function(index, lastIx) {
     this._canvas.width = gCardWidth;
+    this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = gCardHeight + gVFanOffset * (this._maxNum - 1);
     const cs = this.pile.cards;
     for(var i = 0, c = 12; c <= lastIx; ++i, c += 13)
@@ -360,6 +362,7 @@ const StockView = {
 
   update: function(index, lastIx) {
     this._canvas.width = gCardWidth;
+    this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = gCardHeight;
     if(lastIx) this._context.drawImage(images.facedowncard, 0, 0);
     this._counterlabel.setAttribute("value", this.pile.counterValue);

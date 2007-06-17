@@ -266,42 +266,14 @@ const Deal3VWasteView = {
 };
 
 const _TwoFanView = {
-  __proto__: _CanvasView,
-
+  __proto__: FanRightView,
   className: "pile hfan2",
-
-  _numShowing: 0, // num cards visible, needed when dealing with events
-
-  update: function(index, lastIndex) {
-    // setting dimensions clears it
-    this._canvas.width = gCardWidth + gHFanOffset;
-    this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = gCardHeight;
-    const ixs = this._getTwoCardIndicesToShow(lastIndex);
-    const cs = this.pile.cards, l = ixs[0], r = ixs[1];
-    if(cs[l]) this._context.drawImage(cs[l].image, 0, 0);
-    if(cs[r]) this._context.drawImage(cs[r].image, gHFanOffset, 0);
-    this._numShowing = cs[l] ? (cs[r] ? 2 : 1) : 0;
-  },
-
-  getCardOffsets: function(ix) {
-    // ask for ixs to show *as if any extra cards had alread been added*
-    const ixs = this._getTwoCardIndicesToShow(ix + 1);
-    const x = ixs[1] != -1 && ix >= ixs[1] ? 1 : 0;
-    return { x: x * gHFanOffset, y: 0 };
-  },
-
-  getTargetCard: function(event) {
-    const x = event.pageX - this._canvas.offsetLeft;
-    var vIx = -1; // ix in the *visible* list
-    switch(this._numShowing) {
-      case 2: vIx = x > gHFanOffset ? 1 : 0; break;
-      case 1: vIx = x < gCardWidth ? 0 : -1; break;
-    }
-    // convert to real ix, and thence to a Card
-    if(vIx == -1) return null;
-    const cs = this.pile.cards, ixs = this._getTwoCardIndicesToShow(cs.length);
-    return cs[ixs[vIx]] || null; // the null guards agains an ix of -1
+  getVisibleCardIndexes: function(lastIx) {
+    const ixs = this._getTwoCardIndicesToShow(lastIx);
+    const res = [];
+    if(cs[ixs[0]]) res.push(ixs[0]);
+    if(cs[ixs[1]]) res.push(ixs[1]);
+    return res;
   },
 
   // Should return a 2-element array of indices into this.cards (-1 for blank).

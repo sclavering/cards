@@ -63,6 +63,12 @@ const Layout = {
         case ">":
           box = box.parentNode;
           break;
+      // annotation for rows containing lots of fandown piles that need to be stretched
+        case "*":
+          var thing = box.lastChild || box;
+          thing.setAttribute("flex", "1");
+          thing.setAttribute("align", "stretch");
+          break;
       // annotations: "{attrname=val}", applies to most-recent pile or box
         case "{":
           var i0 = i;
@@ -263,13 +269,13 @@ const AcesUpLayout = {
 
 const CanfieldLayout = {
   __proto__: Layout,
-  template: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2"
+  template: "h2[s w]2[f p*]1[f p*]1[f p*]1[f p*]2r2"
 };
 
 const DoubleSolLayout = {
   __proto__: Layout,
   f: DoubleSolFoundationView,
-  template: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
+  template: "v[1s1w4f1f1f1f1] [*1p1p1p1p1p1p1p1p1p1p1]"
 };
 
 const FanLayout = {
@@ -287,17 +293,17 @@ const FanLayout = {
 const FortyThievesLayout = {
   __proto__: Layout,
   w: FanRightView,
-  template: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [*2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const FreeCellLayout = {
   __proto__: Layout,
-  template: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]"
+  template: "v[1c1c1c1c3f1f1f1f1] [*2p1p1p1p1p1p1p1p2]"
 };
 
 const GolfLayout = {
   __proto__: Layout,
-  template: "v[3s2f3] [2p1p1p1p1p1p1p2]"
+  template: "v[3s2f3] [*2p1p1p1p1p1p1p2]"
 };
 
 const GypsyLayout = {
@@ -307,18 +313,18 @@ const GypsyLayout = {
 
 const KlondikeLayout = {
   __proto__: Layout,
-  template: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  template: "v[1s1w1#1f1f1f1f1] [*1p1p1p1p1p1p1p1]"
 };
 
 const KlondikeDraw3Layout = {
   __proto__: Layout,
   w: Deal3HWasteView,
-  template: "v[1s1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  template: "v[1s1w2f1f1f1f1] [*1p1p1p1p1p1p1p1]"
 };
 
 const DoubleKlondikeLayout = {
   __proto__: Layout,
-  template: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
+  template: "v[1s1w4f1f1f1f1f1f1f1f1] [*1p1p1p1p1p1p1p1p1p1p1]"
 };
 
 const MazeLayout = {
@@ -331,7 +337,7 @@ const Mod3Layout = {
   __proto__: Layout,
   f: SlideView,
   template: "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1]"
-      + " [1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
+      + " [*1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
 };
 
 const MontanaLayout = {
@@ -343,7 +349,7 @@ const MontanaLayout = {
 
 const PenguinLayout = {
   __proto__: Layout,
-  template: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2"
+  template: "h2[c p*]1[c p*]1[c p*]1[c p*]1[c p*]1[c p*]1[c p*]2[f f f f]2"
 };
 
 const PileOnLayout = {
@@ -374,7 +380,7 @@ const RussianLayout = {
 
 const SanibelLayout = {
   __proto__: Layout,
-  template: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[1s1w3f1f1f1f1f1f1f1f1] [*2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const SimonLayout = {
@@ -398,7 +404,7 @@ const TriPeaksLayout = {
 
 const TowersLayout = {
   __proto__: Layout,
-  template: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[1c1c1c1c5f1f1f1f1] [*2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const UnionSquareLayout = {

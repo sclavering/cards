@@ -135,26 +135,36 @@ const View = {
 };
 
 const FanDownView = {
-  __proto__: _View,
+  __proto__: _CanvasView,
+  offset: gVFanOffset,
 
   update: function(index, lastIx) {
-    const cs = this.pile.cards, num = lastIx, kids = this.childNodes;
-    const oldoffset = this.offset || gVFanOffset;
-    for(var i = index; i < kids.length && i < num; ++i) kids[i].update(cs[i]);
-    for(; i < num; ++i) appendNewCardView(this, cs[i], 0, i * oldoffset);
-    for(; i < kids.length; ++i) kids[i].update(null);
-  
-    // the fixView of old
-    if(num == 0) { this.offset = 0; return; }
-    const firstbox = this.firstChild.boxObject;
-    const space = window.innerHeight - firstbox.y - firstbox.height;
-    const offset = this.offset = Math.min(space / cs.length, gVFanOffset);
-    for(var v = 0, top = 0; v != kids.length; ++v, top += offset) kids[v].top = kids[v]._top = top;
+    this._canvas.width = this.boxObject.width;
+    this._canvas.height = 0; // changed value clears the canvas
+    this._canvas.height = this.boxObject.height;
+    const space = this.boxObject.height; // always set to flex, or given explicit height
+    const fanSpace = space - gCardHeight;
+    const cs = this.pile.cards;
+    const floatOffset = Math.min(fanSpace / cs.length, gVFanOffset);
+    // Use an int offset to avoid fuzzy cards/borders if using float coords
+    const offset = this.offset = Math.floor(floatOffset);
+    for(var i = 0; i != lastIx; ++i)
+      this._context.drawImage(cs[i].image, 0, offset * i);
   },
 
   getCardOffsets: function(ix) {
-    const y = ix * (this.offset || gVFanOffset);
+    const y = ix * this.offset;
     return { x: 0, y: y };
+  },
+
+  getTargetCard: function(event) {
+    const y = event.pageY - this._canvas.offsetTop;
+    const cs = this.pile.cards;
+    const ix = Math.floor(y / this.offset);
+    const last = cs.length - 1;
+    dump("vfand.getTargetCard y:"+y+" ix:"+ix+"\n")
+    if(ix <= last) return cs[ix];
+    return y < last * this.offset + gCardHeight ? cs[last] : null;
   }
 };
 

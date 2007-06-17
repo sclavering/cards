@@ -119,6 +119,8 @@ Card.prototype = {
 
   // this is necessary so that somePile.build[card] works correctly
   toString: function() { return this.str; },
+  // used by pile views
+  get image() { return images[this.faceUp ? this : "facedowncard"]; },
 
   renumber: function(number) {
     this.number = number;

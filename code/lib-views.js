@@ -33,14 +33,6 @@ function createCardView(card, x, y) {
 function appendNewCardView(pile, card, x, y) {
   return pile.appendChild(createCardView(card, x, y));
 }
-// draw part of the big grid of images onto a <html:canvas> 2d context
-// rx,ry are the row/column index of the card image in the grid (not pixels)
-// dx,dy are the pixel destination coords
-function canvasDrawCardsImageElement(canvasContext, rx, ry, dx, dy) {
-  const w = gCardWidth, h = gCardHeight;
-  // img, sx, sy, sw, sh, dx, dy, dw, dh
-  canvasContext.drawImage(gCardsImg, rx * w, ry * h, w, h, dx, dy, w, h);
-}
 
 
 const _View = {
@@ -133,7 +125,7 @@ const View = {
     this._canvas.width = gCardWidth;
     this._canvas.height = gCardHeight;
     const card = lastIndex ? this.pile.cards[lastIndex - 1] : null;
-    if(card) this._context.drawImage(images[card], 0, 0);
+    if(card) this._context.drawImage(card.image, 0, 0);
 //     else this._context.drawImage(gPileImg, 0, 0);
   },
 
@@ -257,8 +249,8 @@ const _TwoFanView = {
     this._canvas.height = gCardHeight;
     const ixs = this._getTwoCardIndicesToShow(lastIndex);
     const cs = this.pile.cards, l = ixs[0], r = ixs[1];
-    if(cs[l]) this._context.drawImage(images[cs[l]], 0, 0);
-    if(cs[r]) this._context.drawImage(images[cs[r]], gHFanOffset, 0);
+    if(cs[l]) this._context.drawImage(cs[l].image, 0, 0);
+    if(cs[r]) this._context.drawImage(cs[r].image, gHFanOffset, 0);
     this._numShowing = cs[l] ? (cs[r] ? 2 : 1) : 0;
   },
 
@@ -310,7 +302,7 @@ const _SpiderFoundationView = {
     this._canvas.height = gCardHeight + gVFanOffset * (this._maxNum - 1);
     const cs = this.pile.cards;
     for(var i = 0, c = 12; c <= lastIx; ++i, c += 13)
-      this._context.drawImage(images[cs[c]], 0, i * gVFanOffset);
+      this._context.drawImage(cs[c].image, 0, i * gVFanOffset);
   },
 
   getCardOffsets: function(ix) {

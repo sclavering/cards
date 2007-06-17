@@ -345,8 +345,8 @@ const UnionSquareFoundationView = {
   __proto__: _TwoFanView,
 
   _getTwoCardIndicesToShow: function(num) {
-    if(num > 13) return [12, num];
-    return [num, -1];
+    if(num > 13) return [12, num - 1];
+    return [num - 1, -1];
   }
 };
 

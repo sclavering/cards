@@ -74,6 +74,11 @@ function init() {
 
   const images_el = document.getElementById("images");
   for each(var img in images_el.childNodes) images[img.id] = img;
+  // high aces are treated as cards with number 14
+  images.S14 = images.S1;
+  images.H14 = images.H1;
+  images.D14 = images.D1;
+  images.C14 = images.C1;
 
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;

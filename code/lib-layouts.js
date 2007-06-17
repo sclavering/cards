@@ -336,6 +336,7 @@ const Mod3Layout = {
 
 const MontanaLayout = {
   __proto__: Layout,
+  p: View,
   template: "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
       + " [1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
 };

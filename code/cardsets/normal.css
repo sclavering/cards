@@ -1,8 +1,8 @@
-.pile, pilespacer, .stock-placeholder {
+.pile, pilespacer {
   min-width: 71px;
   min-height: 96px;
 }
-.pile, .stock-placeholder {
+.pile {
   background: url(normal-pile.png) no-repeat;
 }
 halfpilespacer {

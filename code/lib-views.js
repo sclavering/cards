@@ -183,7 +183,7 @@ const _FanView = {
     const cs = this.pile.cards;
     const ixs = this.getVisibleCardIndexes(cs.length);
     const visualIx = this._getTargetCardVisualIndex(event, ixs.length);
-    return cs[ixs[visualIx]] || null;
+    return visualIx != -1 ? cs[ixs[visualIx]] : null;
   },
 
   // handles only purely-horizontal or purely-vertical fans

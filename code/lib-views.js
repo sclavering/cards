@@ -244,39 +244,26 @@ const SlideView = {
 };
 
 const _Deal3WasteView = {
-  __proto__: _View,
-  _isHorizontal: false,
-  
-  initView: function() {
-    const h = this._isHorizontal, ho = h * gHFanOffset, vo = !h * gVFanOffset;
-    for(var i = 0; i != 3; ++i) appendNewCardView(this, null, i * ho, i * vo);
-  },
+  __proto__: _FanView,
 
-  update: function(index, lastIx) {
-    const p = this.pile, v = p.deal3v, t = p.deal3t, cs = p.cards, kids = this.childNodes;
-    const visible = Math.max(1, v - (t - lastIx));
-    const ixOffset = cs.length - visible;
-    for(var i = 0; i != 3; ++i) kids[i].update(cs[ixOffset + i] || null);
-  },
-
-  // this assumes only the last card will ever be asked about
-  // (which will be when it's the subject of a hint)
-  getCardOffsets: function(ix) {
-    for(var i = 2; i >= 0; --i) {
-      if(this.childNodes[i].cardIndex != -1) break;
-    }
-    const x = i * gHFanOffset;
-    return { x: x, y: 0 };
+  getVisibleCardIndexes: function(lastIx) {
+    const first = this.pile.deal3t - this.pile.deal3v;
+    if(!lastIx) return [];
+    if(lastIx <= first) return [lastIx - 1]; // gone below the latest 3
+    return [first + i for(i in range(lastIx - first))];
   }
 };
 
 const Deal3HWasteView = {
   __proto__: _Deal3WasteView,
   className: "pile draw3h-waste",
-  _isHorizontal: true
+  _basicHOffset: gHFanOffset
 };
 
-const Deal3VWasteView = _Deal3WasteView;
+const Deal3VWasteView = {
+  __proto__: _Deal3WasteView,
+  _basicVOffset: gVFanOffset
+};
 
 const _TwoFanView = {
   __proto__: _CanvasView,

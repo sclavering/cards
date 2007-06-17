@@ -234,32 +234,13 @@ const Deal3VWasteView = {
   _basicVOffset: gVFanOffset
 };
 
-const _TwoFanView = {
-  __proto__: FanRightView,
-  className: "pile hfan2",
-  getVisibleCardIndexes: function(lastIx) {
-    const ixs = this._getTwoCardIndicesToShow(lastIx);
-    const res = [];
-    if(cs[ixs[0]]) res.push(ixs[0]);
-    if(cs[ixs[1]]) res.push(ixs[1]);
-    return res;
-  },
-
-  // Should return a 2-element array of indices into this.cards (-1 for blank).
-  // 'num' is the number of cards in the stack, though like _View.update's
-  // lastIndex arg, it may lie if cards from this pile are mid-drag.
-  _getTwoCardIndicesToShow: function(num) {
-    throw "_getTwoCardIndicesToShow needs implementing when extending _TwoFanView";
-  }
-};
-
 // top *two* cards visible, so you can tell if they have the same number
 const DoubleSolFoundationView = {
-  __proto__: _TwoFanView,
-
-  _getTwoCardIndicesToShow: function(num) {
-    if(num > 1) return [num - 2, num - 1];
-    return [0, -1];
+  __proto__: FanRightView,
+  className: "pile hfan2",
+  getVisibleCardIndexes: function(num) {
+    if(num >= 2) return [num - 2, num - 1];
+    return num ? [num - 1] : [];
   }
 };
 
@@ -284,20 +265,21 @@ const Spider8FoundationView = {
 
 // bottom + top cards visible, so you can tell whether pile is being built up or down
 const UnionSquarePileView = {
-  __proto__: _TwoFanView,
-
-  _getTwoCardIndicesToShow: function(num) {
-    return [num ? 0 : -1, num > 1 ? num - 1 : -1];
+  __proto__: FanRightView,
+  className: "pile hfan2",
+  getVisibleCardIndexes: function(num) {
+    if(num > 1) return [0, num - 1];
+    return num ? [0] : [];
   }
 };
 
 // Built A->K, and then K->A on top of those. We show the top card of each 13.
 const UnionSquareFoundationView = {
-  __proto__: _TwoFanView,
-
-  _getTwoCardIndicesToShow: function(num) {
+  __proto__: FanRightView,
+  className: "pile hfan2",
+  getVisibleCardIndexes: function(num) {
     if(num > 13) return [12, num - 1];
-    return [num - 1, -1];
+    return num ? [num - 1] : [];
   }
 };
 

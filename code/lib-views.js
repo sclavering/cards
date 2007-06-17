@@ -1,6 +1,5 @@
 function createPileView(viewType) {
   const view = document.createElement(viewType._tagName);
-  view.offset = 0; // xxx ?
   extendObj(view, viewType, true);
   if(viewType.initView) view.initView();
   return view;
@@ -15,33 +14,17 @@ var gCardHeight = 96;
 var gCardWidth = 71;
 var gSlideExtraSpace = 10;
 
-function getCardImageClass(card) {
-  return "card " + (card.faceUp ? card.displayStr : "facedown");
-}
-function cardView_update(card) {
-  this.className = card ? getCardImageClass(card) : "card hidden";
-  // so the drag-drop code can work out what you're starting to drag
-  this.cardIndex = card ? card.index : -1;
-}
-function createCardView(card, x, y) {
-  const v = document.createElement("image");
-  v.top = v._top = y;
-  v.left = v._left = x;
-  v.update = cardView_update;
-  v.update(card);
-  return v;
-}
-function appendNewCardView(pile, card, x, y) {
-  return pile.appendChild(createCardView(card, x, y));
-}
 
-
+// This defines the interface expected of pile views, and also provides basic
+// infrastructure for one based on <xul:box><html:canvas/></xul:box>. The box
+// is used because other code expects a .boxObject of views, and to allow
+// control of whether the canvas should be stretched or not.
 const _View = {
-  // these are used in the drag+drop code and similar places, to see what an element is
+  // this is used in the drag+drop code and similar places, to see what an element is
   isPileView: true,
 
   // override if desired
-  _tagName: "stack",
+  _tagName: "vbox",
   className: "pile",
 
   // Passed the index of a card in the pile or the length of the pile (i.e. the index of
@@ -92,34 +75,20 @@ const _View = {
 
   // Takes an event (mousedown or contextmenu, at present) and returns a Card
   getTargetCard: function(event) {
-    const t = event.target;
-    return t == this ? null : this.pile.cards[t.cardIndex];
-  }
-};
-
-// Uses <xul:box><html:canvas/></xul:box> to draw.  The box is because other
-// code expects a .boxObject of views, and to allow control of whether the
-// canvas should be stretched or not.
-const _CanvasView = {
-  __proto__: _View,
-  _tagName: "vbox",
+    throw "getTargetCard not implemented for a canvas-based view";
+  },
 
   initView: function() {
     const HTMLns = "http://www.w3.org/1999/xhtml";
     this._canvas = document.createElementNS(HTMLns, "canvas");
     this.appendChild(this._canvas);
     this._context = this._canvas.getContext("2d");
-  },
-
-  // _View's version would just fail with a cryptic warning.
-  getTargetCard: function(event) {
-    throw "getTargetCard not implemented for a canvas-based view";
   }
 }
 
 // A view where only the top card is ever visible (used for foundations).
 const View = {
-  __proto__: _CanvasView,
+  __proto__: _View,
 
   update: function(index, lastIndex) {
     this._canvas.width = gCardWidth;
@@ -140,7 +109,7 @@ function range(N) {
 }
 
 const _FanView = {
-  __proto__: _CanvasView,
+  __proto__: _View,
   // Pixel offsets between cards used during the last update() call.
   // Needed by getTargetCard().
   _hOffset: 0,

@@ -1,12 +1,10 @@
 function createPileView(viewType) {
   const view = document.createElement(viewType._tagName);
   extendObj(view, viewType, true);
-  if(viewType.initView) view.initView();
+  view.initView();
   return view;
 }
 
-
-// xxx these just need to die (and be done in CSS)
 var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
 var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
@@ -47,9 +45,6 @@ const _View = {
     this.pile = pile;
     this.update();
   },
-
-  // replace with a function if needed
-  initView: null,
 
   drawHintHighlight: function(card) {
     const rect = this.getHighlightBounds(card);

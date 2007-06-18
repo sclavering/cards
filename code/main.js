@@ -28,8 +28,6 @@ var GameController = null;
 var Games = {}; // all the game controllers, indexed by game id
 var gGamesInMenu = []; // array of ids of games shown in Games menu
 
-var gHintHighlighter = null;
-
 // <command/> elements
 var gCmdNewGame = "cmd:newgame";
 var gCmdRestartGame = "cmd:restart";
@@ -96,8 +94,6 @@ function init() {
     var property = bundle.getNext().QueryInterface(CI.nsIPropertyElement);
     gStrings[property.key] = property.value;
   }
-
-  createHintHighlighter();
 
   // make controllers for each game type
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
@@ -193,34 +189,23 @@ function createFloatingPile() {
 }
 
 
-function createHintHighlighter() {
-  const box = gHintHighlighter = document.createElement("box");
-  for(var i in _hintHighlighter) box[i] = _hintHighlighter[i];
-  box.unhighlight();
-  gGameStack.appendChild(box);
-  return box;
-}
-const _hintHighlighter = {
-  className: "card-highlight",
-  unhighlight: function() {
-    this.top = this.left = -1000;
-    this.width = this.height = 0;
+const gHintHighlighter = {
+  _highlighted: null, // a Pile
+  unhighlight: function(pile) {
+    if(this._highlighted) this._highlighted.updateView(0);
+    this._highlighted = null;
   },
   highlight: function(thing) { // a Card or a pile
     const card = thing instanceof Card ? thing : thing.lastCard;
     const pile = card ? card.pile : thing;
-    const view = pile.view, box = view.boxObject;
-    const bounds = view.getHighlightBounds(card);
-    this.top = box.y - gGameStackTop + bounds.y;
-    this.left = box.x - gGameStackLeft + bounds.x;
-    this.width = bounds.width;
-    this.height = bounds.height;
+    this._highlighted = pile;
+    pile.view.drawHintHighlight(card);
   },
   showHint: function(from, to) {
     const dest = to.isAnyPile && to.hasCards ? to.lastCard : to;
-    this.highlight(from);
     const self = this;
-    setTimeout(function() { self.highlight(dest); }, 350);
+    this.highlight(from);
+    setTimeout(function() { self.unhighlight(); self.highlight(dest); }, 350);
     setTimeout(function() { self.unhighlight(); }, 800);
   }
 };

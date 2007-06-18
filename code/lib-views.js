@@ -51,6 +51,12 @@ const _View = {
   // replace with a function if needed
   initView: null,
 
+  drawHintHighlight: function(card) {
+    const rect = this.getHighlightBounds(card);
+    this._context.fillStyle = "rgba(169,169,169, 0.3)"; // darkgrey
+    this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
+  },
+
   // Get the position + dimensions for a box that covers the card and any subsequent cards.
   // If the card is null then it should instead be a box highlighting the pile itself.
   // Coords are relative to top-left corner of the boxObject for this layout
@@ -64,7 +70,7 @@ const _View = {
       w += o2.x - x;
       h += o2.y - y;
     }
-    return { x: x, y: y, width: w, height: h };
+    return { x: x, y: y, w: w, h: h };
   },
 
   // Return an {x:,y:} obj giving pixel offset from top-left corner for where

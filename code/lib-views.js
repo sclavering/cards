@@ -79,7 +79,7 @@ const _View = {
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
       this._counter = this.appendChild(document.createElement("label"));
-      this._counter.className = "stockcounter";
+      this._counter.className = "counter";
     }
   }
 }
@@ -94,13 +94,20 @@ const View = {
     this._canvas.height = gCardHeight;
     const card = max ? this.pile.cards[max - 1] : null;
     if(card) this._context.drawImage(card.image, 0, 0);
-    if(this._counter) this._counter.setAttribute("value", this.pile.counterValue);
+    if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
 
   getTargetCard: function(event) {
     return this.pile.lastCard;
   }
 };
+
+// Used for Waste piles and single foundations
+const CountedView = {
+  __proto__: View,
+  _counter: true
+}
+
 
 function range(N) {
   for(var i = 0; i < N; ++i) yield i;

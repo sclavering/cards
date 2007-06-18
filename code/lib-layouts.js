@@ -13,7 +13,7 @@ const Layout = {
   c: View,
   r: View,
   s: StockView,
-  w: View,
+  w: CountedView,
 
   views: [],
 

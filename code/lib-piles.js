@@ -14,6 +14,11 @@ const Pile = {
   // the index in Game.piles/Game.foundations/etc. at which this pile appears
   index: -1,
 
+  // An integer that may be displayed below the pile.
+  get counter() {
+    return this.cards.length;
+  },
+
   // Controls whether cards can *ever* be dropped onto this pile
   // (mayAddCard will still be called if true)
   canDrop: true,
@@ -131,10 +136,6 @@ const _Stock = {
     this.addCards(card);
   },
 
-  get counterValue() {
-    return this.cards.length;
-  },
-
   getClickAction: function(card) {
     return this.deal();
   }
@@ -173,7 +174,7 @@ const StockDealToPiles = {
   deal: function() {
     return this.hasCards ? new DealToPiles(Game.piles) : null;
   },
-  get counterValue() {
+  get counter() {
     return Math.ceil(this.cards.length / Game.piles.length);
   }
 };

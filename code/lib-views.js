@@ -15,11 +15,19 @@ var gSlideExtraSpace = 10;
 
 // This defines the interface expected of pile views, and also provides basic
 // infrastructure for one based on <xul:box><html:canvas/></xul:box>. The box
-// is used because other code expects a .boxObject of views, and to allow
+// is used because other code used to expect a .boxObject, and to allow
 // control of whether the canvas should be stretched or not.
 const _View = {
   // this is used in the drag+drop code and similar places, to see what an element is
   isPileView: true,
+
+  // These will mask XULElement.boxObject.* vs HMTLElement.offset*
+  get pixelLeft() { return this.boxObject.x; },
+  get pixelTop() { return this.boxObject.y; },
+  get pixelWidth() { return this.boxObject.width; },
+  get pixelHeight() { return this.boxObject.height; },
+  get pixelRight() { return this.pixelLeft + this.pixelWidth; },
+  get pixelBottom() { return this.pixelTop + this.pixelHeight; },
 
   // override if desired
   _tagName: "vbox",
@@ -124,18 +132,18 @@ const _FanView = {
   _basicHOffset: 0,
 
   _update: function(max) {
-    const box = this.boxObject;
-    this._canvas.width = box.width;
+    this._canvas.width = this.pixelWidth;
     this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = box.height;
+    this._canvas.height = this.pixelHeight;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
-    const off = this._getLayoutOffsets(box.width, box.height, num);
+    const off = this._getLayoutOffsets(this.pixelWidth, this.pixelHeight, num);
     // use an int offset where possible to avoid fuzzy card borders
     const h = this._hOffset = off[0] < 1 ? off[0] : Math.floor(off[0]);
     const v = this._vOffset = off[1] < 1 ? off[1] : Math.floor(off[1]);
     const cs = this.pile.cards;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
+    if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
 
   _getHighlightBounds: function(card) {

@@ -160,16 +160,16 @@ const FloatingPile = {
 
   // card is the lowest-index card to be shown
   _show: function(card) {
-    const pview = card.pile.view, pbox = pview.boxObject;
-    const offsets = pview.getAnimationOrigin(card);
-    const x = pbox.x + offsets.x, y = pbox.y + offsets.y;
-    const p = card.pile, ix = card.index;
-    const cs = this.pile.cards = p.cards.slice(ix);
+    const p = card.pile, v = p.view;
+    const offsets = v.getAnimationOrigin(card);
+    const x = v.pixelLeft + offsets.x;
+    const y = v.pixelTop + offsets.y;
+    const cs = this.pile.cards = p.cards.slice(card.index);
     this.update();
     this.top = this._top = y - gGameStackTop;
     this.left = this._left = x - gGameStackLeft;
     // hide the cards in their real pile
-    p.view.update(ix);
+    p.view.update(card.index);
   },
 
   // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view

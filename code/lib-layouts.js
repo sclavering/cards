@@ -155,17 +155,17 @@ const Layout = {
     const self = Game.layout, et = self._eventTargets, card = et[0], pile = et[1];
     self._resetHandlers();
 
-    const cbox = gFloatingPile.boxObject;
-    var l = cbox.x, r = l + cbox.width, t = cbox.y, b = t + cbox.height;
+    const l = gFloatingPile.pixelLeft, r = gFloatingPile.pixelRight;
+    const t = gFloatingPile.pixelTop, b = gFloatingPile.pixelBottom;
 
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
     for(var i = 0; i != targets.length; i++) {
       var target = targets[i];
       if(target == card.pile) continue;
-
-      var tbox = target.view.boxObject;
-      var l2 = tbox.x, r2 = l2 + tbox.width, t2 = tbox.y, b2 = t2 + tbox.height;
+      var view = target.view;
+      var l2 = view.pixelLeft, r2 = view.pixelRight;
+      var t2 = view.pixelTop, b2 = view.pixelBottom;
       var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
       if(!overlaps) continue;
       var act = target.getActionForDrop(card);
@@ -233,9 +233,9 @@ const _PyramidLayout = {
       // if t is a spacer between two piles we change t to the pile on the row above
       t = t.previousSibling;
       if(!t || !t.pile) return nulls; // spacer is left of the pyramid
-      var rp = t.pile.rightParent, rpbox = rp && rp.view.boxObject;
+      var rp = t.pile.rightParent;
       // spacer on right of pyramid, or if click was not in region overlapping row above
-      if(!rp || rpbox.y + rpbox.height < y) return nulls;
+      if(!rp || rp.view.pixelBottom < y) return nulls;
       t = rp.view;
     }
 
@@ -244,17 +244,16 @@ const _PyramidLayout = {
     // which the user is trying to click on.
     var p = t.pile;
     while(!p.hasCards) {
-      var lp = p.leftParent, lbox = lp && lp.view.boxObject;
-      var rp = p.rightParent, rbox = rp && rp.view.boxObject;
-      if(rp && x > rbox.x) p = rp;
-      else if(lp && lbox.x + lbox.width > x) p = lp;
+      var lp = p.leftParent;
+      var rp = p.rightParent;
+      if(rp && x > rp.view.pixelLeft) p = rp;
+      else if(lp && lp.view.pixelRight > x) p = lp;
       // is it the pile directly above?
       else if(lp && lp.rightParent) p = lp.rightParent;
       // user is probably being stupid
       else return nulls;
       // are we too low down anyway?
-      var box = p.view.boxObject;
-      if(box.y + box.height < y) return nulls;
+      if(p.view.pixelBottom < y) return nulls;
     }
     
     return [p.firstCard, p];

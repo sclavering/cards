@@ -8,10 +8,10 @@ function moveCards(firstCard, target) {
   target.addCards(card, true); // doesn't update view
 
   // final coords (relative to gGameStack)
-  const tview = target.view, tbox = tview.boxObject;
+  const tview = target.view;
   const finalOffset = tview.getAnimationDestination();
-  const tx = tbox.x - gGameStackLeft + finalOffset.x;
-  const ty = tbox.y - gGameStackTop + finalOffset.y;
+  const tx = tview.pixelLeft - gGameStackLeft + finalOffset.x;
+  const ty = tview.pixelTop - gGameStackTop + finalOffset.y;
   // change in coords
   const dx = tx - gFloatingPile._left;
   const dy = ty - gFloatingPile._top;

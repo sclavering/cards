@@ -47,11 +47,11 @@ Games.canfield3 = {
   helpId: "canfield",
   __proto__: CanfieldBase,
   pileTypes: { s: Deal3OrRefillStock },
-  wasteView: Deal3VWasteView
+  layout: CanfieldDeal3Layout
 };
 
 Games.demon = {
   __proto__: CanfieldBase,
-  reserveView: FanDownView,
+  layout: DemonLayout,
   _reserveCards: [0,13]
 };

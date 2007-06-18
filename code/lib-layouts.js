@@ -273,6 +273,16 @@ const CanfieldLayout = {
   template: "h2[s w]2[f p*]1[f p*]1[f p*]1[f p*]2r2"
 };
 
+const CanfieldDeal3Layout = {
+  __proto__: CanfieldLayout,
+  w: Deal3VWasteView
+};
+
+const DemonLayout = {
+  __proto__: CanfieldLayout,
+  r: FanDownView
+};
+
 const DoubleSolLayout = {
   __proto__: Layout,
   f: DoubleSolFoundationView,

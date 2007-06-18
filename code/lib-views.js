@@ -70,7 +70,7 @@ const _View = {
   // Return an {x:,y:} obj giving pixel offset from top-left corner for where
   // an animation for adding cards should finish at.
   getAddedCardOffsets: function(card) {
-    return this.getCardOffsets(this.pile.cards.length);
+    return this.getCardOffsets(this.pile.cards.length - 1);
   },
 
   // Takes an event (mousedown or contextmenu, at present) and returns a Card

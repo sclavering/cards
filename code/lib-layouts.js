@@ -264,6 +264,7 @@ const _PyramidLayout = {
 
 const AcesUpLayout = {
   __proto__: Layout,
+  f: CountedView,
   template: "h2s2p1p1p1p2f2"
 };
 
@@ -303,6 +304,7 @@ const FreeCellLayout = {
 
 const GolfLayout = {
   __proto__: Layout,
+  f: CountedView,
   template: "v[3s2f3] [*2p1p1p1p1p1p1p2]"
 };
 
@@ -361,6 +363,7 @@ const PileOnLayout = {
 
 const PyramidLayout = {
   __proto__: _PyramidLayout,
+  f: CountedView,
   template: "h1[s w]1[{flex=5}{class=pyramid}[1p1][4-++p1p++-4][3++p1p1p++3]"
       + "[3-+p1p1p1p+-3][2+p1p1p1p1p+2][2-p1p1p1p1p1p-2][1p1p1p1p1p1p1p1]]1f1"
 };

@@ -24,6 +24,7 @@ const _View = {
   // override if desired
   _tagName: "vbox",
   className: "pile",
+  _counter: null, // if set true, a <label> will be created and replace it
 
   // Passed the index of a card in the pile or the length of the pile (i.e. the index of
   // the next card to be added to the pile).  Should return the pixel offset from the
@@ -84,6 +85,10 @@ const _View = {
     this._canvas = document.createElementNS(HTMLns, "canvas");
     this.appendChild(this._canvas);
     this._context = this._canvas.getContext("2d");
+    if(this._counter) {
+      this._counter = this.appendChild(document.createElement("label"));
+      this._counter.className = "stockcounter";
+    }
   }
 }
 
@@ -97,7 +102,7 @@ const View = {
     this._canvas.height = gCardHeight;
     const card = max ? this.pile.cards[max - 1] : null;
     if(card) this._context.drawImage(card.image, 0, 0);
-//     else this._context.drawImage(gPileImg, 0, 0);
+    if(this._counter) this._counter.setAttribute("value", this.pile.counterValue);
   },
 
   getTargetCard: function(event) {
@@ -287,19 +292,8 @@ const UnionSquareFoundationView = {
 // a layout for Stocks, including a counter
 const StockView = {
   __proto__: View,
-
-  initView: function() {
-    StockView.__proto__.initView.apply(this);
-    this.appendChild(document.createElement("space"));
-    this._counterlabel = this.appendChild(document.createElement("label"));
-    this._counterlabel.className = "stockcounter";
-  },
-
-  update: function(max) {
-    this._canvas.width = gCardWidth;
-    this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = gCardHeight;
-    if(max) this._context.drawImage(images.facedowncard, 0, 0);
-    this._counterlabel.setAttribute("value", this.pile.counterValue);
+  _counter: true,
+  getVisibleCardIndexes: function(max) {
+    return max ? [0] : [];
   }
 };

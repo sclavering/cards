@@ -71,7 +71,7 @@ const Pile = {
     return overrideGetter(this, "following", ps);
   },
 
-  addCardsFromArray: function(cards) {
+  addCardsFromArray: function(cards, doNotUpdateView) {
     const cs = this.cards, num = cards.length, j0 = cs.length;
     for(var i = 0, j = j0; i != num; ++i, ++j) {
       var c = cards[i];
@@ -79,14 +79,14 @@ const Pile = {
       c.pile = this;
       cs[j] = c;
     }
-    this.updateView(j0);
+    if(!doNotUpdateView) this.updateView(j0);
   },
 
   // arg is a card within another pile's .cards array.
   // should add it and all cards with higher index
-  addCards: function(card) {
+  addCards: function(card, doNotUpdateView) {
     const p = card.pile, pcs = p.cards, ix = card.index;
-    this.addCardsFromArray(pcs.slice(ix));
+    this.addCardsFromArray(pcs.slice(ix), doNotUpdateView);
     p.removeCardsAfter(ix);
   },
 

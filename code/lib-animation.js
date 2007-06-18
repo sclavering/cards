@@ -5,6 +5,7 @@ const kAnimationDelay = 30;
 function moveCards(firstCard, target) {
   const card = firstCard, origin = card.pile;
   gFloatingPile.showForMove(card);
+  target.addCards(card, true); // doesn't update view
 
   // final coords (relative to gGameStack)
   const tview = target.view, tbox = tview.boxObject;
@@ -19,7 +20,7 @@ function moveCards(firstCard, target) {
   var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
   if(steps == 0) {
     gFloatingPileNeedsHiding = true;
-    target.addCards(card);
+    target.updateView();
     done(origin);
     return;
   }
@@ -33,8 +34,8 @@ function moveCards(firstCard, target) {
   // We want the cards to be displayed over their destination while the transfer happens.  Without
   // this function (called via a timer) that doesn't happen.
   function animDone() {
-    target.addCards(card);
     gFloatingPileNeedsHiding = true;
+    target.updateView();
     done(origin);
   };
 
@@ -50,7 +51,7 @@ function moveCards(firstCard, target) {
       const timeout = setTimeout(animDone, 0);
       interruptAction = function() {
         clearTimeout(timeout);
-        target.addCards(card);
+        target.updateView();
         gFloatingPileNeedsHiding = true;
       };
     }
@@ -58,23 +59,11 @@ function moveCards(firstCard, target) {
 
   function interrupt() {
     clearInterval(interval);
-    target.addCards(card);
+    target.updateView();
     gFloatingPileNeedsHiding = true;
     return origin;
   };
 
   interval = setInterval(step, kAnimationDelay);
   interruptAction = interrupt;
-}
-
-
-
-function moveCards2(card, to) {
-  const source = card.parentNode;
-  to.addCards(card);
-  const t = setTimeout(done, kAnimationDelay, source);
-  interruptAction = function() {
-    clearTimeout(t);
-    return source;
-  }
 }

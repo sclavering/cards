@@ -161,7 +161,7 @@ const FloatingPile = {
   // card is the lowest-index card to be shown
   _show: function(card) {
     const pview = card.pile.view, pbox = pview.boxObject;
-    const offsets = pview.getCardOffsets(card.index);
+    const offsets = pview.getAnimationOrigin(card);
     const x = pbox.x + offsets.x, y = pbox.y + offsets.y;
     const p = card.pile, ix = card.index;
     const cs = this.pile.cards = p.cards.slice(ix);

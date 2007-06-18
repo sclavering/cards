@@ -26,11 +26,6 @@ const _View = {
   className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it
 
-  // Passed the index of a card in the pile or the length of the pile (i.e. the index of
-  // the next card to be added to the pile).  Should return the pixel offset from the
-  // top-left corner of the pile.
-  getCardOffsets: function(ix) { return { x: 0, y: 0 }; },
-
   // Redraw the pile, showing only this.pile.cards[0 .. max).
   // Cards are temporarily hidden e.g. during drag+drop, and max allows that.
   update: function(max) {
@@ -58,10 +53,18 @@ const _View = {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
-  // Return an {x:,y:} obj giving pixel offset from top-left corner for where
-  // an animation for adding cards should finish at.
-  getAddedCardOffsets: function(card) {
-    return this.getCardOffsets(this.pile.cards.length - 1);
+  // Return relative CSS-pixel coords to start animated move of 'card' from.
+  getAnimationOrigin: function(card) {
+    return this._getCoordsForIndex(card.index);
+  },
+
+  // Return relative CSS-pixel coords for where an animated move should finish.
+  getAnimationDestination: function() {
+    return this._getCoordsForIndex(this.pile.cards.length - 1); // xxx why -1 ?
+  },
+
+  _getCoordsForIndex: function(ix) {
+    return { x: 0, y: 0 };
   },
 
   // Takes an event (mousedown or contextmenu, at present) and returns a Card
@@ -143,12 +146,9 @@ const _FanView = {
     return [i for(i in range(ix))];
   },
 
-  // xxx this may not work right.  it's written to work for the animation-
-  // destination case, not the hint-highlighting case.
-  getCardOffsets: function(ix) {
-    // what would be shown if that ix existed?
+  _getCoordsForIndex: function(ix) {
     const ixs = this.getVisibleCardIndexes(ix + 1);
-    var visualIx = ixs.indexOf(ix);
+    const visualIx = ixs.indexOf(ix);
     return { x: visualIx * this._hOffset, y: visualIx * this._vOffset };
   },
 

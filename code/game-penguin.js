@@ -13,7 +13,7 @@ Games.penguin = {
   deal: function(cards) {
     // first card's number will be used as "aces"
     var beak = cards[51];
-    this.foundationBases = [beak];
+    this.foundationBaseIndexes = [this.cards.indexOf(beak)];
     renumberCards(this.cards, beak.displayNum);
 
     // put other "aces" up
@@ -46,7 +46,7 @@ Games.penguin = {
       if(i < 7) cs[i] = c.isLast ? c : null;
     }
     // suggest moving things to cells
-    p = this.emptyCell;
+    var p = this.emptyCell;
     if(!p) return;
     // cards that aren't in a seq.
     for(i = 0; i != 7; i++) {

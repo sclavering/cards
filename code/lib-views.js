@@ -48,25 +48,14 @@ const _View = {
   },
 
   drawHintHighlight: function(card) {
-    const rect = this.getHighlightBounds(card);
+    const rect = this._getHighlightBounds(card);
     this._context.fillStyle = "rgba(169,169,169, 0.3)"; // darkgrey
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   },
 
-  // Get the position + dimensions for a box that covers the card and any subsequent cards.
-  // If the card is null then it should instead be a box highlighting the pile itself.
-  // Coords are relative to top-left corner of the boxObject for this layout
-  getHighlightBounds: function(card) {
-    var x = 0, y = 0, w = gCardWidth, h = gCardHeight;
-    if(card) {
-      var o = this.getCardOffsets(card.index);
-      x = o.x;
-      y = o.y;
-      var o2 = this.getCardOffsets(card.pile.cards.length - 1);
-      w += o2.x - x;
-      h += o2.y - y;
-    }
-    return { x: x, y: y, w: w, h: h };
+  // Get bounding-box of the card (or the pile base if null) in <canvas>-pixels
+  _getHighlightBounds: function(card) {
+    return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
   // Return an {x:,y:} obj giving pixel offset from top-left corner for where
@@ -137,6 +126,15 @@ const _FanView = {
     const cs = this.pile.cards;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
+  },
+
+  _getHighlightBounds: function(card) {
+    if(!card) return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
+    const ixs = this.getVisibleCardIndexes(this.pile.cards.length);
+    const vIx = ixs.indexOf(card.index);
+    const num = ixs.pop() - vIx; // num cards to be highlighted
+    const h = this._hOffset, v = this._vOffset;
+    return { x: h * vIx, y: v * vIx, w: h * num + gCardWidth, h: v * num + gCardHeight };
   },
 
   // This exists to allow games to show a subset of the cards in a pile.

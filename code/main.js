@@ -155,7 +155,7 @@ const FloatingPile = {
     gFloatingPileNeedsHiding = false;
     // do these really matter?
     this.pile.cards = [];
-    this.update(0, 0);
+    this.update();
   },
 
   // card is the lowest-index card to be shown
@@ -165,11 +165,11 @@ const FloatingPile = {
     const x = pbox.x + offsets.x, y = pbox.y + offsets.y;
     const p = card.pile, ix = card.index;
     const cs = this.pile.cards = p.cards.slice(ix);
-    this.update(0, cs.length);
+    this.update();
     this.top = this._top = y - gGameStackTop;
     this.left = this._left = x - gGameStackLeft;
     // hide the cards in their real pile
-    p.view.update(ix, ix);
+    p.view.update(ix);
   },
 
   // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view
@@ -192,7 +192,7 @@ function createFloatingPile() {
 const gHintHighlighter = {
   _highlighted: null, // a Pile
   unhighlight: function(pile) {
-    if(this._highlighted) this._highlighted.updateView(0);
+    if(this._highlighted) this._highlighted.view.update();
     this._highlighted = null;
   },
   highlight: function(thing) { // a Card or a pile

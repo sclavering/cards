@@ -72,14 +72,14 @@ const Pile = {
   },
 
   addCardsFromArray: function(cards, doNotUpdateView) {
-    const cs = this.cards, num = cards.length, j0 = cs.length;
-    for(var i = 0, j = j0; i != num; ++i, ++j) {
+    const cs = this.cards, num = cards.length;
+    for(var i = 0, j = cs.length; i != num; ++i, ++j) {
       var c = cards[i];
       c.index = j;
       c.pile = this;
       cs[j] = c;
     }
-    if(!doNotUpdateView) this.updateView(j0);
+    if(!doNotUpdateView) this.view.update();
   },
 
   // arg is a card within another pile's .cards array.
@@ -93,11 +93,7 @@ const Pile = {
   // Should generally not be called except by pile impls.
   removeCardsAfter: function(index) {
     this.cards = this.cards.slice(0, index);
-    this.updateView(index);
-  },
-
-  updateView: function(index) {
-    this.view.update(index, this.cards.length);
+    this.view.update();
   },
 
   // card may be null if the pile is empty

@@ -135,7 +135,7 @@ Card.prototype = {
   setFaceUp: function(val) {
     this.faceUp = val;
     const p = this.pile;
-    if(p) p.updateView(this.index);
+    if(p) p.view.update();
   },
 
   get mayTake() { return this.pile.mayTakeCard(this); }

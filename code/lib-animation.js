@@ -20,7 +20,7 @@ function moveCards(firstCard, target) {
   var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
   if(steps == 0) {
     gFloatingPileNeedsHiding = true;
-    target.updateView();
+    target.view.update();
     done(origin);
     return;
   }
@@ -35,7 +35,7 @@ function moveCards(firstCard, target) {
   // this function (called via a timer) that doesn't happen.
   function animDone() {
     gFloatingPileNeedsHiding = true;
-    target.updateView();
+    target.view.update();
     done(origin);
   };
 
@@ -51,7 +51,7 @@ function moveCards(firstCard, target) {
       const timeout = setTimeout(animDone, 0);
       interruptAction = function() {
         clearTimeout(timeout);
-        target.updateView();
+        target.view.update();
         gFloatingPileNeedsHiding = true;
       };
     }
@@ -59,7 +59,7 @@ function moveCards(firstCard, target) {
 
   function interrupt() {
     clearInterval(interval);
-    target.updateView();
+    target.view.update();
     gFloatingPileNeedsHiding = true;
     return origin;
   };

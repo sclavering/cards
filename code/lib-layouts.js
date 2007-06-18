@@ -182,7 +182,7 @@ const Layout = {
 
     // ordering here may be important (not-repainting fun)
     gFloatingPile.hide();
-    card.pile.updateView(card.index); // make the cards visible again
+    card.pile.view.update(); // make the cards visible again
   },
 
   onmouseup: function(e) {

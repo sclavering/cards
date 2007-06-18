@@ -32,20 +32,20 @@ const _View = {
   // top-left corner of the pile.
   getCardOffsets: function(ix) { return { x: 0, y: 0 }; },
 
-  // Called when the contents of a pile have changed and thus the view needs fixing.
-  // An index of i means that cards 0->i are unchanged, but from i upward cards may have
-  // been added or removed.
-  // When dragging some cards around they are *not* removed from the original pile, only hidden
-  // from view.  This is done by passing a lastIx value: no card at index >= to that should be
-  // shown.  Ordinarily lastIx == pile.cards.length
-  update: function(index, lastIx) {
-    throw "_View.update not overridden!";
+  // Redraw the pile, showing only this.pile.cards[0 .. max).
+  // Cards are temporarily hidden e.g. during drag+drop, and max allows that.
+  update: function(max) {
+    if(typeof max == "undefined") max = this.pile.cards.length;
+    this._update(max);
+  },
+  _update: function(max) {
+    throw "_View._update not overridden!";
   },
 
   // Attach this view to a Pile
   displayPile: function(pile) {
     this.pile = pile;
-    this.update(0, pile.cards.length);
+    this.update();
   },
 
   // replace with a function if needed
@@ -96,11 +96,11 @@ const _View = {
 const View = {
   __proto__: _View,
 
-  update: function(index, lastIndex) {
+  _update: function(max) {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
-    const card = lastIndex ? this.pile.cards[lastIndex - 1] : null;
+    const card = max ? this.pile.cards[max - 1] : null;
     if(card) this._context.drawImage(card.image, 0, 0);
 //     else this._context.drawImage(gPileImg, 0, 0);
   },
@@ -124,12 +124,12 @@ const _FanView = {
   _basicVOffset: 0,
   _basicHOffset: 0,
 
-  update: function(index, lastIx) {
+  _update: function(max) {
     const box = this.boxObject;
     this._canvas.width = box.width;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = box.height;
-    const ixs = this.getVisibleCardIndexes(lastIx), num = ixs.length;
+    const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
     const off = this._getLayoutOffsets(box.width, box.height, num);
     // use an int offset where possible to avoid fuzzy card borders
     const h = this._hOffset = off[0] < 1 ? off[0] : Math.floor(off[0]);
@@ -139,8 +139,8 @@ const _FanView = {
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
   },
 
-  // See _View.update for meaning of lastIx.
   // This exists to allow games to show a subset of the cards in a pile.
+  // 'ix' is like the 'max' of View.update
   getVisibleCardIndexes: function(ix) {
     return [i for(i in range(ix))];
   },
@@ -300,11 +300,11 @@ const StockView = {
     this._counterlabel.className = "stockcounter";
   },
 
-  update: function(index, lastIx) {
+  update: function(max) {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = gCardHeight;
-    if(lastIx) this._context.drawImage(images.facedowncard, 0, 0);
+    if(max) this._context.drawImage(images.facedowncard, 0, 0);
     this._counterlabel.setAttribute("value", this.pile.counterValue);
   }
 };

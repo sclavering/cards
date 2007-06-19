@@ -133,6 +133,8 @@ function savePref(name, val) {
 
 const FloatingPile = {
   pile: null, // will be a fake, because the view expects it
+  _left: 0,
+  _top: 0,
 
   showForMove: function(card) {
     const cs = this.pile.cards;
@@ -150,8 +152,8 @@ const FloatingPile = {
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   hide: function() {
-    this.width = this.height = 0;
-    this.top = this.left = this._top = this._left = -1000;
+    this.element.width = this.element.height = 0;
+    this.moveTo(-1000, -1000);
     gFloatingPileNeedsHiding = false;
     // do these really matter?
     this.pile.cards = [];
@@ -166,8 +168,7 @@ const FloatingPile = {
     const y = v.pixelTop + offsets.y;
     const cs = this.pile.cards = p.cards.slice(card.index);
     this.update();
-    this.top = this._top = y - gGameStackTop;
-    this.left = this._left = x - gGameStackLeft;
+    this.moveTo(x - gGameStackLeft, y - gGameStackTop);
     // hide the cards in their real pile
     p.view.update(card.index);
   },
@@ -175,8 +176,17 @@ const FloatingPile = {
   // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view
   _move: function(e) {
     const self = gFloatingPile; // this==window
-    self.top = self._top = e.pageY - self._ty;
-    self.left = self._left = e.pageX - self._tx;
+    self.moveTo(e.pageX - self._tx, e.pageY - self._ty);
+  },
+
+  moveBy: function(dx, dy) {
+    this.moveTo(this._left + dx, this._top + dy);
+  },
+
+  moveTo: function(x, y) {
+    this.element.left = this._left = x;
+    this.element.top = this._top = y;
+    dump("now at ("+this.element.left+","+this.element.top+")\n");
   }
 };
 
@@ -184,7 +194,7 @@ function createFloatingPile() {
   FloatingPile.__proto__ = FanDownView;
   gFloatingPile = createPileView(FloatingPile);
   gFloatingPile.pile = { __proto__: Pile, cards: [] };
-  gGameStack.appendChild(gFloatingPile);
+  gGameStack.appendChild(gFloatingPile.element);
   gFloatingPile.hide();
 }
 

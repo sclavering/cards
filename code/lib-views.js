@@ -1,6 +1,5 @@
 function createPileView(viewType) {
-  const view = document.createElement(viewType._tagName);
-  extendObj(view, viewType, true);
+  const view =  { __proto__: viewType };
   view.initView();
   return view;
 }
@@ -18,19 +17,18 @@ var gSlideExtraSpace = 10;
 // is used because other code used to expect a .boxObject, and to allow
 // control of whether the canvas should be stretched or not.
 const _View = {
-  // this is used in the drag+drop code and similar places, to see what an element is
-  isPileView: true,
+  // The root XUL element for this view.  Must have .pileViewObj field set.
+  element: null,
 
   // These will mask XULElement.boxObject.* vs HMTLElement.offset*
-  get pixelLeft() { return this.boxObject.x; },
-  get pixelTop() { return this.boxObject.y; },
-  get pixelWidth() { return this.boxObject.width; },
-  get pixelHeight() { return this.boxObject.height; },
+  get pixelLeft() { return this.element.boxObject.x; },
+  get pixelTop() { return this.element.boxObject.y; },
+  get pixelWidth() { return this.element.boxObject.width; },
+  get pixelHeight() { return this.element.boxObject.height; },
   get pixelRight() { return this.pixelLeft + this.pixelWidth; },
   get pixelBottom() { return this.pixelTop + this.pixelHeight; },
 
   // override if desired
-  _tagName: "vbox",
   className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it
 
@@ -81,12 +79,15 @@ const _View = {
   },
 
   initView: function() {
+    const el = this.element = document.createElement("vbox");
+    el.pileViewObj = this;
+    el.className = this.className;
     const HTMLns = "http://www.w3.org/1999/xhtml";
     this._canvas = document.createElementNS(HTMLns, "canvas");
-    this.appendChild(this._canvas);
+    el.appendChild(this._canvas);
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
-      this._counter = this.appendChild(document.createElement("label"));
+      this._counter = el.appendChild(document.createElement("label"));
       this._counter.className = "counter";
     }
   }

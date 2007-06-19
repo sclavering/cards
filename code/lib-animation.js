@@ -41,13 +41,11 @@ function moveCards(firstCard, target) {
 
   function step() {
     if(steps) {
-      gFloatingPile.left = gFloatingPile._left += stepX;
-      gFloatingPile.top = gFloatingPile._top += stepY;
+      gFloatingPile.moveBy(stepX, stepY);
       steps--;
     } else {
       clearInterval(interval);
-      gFloatingPile.left = gFloatingPile._left = tx;
-      gFloatingPile.top = gFloatingPile._top = ty;
+      gFloatingPile.moveTo(tx, ty);
       const timeout = setTimeout(animDone, 0);
       interruptAction = function() {
         clearTimeout(timeout);

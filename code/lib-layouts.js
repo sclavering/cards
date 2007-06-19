@@ -106,9 +106,9 @@ const Layout = {
         default:
           var viewType = this[ch] || null;
           if(!viewType) throw "Layout._build: unrecognised char '" + ch + "' found in template";
-          var node = createPileView(viewType);
-          box.appendChild(node);
-          views.push(node);
+          var viewObj = createPileView(viewType);
+          box.appendChild(viewObj.element);
+          views.push(viewObj);
       }
     }
     // sanity check
@@ -210,8 +210,10 @@ const Layout = {
   },
 
   _getTargetCardAndPile: function(e) {
-    for(var t = e.target; t && !t.isPileView; t = t.parentNode);
-    if(!t || t == gFloatingPile) return [null, null];
+    for(var t = e.target; t && !t.pileViewObj; t = t.parentNode);
+    if(!t || !t.pileViewObj) return [null, null];
+    t = t.pileViewObj;
+    if(t == gFloatingPile) return [null, null];
     return [t.getTargetCard(e), t.pile];
   }
 };
@@ -222,18 +224,20 @@ const _PyramidLayout = {
   _getTargetCardAndPile: function(e) {
     const nulls = [null, null];
     var t = e.target, parent = t.parentNode;
+    var tv = t.pileViewObj || null;
+    var pv = parent.pileViewObj || null;
 
-    if(t == gFloatingPile || parent == gFloatingPile) return nulls;
+    if(tv == gFloatingPile || pv == gFloatingPile) return nulls;
 
     // occupied pile, foundation, or stock
-    if(parent.pile) return [parent.getTargetCard(e), parent.pile];
+    if(pv) return [pv.getTargetCard(e), pv.pile];
 
     // get from a <flex/> or spacer to the pile it covers
-    if(!t.pile) {
+    if(!tv) {
       // if t is a spacer between two piles we change t to the pile on the row above
       t = t.previousSibling;
-      if(!t || !t.pile) return nulls; // spacer is left of the pyramid
-      var rp = t.pile.rightParent;
+      if(!t || !t.pileViewObj) return nulls; // spacer is left of the pyramid
+      var rp = t.pileViewObj.pile.rightParent;
       // spacer on right of pyramid, or if click was not in region overlapping row above
       if(!rp || rp.view.pixelBottom < y) return nulls;
       t = rp.view;

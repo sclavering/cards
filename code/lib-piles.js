@@ -138,6 +138,14 @@ const _Stock = {
 
   getClickAction: function(card) {
     return this.deal();
+  },
+
+  // The Layout mouse-handling code wants a Card as the target of the event. So
+  // we provide a stub object that just lets it get from there to the pile to
+  // call getClickAction.
+  _stubCard: null,
+  get magicStockStubCard() {
+    return this._stubCard || (this._stubCard = { pile: this });
   }
 };
 

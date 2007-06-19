@@ -127,12 +127,12 @@ const Layout = {
 
   _ex0: 0, // coords of mousedown event
   _ey0: 0,
-  _eventTargets: null, // or a [card, pile] pair after mousedown and until mouseup
+  _eventTargetCard: null, // or a Card
 
   onmousedown: function(e) {
     if(e.button) return;
     const self = Game.layout;
-    const et = self._eventTargets = self._getTargetCardAndPile(e), card = et[0];
+    const card = self._eventTargetCard = self._getTargetCard(e);
     if(!card || !card.pile.mayTakeCard(card)) return;
     if(interruptAction) interrupt();
     self._ex0 = e.pageX;
@@ -146,7 +146,7 @@ const Layout = {
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    gFloatingPile.show(self._eventTargets[0]);
+    gFloatingPile.show(self._eventTargetCard);
     self._tx = ex0 - gFloatingPile._left;
     self._ty = ey0 - gFloatingPile._top;
     gGameStack.onmousemove = self.mouseMoveInDrag;
@@ -163,7 +163,7 @@ const Layout = {
   },
 
   endDrag: function(e) {
-    const self = Game.layout, et = self._eventTargets, card = et[0], pile = et[1];
+    const self = Game.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
     const l = gFloatingPile.pixelLeft, r = gFloatingPile.pixelRight;
@@ -197,60 +197,57 @@ const Layout = {
   },
 
   onmouseup: function(e) {
-    const self = Game.layout, et = self._eventTargets;
-    if(!et) return; // on Mac, a click+hold (right-click equiv.) may have intervened
-    const card = et[0], pile = et[1];
-    if(pile) doo(pile.getClickAction(card));
+    const self = Game.layout, card = self._eventTargetCard;
+    if(!card) return;
+    doo(card.pile.getClickAction(card));
     self._resetHandlers();
   },
 
   rightClick: function(e) {
     const self = Game.layout;
-    const card = self._getTargetCardAndPile(e)[0];
+    const card = self._getTargetCard(e);
     if(interruptAction) interrupt();
     if(card) doo(Game.sendToFoundations(card));
     self._resetHandlers();
   },
 
   _resetHandlers: function(e) {
-    this._eventTargets = null;
+    this._eventTargetCard = null;
     gGameStack.oncontextmenu = this.rightClick;
     gGameStack.onmousedown = this.onmousedown;
     gGameStack.onmouseup = this.onmouseup;
     gGameStack.onmousemove = null;
   },
 
-  _getTargetCardAndPile: function(e) {
+  _getTargetCard: function(e) {
     for(var t = e.target; t && !t.pileViewObj; t = t.parentNode);
-    if(!t || !t.pileViewObj) return [null, null];
+    if(!t || !t.pileViewObj) return null;
     t = t.pileViewObj;
-    if(t == gFloatingPile) return [null, null];
-    return [t.getTargetCard(e), t.pile];
+    return t != gFloatingPile ? t.getTargetCard(e) : null;
   }
 };
 
 const _PyramidLayout = {
   __proto__: Layout,
 
-  _getTargetCardAndPile: function(e) {
-    const nulls = [null, null];
+  _getTargetCard: function(e) {
     var t = e.target, parent = t.parentNode;
     var tv = t.pileViewObj || null;
     var pv = parent.pileViewObj || null;
 
-    if(tv == gFloatingPile || pv == gFloatingPile) return nulls;
+    if(tv == gFloatingPile || pv == gFloatingPile) return null;
 
     // occupied pile, foundation, or stock
-    if(pv) return [pv.getTargetCard(e), pv.pile];
+    if(pv) return pv.getTargetCard(e);
 
     // get from a <flex/> or spacer to the pile it covers
     if(!tv) {
       // if t is a spacer between two piles we change t to the pile on the row above
       t = t.previousSibling;
-      if(!t || !t.pileViewObj) return nulls; // spacer is left of the pyramid
+      if(!t || !t.pileViewObj) return null; // spacer is left of the pyramid
       var rp = t.pileViewObj.pile.rightParent;
       // spacer on right of pyramid, or if click was not in region overlapping row above
-      if(!rp || rp.view.pixelBottom < y) return nulls;
+      if(!rp || rp.view.pixelBottom < y) return null;
       t = rp.view;
     }
 
@@ -266,12 +263,12 @@ const _PyramidLayout = {
       // is it the pile directly above?
       else if(lp && lp.rightParent) p = lp.rightParent;
       // user is probably being stupid
-      else return nulls;
+      else return null;
       // are we too low down anyway?
-      if(p.view.pixelBottom < y) return nulls;
+      if(p.view.pixelBottom < y) return null;
     }
     
-    return [p.firstCard, p];
+    return p.firstCard;
   }
 };
 

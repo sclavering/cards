@@ -318,7 +318,7 @@ const FanLayout = {
 const FortyThievesLayout = {
   __proto__: Layout,
   w: FanRightView,
-  template: "v[2f1f1f1f1f1f1f1f2] [  s w  ] [*2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[2f1f1f1f1f1f1f1f2] [  s w*] [*2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const FreeCellLayout = {

@@ -22,14 +22,6 @@ const CanfieldBase = {
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },
 
-  getHints: function() {
-    this.addHintsFor(this.reserve.lastCard);
-    this.addHintsFor(this.waste.lastCard);
-    for(var i = 0; i != 4; i++) this.addHintsForLowestMovable(this.piles[i]);
-  },
-
-  getLowestMovableCard_helper: "face up",
-
   getBestDestinationFor: "legal nonempty, or empty",
 
   autoplay: "commonish",

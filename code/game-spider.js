@@ -44,14 +44,7 @@ const SpiderBase = {
 const Spider = {
   __proto__: SpiderBase,
   helpId: "spider",
-
   dealTemplate: "p 5,1 5,1 5,1 5,1 4,1 4,1 4,1 4,1 4,1 4,1",
-
-  getLowestMovableCard_helper: "descending, in suit",
-
-  getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
-  }
 };
 
 
@@ -80,22 +73,7 @@ Games.blackwidow = {
   __proto__: Spider,
   helpId: null,
   pileTypes: { p: BlackWidowPile },
-  cards: 2,
-
-  getHints: function() {
-    const ps = this.piles;
-    for(var i = 0; i != 10; i++) {
-      var p = ps[i], cs = p.cards;
-      for(var j = cs.length; j;) {
-        var card = cs[--j];
-        if(!card.faceUp) break;
-        var prv = p.getCard(j - 1);
-        if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
-        this.addHintsFor(card);
-        if(prv.number != card.upNumber) break;
-      }
-    }
-  }
+  cards: 2
 };
 
 
@@ -109,12 +87,6 @@ Games.divorce = {
 
   init: function() {
     this.cards = makeDecksMod13(2);
-  },
-
-  getLowestMovableCard_helper: "descending, in suit",
-
-  getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
   },
 
   autoplay: function() {
@@ -140,21 +112,8 @@ Games.wasp = {
   pilesToBuild: "7p f s",
   pileTypes: { s: StockDealToPiles, p: WaspPile },
   dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
-
   kings: [12, 25, 38, 51],
-
   getBestDestinationFor: "to up or nearest space",
-
-  getHints: function() {
-    for(var i = 0; i != 7; i++) {
-      var pile = this.piles[i];
-      if(!pile.hasCards) continue;
-      var last = pile.lastCard, down = last.down;
-      if(!down || !down.faceUp) continue;
-      var downp = down.pile;
-      if(downp!=pile && downp.isPile) this.addHint(down, pile);
-    }
-  }
 };
 
 
@@ -167,14 +126,7 @@ const SimonBase = {
   pilesToBuild: "10p f",
   layout: SimonLayout,
   dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
-
   kings: [12, 25, 38, 51],
-
-  getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
-  },
-
-  getLowestMovableCard_helper: "descending, in suit"
 };
 
 Games.simon1 = {

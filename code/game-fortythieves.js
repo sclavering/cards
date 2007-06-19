@@ -8,13 +8,6 @@ Games.fortythieves = {
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 
-  getHints: function() {
-    for(var i = 0; i != 10; i++) this.addHintsForLowestMovable(this.piles[i]);
-    this.addHintsFor(this.waste.lastCard);
-  },
-
-  getLowestMovableCard_helper: "descending, in suit",
-
   getBestDestinationFor: "legal nonempty, or empty",
 
   autoplay: "commonish",

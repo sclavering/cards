@@ -33,8 +33,6 @@ Games.tripeaks = {
     return card.faceUp && (c.number==card.upNumber || c.upNumber==card.number) && new Move(card, f);
   },
 
-  // xxx write getHints()
-
   getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
     const res = [];
     const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;

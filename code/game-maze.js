@@ -18,24 +18,6 @@ Games.maze = {
     this.queens = [cs[11], cs[23], cs[35], cs[47]];
   },
 
-  getHints: function() {
-    for(var i = 0; i != 54; i++) {
-      var p = this.piles[i];
-      if(p.hasCards) continue;
-      var c1 = null, p2, c2;
-      if(p.prev.hasCards) {
-        p2 = p.prev; c1 = p2.lastCard.up;
-        if(c1) this.addHint(c1, p);
-        else this.addHints2(this.aces, p);
-      }
-      if(p.next.hasCards) {
-        p2 = p.next; c2 = p2.lastCard.down;
-        if(c2) { if(c2!=c1) this.addHint(c2, p); }
-        else this.addHints2(this.queens, p);
-      }
-    }
-  },
-
   getBestDestinationFor: function(card) {
     if(card.isAce) {
       var start = card.pile, pile = start.next;

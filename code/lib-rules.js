@@ -6,19 +6,6 @@ relevant function in this file.
 */
 
 const Rules = {
-  getLowestMovableCard_helper: {
-    "descending, in suit": function(card, prv) {
-      return prv.faceUp && card.upNumber == prv.number && card.suit == prv.suit;
-    },
-    "descending, alt colours": function(card, prv) {
-      return prv.faceUp && card.upNumber == prv.number && card.colour != prv.colour;
-    },
-    "face up": function(card, prv) {
-      return prv.faceUp;
-    }
-  },
-
-
   isWon: {
     "13 cards on each foundation":
     function() {

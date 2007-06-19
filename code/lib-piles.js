@@ -105,6 +105,14 @@ const Pile = {
   // card may be null if the pile is empty
   getClickAction: function(card) {
     return card ? Game.getBestActionFor(card) : null;
+  },
+
+  // Return an array of cards to consider moving when computing hints
+  getHintSources: function() {
+    for each(var c in this.cards)
+      if(this.mayTakeCard(c))
+        return [c];
+    return [];
   }
 };
 
@@ -314,7 +322,21 @@ const BlackWidowPile = {
   __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeDescendingRun,
-  mayAddCard: mayAddOntoUpNumberOrEmpty
+  mayAddCard: mayAddOntoUpNumberOrEmpty,
+  getHintSources: function() {
+    const sources = [];
+    const cs = this.cards;
+    for(var j = cs.length; j;) {
+      var card = cs[--j];
+      if(!card.faceUp) break;
+      var prv = this.getCard(j - 1);
+      if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
+      sources.push(card);
+      if(prv.number != card.upNumber) break;
+    }
+    // longer-run hints are probably better, so show those first
+    return sources.reverse();
+  }
 };
 
 const CanfieldPile = {
@@ -568,7 +590,10 @@ const WaspPile = {
   __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: mayAddOntoDotUpOrEmpty
+  mayAddCard: mayAddOntoDotUpOrEmpty,
+  getHintSources: function() {
+    return [c for each(c in this.cards) if(c.faceUp)];
+  }
 };
 
 const WhiteheadPile = {
@@ -580,6 +605,13 @@ const WhiteheadPile = {
     return !lst || lst==card.up || lst==card.on;
   }
 };
+
+const YukonPile = {
+  __proto__: CanfieldPile,
+  getHintSources: function() {
+    return [c for each(c in this.cards) if(c.faceUp)];
+  }
+}
 
 
 function mayAddCardToKlondikeFoundation(card) {

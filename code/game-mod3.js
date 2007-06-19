@@ -6,6 +6,9 @@ Games.mod3 = {
   pileTypes: { s: StockDealToPiles, f: Mod3Foundation, p: AcesUpPile },
   dealTemplate: "F 0,1; P 0,1",
   cards: null,
+  get hintOriginPileCollections() {
+    return [this.foundations, this.piles];
+  },
 
   init: function() {
     var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
@@ -45,26 +48,6 @@ Games.mod3 = {
       if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
         return false;
     return true;
-  },
-
-  getHints: function() {
-    const ps = this.dragDropTargets, num = ps.length;
-    for(var i = 0; i != num; ++i) {
-      var source = ps[i];
-      var card = source.lastCard;
-      if(!card) continue;
-
-      var row = this.rows[card.row];
-      for(var j = 0; j != 8; j++) {
-        var target = row[j];
-        if(!target.mayAddCard(card)) continue;
-        // hints are useful if:
-        // - |target| is empty and in a different row (so we don't suggest moving a 2/3/4 along a row)
-        // - |target| is nonempty, and |card| is the only card in |source|
-        if(source.isFoundation && (target.hasCards ? !card.isFirst : source.row==target.row)) continue;
-        this.addHint(card, target);
-      }
-    }
   },
 
   getBestDestinationFor: function(card) {

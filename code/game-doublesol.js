@@ -10,24 +10,6 @@ Games.doublesol = {
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 
-  getHints: function() {
-    this.getHintsFor(this.waste.lastCard);
-    for(var i = 0; i != 10; i++) this.getHintsFor(this.getLowestMovableCard(this.piles[i]));
-  },
-  getHintsFor: function(card) {
-    if(!card) return;
-    if(card.isKing) {
-      // suggest just one move to an empty pile, and only if the king is on something else
-      if(!card.isFirst || card.pile.isWaste) this.addHintToFirstEmpty(card);
-      this.addFoundationHintsFor(card);
-    } else {
-      // only looks at foundations and *nonempty* spaces
-      this.addHintsFor(card);
-    }
-  },
-
-  getLowestMovableCard_helper: "face up",
-
   getBestDestinationFor: "legal",
 
   autoplay: function() {

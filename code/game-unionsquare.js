@@ -8,8 +8,6 @@ Games.unionsquare = {
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 
-  // xxx write getHints()
-
   getBestDestinationFor: function(card) {
     const p = card.pile, ps = p.isPile ? p.following : this.piles, num = ps.length;
     var empty = null;

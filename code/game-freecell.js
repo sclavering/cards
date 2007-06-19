@@ -8,13 +8,6 @@ Games.freecell = {
   foundationBaseIndexes: [0, 13, 26, 39],
   cards: 1,
 
-  getHints: function() {
-    for(var i = 0; i != 4; ++i) this.addHintsFor(this.cells[i].firstCard);
-    for(i = 0; i != 8; i++) this.addHintsForLowestMovable(this.piles[i]);
-  },
-
-  getLowestMovableCard_helper: "descending, alt colours",
-
   // similar to Rules.getBestDestinationFor["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space
   getBestDestinationFor: function(card) {

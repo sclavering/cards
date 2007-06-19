@@ -6,8 +6,6 @@ Games.pileon = {
   pileTypes: { p: PileOnPile },
   dealTemplate: "P 0,4", // will actually leave last two piles empty
 
-  // xxx write getHints()
-
   getBestDestinationFor: "legal nonempty, or empty",
 
   // Won when each pile is either empty or holds four cards of the same rank.

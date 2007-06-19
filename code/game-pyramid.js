@@ -22,8 +22,6 @@ Games.pyramid = {
     return card.isKing && card.mayTake ? new RemovePair(card, null) : null;
   },
 
-  // xxx write getHints()
-
   // this game has no autoplay
 
   isWon: function() {

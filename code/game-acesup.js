@@ -14,17 +14,6 @@ Games.acesup = {
     ps[3].next = ps[0];
   },
 
-  getHints: function() {
-    const ps = this.piles, f = this.foundation;
-    for(var i = 0; i != 4; i++) {
-      var c = ps[i].lastCard;
-      if(c && f.mayAddCard(c)) this.addHint(c, f);
-    }
-    const p = this.firstEmptyPile;
-    if(!p) return;
-    for(i = 0; i != 4; i++) this.addHint(ps[i].lastCard, p)
-  },
-
   getBestDestinationFor: function(card) {
     const f = this.foundation;
     if(card.pile == f) return null;

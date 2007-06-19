@@ -114,6 +114,7 @@ const BaseCardGame = {
     this.foundations = [p for each(p in all) if(p.isFoundation)];
     for(i in this.foundations) this.foundations[i].index = i;
     this.stock = bytype.s ? bytype.s[0] : null;
+    this.wastes = bytype.w;
     this.waste = bytype.w ? bytype.w[0] : null;
     this.foundation = bytype.f ? bytype.f[0] : null;
     this.reserve = bytype.r ? bytype.r[0] : null;
@@ -407,9 +408,19 @@ const BaseCardGame = {
     gHintHighlighter.showHints(this.hintSources[num], this.hintDestinations[num]);
   },
 
-  // If left null the Hint toolbar button will be disabled.  Should be replaced with a zero-argument
-  // function that calls addHint(..) repeatedly, possibly via intermediaries (addHintsFor etc.).
-  getHints: null,
+  // can be overridden e.g. to show hints from foundations
+  get hintOriginPileCollections() {
+    return [this.reserves, this.cells, this.wastes, this.piles];
+  },
+
+  // If set null the Hint toolbar button will be disabled.
+  getHints: function() {
+    const collections = this.hintOriginPileCollections;
+    for each(var ps in collections)
+      for each(var p in ps)
+        for each(var source in p.getHintSources())
+          this.addHintsFor(source);
+  },
 
   // takes the card to suggest moving, and the destination to suggest moving to (generally a pile)
   addHint: function(source, dest) {
@@ -424,52 +435,20 @@ const BaseCardGame = {
     this.hintDestinations.push(dests);
   },
 
-  addHintToFirstEmpty: function(card) {
-    if(!card) return;
-    const p = this.firstEmptyPile;
-    if(p) this.addHint(card, p);
-  },
-
   // many sources, one destination
   addHints2: function(cards, dest) {
     for(var i = 0; i != cards.length; i++) {
       this.hintSources.push(cards[i]);
-      this.hintDestinations.push(dest);
+      this.hintDestinations.push([dest]);
     }
   },
 
-  // a common pattern.  xxx doesn't quite fit Klondike and Double Solitaire
   addHintsFor: function(card) {
     if(!card) return;
-    var ds = [];
-    const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      if(p.hasCards && p.mayAddCard(card)) ds.push(p);
-    }
+    const src = card.pile;
+    const ps = Array.concat(this.piles, this.foundations);
+    const ds = [p for each(p in this.piles) if(p != src && p.mayAddCard(card))];
     if(ds.length) this.addHints(card, ds);
-    this.addFoundationHintsFor(card);
-  },
-
-  addHintsForLowestMovable: function(pile) {
-    this.addHintsFor(this.getLowestMovableCard(pile));
-  },
-
-  getLowestMovableCard: function(pile) {
-    const cs = pile.cards;
-    if(!cs.length) return null;
-    for(var i = cs.length - 1; i > 0 && this.getLowestMovableCard_helper(cs[i], cs[i-1]); --i);
-    return cs[i];
-  },
-
-  addFoundationHintsFor: function(card) {
-    if(!card) return;
-    const fs = this.foundations, num = fs.length;
-    var ds = [];
-    for(var i = 0; i != num; i++) {
-      var f = fs[i];
-      if(f.mayAddCard(card)) this.addHint(card, f);
-    }
   },
 
 

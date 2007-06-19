@@ -6,14 +6,6 @@ const GolfBase = {
   pilesToBuild: "s f 7p",
   pileTypes: { s: StockDealToFoundation, f: GolfFoundation, p: GolfPile },
 
-  getHints: function() {
-    const f = this.foundation, ps = this.piles;
-    for(var i = 0; i != 7; i++) {
-      var card = ps[i].lastCard;
-      if(card && f.mayAddCard(card)) this.addHint(card, f);
-    }
-  },
-
   getBestActionFor: function(card) {
     const f = this.foundation;
     return card.pile.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;

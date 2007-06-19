@@ -30,22 +30,6 @@ const Montana = {
     this.rowStarts = [ps[0], ps[13], ps[26], ps[39]];
   },
 
-  getHints: function() {
-    for(var i = 0; i != 52; i++) {
-      var pile = this.piles[i];
-      if(pile.hasCards) continue;
-      if(pile.leftp) {
-        var card = pile.leftp.lastCard;
-        if(card && card.up) this.addHint(card.up, pile);
-      } else {
-        for(var j = 0; j != 4; j++) {
-          card = this.twos[j];
-          if(card.pile.leftp) this.addHint(card, pile);
-        }
-      }
-    }
-  },
-
   getBestDestinationFor: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.pile.rightp;

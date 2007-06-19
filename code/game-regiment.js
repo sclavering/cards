@@ -29,11 +29,6 @@ Games.regiment = {
     this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
   },
 
-  getHints: function() {
-    for(var i = 0; i != 8; i++) this.addHintsFor(this.reserves[i].lastCard);
-    for(i = 0; i != 16; i++) this.addHintsFor(this.piles[i].lastCard);
-  },
-
   getBestDestinationFor: function(card) {
     const parent = card.pile;
     const ps = parent.isPile ? parent.following : this.piles, num = ps.length;

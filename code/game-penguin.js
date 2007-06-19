@@ -29,39 +29,6 @@ Games.penguin = {
     for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], cards, [0, 7]);
   },
 
-  getHints: function() {
-    const ps = this.pilesAndCells;
-    const cs = new Array(7);
-    for(var i = 0; i != 14; i++) {
-      var c = this.getLowestMovableCard(ps[i]);
-      if(!c) continue;
-      // suggest moving to a pile
-      if(c.isAce) {
-        this.addHintToFirstEmpty(c);
-      } else {
-        var up = c.up, upp = up.pile;
-        if(up.isLast && upp.isPile) this.addHint(c, upp);
-      }
-      // remember cards
-      if(i < 7) cs[i] = c.isLast ? c : null;
-    }
-    // suggest moving things to cells
-    var p = this.emptyCell;
-    if(!p) return;
-    // cards that aren't in a seq.
-    for(i = 0; i != 7; i++) {
-      c = cs[i];
-      this.addHint(c, p);
-    }
-    // cards which are
-    for(i = 0; i != 7; i++) {
-      if(cs[i]) continue;
-      this.addHint(ps[i].lastCard, p);
-    }
-  },
-
-  getLowestMovableCard_helper: "descending, in suit",
-
   getBestDestinationFor: "towers/penguin",
 
   autoplay: "commonish",

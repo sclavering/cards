@@ -18,13 +18,6 @@ Games.whitehead = {
     }
   },
 
-  getHints: function() {
-    this.addHintsFor(this.waste.lastCard);
-    for(var i = 0; i != 7; i++) this.addHintsForLowestMovable(this.piles[i]);
-  },
-
-  getLowestMovableCard_helper: "descending, in suit",
-
   getBestDestinationFor: function(card) {
     var up = card.up, on = card.on;
     if(up) {

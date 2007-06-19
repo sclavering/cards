@@ -12,12 +12,6 @@ const GypsyBase = {
     for(var i = 0; i != 4; i++) fs[i].twin = fs[i+4], fs[i+4].twin = fs[i];
   },
 
-  getHints: function() {
-    for(var i = 0; i != 8; i++) this.addHintsForLowestMovable(this.piles[i]);
-  },
-
-  getLowestMovableCard_helper: "descending, alt colours",
-
   getBestDestinationFor: "legal nonempty, or empty",
 
   getFoundationMoveFor: function(card) {

@@ -21,21 +21,6 @@ Games.fan = {
     return false;
   },
 
-  getHints: function() {
-    const ps = this.piles, len = ps.length;
-
-    for(var i = 0; i != this.piles.length; i++) {
-      var card = this.piles[i].lastCard;
-      if(!card) continue;
-      var up = card.up;
-      if(up) { // not a King
-        if(up.isLast) this.addHint(card, up.pile);
-      } else if(!card.isFirst) { // is a King, not in a space already
-        this.addHintToFirstEmpty(card);
-      }
-    }
-  },
-
   getBestDestinationFor: "to up or nearest space",
 
   autoplay: "commonish",

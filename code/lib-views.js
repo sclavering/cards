@@ -32,13 +32,19 @@ const _View = {
   className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it
 
-  // Redraw the pile, showing only this.pile.cards[0 .. max).
-  // Cards are temporarily hidden e.g. during drag+drop, and max allows that.
-  update: function(max) {
-    if(typeof max == "undefined") max = this.pile.cards.length;
-    this._update(max);
+  // An array of Cards that are being displayed in the pile.
+  // Either ==.pile.cards, or a prefix of it during drags or animations.
+  // Note that some views will choose to show only a subset even of these.
+  _cards: null,
+
+  // Redraw the pile.  'card', if present, must be in the pile, and it and any
+  // cards on top of it will not be shown.
+  update: function(card) {
+    const cs = this.pile.cards;
+    this._cards = card ? cs.slice(0, card.index) : cs;
+    this._update();
   },
-  _update: function(max) {
+  _update: function() {
     throw "_View._update not overridden!";
   },
 
@@ -97,12 +103,12 @@ const _View = {
 const View = {
   __proto__: _View,
 
-  _update: function(max) {
+  _update: function() {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
-    const card = max ? this.pile.cards[max - 1] : null;
-    if(card) this._context.drawImage(card.image, 0, 0);
+    const cs = this._cards, num = cs.length;
+    if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
 
@@ -132,16 +138,16 @@ const _FanView = {
   _basicVOffset: 0,
   _basicHOffset: 0,
 
-  _update: function(max) {
+  _update: function() {
     this._canvas.width = this.pixelWidth;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = this.pixelHeight;
+    const cs = this._cards, max = cs.length;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
     const off = this._getLayoutOffsets(this.pixelWidth, this.pixelHeight, num);
     // use an int offset where possible to avoid fuzzy card borders
     const h = this._hOffset = off[0] < 1 ? off[0] : Math.floor(off[0]);
     const v = this._vOffset = off[1] < 1 ? off[1] : Math.floor(off[1]);
-    const cs = this.pile.cards;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);

@@ -162,7 +162,7 @@ const FloatingPile = {
     this.update();
     this.moveTo(x - gGameStackLeft, y - gGameStackTop);
     // hide the cards in their real pile
-    p.view.update(card.index);
+    p.view.update(card);
   },
 
   moveBy: function(dx, dy) {

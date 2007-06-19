@@ -159,11 +159,17 @@ const gFloatingPile = {
     gFloatingPileNeedsHiding = false;
   },
 
-  // Show offset (x,y) from top-left corner of View, with given dimensions.
-  showAt: function(view, x, y, w, h) {
+  sizeCanvas: function(width, height) {
     this.context.canvas.height = 0;
-    this.element.width = this.context.canvas.width = w;
-    this.element.height = this.context.canvas.height = h;
+    this.context.canvas.width = width;
+    this.context.canvas.height = height;
+  },
+
+  // Show offset (x,y) from top-left corner of View.
+  // Must be preceded by call to sizeCanvas
+  showAt: function(view, x, y) {
+    this.element.width = this.context.canvas.width;
+    this.element.height = this.context.canvas.height;
     const elX = view.pixelLeft - gGameStackLeft;
     const elY = view.pixelTop - gGameStackTop;
     this.moveTo(elX + x, elY + y);
@@ -183,23 +189,21 @@ const gFloatingPile = {
 
 
 const gHintHighlighter = {
-  _highlighted: null, // a Pile
-  unhighlight: function(pile) {
-    if(this._highlighted) this._highlighted.view.update();
-    this._highlighted = null;
+  _timeout: null,
+  _views: [],
+  showHint: function(card, to) {
+    this._clear();
+    this._views = [card.pile.view, to.view];
+    card.pile.view.highlightHintFrom(card);
+    to.view.highlightHintTo(card);
+    this._timeout = setTimeout(this._clear, 2500);
   },
-  highlight: function(thing) { // a Card or a pile
-    const card = thing instanceof Card ? thing : thing.lastCard;
-    const pile = card ? card.pile : thing;
-    this._highlighted = pile;
-    pile.view.drawHintHighlight(card);
-  },
-  showHint: function(from, to) {
-    const dest = to.isAnyPile && to.hasCards ? to.lastCard : to;
-    const self = this;
-    this.highlight(from);
-    setTimeout(function() { self.unhighlight(); self.highlight(dest); }, 350);
-    setTimeout(function() { self.unhighlight(); }, 800);
+  _clear: function() {
+    const self = gHintHighlighter;
+    if(self._timeout === null) return;
+    clearTimeout(self._timeout);
+    self._timeout = null;
+    for each(var v in self._views) v.update();
   }
 };
 

@@ -25,6 +25,7 @@ const Pile = {
 
   // cards: [], // actually happens in createPile, so that each pile has a different array
   get hasCards() { return this.cards.length != 0; },
+  get numCards() { return this.cards.length; },
 
   // lots of code used firstChild/lastChild -- these are for compatibility.
   // may be removed, long term

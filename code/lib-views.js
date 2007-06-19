@@ -61,14 +61,42 @@ const _View = {
     this.update();
   },
 
-  drawHintHighlight: function(card) {
-    const rect = this._getHighlightBounds(card);
-    this._context.fillStyle = "rgba(169,169,169, 0.3)"; // darkgrey
+  highlightHintFrom: function(card) {
+    // for the destination piles to use
+    this.drawIntoFloatingPile(card);
+    // shade the cards to be moved
+    const bounds = card && this._getHighlightBounds(card.index, this.pile.numCards);
+    const rect = bounds || { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
+    this._context.fillStyle = "darkgrey";
+    this._context.globalAlpha = 0.3;
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   },
 
-  // Get bounding-box of the card (or the pile base if null) in <canvas>-pixels
-  _getHighlightBounds: function(card) {
+  highlightHintTo: function() {
+    const numCards = this.pile.numCards;
+    // area covered by existing cards
+    const rect0 = this._getHighlightBounds(0, numCards);
+    const rect = this._getHighlightBounds(numCards, numCards + 1);
+    const overlapwidth = rect0.x + rect0.w - rect.x;
+    const overlapheight = rect0.y + rect0.h - rect.y;
+    // Obscure the cards beneath a bit, since black stuff shows through a lot.
+    // The ?1:2 stuff is to ensure the final card border in a fan is also dimmed
+    const dim_h = overlapheight - (rect.y ? 1 : 2);
+    const dim_w = overlapwidth  - (rect.x ? 1 : 2);
+    this._context.globalAlpha = 0.9;
+    this._context.fillStyle = "white";
+    this._context.fillRect(rect.x + 1, rect.y + 1, dim_w, dim_h);
+    // Draw the cards
+    this._context.globalAlpha = 0.4;
+    this._context.drawImage(gFloatingPile.context.canvas, rect.x, rect.y);
+//     this._context.globalAlpha = 0.3;
+//     this._context.fillStyle = "white";
+//     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
+  },
+
+  // Get bounding-box in canvas-pixels of the card at index, assuming this pile
+  // contains numCards cards.
+  _getHighlightBounds: function(index, numCards) {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
@@ -120,9 +148,14 @@ const View = {
   },
 
   updateForAnimationOrDrag: function(card) {
-    gFloatingPile.showAt(this, 0, 0, gCardWidth, gCardHeight);
-    gFloatingPile.context.drawImage(card.image, 0, 0);
+    this.drawIntoFloatingPile(card);
+    gFloatingPile.showAt(this, 0, 0);
     this.update(card);
+  },
+
+  drawIntoFloatingPile: function(card) {
+    gFloatingPile.sizeCanvas(gCardWidth, gCardHeight);
+    gFloatingPile.context.drawImage(card.image, 0, 0);
   },
 
   getTargetCard: function(event) {
@@ -167,6 +200,12 @@ const _FanView = {
   },
 
   updateForAnimationOrDrag: function(card) {
+    const first = this.drawIntoFloatingPile(card);
+    gFloatingPile.showAt(this, first * this._hOffset, first * this._vOffset);
+    this.update(card);
+  },
+
+  drawIntoFloatingPile: function(card) {
     const cs = this.pile.cards;
     const ixs = this.getVisibleCardIndexes(cs.length), inum = ixs.length;
     const first = ixs.indexOf(card.index);
@@ -174,16 +213,15 @@ const _FanView = {
     const numFloating = inum - first;
     const extras = numFloating - 1;
     const width = extras * h + gCardWidth, height = extras * v + gCardHeight;
-    gFloatingPile.showAt(this, first * h, first * v, width, height);
+    gFloatingPile.sizeCanvas(width, height);
     for(var i = 0, j = first; i < numFloating; ++i, ++j)
       gFloatingPile.context.drawImage(cs[ixs[j]].image, h * i, v * i);
-    this.update(card);
+    return first;
   },
 
-  _getHighlightBounds: function(card) {
-    if(!card) return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
-    const ixs = this.getVisibleCardIndexes(this.pile.cards.length);
-    const vIx = ixs.indexOf(card.index);
+  _getHighlightBounds: function(index, numCards) {
+    const ixs = this.getVisibleCardIndexes(numCards);
+    const vIx = ixs.indexOf(index);
     const num = ixs.pop() - vIx; // num cards to be highlighted
     const h = this._hOffset, v = this._vOffset;
     return { x: h * vIx, y: v * vIx, w: h * num + gCardWidth, h: v * num + gCardHeight };

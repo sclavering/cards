@@ -74,24 +74,23 @@ const _View = {
 
   highlightHintTo: function() {
     const numCards = this.pile.numCards;
-    // area covered by existing cards
-    const rect0 = this._getHighlightBounds(0, numCards);
     const rect = this._getHighlightBounds(numCards, numCards + 1);
-    const overlapwidth = rect0.x + rect0.w - rect.x;
-    const overlapheight = rect0.y + rect0.h - rect.y;
     // Obscure the cards beneath a bit, since black stuff shows through a lot.
-    // The ?1:2 stuff is to ensure the final card border in a fan is also dimmed
-    const dim_h = overlapheight - (rect.y ? 1 : 2);
-    const dim_w = overlapwidth  - (rect.x ? 1 : 2);
-    this._context.globalAlpha = 0.9;
-    this._context.fillStyle = "white";
-    this._context.fillRect(rect.x + 1, rect.y + 1, dim_w, dim_h);
+    if(numCards) {
+      // area covered by existing cards
+      const rect0 = this._getHighlightBounds(0, numCards);
+      const overlapwidth = rect0.x + rect0.w - rect.x;
+      const overlapheight = rect0.y + rect0.h - rect.y;
+      // The ?1:2 stuff hides the final card's final (bottom/right) border
+      const dim_h = overlapheight - (rect.y ? 1 : 2);
+      const dim_w = overlapwidth  - (rect.x ? 1 : 2);
+      this._context.globalAlpha = 0.9;
+      this._context.fillStyle = "white";
+      this._context.fillRect(rect.x + 1, rect.y + 1, dim_w, dim_h);
+    }
     // Draw the cards
     this._context.globalAlpha = 0.4;
     this._context.drawImage(gFloatingPile.context.canvas, rect.x, rect.y);
-//     this._context.globalAlpha = 0.3;
-//     this._context.fillStyle = "white";
-//     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   },
 
   // Get bounding-box in canvas-pixels of the card at index, assuming this pile

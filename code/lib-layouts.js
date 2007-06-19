@@ -134,6 +134,7 @@ const Layout = {
     const self = Game.layout;
     const card = self._eventTargetCard = self._getTargetCard(e);
     if(!card || !card.pile.mayTakeCard(card)) return;
+    gHintHighlighter.clear();
     if(interruptAction) interrupt();
     self._ex0 = e.pageX;
     self._ey0 = e.pageY;

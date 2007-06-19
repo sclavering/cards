@@ -388,7 +388,7 @@ const BaseCardGame = {
   // === Hints ============================================
   // Games should override getHints(); the implementation should call addHint[s]() repeatedly.
   hintSources: [],
-  hintDestinations: [],
+  hintDestinations: [], // destination *array* (of Piles) per hintSources element
   hintsReady: false, // means hints have been calculated, though there may not be any.
   hintNum: 0,
 
@@ -400,16 +400,11 @@ const BaseCardGame = {
       this.getHints();
       this.hintsReady = true;
     }
-    this.showHint();
-  },
 
-  showHint: function() {
     if(this.hintSources.length == 0) return;
-    var src = this.hintSources[this.hintNum];
-    var dest = this.hintDestinations[this.hintNum];
-    gHintHighlighter.showHint(src,dest);
-    this.hintNum++;
-    if(this.hintNum==this.hintSources.length) this.hintNum = 0;
+    const num = this.hintNum++; // must *post*-increment
+    if(this.hintNum == this.hintSources.length) this.hintNum = 0;
+    gHintHighlighter.showHints(this.hintSources[num], this.hintDestinations[num]);
   },
 
   // If left null the Hint toolbar button will be disabled.  Should be replaced with a zero-argument
@@ -420,15 +415,13 @@ const BaseCardGame = {
   addHint: function(source, dest) {
     if(!source || !dest) return;
     this.hintSources.push(source);
-    this.hintDestinations.push(dest);
+    this.hintDestinations.push([dest]);
   },
 
   // one source, many destinations
   addHints: function(source, dests) {
-    for(var i = 0; i != dests.length; i++) {
-      this.hintSources.push(source);
-      this.hintDestinations.push(dests[i]);
-    }
+    this.hintSources.push(source);
+    this.hintDestinations.push(dests);
   },
 
   addHintToFirstEmpty: function(card) {

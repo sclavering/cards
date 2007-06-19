@@ -190,20 +190,20 @@ const gFloatingPile = {
 
 const gHintHighlighter = {
   _timeout: null,
-  _views: [],
-  showHint: function(card, to) {
-    this._clear();
-    this._views = [card.pile.view, to.view];
+  _piles: [],
+  showHints: function(card, destinations) {
+    this.clear();
+    this._piles = Array.concat([card.pile], destinations);
     card.pile.view.highlightHintFrom(card);
-    to.view.highlightHintTo(card);
-    this._timeout = setTimeout(this._clear, 2500);
+    for each(var p in destinations) p.view.highlightHintTo();
+    this._timeout = setTimeout(this.clear, 2500);
   },
-  _clear: function() {
+  clear: function() {
     const self = gHintHighlighter;
     if(self._timeout === null) return;
     clearTimeout(self._timeout);
     self._timeout = null;
-    for each(var v in self._views) v.update();
+    for each(var p in self._piles) p.view.update();
   }
 };
 
@@ -346,6 +346,7 @@ function done(pileWhichHasHadCardsRemoved) {
 
 
 function interrupt() {
+  gHintHighlighter.clear();
   if(!interruptAction) return;
   const pile = interruptAction();
   interruptAction = null;

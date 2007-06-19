@@ -48,6 +48,13 @@ const _View = {
     throw "_View._update not overridden!";
   },
 
+  // Called when the user starts dragging 'card', or it's about to be moved
+  // elsewhere with animation. Should update the view to hide it and the cards
+  // after it, and draw them in gFloatingPile instead.
+  updateForAnimationOrDrag: function(card) {
+    throw "updateForAnimationOrDrag not implemented"
+  },
+
   // Attach this view to a Pile
   displayPile: function(pile) {
     this.pile = pile;
@@ -72,7 +79,7 @@ const _View = {
 
   // Return relative CSS-pixel coords for where an animated move should finish.
   getAnimationDestination: function() {
-    return this._getCoordsForIndex(this.pile.cards.length - 1); // xxx why -1 ?
+    return this._getCoordsForIndex(this.pile.cards.length);
   },
 
   _getCoordsForIndex: function(ix) {
@@ -110,6 +117,12 @@ const View = {
     const cs = this._cards, num = cs.length;
     if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
+  },
+
+  updateForAnimationOrDrag: function(card) {
+    gFloatingPile.showAt(this, 0, 0, gCardWidth, gCardHeight);
+    gFloatingPile.context.drawImage(card.image, 0, 0);
+    this.update(card);
   },
 
   getTargetCard: function(event) {
@@ -151,6 +164,20 @@ const _FanView = {
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
+  },
+
+  updateForAnimationOrDrag: function(card) {
+    const cs = this.pile.cards;
+    const ixs = this.getVisibleCardIndexes(cs.length), inum = ixs.length;
+    const first = ixs.indexOf(card.index);
+    const h = this._hOffset, v = this._vOffset;
+    const numFloating = inum - first;
+    const extras = numFloating - 1;
+    const width = extras * h + gCardWidth, height = extras * v + gCardHeight;
+    gFloatingPile.showAt(this, first * h, first * v, width, height);
+    for(var i = 0, j = first; i < numFloating; ++i, ++j)
+      gFloatingPile.context.drawImage(cs[ixs[j]].image, h * i, v * i);
+    this.update(card);
   },
 
   _getHighlightBounds: function(card) {

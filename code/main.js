@@ -52,8 +52,6 @@ var gGameStackLeft = 0;
 // <html:img>s for use by canvases.  Keys are typically of the form "S3"
 const images = {};
 
-// Actually just a View, not a Pile.  (Name predates MV-split.)
-var gFloatingPile = null; 
 var gFloatingPileNeedsHiding = false; // see done()
 
 const CI = Components.interfaces;
@@ -81,7 +79,7 @@ function init() {
   gGameStackTop = gGameStack.boxObject.y;
   gGameStackLeft = gGameStack.boxObject.x;
 
-  createFloatingPile();
+  gFloatingPile.init();
 
   // init the pref branch
   gPrefs = CC["@mozilla.org/preferences-service;1"]
@@ -131,10 +129,23 @@ function savePref(name, val) {
 
 
 
-const FloatingPile = {
-  pile: null, // will be a fake, because the view expects it
+// Not a Pile, nor a View.  Just a <html:canvas> really.
+const gFloatingPile = {
+  init: function() {
+    this.element = document.createElement("box");
+    this.hide();
+    gGameStack.appendChild(this.element);
+    const HTMLns = "http://www.w3.org/1999/xhtml";
+    const canvas = document.createElementNS(HTMLns, "canvas");
+    this.element.appendChild(canvas);
+    this.context = canvas.getContext("2d");
+  },
+
+  element: null,
+  context: null, // <canvas> 2d rendering context
   _left: 0,
   _top: 0,
+  get inUse() { return this._left > 0; },
 
   showForMove: function(card) {
     const cs = this.pile.cards;
@@ -144,25 +155,18 @@ const FloatingPile = {
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   hide: function() {
-    this.element.width = this.element.height = 0;
     this.moveTo(-1000, -1000);
     gFloatingPileNeedsHiding = false;
-    // do these really matter?
-    this.pile.cards = [];
-    this.update();
   },
 
-  // card is the lowest-index card to be shown
-  show: function(card) {
-    const p = card.pile, v = p.view;
-    const offsets = v.getAnimationOrigin(card);
-    const x = v.pixelLeft + offsets.x;
-    const y = v.pixelTop + offsets.y;
-    const cs = this.pile.cards = p.cards.slice(card.index);
-    this.update();
-    this.moveTo(x - gGameStackLeft, y - gGameStackTop);
-    // hide the cards in their real pile
-    p.view.update(card);
+  // Show offset (x,y) from top-left corner of View, with given dimensions.
+  showAt: function(view, x, y, w, h) {
+    this.context.canvas.height = 0;
+    this.element.width = this.context.canvas.width = w;
+    this.element.height = this.context.canvas.height = h;
+    const elX = view.pixelLeft - gGameStackLeft;
+    const elY = view.pixelTop - gGameStackTop;
+    this.moveTo(elX + x, elY + y);
   },
 
   moveBy: function(dx, dy) {
@@ -176,13 +180,6 @@ const FloatingPile = {
   }
 };
 
-function createFloatingPile() {
-  FloatingPile.__proto__ = FanDownView;
-  gFloatingPile = createPileView(FloatingPile);
-  gFloatingPile.pile = { __proto__: Pile, cards: [] };
-  gGameStack.appendChild(gFloatingPile.element);
-  gFloatingPile.hide();
-}
 
 
 const gHintHighlighter = {

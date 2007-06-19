@@ -4,12 +4,12 @@ const kAnimationDelay = 30;
 
 function moveCards(firstCard, target) {
   const card = firstCard, origin = card.pile;
-  gFloatingPile.showForMove(card);
+  if(!gFloatingPile.inUse) origin.view.updateForAnimationOrDrag(card);
+  const finalOffset = target.view.getAnimationDestination();
   target.addCards(card, true); // doesn't update view
 
   // final coords (relative to gGameStack)
   const tview = target.view;
-  const finalOffset = tview.getAnimationDestination();
   const tx = tview.pixelLeft - gGameStackLeft + finalOffset.x;
   const ty = tview.pixelTop - gGameStackTop + finalOffset.y;
   // change in coords

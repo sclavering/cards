@@ -146,7 +146,8 @@ const Layout = {
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    gFloatingPile.show(self._eventTargetCard);
+    const card = self._eventTargetCard;
+    card.pile.view.updateForAnimationOrDrag(card);
     self._tx = ex0 - gFloatingPile._left;
     self._ty = ey0 - gFloatingPile._top;
     gGameStack.onmousemove = self.mouseMoveInDrag;
@@ -166,8 +167,9 @@ const Layout = {
     const self = Game.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
-    const l = gFloatingPile.pixelLeft, r = gFloatingPile.pixelRight;
-    const t = gFloatingPile.pixelTop, b = gFloatingPile.pixelBottom;
+    const box = gFloatingPile.element.boxObject;
+    const l = box.x, r = box.x + box.width;
+    const t = box.y, b = box.y + box.height;
 
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;

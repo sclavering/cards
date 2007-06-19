@@ -146,9 +146,20 @@ const Layout = {
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    gFloatingPile.showForDragDrop(self._eventTargets[0], ex0, ey0);
+    gFloatingPile.show(self._eventTargets[0]);
+    self._tx = ex0 - gFloatingPile._left;
+    self._ty = ey0 - gFloatingPile._top;
+    gGameStack.onmousemove = self.mouseMoveInDrag;
     gGameStack.onmouseup = self.endDrag;
     gGameStack.oncontextmenu = null;
+  },
+
+  // (_tx, _ty) is the pixel coords of the mouse relative to gFloatingPile
+  _tx: 0,
+  _ty: 0,
+  mouseMoveInDrag: function(e) {
+    const self = Game.layout;
+    gFloatingPile.moveTo(e.pageX - self._tx, e.pageY - self._ty);
   },
 
   endDrag: function(e) {

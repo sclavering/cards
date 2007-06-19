@@ -138,16 +138,8 @@ const FloatingPile = {
 
   showForMove: function(card) {
     const cs = this.pile.cards;
-    if(cs.length && cs[0] == card) gGameStack.onmousemove = null;
-    else this._show(card);
-  },
-
-  // (ex, ey) are window-relative coords of mouse ptr at start of drag
-  showForDragDrop: function(card, ex, ey) {
-    this._show(card);
-    this._tx = ex - this._left// - gGameStackLeft;
-    this._ty = ey - this._top// - gGameStackTop;
-    gGameStack.onmousemove = this._move;
+    if(cs.length && cs[0] == card) return;
+    this.show(card);
   },
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
@@ -161,7 +153,7 @@ const FloatingPile = {
   },
 
   // card is the lowest-index card to be shown
-  _show: function(card) {
+  show: function(card) {
     const p = card.pile, v = p.view;
     const offsets = v.getAnimationOrigin(card);
     const x = v.pixelLeft + offsets.x;
@@ -171,12 +163,6 @@ const FloatingPile = {
     this.moveTo(x - gGameStackLeft, y - gGameStackTop);
     // hide the cards in their real pile
     p.view.update(card.index);
-  },
-
-  // A mousemove handler to be attached to gGameStack, *not* to the floating pile's view
-  _move: function(e) {
-    const self = gFloatingPile; // this==window
-    self.moveTo(e.pageX - self._tx, e.pageY - self._ty);
   },
 
   moveBy: function(dx, dy) {

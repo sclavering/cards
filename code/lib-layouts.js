@@ -284,6 +284,7 @@ const AcesUpLayout = {
 
 const CanfieldLayout = {
   __proto__: Layout,
+  f: CountedView,
   template: "h2[s w]2[f p*]1[f p*]1[f p*]1[f p*]2r2"
 };
 

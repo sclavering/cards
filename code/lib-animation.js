@@ -1,5 +1,21 @@
 var interruptAction = null; // null except during animation, when it's a function
 
+const animations = {
+  _timeouts: [],
+
+  schedule: function(delay, func, args) {
+    const stuff = Array.concat([func, delay], args || []);
+    this._timeouts.push(setTimeout.apply(window, stuff));
+  },
+
+  interrupt: function() {
+    for each(var t in this._timeouts) clearTimeout(t);
+    for each(var i in this._interrupts) i();
+    this._timeouts = [];
+  }
+};
+
+
 const kAnimationDelay = 30;
 
 function moveCards(firstCard, target) {
@@ -18,20 +34,9 @@ function moveCards(firstCard, target) {
 
   // Move 55px diagonally per step, adjusted to whatever value leads to a whole number of steps
   var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
-  if(steps == 0) {
-    gFloatingPileNeedsHiding = true;
-    target.view.update();
-    done(origin);
-    return;
-  }
+  const stepX = steps && dx / steps; // guard against steps == 0
+  const stepY = steps && dy / steps;
 
-  const stepX = dx / steps;
-  const stepY = dy / steps;
-  steps--; // so it's 0 when the move is complete
-
-  var interval = null;
-
-  // We want the cards to be displayed over their destination while the transfer happens.  Without
   // this function (called via a timer) that doesn't happen.
   function animDone() {
     gFloatingPileNeedsHiding = true;
@@ -39,29 +44,16 @@ function moveCards(firstCard, target) {
     done(origin);
   };
 
-  function step() {
-    if(steps) {
-      gFloatingPile.moveBy(stepX, stepY);
-      steps--;
-    } else {
-      clearInterval(interval);
-      gFloatingPile.moveTo(tx, ty);
-      const timeout = setTimeout(animDone, 0);
-      interruptAction = function() {
-        clearTimeout(timeout);
-        target.view.update();
-        gFloatingPileNeedsHiding = true;
-      };
-    }
-  };
+  // For 0 steps we still call animDone in a (0) timeout, for consistency
+  const finishtime = steps * kAnimationDelay;
+  for(var i = 1; i <= steps; ++i)
+    animations.schedule(i * kAnimationDelay, gFloatingPile.moveBy, [stepX, stepY]);
+  animations.schedule(finishtime, animDone, [origin]);
 
-  function interrupt() {
-    clearInterval(interval);
+  interruptAction = function() {
+    animations.interrupt();
     target.view.update();
     gFloatingPileNeedsHiding = true;
     return origin;
   };
-
-  interval = setInterval(step, kAnimationDelay);
-  interruptAction = interrupt;
-}
+};

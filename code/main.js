@@ -176,13 +176,14 @@ const gFloatingPile = {
   },
 
   moveBy: function(dx, dy) {
-    this.moveTo(this._left + dx, this._top + dy);
+    const self = gFloatingPile;
+    self.moveTo(self._left + dx, self._top + dy);
   },
 
   moveTo: function(x, y) {
-    this.element.left = this._left = x;
-    this.element.top = this._top = y;
-    dump("now at ("+this.element.left+","+this.element.top+")\n");
+    const self = gFloatingPile;
+    self.element.left = self._left = x;
+    self.element.top = self._top = y;
   }
 };
 

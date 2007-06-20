@@ -356,6 +356,7 @@ const DoubleKlondikeLayout = {
 
 const MazeLayout = {
   __proto__: Layout,
+  p: View,
   template: "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
       + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
 };
@@ -382,8 +383,7 @@ const PenguinLayout = {
 const PileOnLayout = {
   __proto__: Layout,
   p: PileOnView,
-  pilespacerClass: "pileon",
-  template: "v[3p1p1p1p3] [3p1p1p1p3] [3p1p1p1p3] [3p1p1p1#3]"
+  template: "h3[p p p p]1[p p p p]1[p p p p]1[p p p]3"
 };
 
 const PyramidLayout = {

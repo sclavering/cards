@@ -120,6 +120,8 @@ const _View = {
 
   initView: function() {
     const el = this.element = document.createElement("vbox");
+    if(this.fixedWidth) el.width = this.fixedWidth;
+    if(this.fixedHeight) el.height = this.fixedHeight;
     el.pileViewObj = this;
     el.className = this.className;
     const HTMLns = "http://www.w3.org/1999/xhtml";
@@ -175,22 +177,29 @@ function range(N) {
 
 const _FanView = {
   __proto__: _View,
+
+  // Controls the size of the <canvas>.  Set null to use all available space
+  fixedWidth: gCardWidth,
+  fixedHeight: gCardHeight,
+
   // Horizontal and vertical canvas-pixel offsets between cards
   _hOffset: 0,
   _vOffset: 0,
 
   _update: function() {
-    this._canvas.width = this.pixelWidth;
+    this._canvas.width = this.fixedWidth || this.pixelWidth;
     this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = this.pixelHeight;
+    this._canvas.height = this.fixedHeight || this.pixelHeight;
     const cs = this._cards, max = cs.length;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
-    this._updateOffsets(num - 1);
+    if(this._updateOffsets) this._updateOffsets(num - 1);
     const h = this._hOffset, v = this._vOffset;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
+
+  _updateOffsets: null,
 
   updateForAnimationOrDrag: function(card) {
     const first = this.drawIntoFloatingPile(card);
@@ -255,10 +264,21 @@ const _FanView = {
     const last = numVisible - 1;
     if(ix <= last) return ix;
     return pos < last * offset + cardsize ? last : -1;
-  },
+  }
+};
+
+// A fan that stretches in one dimension, and varies the card offset to make
+// all its cards always visible
+const _FlexFanView = {
+  __proto__: _FanView,
 
   _basicVOffset: 0,
   _basicHOffset: 0,
+
+  get pixelLeft() { return this.element.offsetLeft; },
+  get pixelTop() { return this.element.offsetTop; },
+  get pixelWidth() { return this.element.offsetWidth; },
+  get pixelHeight() { return this.element.offsetHeight; },
 
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
@@ -272,30 +292,37 @@ const _FanView = {
     }
     this._hOffset = h;
     this._vOffset = v;
+  },
+
+  initView: function() {
+    const HTMLns = "http://www.w3.org/1999/xhtml";
+    const el = document.createElementNS(HTMLns, "canvas");
+    this.element = this._canvas = el;
+    el.pileViewObj = this;
+    this._context = this._canvas.getContext("2d");
   }
 };
 
 const FanDownView = {
-  __proto__: _FanView,
+  __proto__: _FlexFanView,
+  fixedHeight: null,
   _basicVOffset: gVFanOffset
-}
-
-const FanRightView = {
-  __proto__: _FanView,
-  _basicHOffset: gHFanOffset
 };
 
-const PileOnView = {
-  __proto__: FanRightView,
-  className: "pileon pile"
+const FanRightView = {
+  __proto__: _FlexFanView,
+  fixedWidth: null,
+  _basicHOffset: gHFanOffset
 };
 
 // this really needs modifying to allow for more than 6 cards!
 const SlideView = {
   __proto__: _FanView,
   className: "pile slide",
-  _basicHOffset: gSlideOffset,
-  _basicVOffset: gSlideOffset,
+  _hOffset: gSlideOffset,
+  _vOffset: gSlideOffset,
+  fixedWidth: gCardWidth + gSlideExtraSpace,
+  fixedHeight: gCardHeight + gSlideExtraSpace,
   // Only used in mod3, where this simple version is adequate.
   getTargetCard: function(event) {
     return this.pile.lastCard;
@@ -315,27 +342,37 @@ const _Deal3WasteView = {
 
 const Deal3HWasteView = {
   __proto__: _Deal3WasteView,
-  className: "pile draw3h-waste",
-  _basicHOffset: gHFanOffset
+  fixedWidth: gCardWidth + 2 * gHFanOffset,
+  _hOffset: gHFanOffset
 };
 
 const Deal3VWasteView = {
   __proto__: _Deal3WasteView,
-  _basicVOffset: gVFanOffset
+  fixedHeight: gCardHeight + 2 * gVFanOffset,
+  _vOffset: gVFanOffset
 };
+
 
 // top *two* cards visible, so you can tell if they have the same number
 const DoubleSolFoundationView = {
-  __proto__: FanRightView,
-  className: "pile hfan2",
+  __proto__: _FanView,
+  _hOffset: gHFanOffset,
+  fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
     if(num >= 2) return [num - 2, num - 1];
     return num ? [num - 1] : [];
   }
 };
 
+const PileOnView = {
+  __proto__: _FanView,
+  _hOffset: gHFanOffset,
+  fixedWidth: gCardWidth + 3 * gHFanOffset
+};
+
 const _SpiderFoundationView = {
-  __proto__: FanDownView,
+  __proto__: _FanView,
+  _vOffset: gVFanOffset,
   getVisibleCardIndexes: function(lastIx) {
     const ixs = [], cs = this.pile.cards;
     for(var i = 0; i < lastIx; i += 13) ixs.push(i);
@@ -345,18 +382,19 @@ const _SpiderFoundationView = {
 
 const Spider4FoundationView = {
   __proto__: _SpiderFoundationView,
-  className: "pile foundation4"
+  fixedHeight: gCardHeight + 3 * gVFanOffset
 };
 
 const Spider8FoundationView = {
   __proto__: _SpiderFoundationView,
-  className: "pile foundation8"
+  fixedHeight: gCardHeight + 7 * gVFanOffset
 };
 
 // bottom + top cards visible, so you can tell whether pile is being built up or down
 const UnionSquarePileView = {
-  __proto__: FanRightView,
-  className: "pile hfan2",
+  __proto__: _FanView,
+  _hOffset: gHFanOffset,
+  fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
     if(num > 1) return [0, num - 1];
     return num ? [0] : [];
@@ -365,8 +403,9 @@ const UnionSquarePileView = {
 
 // Built A->K, and then K->A on top of those. We show the top card of each 13.
 const UnionSquareFoundationView = {
-  __proto__: FanRightView,
-  className: "pile hfan2",
+  __proto__: _FanView,
+  _hOffset: gHFanOffset,
+  fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
     if(num > 13) return [12, num - 1];
     return num ? [num - 1] : [];

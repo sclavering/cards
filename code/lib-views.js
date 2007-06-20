@@ -175,13 +175,9 @@ function range(N) {
 
 const _FanView = {
   __proto__: _View,
-  // Pixel offsets between cards used during the last update() call.
-  // Needed by getTargetCard().
+  // Horizontal and vertical canvas-pixel offsets between cards
   _hOffset: 0,
   _vOffset: 0,
-  // For the default _getLayoutOffsets.  Views would override one or both.
-  _basicVOffset: 0,
-  _basicHOffset: 0,
 
   _update: function() {
     this._canvas.width = this.pixelWidth;
@@ -189,10 +185,8 @@ const _FanView = {
     this._canvas.height = this.pixelHeight;
     const cs = this._cards, max = cs.length;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
-    const off = this._getLayoutOffsets(this.pixelWidth, this.pixelHeight, num);
-    // use an int offset where possible to avoid fuzzy card borders
-    const h = this._hOffset = off[0] < 1 ? off[0] : Math.floor(off[0]);
-    const v = this._vOffset = off[1] < 1 ? off[1] : Math.floor(off[1]);
+    this._updateOffsets(num - 1);
+    const h = this._hOffset, v = this._vOffset;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
@@ -263,15 +257,21 @@ const _FanView = {
     return pos < last * offset + cardsize ? last : -1;
   },
 
-  // Given the pixel width and height of the pile view (usually set by either
-  // explicit CSS sizes or by using XUL flex) and the number of cards being
-  // shown in the pile, return a [horizontal, vertical] pair of pixel offsets.
-  _getLayoutOffsets: function(width, height, num) {
+  _basicVOffset: 0,
+  _basicHOffset: 0,
+
+  // change offsets to allow num+1 cards to fit in the space
+  _updateOffsets: function(num) {
     var h = this._basicHOffset, v = this._basicVOffset;
-    if(num <= 1) return [h, v]; // avoid NaN in the next bit
-    h = Math.min((width - gCardWidth) / (num - 1), h);
-    v = Math.min((height - gCardHeight) / (num - 1), v);
-    return [h, v];
+    if(num > 0) { // avoid divide by zero
+      h = Math.min((this.pixelWidth - gCardWidth) / num, h);
+      v = Math.min((this.pixelHeight - gCardHeight) / num, v);
+      // use integer offset where possible to avoid fuzzyness
+      if(h > 1) h = Math.floor(h);
+      if(v > 1) v = Math.floor(v)
+    }
+    this._hOffset = h;
+    this._vOffset = v;
   }
 };
 

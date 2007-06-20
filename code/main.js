@@ -145,17 +145,15 @@ const gFloatingPile = {
   context: null, // <canvas> 2d rendering context
   _left: 0,
   _top: 0,
-  get inUse() { return this._left > 0; },
 
-  showForMove: function(card) {
-    const cs = this.pile.cards;
-    if(cs.length && cs[0] == card) return;
-    this.show(card);
-  },
+  // Used to suppress repositioning/redrawing between mouseup and animation
+  // starting when dropping a card on a new valid pile.
+  lastCard: null,
 
   // putting the pile where it's not visible is faster than setting it's |hidden| property
   hide: function() {
     this.moveTo(-1000, -1000);
+    this.lastCard = null;
     gFloatingPileNeedsHiding = false;
   },
 
@@ -167,7 +165,8 @@ const gFloatingPile = {
 
   // Show offset (x,y) from top-left corner of View.
   // Must be preceded by call to sizeCanvas
-  showAt: function(view, x, y) {
+  showFor: function(view, card, x, y) {
+    this.lastCard = card;
     this.element.width = this.context.canvas.width;
     this.element.height = this.context.canvas.height;
     const elX = view.pixelLeft - gGameStackLeft;

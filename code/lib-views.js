@@ -150,7 +150,7 @@ const View = {
 
   updateForAnimationOrDrag: function(card) {
     this.drawIntoFloatingPile(card);
-    gFloatingPile.showAt(this, 0, 0);
+    gFloatingPile.showFor(this, card, 0, 0);
     this.update(card);
   },
 
@@ -203,7 +203,7 @@ const _FanView = {
 
   updateForAnimationOrDrag: function(card) {
     const first = this.drawIntoFloatingPile(card);
-    gFloatingPile.showAt(this, first * this._hOffset, first * this._vOffset);
+    gFloatingPile.showFor(this, card, first * this._hOffset, first * this._vOffset);
     this.update(card);
   },
 

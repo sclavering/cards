@@ -6,7 +6,8 @@ function createPileView(viewType) {
 
 var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
-var gSlideOffset = 2; // num pixels between top+left edges of two cards in a slide
+var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
+var gHSlideOffset = 2;
 var gCardHeight = 96;
 var gCardWidth = 71;
 var gSlideExtraSpace = 10;
@@ -287,8 +288,8 @@ const _FlexFanView = {
       h = Math.min((this.pixelWidth - gCardWidth) / num, h);
       v = Math.min((this.pixelHeight - gCardHeight) / num, v);
       // use integer offset where possible to avoid fuzzyness
-      if(h > 1) h = Math.floor(h);
-      if(v > 1) v = Math.floor(v)
+      if(h > 2) h = Math.floor(h);
+      if(v > 2) v = Math.floor(v);
     }
     this._hOffset = h;
     this._vOffset = v;
@@ -315,15 +316,12 @@ const FanRightView = {
   _basicHOffset: gHFanOffset
 };
 
-// this really needs modifying to allow for more than 6 cards!
-const SlideView = {
-  __proto__: _FanView,
+const _SlideView = {
+  __proto__: _FlexFanView,
   className: "pile slide",
-  _hOffset: gSlideOffset,
-  _vOffset: gSlideOffset,
-  fixedWidth: gCardWidth + gSlideExtraSpace,
-  fixedHeight: gCardHeight + gSlideExtraSpace,
-  // Only used in mod3, where this simple version is adequate.
+  _basicHOffset: gHSlideOffset,
+  _basicVOffset: gVSlideOffset,
+  // Adequate in all the games it's used in
   getTargetCard: function(event) {
     return this.pile.lastCard;
   }
@@ -362,6 +360,18 @@ const DoubleSolFoundationView = {
     if(num >= 2) return [num - 2, num - 1];
     return num ? [num - 1] : [];
   }
+};
+
+const FoundationSlideView = {
+  __proto__: _SlideView,
+  fixedWidth: gCardWidth + 12 * gHSlideOffset,
+  fixedHeight: gCardHeight + 12 * gVSlideOffset
+};
+
+const Mod3SlideView = {
+  __proto__: _SlideView,
+  fixedWidth: gCardWidth + 3 * gHSlideOffset,
+  fixedHeight: gCardHeight + 3 * gVSlideOffset,
 };
 
 const PileOnView = {

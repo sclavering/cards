@@ -14,11 +14,6 @@ halfpilespacer {
   height: 96px;
 }
 
-.slide {
-  min-width: 81px;
-  min-height: 106px;
-}
-
 .draw3h-waste {
   min-width: 142px;
 }

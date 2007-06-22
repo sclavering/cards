@@ -363,7 +363,7 @@ const MazeLayout = {
 
 const Mod3Layout = {
   __proto__: Layout,
-  f: SlideView,
+  f: Mod3SlideView,
   template: "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1]"
       + " [*1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
 };
@@ -395,9 +395,10 @@ const PyramidLayout = {
 
 const RegimentLayout = {
   __proto__: Layout,
-  a: View, // ace/king foundations
-  k: View,
-  p: View,
+  a: FoundationSlideView, // ace/king foundations
+  k: FoundationSlideView,
+  p: FoundationSlideView,
+  r: FoundationSlideView,
   template: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]"
 };
 

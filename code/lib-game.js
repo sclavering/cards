@@ -582,15 +582,13 @@ const BaseCardGame = {
 
 function GameControllerObj(id, proto) {
   this.id = id;
-  proto.id = id; // cardslib.js still uses this
-  this.constructor = new Function(); // don't use function(){}, see bug 7976
-  this.constructor.prototype = proto;
+  proto.id = id; // main.js still uses this
+  this.instanceProto = proto;
   this.pastGames = [];
   this.futureGames = [];
 }
 GameControllerObj.prototype = {
-  proto: null,
-  constructor: null,
+  instanceProto: null,
   pastGames: [],
   havePastGames: false,
   currentGame: null,
@@ -614,7 +612,7 @@ GameControllerObj.prototype = {
       this.havePastGames = true;
     }
 
-    Game = this.currentGame = new this.constructor();
+    Game = this.currentGame = { __proto__: this.instanceProto };
     Game.begin(cards);
     const act = Game.autoplay();
     if(act) doo(act);

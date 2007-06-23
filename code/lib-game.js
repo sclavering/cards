@@ -280,7 +280,11 @@ const BaseCardGame = {
   canUndo: false,
   canRedo: false,
 
+  // set elsewhere. used to trigger revealing cards in .done
+  pileWhichLastHadCardRemoved: null,
+
   doo: function(action) {
+    this.pileWhichLastHadCardRemoved = null; // paranoia
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
     this.actionList[this.actionPtr++] = action;
     this.canUndo = true;
@@ -290,10 +294,11 @@ const BaseCardGame = {
   },
 
   // Called after a move completes (from global done() function)
-  //   pile - an optional <pile/> from which a card was removed
   //   wasInterrupted - indicates no animations should be started here
   // Returns a bool. indicating whether an animation was triggered.
-  done: function(pile, wasInterrupted) {
+  done: function(wasInterrupted) {
+    const pile = this.pileWhichLastHadCardRemoved;
+    if(!this.actionPtr) return false; // e.g. hint interrupted before any moves
     const act = this.actionList[this.actionPtr - 1];
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
@@ -405,7 +410,7 @@ const BaseCardGame = {
     if(this.hintSources.length == 0) return;
     const num = this.hintNum++; // must *post*-increment
     if(this.hintNum == this.hintSources.length) this.hintNum = 0;
-    gHintHighlighter.showHints(this.hintSources[num], this.hintDestinations[num]);
+    showHints(this.hintSources[num], this.hintDestinations[num]);
   },
 
   // can be overridden e.g. to show hints from foundations

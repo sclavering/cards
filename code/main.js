@@ -187,27 +187,6 @@ const gFloatingPile = {
 };
 
 
-
-const gHintHighlighter = {
-  _timeout: null,
-  _piles: [],
-  showHints: function(card, destinations) {
-    this.clear();
-    this._piles = Array.concat([card.pile], destinations);
-    card.pile.view.highlightHintFrom(card);
-    for each(var p in destinations) p.view.highlightHintTo();
-    this._timeout = setTimeout(this.clear, 2500);
-  },
-  clear: function() {
-    const self = gHintHighlighter;
-    if(self._timeout === null) return;
-    clearTimeout(self._timeout);
-    self._timeout = null;
-    for each(var p in self._piles) p.view.update();
-  }
-};
-
-
 function playGame(game) {
   if(GameController) GameController.switchFrom();
 
@@ -323,19 +302,14 @@ function doo(action) { // "do" is a reserved word
 
   // asynch. (i.e. animated) actions trigger autoplay themselves
   if(!action.synchronous) return;
-  const t = setTimeout(done, kAnimationDelay, null);
-  interruptAction = function() {
-    clearTimeout(t);
-    return null;
-  };
+  animations.schedule(done, kAnimationDelay);
 }
 
 
 // we don't want to enable the UI between an animated move and any autoplay it triggers
-function done(pileWhichHasHadCardsRemoved) {
-  interruptAction = null;
-  if(Game.done(pileWhichHasHadCardsRemoved, false)) return;
-  const act = Game.autoplay(pileWhichHasHadCardsRemoved);
+function done() {
+  if(Game.done(false)) return;
+  const act = Game.autoplay();
   if(act) {
     doo(act);
   } else {
@@ -346,11 +320,8 @@ function done(pileWhichHasHadCardsRemoved) {
 
 
 function interrupt() {
-  gHintHighlighter.clear();
-  if(!interruptAction) return;
-  const pile = interruptAction();
-  interruptAction = null;
-  Game.done(pile, true);
+  animations.interrupt()
+  Game.done(true);
   if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 

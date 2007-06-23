@@ -1,17 +1,23 @@
-var interruptAction = null; // null except during animation, when it's a function
-
 const animations = {
   _timeouts: [],
+  _interrupts: [],
 
-  schedule: function(delay, func, args) {
-    const stuff = Array.concat([func, delay], args || []);
-    this._timeouts.push(setTimeout.apply(window, stuff));
+  schedule: function() { // func, delay, func_arg_1, ...
+    const args = Array.slice(arguments, 0);
+    this._timeouts.push(setTimeout(args[0], args[1], args[2] || null, args[3] || null));
+  },
+
+  // pass (function, arg1, arg2, ...)
+  onInterruptRun: function() {
+    this._interrupts.push(Array.slice(arguments, 0));
   },
 
   interrupt: function() {
     for each(var t in this._timeouts) clearTimeout(t);
-    for each(var i in this._interrupts) i();
+    for each(var i in this._interrupts)
+      i[0].apply(window, i.slice(1));
     this._timeouts = [];
+    this._interrupts = [];
   }
 };
 
@@ -23,6 +29,7 @@ function moveCards(firstCard, target) {
   if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
   target.addCards(card, true); // doesn't update view
+  Game.pileWhichLastHadCardRemoved = origin;
 
   // final coords (relative to gGameStack)
   const tview = target.view;
@@ -41,19 +48,31 @@ function moveCards(firstCard, target) {
   function animDone() {
     gFloatingPileNeedsHiding = true;
     target.view.update();
-    done(origin);
+    done();
   };
 
   // For 0 steps we still call animDone in a (0) timeout, for consistency
-  const finishtime = steps * kAnimationDelay;
   for(var i = 1; i <= steps; ++i)
-    animations.schedule(i * kAnimationDelay, gFloatingPile.moveBy, [stepX, stepY]);
-  animations.schedule(finishtime, animDone, [origin]);
-
-  interruptAction = function() {
-    animations.interrupt();
+    animations.schedule(gFloatingPile.moveBy, i * kAnimationDelay, stepX, stepY);
+  animations.schedule(animDone, steps * kAnimationDelay);
+  animations.onInterruptRun(function() {
     target.view.update();
     gFloatingPileNeedsHiding = true;
-    return origin;
-  };
+  });
 };
+
+
+function showHints(card, destinations) {
+  const view = card.pile.view;
+  view.highlightHintFrom(card);
+  animations.schedule(showHints_highlightDestinations, 300, destinations);
+  animations.schedule(showHints_updateAll, 2500, destinations, view);
+  animations.onInterruptRun(showHints_updateAll, destinations, view);
+}
+function showHints_highlightDestinations(destinations) {
+  for each(var d in destinations) d.view.highlightHintTo();
+}
+function showHints_updateAll(destinations, sourceView) {
+  for each(var d in destinations) d.view.update();
+  if(sourceView) sourceView.update();
+}

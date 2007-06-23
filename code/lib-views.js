@@ -133,8 +133,6 @@ const _View = {
 
   initView: function() {
     const el = this.element = document.createElement("vbox");
-    if(this.fixedWidth) el.width = this.fixedWidth;
-    if(this.fixedHeight) el.height = this.fixedHeight;
     el.pileViewObj = this;
     el.className = this.className;
     const HTMLns = "http://www.w3.org/1999/xhtml";
@@ -332,6 +330,7 @@ const _SlideView = {
 
 const _Deal3WasteView = {
   __proto__: _FanView,
+  _counter: true,
 
   getVisibleCardIndexes: function(lastIx) {
     const first = this.pile.deal3t - this.pile.deal3v;

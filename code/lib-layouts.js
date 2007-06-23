@@ -367,13 +367,13 @@ const GypsyLayout = {
 
 const KlondikeLayout = {
   __proto__: Layout,
-  template: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  template: "v[2s1w3f1f1f1f2] [1p1p1p1p1p1p1p1]"
 };
 
 const KlondikeDraw3Layout = {
   __proto__: Layout,
   w: Deal3HWasteView,
-  template: "v[1s1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
+  template: "v[2s1w2f1f1f1f2] [1p1p1p1p1p1p1p1]"
 };
 
 const DoubleKlondikeLayout = {

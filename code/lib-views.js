@@ -258,7 +258,7 @@ const _FanView = {
     const ix = Math.floor(pos / offset);
     const last = numVisible - 1;
     if(ix <= last) return ix;
-    return pos < last * offset + cardsize ? last : -1;
+    return pos < numVisible * offset + cardsize ? last : -1;
   }
 };
 

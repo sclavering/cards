@@ -338,7 +338,6 @@ const FanLayout = {
   setFlexibleViewSizes: function(views, width, height) {
     // 4 is the num <spacer>s.  16 is 3 per pile view, and a space to the left
     const unitwidth = Math.floor((width - 4 * gSpacerSize) / 16);
-    dump("width: "+width+" unitwidth: "+unitwidth+" views\n");
     views[0].element.parentNode.parentNode.previousSibling.width = unitwidth;
     for each(var v in views) v.widthToUse = unitwidth * 3;
   }

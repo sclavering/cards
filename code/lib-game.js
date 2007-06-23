@@ -55,6 +55,7 @@ const BaseCardGame = {
     this.initialised = true;
     // replace strings with functions (see rules.js)
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
+    this.layout == { __proto__: this.layout };  // avoid weirdness if shared
     this.layout.init();
     this.initPilesToBuild();
     this.createPiles();

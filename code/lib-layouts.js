@@ -236,20 +236,22 @@ const Layout = {
   },
 
   onWindowResize: function(e) {
+    animations.interrupt();
     const self = Game.layout;
     const width = window.innerWidth
     const height = window.innerHeight - self._node.boxObject.y;
     self._node.width = width;
     self._node.height = height;
     const vs = self.viewsNeedingUpdateOnResize;
-    for each(var v in vs) {
+    self.setFlexibleViewSizes(vs, width, height);
+    for each(var v in vs) v.update();
+  },
+
+  setFlexibleViewSizes: function(views, width, height) {
+    for each(var v in views) {
       v.heightToUse = height - v.relativePixelTop;
       v.widthToUse = width - v.relativePixelLeft;
     }
-    animations.interrupt();
-//     for each(var v in self.viewsNeedingUpdateOnResize)
-//       v._canvas.width = v._canvas.height = 0;
-    for each(var v in vs) v.update();
   }
 };
 
@@ -331,13 +333,15 @@ const DoubleSolLayout = {
 const FanLayout = {
   __proto__: Layout,
   p: FanRightView,
-  // Using width=0 makes the columns change width less often (only when they
-  // must, rather than whenever the widest pile in the column changes). This is
-  // presumably because flex allocates *spare* space, or something, but who
-  // really knows with XUL?
-  // Tested on: ... rv:1.8.1.3) Gecko/20061201 Firefox/2.0.0.3 (Ubuntu-feisty)
-  template: "v[3f1f1f1f3] [ [{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p p]"
-      + "[{flex=1}{width=0}p p p p][{flex=1}{width=0}p p p][{flex=1}{width=0}p p p]]"
+  template: "v[3f1f1f1f3] [ [[p p p p p] [p p p p p] [p p p p p] [p p p]]]",
+  // No other layout has a grid of flexible views
+  setFlexibleViewSizes: function(views, width, height) {
+    // 4 is the num <spacer>s.  16 is 3 per pile view, and a space to the left
+    const unitwidth = Math.floor((width - 4 * gSpacerSize) / 16);
+    dump("width: "+width+" unitwidth: "+unitwidth+" views\n");
+    views[0].element.parentNode.parentNode.previousSibling.width = unitwidth;
+    for each(var v in views) v.widthToUse = unitwidth * 3;
+  }
 };
 
 const FortyThievesLayout = {

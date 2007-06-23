@@ -10,7 +10,7 @@ var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
 var gHSlideOffset = 2;
 var gCardHeight = 96;
 var gCardWidth = 71;
-var gSlideExtraSpace = 10;
+var gSpacerSize = 10;
 
 
 // This defines the interface expected of pile views, and also provides basic

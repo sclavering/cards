@@ -1,21 +1,10 @@
-.pile, pilespacer {
+canvas, pilespacer {
   min-width: 71px;
   min-height: 96px;
-}
-.pile {
-  background: url(images/pile.png) no-repeat;
 }
 halfpilespacer {
   min-width: 35px;
   min-height: 96px;
-}
-.pile > canvas {
-  width: 71px;
-  height: 96px;
-}
-
-.draw3h-waste {
-  min-width: 142px;
 }
 
 .pyramid > * { margin-bottom: -60px; }

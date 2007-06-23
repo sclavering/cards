@@ -34,8 +34,6 @@ const _View = {
   get relativePixelTop() { return this.pixelTop - Game.layout._node.boxObject.y; },
   get relativePixelLeft() { return this.pixelLeft; }, // pixelLeft minus zero
 
-  // override if desired
-  className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it
 
   // Redraw the pile.
@@ -48,6 +46,13 @@ const _View = {
   // cards, during animation or dragging).  num == cards.length
   _update: function(card, num) {
     throw "_View._update not overridden!";
+  },
+
+  _drawBackgroundForEmpty: function() {
+    this._context.strokeStyle = "white";
+    this._context.lineWidth = 2;
+    // note: strokeRect seems incapable of rounded corners
+    this._context.strokeRect(2, 2, this._canvas.width - 4, this._canvas.height - 4);
   },
 
   // Called when the user starts dragging 'card', or it's about to be moved
@@ -152,6 +157,7 @@ const View = {
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
     if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
+    else this._drawBackgroundForEmpty();
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
 
@@ -197,6 +203,7 @@ const _FanView = {
     const h = this._hOffset, v = this._vOffset;
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
+    if(!num) this._drawBackgroundForEmpty();
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
   },
 

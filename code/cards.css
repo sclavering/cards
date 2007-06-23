@@ -46,11 +46,5 @@ toolbarbutton { margin-left: 10px; }
   padding-top: 0.2em;
 }
 
-.card-highlight { background: darkgray; -moz-opacity: 0.3; }
-
-.pyramid .pile {
-  background-image: none;
-}
-
 /* for card <image>s */
 .hidden { display: none }

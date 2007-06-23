@@ -125,6 +125,7 @@ function savePref(name, val) {
 
 
 // Not a Pile, nor a View.  Just a <html:canvas> really.
+// Needs a <xul:box> so it can be positioned in the <xul:stack>
 const gFloatingPile = {
   init: function() {
     this.element = document.createElement("box");
@@ -158,14 +159,14 @@ const gFloatingPile = {
     this.context.canvas.height = height;
   },
 
-  // Show offset (x,y) from top-left corner of View.
-  // Must be preceded by call to sizeCanvas
-  showFor: function(view, card, x, y) {
+  // Show at (x, y).  Must be preceded by a call to sizeCanvas().
+  // 'card' has to be stored so that animations starting after a drag look right
+  showFor: function(card, x, y) {
     this.lastCard = card;
     // context widths already set appropriately in sizeCanvas
     this.element.width = this.context.canvas.width;
     this.element.height = this.context.canvas.height;
-    this.moveTo(view.relativePixelLeft + x, view.relativePixelTop + y);
+    this.moveTo(x, y);
   },
 
   moveBy: function(dx, dy) {

@@ -38,19 +38,15 @@ const _View = {
   className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it
 
-  // An array of Cards that are being displayed in the pile.
-  // Either ==.pile.cards, or a prefix of it during drags or animations.
-  // Note that some views will choose to show only a subset even of these.
-  _cards: null,
-
-  // Redraw the pile.  'card', if present, must be in the pile, and it and any
-  // cards on top of it will not be shown.
+  // Redraw the pile.
   update: function(card) {
     const cs = this.pile.cards;
-    this._cards = card ? cs.slice(0, card.index) : cs;
-    this._update();
+    this._update(cs, cs.length);
   },
-  _update: function() {
+
+  // Show the specified array of cards (which may be a prefix of the actual
+  // cards, during animation or dragging).  num == cards.length
+  _update: function(card, num) {
     throw "_View._update not overridden!";
   },
 
@@ -58,7 +54,11 @@ const _View = {
   // elsewhere with animation. Should update the view to hide it and the cards
   // after it, and draw them in gFloatingPile instead.
   updateForAnimationOrDrag: function(card) {
-    throw "updateForAnimationOrDrag not implemented"
+    const coords = this.drawIntoFloatingPile(card);
+    const vx = this.relativePixelLeft, vy = this.relativePixelTop;
+    gFloatingPile.showFor(card, vx + coords.x, vy + coords.y);
+    const cs = this.pile.cards.slice(0, card.index);
+    this._update(cs, cs.length);
   },
 
   // Attach this view to a Pile
@@ -147,24 +147,18 @@ const _View = {
 const View = {
   __proto__: _View,
 
-  _update: function() {
+  _update: function(cs, num) {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
-    const cs = this._cards, num = cs.length;
     if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
     if(this._counter) this._counter.setAttribute("value", this.pile.counter);
-  },
-
-  updateForAnimationOrDrag: function(card) {
-    this.drawIntoFloatingPile(card);
-    gFloatingPile.showFor(this, card, 0, 0);
-    this.update(card);
   },
 
   drawIntoFloatingPile: function(card) {
     gFloatingPile.sizeCanvas(gCardWidth, gCardHeight);
     gFloatingPile.context.drawImage(card.image, 0, 0);
+    return { x: 0, y: 0 };
   },
 
   getTargetCard: function(event) {
@@ -194,11 +188,10 @@ const _FanView = {
   _hOffset: 0,
   _vOffset: 0,
 
-  _update: function() {
+  _update: function(cs, max) {
     this._canvas.width = this.fixedWidth || this.widthToUse;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = this.fixedHeight || this.heightToUse;
-    const cs = this._cards, max = cs.length;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
     if(this._updateOffsets) this._updateOffsets(num - 1);
     const h = this._hOffset, v = this._vOffset;
@@ -208,12 +201,6 @@ const _FanView = {
   },
 
   _updateOffsets: null,
-
-  updateForAnimationOrDrag: function(card) {
-    const first = this.drawIntoFloatingPile(card);
-    gFloatingPile.showFor(this, card, first * this._hOffset, first * this._vOffset);
-    this.update(card);
-  },
 
   drawIntoFloatingPile: function(card) {
     const cs = this.pile.cards;
@@ -226,7 +213,7 @@ const _FanView = {
     gFloatingPile.sizeCanvas(width, height);
     for(var i = 0, j = first; i < numFloating; ++i, ++j)
       gFloatingPile.context.drawImage(cs[ixs[j]].image, h * i, v * i);
-    return first;
+    return { x: first * h, y: first * v };
   },
 
   _getHighlightBounds: function(index, numCards) {

@@ -700,6 +700,10 @@ const Mod3Foundation = {
     const last = this.lastCard;
     return last ? last.inPlace && (card.down==last || card.twin.down==last)
                 : !card.down && card.row==this.row;
+  },
+  getHintSources: function() {
+    const c = this.firstCard;
+    return c && !c.inPlace ? [c] : [];
   }
 };
 

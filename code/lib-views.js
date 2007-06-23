@@ -29,6 +29,11 @@ const _View = {
   get pixelRight() { return this.pixelLeft + this.pixelWidth; },
   get pixelBottom() { return this.pixelTop + this.pixelHeight; },
 
+  // The (x,y) coords in terms of gGameStack's positioning (which starts at the
+  // inside of its padding).
+  get relativePixelTop() { return this.pixelTop - Game.layout._node.boxObject.y; },
+  get relativePixelLeft() { return this.pixelLeft; }, // pixelLeft minus zero
+
   // override if desired
   className: "pile",
   _counter: null, // if set true, a <label> will be created and replace it

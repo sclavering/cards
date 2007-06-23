@@ -10,7 +10,12 @@ space { min-width: 10px; min-height: 10px; }
 
 label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwanted margins */
 
-#games { overflow: hidden; }
+#games {
+  /* avoid manually spacing on every game */
+  padding-top: 10px;
+  /* stops toolbar stretching right when cards are dragged beyond the window edge */
+  overflow: hidden;
+}
 
 #message {
   -moz-box-orient: vertical;
@@ -35,10 +40,6 @@ label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwa
 #score-panel { margin-right: 10px }
 toolbarbutton { margin-left: 10px; }
 #score-panel label { margin: 0 }
-
-.game {
-  padding-top: 10px;
-}
 
 .counter {
   text-align: center;

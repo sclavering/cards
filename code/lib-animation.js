@@ -33,8 +33,8 @@ function moveCards(firstCard, target) {
 
   // final coords (relative to gGameStack)
   const tview = target.view;
-  const tx = tview.pixelLeft - gGameStackLeft + finalOffset.x;
-  const ty = tview.pixelTop - gGameStackTop + finalOffset.y;
+  const tx = tview.pixelLeft + finalOffset.x;
+  const ty = tview.relativePixelTop + finalOffset.y;
   // change in coords
   const dx = tx - gFloatingPile._left;
   const dy = ty - gFloatingPile._top;

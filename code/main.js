@@ -46,8 +46,6 @@ var gGameMenuPopup = "menupopup-gametypes";
 var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
-var gGameStackTop = 0;    // ... and its coords
-var gGameStackLeft = 0;
 
 // <html:img>s for use by canvases.  Keys are typically of the form "S3"
 const images = {};
@@ -75,9 +73,6 @@ function init() {
   images.H14 = images.H1;
   images.D14 = images.D1;
   images.C14 = images.C1;
-
-  gGameStackTop = gGameStack.boxObject.y;
-  gGameStackLeft = gGameStack.boxObject.x;
 
   gFloatingPile.init();
 
@@ -167,11 +162,10 @@ const gFloatingPile = {
   // Must be preceded by call to sizeCanvas
   showFor: function(view, card, x, y) {
     this.lastCard = card;
+    // context widths already set appropriately in sizeCanvas
     this.element.width = this.context.canvas.width;
     this.element.height = this.context.canvas.height;
-    const elX = view.pixelLeft - gGameStackLeft;
-    const elY = view.pixelTop - gGameStackTop;
-    this.moveTo(elX + x, elY + y);
+    this.moveTo(view.relativePixelLeft + x, view.relativePixelTop + y);
   },
 
   moveBy: function(dx, dy) {

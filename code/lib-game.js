@@ -428,33 +428,19 @@ const BaseCardGame = {
           this.addHintsFor(source);
   },
 
-  // takes the card to suggest moving, and the destination to suggest moving to (generally a pile)
-  addHint: function(source, dest) {
-    if(!source || !dest) return;
-    this.hintSources.push(source);
-    this.hintDestinations.push([dest]);
-  },
-
-  // one source, many destinations
-  addHints: function(source, dests) {
-    this.hintSources.push(source);
-    this.hintDestinations.push(dests);
-  },
-
-  // many sources, one destination
-  addHints2: function(cards, dest) {
-    for(var i = 0; i != cards.length; i++) {
-      this.hintSources.push(cards[i]);
-      this.hintDestinations.push([dest]);
-    }
-  },
-
   addHintsFor: function(card) {
-    if(!card) return;
-    const src = card.pile;
-    const ps = Array.concat(this.piles, this.foundations);
-    const ds = [p for each(p in this.piles) if(p != src && p.mayAddCard(card))];
+    const ds = [];
+    for each(var p in this.piles)
+      // suggesting moves to empty piles is ugly/annoying/pointless
+      if(p.hasCards && p.mayAddCard(card)) ds.push(p);
+    for each(var f in this.foundations)
+      if(f.mayAddCard(card)) ds.push(f);
     if(ds.length) this.addHints(card, ds);
+  },
+
+  addHints: function(card, destinations) {
+    this.hintSources.push(card);
+    this.hintDestinations.push(destinations);
   },
 
 

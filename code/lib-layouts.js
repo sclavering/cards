@@ -17,17 +17,23 @@ const Layout = {
 
   views: [],
 
-  // the root XUL element for this layout
+  // The root XUL element for this layout.
+  // The size is explicitly set (in onWindowResize) to match the *visible part*
+  // of the parent <stack>, not the full area as expanded when cards are being
+  // dragged or animated beyond the bottom and/or right edges of the window.
   _node: null,
 
   show: function() {
     if(!this._node) throw "layout not init()'d";
     this._node.hidden = false;
     this._resetHandlers();
+    this.onWindowResize();
+    window.onresize = this.onWindowResize;
   },
 
   hide: function() {
     this._node.hidden = true;
+    window.onresize = null;
   },
 
   init: function() {
@@ -39,6 +45,9 @@ const Layout = {
     const container = this._node = document.createElement(containerIsVbox ? "vbox" : "hbox");
     container.className = "game";
     gGameStack.insertBefore(container, gGameStack.firstChild);
+    container.top = container.left = 0; // to make explicit sizing work
+    // Typically what we want
+    if(!containerIsVbox) container.align = "start";
 
     var box = container;
     var nextBoxVertical = !containerIsVbox;
@@ -55,6 +64,9 @@ const Layout = {
         case "<": // in current direction
           var old = box;
           old.appendChild(box = document.createElement(nextBoxVertical ? "hbox" : "vbox"));
+          // "stretch" is the default, and usually not what we want.
+          // Also, setting via CSS sometimes fails to have any effect!
+          box.align = "start";
           break;
       // finish a box
         case "]":
@@ -62,12 +74,6 @@ const Layout = {
           // fall through
         case ">":
           box = box.parentNode;
-          break;
-      // annotation for rows containing lots of fandown piles that need to be stretched
-        case "*":
-          var thing = box.lastChild || box;
-          thing.setAttribute("flex", "1");
-          thing.setAttribute("align", "stretch");
           break;
       // annotations: "{attrname=val}", applies to most-recent pile or box
         case "{":
@@ -113,6 +119,7 @@ const Layout = {
     }
     // sanity check
     if(box != container) throw "Layout._build: layout had unclosed box";
+    this.viewsNeedingUpdateOnResize = [v for each(v in this.views) if(v.needsUpdateOnResize)];
   },
 
 
@@ -226,11 +233,29 @@ const Layout = {
     if(!t || !t.pileViewObj) return null;
     t = t.pileViewObj;
     return t != gFloatingPile ? t.getTargetCard(e) : null;
+  },
+
+  onWindowResize: function(e) {
+    const self = Game.layout;
+    const width = window.innerWidth
+    const height = window.innerHeight - self._node.boxObject.y;
+    self._node.width = width;
+    self._node.height = height;
+    const vs = self.viewsNeedingUpdateOnResize;
+    for each(var v in vs) {
+      v.heightToUse = height - v.relativePixelTop;
+      v.widthToUse = width - v.relativePixelLeft;
+    }
+    animations.interrupt();
+//     for each(var v in self.viewsNeedingUpdateOnResize)
+//       v._canvas.width = v._canvas.height = 0;
+    for each(var v in vs) v.update();
   }
 };
 
 const _PyramidLayout = {
   __proto__: Layout,
+  p: View,
 
   _getTargetCard: function(e) {
     var t = e.target, parent = t.parentNode;
@@ -284,7 +309,7 @@ const AcesUpLayout = {
 const CanfieldLayout = {
   __proto__: Layout,
   f: CountedView,
-  template: "h2[s w]2[f p*]1[f p*]1[f p*]1[f p*]2r2"
+  template: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2"
 };
 
 const CanfieldDeal3Layout = {
@@ -300,7 +325,7 @@ const DemonLayout = {
 const DoubleSolLayout = {
   __proto__: Layout,
   f: DoubleSolFoundationView,
-  template: "v[1s1w4f1f1f1f1] [*1p1p1p1p1p1p1p1p1p1p1]"
+  template: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
 };
 
 const FanLayout = {
@@ -318,18 +343,18 @@ const FanLayout = {
 const FortyThievesLayout = {
   __proto__: Layout,
   w: FanRightView,
-  template: "v[2f1f1f1f1f1f1f1f2] [  s w*] [*2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[2f1f1f1f1f1f1f1f2] [  s w] [2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const FreeCellLayout = {
   __proto__: Layout,
-  template: "v[1c1c1c1c3f1f1f1f1] [*2p1p1p1p1p1p1p1p2]"
+  template: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]"
 };
 
 const GolfLayout = {
   __proto__: Layout,
   f: CountedView,
-  template: "v[3s2f3] [*2p1p1p1p1p1p1p2]"
+  template: "v[3s2f3] [2p1p1p1p1p1p1p2]"
 };
 
 const GypsyLayout = {
@@ -339,18 +364,18 @@ const GypsyLayout = {
 
 const KlondikeLayout = {
   __proto__: Layout,
-  template: "v[1s1w1#1f1f1f1f1] [*1p1p1p1p1p1p1p1]"
+  template: "v[1s1w1#1f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 
 const KlondikeDraw3Layout = {
   __proto__: Layout,
   w: Deal3HWasteView,
-  template: "v[1s1w2f1f1f1f1] [*1p1p1p1p1p1p1p1]"
+  template: "v[1s1w2f1f1f1f1] [1p1p1p1p1p1p1p1]"
 };
 
 const DoubleKlondikeLayout = {
   __proto__: Layout,
-  template: "v[1s1w4f1f1f1f1f1f1f1f1] [*1p1p1p1p1p1p1p1p1p1p1]"
+  template: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]"
 };
 
 const MazeLayout = {
@@ -364,7 +389,7 @@ const Mod3Layout = {
   __proto__: Layout,
   f: Mod3SlideView,
   template: "v[1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1] [1f1f1f1f1f1f1f1f1#1]"
-      + " [*1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
+      + " [1p 1p 1p 1p 1p 1p 1p 1p 1s1]"
 };
 
 const MontanaLayout = {
@@ -376,7 +401,7 @@ const MontanaLayout = {
 
 const PenguinLayout = {
   __proto__: Layout,
-  template: "h2[c p*]1[c p*]1[c p*]1[c p*]1[c p*]1[c p*]1[c p*]2[f f f f]2"
+  template: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2"
 };
 
 const PileOnLayout = {
@@ -408,7 +433,7 @@ const RussianLayout = {
 
 const SanibelLayout = {
   __proto__: Layout,
-  template: "v[1s1w3f1f1f1f1f1f1f1f1] [*2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[1s1w3f1f1f1f1f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const SimonLayout = {
@@ -432,7 +457,7 @@ const TriPeaksLayout = {
 
 const TowersLayout = {
   __proto__: Layout,
-  template: "v[1c1c1c1c5f1f1f1f1] [*2p1p1p1p1p1p1p1p1p1p2]"
+  template: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]"
 };
 
 const UnionSquareLayout = {

@@ -154,7 +154,7 @@
 
 <!-- Individual games' layouts are stored in a DSL in strings in their .js files -->
 
-<stack id="games" flex="1">
+<stack id="games">
   <vbox id="message" hidden="true">
     <vbox id="message-inner">
       <label id="message1"/>

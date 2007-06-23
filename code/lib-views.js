@@ -124,6 +124,8 @@ const _View = {
     throw "getTargetCard not implemented for a canvas-based view";
   },
 
+  needsUpdateOnResize: false,
+
   initView: function() {
     const el = this.element = document.createElement("vbox");
     if(this.fixedWidth) el.width = this.fixedWidth;
@@ -193,9 +195,9 @@ const _FanView = {
   _vOffset: 0,
 
   _update: function() {
-    this._canvas.width = this.fixedWidth || this.pixelWidth;
+    this._canvas.width = this.fixedWidth || this.widthToUse;
     this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = this.fixedHeight || this.pixelHeight;
+    this._canvas.height = this.fixedHeight || this.heightToUse;
     const cs = this._cards, max = cs.length;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
     if(this._updateOffsets) this._updateOffsets(num - 1);
@@ -299,6 +301,8 @@ const _FlexFanView = {
     this._hOffset = h;
     this._vOffset = v;
   },
+
+  needsUpdateOnResize: true,
 
   initView: function() {
     const HTMLns = "http://www.w3.org/1999/xhtml";

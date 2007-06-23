@@ -294,6 +294,12 @@ const _FlexFanView = {
     this._vOffset = v;
   },
 
+  _drawBackgroundForEmpty: function() {
+    this._context.strokeStyle = "white";
+    this._context.lineWidth = 2;
+    this._context.strokeRect(2, 2, gCardWidth - 4, gCardHeight - 4);
+  },
+
   needsUpdateOnResize: true,
 
   initView: function() {

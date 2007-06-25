@@ -11,22 +11,15 @@ Games.penguin = {
   },
 
   deal: function(cards) {
-    // first card's number will be used as "aces"
-    var beak = cards[51];
+    // "Aces" are cards with the first's number.  Other "aces" start on foundations
+    const beak = cards[51];
     this.foundationBaseIndexes = [this.cards.indexOf(beak)];
     renumberCards(this.cards, beak.displayNum);
-
-    // put other "aces" up
-    for(var i = 50, f = 0; f != 3; --i) {
-      var c = cards[i];
-      if(!c.isAce) continue;
-      cards.splice(i, 1);
-      c.faceUp = true;
-      this.foundations[f].addCardsFromArray([c]);
-      f++;
-    }
-
-    for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], cards, [0, 7]);
+    const aces = [c for each(c in cards) if(c.isAce)];
+    for(var i = 0; i != 3; ++i) this._dealSomeCards(this.foundations[i], aces, [0, 1]);
+    const others = [c for each(c in cards) if(!c.isAce)];
+    others.push(beak);
+    for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], others, [0, 7]);
   },
 
   getBestDestinationFor: "towers/penguin",

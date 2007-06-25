@@ -93,7 +93,7 @@
 <script src="game-maze.js"/>
 <script type="application/javascript;version=1.7" src="game-mod3.js"/>
 <script type="application/x-javascript;version=1.7" src="game-montana.js"/>
-<script src="game-penguin.js"/>
+<script type="application/javascript;version=1.7" src="game-penguin.js"/>
 <script src="game-pileon.js"/>
 <script src="game-pyramid.js"/>
 <script type="application/javascript;version=1.7" src="game-regiment.js"/>

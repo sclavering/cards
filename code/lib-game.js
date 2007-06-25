@@ -114,11 +114,11 @@ const BaseCardGame = {
     this.reserves = [p for each(p in all) if(p.isReserve)];
     this.foundations = [p for each(p in all) if(p.isFoundation)];
     for(i in this.foundations) this.foundations[i].index = i;
+    this.wastes = [p for each(p in all) if(p.isWaste)];
+    this.waste = this.wastes[0] || null;
+    this.foundation = this.foundations[0] || null
+    this.reserve = this.reserves[0] || null;
     this.stock = bytype.s ? bytype.s[0] : null;
-    this.wastes = bytype.w;
-    this.waste = bytype.w ? bytype.w[0] : null;
-    this.foundation = bytype.f ? bytype.f[0] : null;
-    this.reserve = bytype.r ? bytype.r[0] : null;
 
     this.loadPreferredFoundationSuits();
   },

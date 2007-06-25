@@ -28,43 +28,42 @@ const BaseCardGame = {
   _pilesToBuildLetters: [],
   _pilesToBuildClasses: [],
 
-  // === Start/Finish Playing =============================
-  // Games may override init(), and nothing else.
-  initialised: false,
+  // ======================================================
+  // The following is a mix of initialisation for the "class" (not that JS
+  // really has classes) and the instance games.  It's a legacy from when
+  // the two object were the same (don't ask).
 
-  // Games which need to do some additional initialisation should override this.
-  // It is called the first time the game is played.
+  // For games to override.  Called for each new instance
   init: function() {},
 
   show: function() {
     // some other game may have been using the layout, so need to reassociate piles+views
     const all = this.allpiles, num = all.length;
     for(var i = 0; i != num; ++i) all[i].view.displayPile(all[i]);
-
     this.layout.show();
     if(this.getHints) gCmdHint.removeAttribute("disabled");
     else gCmdHint.setAttribute("disabled","true");
     gScorePanel.hidden = !this.hasScoring;
+    gScoreDisplay.value = this.score;
   },
 
   hide: function() {
     this.layout.hide();
   },
 
-  initialise: function() {
+
+  classInit: function() {
+    this.classInit = null; // to avoid re-calling
     this.initialised = true;
     // replace strings with functions (see rules.js)
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
     this.layout == { __proto__: this.layout };  // avoid weirdness if shared
     this.layout.init();
-    this.initPilesToBuild();
-    this.createPiles();
-    this.init();
-    this.initCards();
+    this.classInitPilesToBuild();
   },
 
   // Parse the string representation to create an array of letters and of classes
-  initPilesToBuild: function() {
+  classInitPilesToBuild: function() {
     const map = this.pileTypes;
     for(var obj = this.__proto__; obj; obj = obj.__proto__) {
       if(!obj.pileTypes) continue;
@@ -152,9 +151,9 @@ const BaseCardGame = {
 
   // |cards| is only defined if we're trying to restart a game
   begin: function(cards) {
-    // most initialisation can be done once per game, rather than once per instance of the game.
-    const pro = this.__proto__;
-    if(!pro.initialised) pro.initialise();
+    this.createPiles();
+    this.init();
+    this.initCards();
 
     if(!cards) {
       cards = this.cards;
@@ -164,27 +163,6 @@ const BaseCardGame = {
     this.cardsAsDealt = cards.slice(0); // copy of array
 
     this.actionList = [];
-    this._begin(cards);
-  },
-
-  restore: function() {
-    this._begin(this.cardsAsDealt.slice(0)); // deal() destroys the array, so use a copy
-    const acts = this.actionList, numDone = this.actionPtr;
-    for(var i = 0; i != numDone; ++i) {
-      var d = acts[i];
-      if("redo" in d) d.redo();
-      else d.perform();
-      this.score += d.score;
-      var cs = d.revealedCards;
-      for(var j = 0; j != cs.length; ++j) cs[j].setFaceUp(true);
-    }
-
-    gScoreDisplay.value = this.score;
-  },
-
-  _begin: function(cards) {
-    const ps = this.allpiles, num = ps.length;
-    for(var i = 0; i != num; i++) ps[i].removeCardsAfter(0); // clear the view
     this.redealsRemaining = this.redeals;
     this.deal(cards);
     gScoreDisplay.value = this.score = this.initialScore;
@@ -598,6 +576,7 @@ GameControllerObj.prototype = {
       this.havePastGames = true;
     }
 
+    if(this.instanceProto.classInit) this.instanceProto.classInit();
     Game = this.currentGame = { __proto__: this.instanceProto };
     Game.begin(cards);
     const act = Game.autoplay();
@@ -610,7 +589,7 @@ GameControllerObj.prototype = {
     this.haveFutureGames = true;
     Game = this.currentGame = this.pastGames.pop();
     this.havePastGames = this.pastGames.length!=0;
-    Game.restore();
+    Game.show();
   },
 
   restoreFutureGame: function() {
@@ -619,7 +598,7 @@ GameControllerObj.prototype = {
     this.havePastGames = true;
     Game = this.currentGame = this.futureGames.pop();
     this.haveFutureGames = this.futureGames.length!=0;
-    Game.restore();
+    Game.show();
   },
 
   clearFutureGames: function() {

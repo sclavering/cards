@@ -1,9 +1,12 @@
 // base class for FreeCell, Seahaven Towers and Forty Thieves
-var FreeCellGame = {
+const FreeCellGame = {
   __proto__: BaseCardGame,
 
   // overridden to deal with FreeCellMover (and revealing cards is unnecessary)
-  done: function(pile, wasInterrupted) {
+  done: function(wasInterrupted) {
+    const pile = this.pileWhichLastHadCardRemoved;
+    if(!this.actionPtr) return false; // e.g. hint interrupted before any moves
+
     const act = this.actionList[this.actionPtr - 1];
     gScoreDisplay.value = this.score += act.score;
 

@@ -334,16 +334,14 @@ const BaseCardGame = {
 
   // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
   // This default version is for Klondike-like games, Spider-like games may need to override it.
-  sendToFoundations: function(card) {
+  getFoundationMoveFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
-    const f = this.getFoundationMoveFor(card);
+    const f = this.getFoundationDestinationFor(card);
     return f ? new Move(card, f) : null;
   },
 
-  // xxx much better versions of this should be possible in most games
-  getFoundationMoveFor: function(card) {
-    const fs = this.foundations, len = fs.length;
-    for(var i = 0, f = fs[0]; i != len; f = fs[++i]) if(f.mayAddCard(card)) return f;
+  getFoundationDestinationFor: function(card) {
+    for each(var f in this.foundations) if(f.mayAddCard(card)) return f;
     return null;
   },
 
@@ -435,7 +433,7 @@ const BaseCardGame = {
   // choice (e.g. placing identical suits side-by-side in Gypsy).
 
   // xxx maybe this should be merged in part with the autoplay stuff above, and
-  // sendToFoundations/getFoundationMoveFor in particular.
+  // getFoundationMoveFor/getFoundationDestinationFor in particular.
 
   // xxx in a sane world, we'd just set this based on the cards in use
   // Controls how many piles are tracked as being the preferred destination for

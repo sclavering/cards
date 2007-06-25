@@ -14,7 +14,7 @@ const GypsyBase = {
 
   getBestDestinationFor: "legal nonempty, or empty",
 
-  getFoundationMoveFor: function(card) {
+  getFoundationDestinationFor: function(card) {
     if(!card.isLast) return null;
     if(card.isAce) {
       var twinp = card.twin.pile;
@@ -35,7 +35,7 @@ const GypsyBase = {
     for(var i = 0; i != 8; i++) {
       var last = ps[i].lastCard;
       if(!last || last.number > nums[last.suit]) continue;
-      var act = this.sendToFoundations(last);
+      var act = this.getFoundationMoveFor(last);
       if(act) return act;
     }
     return null;

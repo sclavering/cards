@@ -216,7 +216,7 @@ const Layout = {
     const self = Game.layout;
     const card = self._getTargetCard(e);
     interrupt();
-    if(card) doo(Game.sendToFoundations(card));
+    if(card) doo(Game.getFoundationMoveFor(card));
     self._resetHandlers();
   },
 

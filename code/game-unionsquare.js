@@ -22,7 +22,7 @@ Games.unionsquare = {
     return empty;
   },
 
-  getFoundationMoveFor: function(card) {
+  getFoundationDestinationFor: function(card) {
     const twin = card.twin, twinp = twin.pile;
     if(twinp.isFoundation) {
       if(card.isKing) return twinp;

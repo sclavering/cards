@@ -2,44 +2,28 @@ Games.mod3 = {
   __proto__: BaseCardGame,
 
   layout: Mod3Layout,
-  pilesToBuild: "24f 8p s",
-  pileTypes: { s: StockDealToPiles, f: Mod3Foundation, p: AcesUpPile },
-  dealTemplate: "F 0,1; P 0,1",
+  pilesToBuild: "8f 8g 8h 8p s",
+  pileTypes: {
+    s: { __proto__: StockDealToPiles, isGood: false },
+    f: { __proto__: _Mod3Foundation, _baseNum: 2 },
+    g: { __proto__: _Mod3Foundation, _baseNum: 3 },
+    h: { __proto__: _Mod3Foundation, _baseNum: 4 },
+    p: { __proto__: AcesUpPile, isGood: false },
+  },
+  dealTemplate: "F 0,1; G 0,1; H 0,1; P 0,1",
   cards: null,
   get hintOriginPileCollections() {
     return [this.foundations, this.piles];
   },
 
   init: function() {
-    var css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
-
-    function inPlace() { return this.pile.isFoundation && !this.isFirst; };
-    function inPlace2() { return this.pile.row == this.row; }
-
-    this.bases = new Array(3);
-
-    for(var i = 0; i != 3; i++) {
-      var cs = css[i] = makeCards(css[i], null, 2);
-
-      for(var j = 0; j != 16; j++) {
-        var c = cs[j], c2 = cs[j+16];
-        c.row = c2.row = i;
-        c.__defineGetter__("inPlace", inPlace);
-        c2.__defineGetter__("inPlace", inPlace);
-      }
-
-      var bs = this.bases[i] = [cs[0], cs[4], cs[8], cs[12], cs[16], cs[20], cs[24], cs[28]];
-      for(j = 0; j != 8; j++) bs[j].__defineGetter__("inPlace", inPlace2);
-    }
-
-    this.cards = flattenOnce(css);
-
-    var fs = this.foundations, ps = this.piles;
-    var rs = this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16), ps];
-    for(i = 0; i != 4; i++)
-      for(j = 0; j != 8; j++)
-        rs[i][j].row = i;
-    this.stock.row = 4; // just so long as it's not 0, 1, or 2
+    const css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
+    const cards = [makeCards(css[i], null, 2) for(i in css)];
+    this.cards = flattenOnce(cards);
+    const baseIxs =[0, 4, 8, 12, 16, 20, 24, 28]
+    this.bases = [[cards[i][ix] for each(ix in baseIxs)] for(i in cards)];
+    const fs = this.foundations;
+    this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
   },
 
   // games that start with no cards in the correct place on the foundations are impossible
@@ -52,11 +36,12 @@ Games.mod3 = {
 
   getBestDestinationFor: function(card) {
     if(card.down) {
-      var d1 = card.down, d2 = card.twin.down;
-      if(d1.inPlace && d1.isLast) return d1.pile;
-      if(d2.inPlace && d2.isLast) return d2.pile;
+      var d1p = card.down.pile, d2p = card.twin.down.pile;
+      // won't return non-foundations, because you can only add there if empty
+      if(d1p.mayAddCard(card)) return d1p;
+      if(d2p.mayAddCard(card)) return d2p;
     } else {
-      var p = findEmpty(this.rows[card.row]);
+      var p = findEmpty(this.rows[card.number - 2]);
       if(p) return p;
     }
     var parent = card.pile;
@@ -64,21 +49,19 @@ Games.mod3 = {
   },
 
   autoplay: function() {
-    var rs = this.rows;
+    const rs = this.rows;
     for(var r = 0; r != 3; r++) {
       var shouldFillEmpty = true; // don't do so if any foudations have "junk" in them
-      var empty = null; // an empty <foundation>, if we find one
+      var empty = null; // an empty foundation, if we find one
       for(var c = 0; c != 8; c++) {
         var pile = rs[r][c], last = pile.lastCard;
         // we choose not to autoplay onto a card whose twin isn't in place
         if(last) {
-          if(!last.inPlace) { shouldFillEmpty = false; continue; }
-          if(!last.twin.inPlace) continue;
+          if(!last.pile.isGood) { shouldFillEmpty = false; continue; }
+          if(!last.twin.pile.isGood || !last.up) continue;
           var up1 = last.up, up2 = last.twin.up;
-          if(up1 && !up1.inPlace && up1.isLast && !up1.pile.isStock)
-            return new Move(up1, pile);
-          if(up2 && !up2.inPlace && up2.isLast && !up2.pile.isStock)
-            return new Move(up2, pile);
+          if(!up1.pile.isGood && up1.mayTake) return new Move(up1, pile);
+          if(!up2.pile.isGood && up2.mayTake) return new Move(up2, pile);
         } else if(shouldFillEmpty && !empty) {
           empty = pile;
         }
@@ -88,8 +71,7 @@ Games.mod3 = {
       var bs = this.bases[r];
       for(var i = 0; i != 8; i++) {
         var card = bs[i];
-        if(!card.pile.isStock && card.isLast && !card.inPlace)
-          return new Move(card, empty);
+        if(!card.pile.isGood && card.mayTake) return new Move(card, empty);
       }
     }
     return null;

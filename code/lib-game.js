@@ -201,7 +201,7 @@ const BaseCardGame = {
       var bit = bits[i];
       var ch = bit.charAt(0);
       var lch = ch.toLowerCase();
-      if("pfcrws".indexOf(lch) == -1)
+      if("pfghcrws".indexOf(lch) == -1)
         throw "BaseCardGame.deal: malformed dealTemplate: '" + ch + "' follows a '; '";
       var piles = this.pilesByType[lch];
       bit = bit.slice(2); // drop the leading "x "

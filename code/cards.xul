@@ -91,7 +91,7 @@
 <script src="game-gypsy.js"/>
 <script src="game-klondike.js"/>
 <script src="game-maze.js"/>
-<script src="game-mod3.js"/>
+<script type="application/javascript;version=1.7" src="game-mod3.js"/>
 <script type="application/x-javascript;version=1.7" src="game-montana.js"/>
 <script src="game-penguin.js"/>
 <script src="game-pileon.js"/>

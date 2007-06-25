@@ -693,17 +693,23 @@ const DoubleSolFoundation = {
   }
 };
 
-const Mod3Foundation = {
+const _Mod3Foundation = {
   __proto__: WorryingBackFoundation,
+  _baseNum: -1, // set elsewhere
+  // returns whether the cards in this foundation are appropriate for it
+  get isGood() {
+    const first = this.firstCard;
+    return first ? first.number == this._baseNum : false;
+  },
   mayAddCard: function(card) {
     if(card.pile == this) return false;
     const last = this.lastCard;
-    return last ? last.inPlace && (card.down==last || card.twin.down==last)
-                : !card.down && card.row==this.row;
+    if(!this.hasCards) return card.number == this._baseNum;
+    return this.isGood && (card.down==last || card.twin.down==last)
   },
   getHintSources: function() {
     const c = this.firstCard;
-    return c && !c.inPlace ? [c] : [];
+    return c && !this.isGood ? [c] : [];
   }
 };
 

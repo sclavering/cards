@@ -22,12 +22,6 @@ const SpiderBase = {
     return null;
   },
 
-  sendToFoundations: function(card) {
-    const f = this.foundation;
-    return card.pile.mayTakeCard(card) && f.mayAddCard(card)
-        ? new Move(card, f) : null;
-  },
-
   isWon: "foundation holds all cards",
 
   hasScoring: true,

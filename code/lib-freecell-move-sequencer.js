@@ -2,22 +2,6 @@
 const FreeCellGame = {
   __proto__: BaseCardGame,
 
-  // overridden to deal with FreeCellMover (and revealing cards is unnecessary)
-  done: function(wasInterrupted) {
-    const pile = this.pileWhichLastHadCardRemoved;
-    if(!this.actionPtr) return false; // e.g. hint interrupted before any moves
-
-    const act = this.actionList[this.actionPtr - 1];
-    gScoreDisplay.value = this.score += act.score;
-
-    act.revealedCards = []; //BaseCardGame.undo/redo/restore all require this
-
-    if(!wasInterrupted) return FreeCellMover.step();
-
-    FreeCellMover.interrupt();
-    return false;
-  },
-
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
     var p = this.getBestDestinationFor(card);
@@ -93,26 +77,37 @@ FreeCellMoveAction.prototype = {
 
 
 
-// Carries out the sequences of single-card moves necessary to move a run of cards in games like FreeCell
+// Carries out the sequences of single-card moves necessary to move a run of
+// cards in games like FreeCell.  Ideally it would just schedule them all as
+// animations and only changes the Pile objects' state to reflect the final
+// position, but for historical reasons it still adjusts the piles for each
+// single-card move.
 const FreeCellMover = {
-  cards: [], // a queue of the remaining cards to move
-  tos: [],   // their destinations
+  _queue: [],  // queue of [card, pile] pairs
+
+  move: function(card, target, cells, spaces) {
+    this.queue(card, target, cells, spaces);
+    this.step();
+  },
 
   step: function() {
-    if(!this.cards.length) return false;
-    moveCards(this.cards.shift(), this.tos.shift());
+    const self = FreeCellMover;
+    if(!self._queue.length) return true;
+    const el = self._queue.shift();
+    // call done after the final step
+    const callback = self._queue.length ? self.step : done;
+    moveCards(el[0], el[1], callback);
     return true;
   },
 
   interrupt: function() {
-    const froms = this.cards, tos = this.tos, num = froms.length;
-    for(var i = 0; i != num; ++i) tos[i].addCards(froms[i]);
-    this.cards = [];
-    this.tos = [];
+    if(!this._queue.length) return;
+    for each(var el in this._queue) el[1].addCards(el[0]);
+    this._queue = [];
   },
 
   // construct the queue of single-card steps for a move and do the first step
-  move: function(card, target, cells, spaces) {
+  queue: function(card, target, cells, spaces) {
     const sibs = card.pile.cards;
     const group = cells.length + 1;
     const numSpaces = spaces.length;
@@ -128,13 +123,10 @@ const FreeCellMover = {
     } else { // we know that num<= group*((the sum of ints up to numSpaces)+1))
       this.queueComplex(sibs, fst, num, target, cells, spaces);
     }
-
-    this.step();
   },
 
   queueStep: function(card, to) {
-    this.cards.push(card);
-    this.tos.push(to);
+    this._queue.push([card, to]);
   },
 
   // In the following methods, |cards| a DOMNodeList consisting of the sibling nodes of the cards to

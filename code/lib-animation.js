@@ -18,13 +18,14 @@ const animations = {
       i[0].apply(window, i.slice(1));
     this._timeouts = [];
     this._interrupts = [];
+    FreeCellMover.interrupt();
   }
 };
 
 
 const kAnimationDelay = 30;
 
-function moveCards(firstCard, target) {
+function moveCards(firstCard, target, doneFunc) {
   const card = firstCard, origin = card.pile;
   if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
@@ -48,7 +49,7 @@ function moveCards(firstCard, target) {
   function animDone() {
     gFloatingPileNeedsHiding = true;
     target.view.update();
-    done();
+    doneFunc();
   };
 
   // For 0 steps we still call animDone in a (0) timeout, for consistency

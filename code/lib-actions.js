@@ -119,7 +119,7 @@ Move.prototype = {
   synchronous: false,
 
   perform: function() {
-    moveCards(this.card, this.destination);
+    moveCards(this.card, this.destination, done);
   },
   undo: function() {
     this.source.addCards(this.card);

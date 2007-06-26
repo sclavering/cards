@@ -120,6 +120,7 @@ Move.prototype = {
 
   perform: function() {
     moveCards(this.card, this.destination, done);
+    this.destination.addCards(this.card, true); // doesn't update view
   },
   undo: function() {
     this.source.addCards(this.card);

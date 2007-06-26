@@ -29,7 +29,6 @@ function moveCards(firstCard, target, doneFunc) {
   const card = firstCard, origin = card.pile;
   if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
-  target.addCards(card, true); // doesn't update view
   Game.pileWhichLastHadCardRemoved = origin;
 
   // final coords (relative to gGameStack)

@@ -163,7 +163,6 @@ const BaseCardGame = {
     this.cardsAsDealt = cards.slice(0); // copy of array
 
     this.actionList = [];
-    this.redealsRemaining = this.redeals;
     this.deal(cards);
     gScoreDisplay.value = this.score = this.initialScore;
   },
@@ -304,8 +303,6 @@ const BaseCardGame = {
     action.undo();
     const cs = action.revealedCards || [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(false);
-
-    if(this.redealsRemaining==1) gCmdRedeal.removeAttribute("disabled");
   },
 
   redo: function() {
@@ -322,8 +319,6 @@ const BaseCardGame = {
     else action.perform();
     const cs = action.revealedCards;
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
-
-    if(this.redealsRemaining==0) gCmdRedeal.setAttribute("disabled","true");
   },
 
   // called after each move (unless interrupted by user).
@@ -356,15 +351,6 @@ const BaseCardGame = {
   getBestDestinationFor: function(card) {
     return null;
   },
-
-
-
-  // === Redealing ========================================
-  // xxx relics of experiments with redeals.  only Montana has these now
-  redeals: 0,
-  redealsRemaining: 0,
-  canRedeal: false,
-  redeal: function() {},
 
 
 

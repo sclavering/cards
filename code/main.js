@@ -192,6 +192,7 @@ function playGame(game) {
   GameController.switchTo();
 
   updateUI();
+  gCmdRedeal.disabled = !Game.redeal;
 }
 
 
@@ -359,8 +360,6 @@ function updateUI() {
   else gCmdUndo.setAttribute("disabled","true");
   if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
   else gCmdRedo.setAttribute("disabled","true");
-  if(Game.canRedeal) gCmdRedeal.removeAttribute("disabled");
-  else gCmdRedeal.setAttribute("disabled","true");
 }
 
 

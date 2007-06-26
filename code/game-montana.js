@@ -1,4 +1,4 @@
-const Montana = {
+Games.montana = {
   __proto__: BaseCardGame,
 
   helpId: "montana",
@@ -6,9 +6,6 @@ const Montana = {
   pilesToBuild: "52p",
   pileTypes: { p: MontanaPile },
   dealTemplate: "P 0,1",
-
-  redeals: 2,
-  redealsRemaining: 2,
 
   init: function() {
     // the four nulls get shuffled with the cards, producing spaces in random places in the lay out
@@ -37,11 +34,7 @@ const Montana = {
   },
 
   redeal: function() {
-    doo(new MontanaRedealAction(this.isHardGame));
-  },
-
-  get canRedeal() {
-    return this.redealsRemaining != 0;
+    doo(new MontanaRedealAction());
   },
 
   isWon: function() {
@@ -58,21 +51,7 @@ const Montana = {
 };
 
 
-Games.montanaEasier = {
-  __proto__: Montana,
-  isHardGame: false
-};
-
-
-Games.montana = {
-  __proto__: Montana,
-  isHardGame: true
-};
-
-
-function MontanaRedealAction(hardGame) {
-  this.isHardGame = hardGame;
-}
+function MontanaRedealAction() {}
 MontanaRedealAction.prototype = {
   synchronous: true,
 
@@ -83,7 +62,6 @@ MontanaRedealAction.prototype = {
   perform: function() {
     var c, i, p, r, row;
     const rows = Game.rows;
-    const easy = this.isHardGame ? 0 : 1;
 
     // store old card locations
     const map = [[p.firstCard for each(p in row)] for each(row in rows)];
@@ -100,10 +78,8 @@ MontanaRedealAction.prototype = {
 
     // decide post-redeal layout
     var to_shuffle = [].concat.apply([], [map[i].slice(col_indexes[i]) for(i in map)]);
-    if(easy) to_shuffle = [c for each(c in to_shuffle) if(c)]; // filter nulls
     const shuffled = shuffle(to_shuffle);
-    const newmaptails = [shuffled.splice(0, 13 - col_indexes[i] + easy) for(i in map)];
-    if(easy) newmaptails.iter(function(tail) { tail.unshift(null); });
+    const newmaptails = [shuffled.splice(0, 13 - col_indexes[i]) for(i in map)];
     const postmap = [map[i].slice(0, col_indexes[i]).concat(newmaptails[i]) for(i in map)];
     this._post_map = [].concat.apply([], postmap);
 
@@ -117,12 +93,10 @@ MontanaRedealAction.prototype = {
   },
 
   undo: function() {
-    Game.redealsRemaining++;
     this._change(this._pre_map);
   },
 
   redo: function() {
-    Game.redealsRemaining--;
     this._change(this._post_map);
   }
 }

@@ -299,6 +299,7 @@ function doo(action) { // "do" is a reserved word
   // asynch. (i.e. animated) actions trigger autoplay themselves
   if(!action.synchronous) return;
   animations.schedule(done, kAnimationDelay);
+  animations.setTimeouts();
 }
 
 

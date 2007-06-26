@@ -1,10 +1,20 @@
 const animations = {
   _timeouts: [],
   _interrupts: [],
+  _items: [],
 
+  // the second arg is the delay *relative* to the previous scheduled timer
   schedule: function() { // func, delay, func_arg_1, ...
-    const args = Array.slice(arguments, 0);
-    this._timeouts.push(setTimeout(args[0], args[1], args[2] || null, args[3] || null));
+    this._items.push(Array.slice(arguments, 0));
+  },
+
+  setTimeouts: function() {
+    var time = 0;
+    for each(var item in this._items) {
+      time = item[1] = item[1] + time;
+      this._timeouts.push(setTimeout.apply(window, item));
+    }
+    this._items = [];
   },
 
   // pass (function, arg1, arg2, ...)
@@ -36,10 +46,10 @@ function moveCards(firstCard, target, doneFunc) {
   const tx = tview.pixelLeft + finalOffset.x;
   const ty = tview.relativePixelTop + finalOffset.y;
 
-  const steps = scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
-  // For 0 steps we still call animDone in a (0) timeout, for consistency
-  animations.schedule(moveCards_callback, steps * kAnimationDelay, target, doneFunc);
+  scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
+  animations.schedule(moveCards_callback, 0, target, doneFunc);
   animations.onInterruptRun(moveCards_callback, target, null);
+  animations.setTimeouts();
 };
 
 function moveCards_callback(target, extraFunc) {
@@ -53,19 +63,19 @@ function scheduleAnimatedMove(x0, y0, x1, y1) {
   const dx = x1 - x0, dy = y1 - y0;
   // Move 55px diagonally per step, adjusted to make all steps equal-sized.
   const steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
-  if(!steps) return steps;
+  if(!steps) return;
   const stepX = dx / steps, stepY = dy / steps;
   for(var i = 1; i <= steps; ++i)
-    animations.schedule(gFloatingPile.moveBy, i * kAnimationDelay, stepX, stepY);
-  return steps;
+    animations.schedule(gFloatingPile.moveBy, kAnimationDelay, stepX, stepY);
 }
 
 function showHints(card, destinations) {
   const view = card.pile.view;
   view.highlightHintFrom(card);
   animations.schedule(showHints_highlightDestinations, 300, destinations);
-  animations.schedule(showHints_updateAll, 2500, destinations, view);
+  animations.schedule(showHints_updateAll, 1700, destinations, view);
   animations.onInterruptRun(showHints_updateAll, destinations, view);
+  animations.setTimeouts();
 }
 function showHints_highlightDestinations(destinations) {
   for each(var d in destinations) d.view.highlightHintTo();

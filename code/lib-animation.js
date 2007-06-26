@@ -36,32 +36,30 @@ function moveCards(firstCard, target, doneFunc) {
   const tview = target.view;
   const tx = tview.pixelLeft + finalOffset.x;
   const ty = tview.relativePixelTop + finalOffset.y;
-  // change in coords
-  const dx = tx - gFloatingPile._left;
-  const dy = ty - gFloatingPile._top;
 
-  // Move 55px diagonally per step, adjusted to whatever value leads to a whole number of steps
-  var steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
-  const stepX = steps && dx / steps; // guard against steps == 0
-  const stepY = steps && dy / steps;
-
-  // this function (called via a timer) that doesn't happen.
-  function animDone() {
-    gFloatingPileNeedsHiding = true;
-    target.view.update();
-    doneFunc();
-  };
-
+  const steps = scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
   // For 0 steps we still call animDone in a (0) timeout, for consistency
-  for(var i = 1; i <= steps; ++i)
-    animations.schedule(gFloatingPile.moveBy, i * kAnimationDelay, stepX, stepY);
-  animations.schedule(animDone, steps * kAnimationDelay);
-  animations.onInterruptRun(function() {
-    target.view.update();
-    gFloatingPileNeedsHiding = true;
-  });
+  animations.schedule(moveCards_callback, steps * kAnimationDelay, target, doneFunc);
+  animations.onInterruptRun(moveCards_callback, target, null);
 };
 
+function moveCards_callback(target, extraFunc) {
+  target.view.update();
+  gFloatingPileNeedsHiding = true;
+  if(extraFunc) extraFunc();
+}
+
+// Schedule timeouts to slide the floating pile from (x0, y0) to (x1, y1)
+function scheduleAnimatedMove(x0, y0, x1, y1) {
+  const dx = x1 - x0, dy = y1 - y0;
+  // Move 55px diagonally per step, adjusted to make all steps equal-sized.
+  const steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
+  if(!steps) return steps;
+  const stepX = dx / steps, stepY = dy / steps;
+  for(var i = 1; i <= steps; ++i)
+    animations.schedule(gFloatingPile.moveBy, i * kAnimationDelay, stepX, stepY);
+  return steps;
+}
 
 function showHints(card, destinations) {
   const view = card.pile.view;

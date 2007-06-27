@@ -149,21 +149,27 @@ const BaseCardGame = {
   // === Start Game =======================================
   // Games should override deal(), and shuffleImpossible() if they need to
 
-  // |cards| is only defined if we're trying to restart a game
-  begin: function(cards) {
+  // 'order' is used to "restart" games - by starting a new one with the same
+  // shuffled cards.  If not null, it's a permutation of indices
+  begin: function(order) {
     this.createPiles();
     this.init();
     this.initCards();
 
-    if(!cards) {
-      cards = this.cards;
-      do cards = shuffle(cards);
-      while(this.shuffleImpossible(cards));
+    var cardsToDeal;
+    if(order) {
+      this.orderCardsDealt = order;
+      cardsToDeal = [this.cards[order[i]] for(i in this.cards)];
+    } else {
+      var ixs = [i for each(i in range(this.cards.length))];
+      do {
+        this.orderCardsDealt = order = shuffle(ixs);
+        cardsToDeal = [this.cards[order[i]] for(i in this.cards)];
+      } while(this.shuffleImpossible(cardsToDeal));
     }
-    this.cardsAsDealt = cards.slice(0); // copy of array
 
     this.actionList = [];
-    this.deal(cards);
+    this.deal(cardsToDeal);
     gScoreDisplay.value = this.score = this.initialScore;
   },
 
@@ -545,7 +551,7 @@ GameControllerObj.prototype = {
     this.currentGame.hide();
   },
 
-  newGame: function(cards) {
+  newGame: function(cardsOrder) {
     if(this.currentGame) {
       if(this.pastGames.length==2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
@@ -554,9 +560,13 @@ GameControllerObj.prototype = {
 
     if(this.instanceProto.classInit) this.instanceProto.classInit();
     Game = this.currentGame = { __proto__: this.instanceProto };
-    Game.begin(cards);
+    Game.begin(cardsOrder || null);
     const act = Game.autoplay();
     if(act) doo(act);
+  },
+
+  restart: function() {
+    this.newGame(this.currentGame.orderCardsDealt);
   },
 
   restorePastGame: function() {

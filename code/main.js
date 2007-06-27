@@ -269,9 +269,9 @@ function buildGamesMenu(items, selected) {
 }
 
 
-function newGame(cards) {
+function newGame() {
   interrupt();
-  GameController.newGame(cards);
+  GameController.newGame();
   updateUI();
 }
 
@@ -281,7 +281,7 @@ function restartGame() {
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
   if(!Game.canUndo) return;
-  newGame(Game.cardsAsDealt.slice(0));
+  GameController.restart();
   updateUI();
 }
 

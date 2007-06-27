@@ -258,9 +258,6 @@ const BaseCardGame = {
   canUndo: false,
   canRedo: false,
 
-  // set elsewhere. used to trigger revealing cards in .done
-  pileWhichLastHadCardRemoved: null,
-
   doo: function(action) {
     this.pileWhichLastHadCardRemoved = null; // paranoia
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
@@ -269,20 +266,15 @@ const BaseCardGame = {
     this.canRedo = false;
     action.score = this.getScoreFor(action);
     this.hintsReady = false;
-  },
 
-  // Called after a move completes (from global done() function)
-  //   wasInterrupted - indicates no animations should be started here
-  // Returns a bool. indicating whether an animation was triggered.
-  done: function(wasInterrupted) {
-    const pile = this.pileWhichLastHadCardRemoved;
-    if(!this.actionPtr) return false; // e.g. hint interrupted before any moves
-    const act = this.actionList[this.actionPtr - 1];
+    action.perform();
+
+    const act = action;
+    const pile = action.pileWhichMayNeedCardsRevealing || null;
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
     gScoreDisplay.value = this.score += act.score;
-    return false;
   },
 
   // overridden by TriPeaks

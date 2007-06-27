@@ -294,18 +294,15 @@ function doo(action) { // "do" is a reserved word
 
   if(GameController.haveFutureGames) GameController.clearFutureGames();
   Game.doo(action);
-  action.perform();
 
-  // asynch. (i.e. animated) actions trigger autoplay themselves
-  if(!action.synchronous) return;
-  animations.schedule(done, kAnimationDelay);
+  // Animated actions schedule done() approptiately themselves
+  if(action.synchronous) animations.schedule(done, kAnimationDelay);
+  // For both the above timer and any requested by an animated action
   animations.setTimeouts();
 }
 
 
-// we don't want to enable the UI between an animated move and any autoplay it triggers
 function done() {
-  if(Game.done(false)) return;
   const act = Game.autoplay();
   if(act) {
     doo(act);
@@ -318,7 +315,6 @@ function done() {
 
 function interrupt() {
   animations.interrupt()
-  Game.done(true);
   if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 

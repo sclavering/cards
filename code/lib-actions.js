@@ -1,14 +1,22 @@
 /*
-perform() would be do() but for that pesky language keyword
+This file holds "Action" objects, i.e. things that cane be done, undone, and
+redone (also called Commands, but that name has other meanings in XUL). They
+usually correspond to moving cards, removing a pair etc. (though not turning
+cards face up, as that is handled in Game.doo).  The required interface is:
 
-perform() can be either synchronous or asynchronous (i.e use animation or not), but the action obj.
-should have a "synchronous" member to say which.
+perform()
+  Carry out the action.  May start an animation, in which case the Action must
+  have a .synchronous field set to true.
+undo()
+redo()
+  Undo/redo the effects of the action.  Must *not* use animation.
+  If redo() is omitted, perform() is used instead, and must not use animation.
+pileWhichMayNeedCardsRevealing
+  An optional field holding a Pile.  Used to automatically turn up face-down
+  cards at the top of the Pile, in Game.doo()
 
-undo() should always be synchronous.
-
-redo() should be synchronous if present.  if not present perform() is used instead, and should be synchronous
-
-somePile.getActionForDrop might return an ErrorMsg instead of a real Action
+Pile.getActionForDrop() normally returns an Action, but in FreeCell and similar
+it may return an ErrorMsg instead.
 */
 
 function DealToPile(pile) {
@@ -117,6 +125,7 @@ function Move(card, destination) {
 }
 Move.prototype = {
   synchronous: false,
+  get pileWhichMayNeedCardsRevealing() { return this.source; },
 
   perform: function() {
     moveCards(this.card, this.destination, done);

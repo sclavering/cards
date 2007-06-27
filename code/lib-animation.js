@@ -39,7 +39,6 @@ function moveCards(firstCard, target, doneFunc) {
   const card = firstCard, origin = card.pile;
   if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
-  Game.pileWhichLastHadCardRemoved = origin;
 
   // final coords (relative to gGameStack)
   const tview = target.view;
@@ -49,7 +48,6 @@ function moveCards(firstCard, target, doneFunc) {
   scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
   animations.schedule(moveCards_callback, 0, target, doneFunc);
   animations.onInterruptRun(moveCards_callback, target, null);
-  animations.setTimeouts();
 };
 
 function moveCards_callback(target, extraFunc) {

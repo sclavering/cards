@@ -12,7 +12,7 @@
   persist="screenX screenY width height sizemode"
   >
 
-<notarealelement class="hidden" id="images">
+<images_container class="hidden" id="images">
 <html:img id="S1" src="images/S1.png"/>
 <html:img id="S2" src="images/S2.png"/>
 <html:img id="S3" src="images/S3.png"/>
@@ -66,8 +66,9 @@
 <html:img id="C12" src="images/C12.png"/>
 <html:img id="C13" src="images/C13.png"/>
 <html:img id="facedowncard" src="images/facedown.png"/>
-</notarealelement>
+</images_container>
 
+<scripts_container class="hidden">
 <script src="main.js"/>
 
 <script src="lib-cards.js"/>
@@ -103,6 +104,7 @@
 <script src="game-unionsquare.js"/>
 <script src="game-whitehead.js"/>
 <script src="game-yukon.js"/>
+</scripts_container>
 
 <commandset id="cards-commands">
   <command id="cmd:newgame" oncommand="newGame();"/>

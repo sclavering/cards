@@ -110,11 +110,6 @@ const _View = {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
-  // Return relative CSS-pixel coords to start animated move of 'card' from.
-  getAnimationOrigin: function(card) {
-    return this._getCoordsForIndex(card.index);
-  },
-
   // Return relative CSS-pixel coords for where an animated move should finish.
   getAnimationDestination: function() {
     return this._getCoordsForIndex(this.pile.cards.length);

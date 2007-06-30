@@ -16,6 +16,7 @@ Games.penguin = {
     this.foundationBaseIndexes = [this.cards.indexOf(beak)];
     renumberCards(this.cards, beak.displayNum);
     const aces = [c for each(c in cards) if(c.isAce)];
+    aces.pop(); // remove the beak, which would otherwise be dealt to a foundation
     for(var i = 0; i != 3; ++i) this._dealSomeCards(this.foundations[i], aces, [0, 1]);
     const others = [c for each(c in cards) if(!c.isAce)];
     others.push(beak);

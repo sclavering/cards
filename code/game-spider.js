@@ -123,6 +123,12 @@ const SimonBase = {
   kings: [12, 25, 38, 51],
 };
 
+Games.simplersimon = {
+  __proto__: SimonBase,
+  pileTypes: { p: BlackWidowPile },
+  cards: 1
+}
+
 Games.simon1 = {
   __proto__: SimonBase,
   cards: [[SPADE], 4]

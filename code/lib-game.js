@@ -145,6 +145,10 @@ const BaseCardGame = {
   // is used by, e.g.,  Fan ("P 0,3") to leave the final pile with just 1 card
   dealTemplate: null,
 
+  // Created by parsing dealTemplate, and used when actually dealing. A list of
+  // [pile, nums] arrays, where 'nums' is the format used by _dealSomeCards.
+  dealMap: null,
+
 
   // === Start Game =======================================
   // Games should override deal(), and shuffleImpossible() if they need to
@@ -169,43 +173,43 @@ const BaseCardGame = {
     }
 
     this.actionList = [];
+    if(this.dealTemplate) this._parseDealTemplate();
     this.deal(cardsToDeal);
     gScoreDisplay.value = this.score = this.initialScore;
   },
 
-  // overriding versions should deal out the provided shuffled cards for a new game.
-  // piles will already be empty.
-  deal: function(cards) {
-    const dt = this.dealTemplate;
-    if(!dt) throw "dealTemplate missing, and deal() not overridden";
-    
-    const bits = dt.split("; ");
-    for(var i = 0; i != bits.length; ++i) {
-      var bit = bits[i];
+  _parseDealTemplate: function(cards) {
+    const mapbatches = [];
+    const bits = this.dealTemplate.split("; ");
+    // get comma-separated digit-strings for each pile, in batches by pile type
+    for each(var bit in bits) {
       var ch = bit.charAt(0);
       var lch = ch.toLowerCase();
-      if("pfghcrws".indexOf(lch) == -1)
-        throw "BaseCardGame.deal: malformed dealTemplate: '" + ch + "' follows a '; '";
-      var piles = this.pilesByType[lch];
+      var piles = this.pilesByType[lch] || null;
+      if(!piles) throw "dealTemplate contains bad character: " + ch;
       bit = bit.slice(2); // drop the leading "x "
       if(ch == lch) { // separate nums for each pile
         var numss = bit.split(" ");
-        for(var j = 0; j != numss.length; ++j) this._dealSomeCards(piles[j], cards, numss[j]);
+        mapbatches.push([[piles[j], numss[j]] for(j in numss)]);
       } else {
-        for(j = 0; j != piles.length; ++j) this._dealSomeCards(piles[j], cards, bit);
+        mapbatches.push([[piles[j], bit] for(j in piles)]);
       }
     }
+    // flatten batches, and parse digit-strings into arrays of integers
+    const strmap = Array.concat.apply(null, mapbatches);
+    this.dealMap = [[p, [parseInt(i,10) for each(i in s.split(","))]] for each([p,s] in strmap)];
+  },
 
+  // overriding versions should deal out the provided shuffled cards for a new game.
+  deal: function(cards) {
+    if(!this.dealMap) throw "deal() not overridden, and dealMap not defined";
+    for each([pile, nums] in this.dealMap) this._dealSomeCards(pile, cards, nums);
     // deal any remaining cards to the stock (keeps the templates simple)
     if(this.stock) this._dealSomeCards(this.stock, cards, [cards.length]);
   },
 
-  // |nums| is an array of ints, or a comma-separated string of ints
+  // |nums| is an array of ints
   _dealSomeCards: function(pile, cards, nums) {
-    // without the function(){} round parseInt, all but the first int are parsed as NaN !!!
-    if(typeof nums == "string")
-      nums = nums.split(",").map(function(numStr) { return parseInt(numStr, 10); });
-
     const cs = [];
     for(var i = 0, faceDown = true; i != nums.length; ++i, faceDown = !faceDown) {
       var n = nums[i];

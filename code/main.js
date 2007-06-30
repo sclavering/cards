@@ -192,7 +192,7 @@ function playGame(game) {
   GameController.switchTo();
 
   updateUI();
-  gCmdRedeal.disabled = !Game.redeal;
+  gCmdRedeal.setAttribute("disabled", !Game.redeal);
 }
 
 

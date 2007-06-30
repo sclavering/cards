@@ -4,18 +4,12 @@ const FreeCellGame = {
 
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
-    var p = this.getBestDestinationFor(card);
-    if(!p) return null;
-    return card.isLast ? new Move(card, p)
-        : new FreeCellMoveAction(card, p, this.emptyCells, this.getEmptyPiles(p));
-  },
-
-  get emptyCells() {
-    var freecells = [];
-    const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++)
-      if(!cs[i].hasCards) freecells.push(cs[i]);
-    return freecells;
+    const dest = this.getBestDestinationFor(card);
+    if(!dest) return null;
+    if(card.isLast) return new Move(card, dest);
+    const spaces = [p for each(p in this.piles) if(p != dest && !p.hasCards)];
+    const cells = [c for each(c in this.cells) if(!c.hasCards)];
+    return new FreeCellMoveAction(card, dest, cells, spaces);
   },
 
   get numEmptyCells() {
@@ -23,19 +17,6 @@ const FreeCellGame = {
     const cs = this.cells, num = cs.length;
     for(var i = 0; i != num; i++) if(!cs[i].hasCards) cells++;
     return cells;
-  },
-
-  // The source and target of a move should not be used as spaces. However this is only called via
-  // getBestActionFor, where the source won't be empty since it still contains the cards, so only
-  // the target need be ignored.
-  getEmptyPiles: function(ignore1) {
-    var spaces = [];
-    const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      if(p != ignore1 && !p.hasCards) spaces.push(p);
-    }
-    return spaces;
   },
 
   // args. are piles which should not be counted even if empty

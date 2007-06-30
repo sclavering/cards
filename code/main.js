@@ -347,10 +347,8 @@ function redeal() {
 
 
 function updateUI() {
-  if(Game.canUndo || GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
-  else gCmdUndo.setAttribute("disabled","true");
-  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.removeAttribute("disabled");
-  else gCmdRedo.setAttribute("disabled","true");
+  gCmdUndo.setAttribute("disabled", !(Game.canUndo || GameController.havePastGames));
+  gCmdRedo.setAttribute("disabled", !(Game.canRedo || GameController.haveFutureGames));
 }
 
 

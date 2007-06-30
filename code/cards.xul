@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://cards/content/cards.css" type="text/css"?>
-<?xml-stylesheet href="chrome://cards/content/normal.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://cards/locale/cards.dtd">
 

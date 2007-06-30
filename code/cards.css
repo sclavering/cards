@@ -46,5 +46,17 @@ toolbarbutton { margin-left: 10px; }
   padding-top: 0.2em;
 }
 
+canvas, pilespacer {
+  min-width: 71px;
+  min-height: 96px;
+}
+halfpilespacer {
+  min-width: 35px;
+  min-height: 96px;
+}
+
+.pyramid > * { margin-bottom: -60px; }
+.pyramid { padding-bottom: 60px; }
+
 /* for card <image>s */
 .hidden { display: none }

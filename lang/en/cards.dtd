@@ -5,17 +5,10 @@
 <!-- label for item shown in Firefox Tools menu and Seamonkey Window menu -->
 <!ENTITY play-cards "Cards">
 
-
-<!-- for the "Select Game" dialogue (and related menuitem) -->
-<!ENTITY showallgames "All Games...">
-
-<!ENTITY selectgame "Select Game">
-<!ENTITY selectgame.checkboxes "Ticked games will appear in the Game menu.">
-
-
 <!-- toolbar buttons, and key associated with them -->
 <!ENTITY gamesMenu.label "Game">
 <!ENTITY gamesMenu.tooltip "Select which card game you wish to play">
+<!ENTITY show_all_games_marker "...">
 
 <!ENTITY newgame.label "New">
 <!ENTITY newgame.tooltip "Start a new game">

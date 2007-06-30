@@ -129,10 +129,13 @@
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="&gamesMenu.label;">
     <menupopup id="menupopup-gametypes"
+        onpopupshowing="onGamesMenuShowing(this);"
         oncommand="playGame(event.target.gameId);">
-      <menuitem id="gametypes-showall" label="&showallgames;"
-          oncommand="showGameSelector(); event.stopPropagation();"/>
-      <menuseparator/>
+      <!-- Semantically wrong, but gives nice event handling. Supressing hiding
+           of the menu when clicking a normal menuitem is v. difficult, too -->
+      <autorepeatbutton id="gametypes-showall" oncommand="showAllGames(this); event.stopPropagation(); return false">
+        <label value="&show_all_games_marker;"/>
+      </autorepeatbutton>
     </menupopup>
   </toolbarbutton>
   <toolbarbutton command="cmd:newgame" label="&newgame.label;" tooltiptext="&newgame.tooltip;"/>

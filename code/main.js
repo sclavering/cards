@@ -26,7 +26,6 @@ var Game = null;  // the current games
 var GameController = null;
 
 var Games = {}; // all the game controllers, indexed by game id
-var gGamesInMenu = []; // array of ids of games shown in Games menu
 
 // <command/> elements
 var gCmdNewGame = "cmd:newgame";
@@ -95,12 +94,8 @@ function init() {
   var game = loadPref("current-game");
   if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
 
-  // build the games menu
-  var gamesInMenu = loadPref("gamesInMenu")
-      || "freecell,fan,divorce,gypsy4,klondike1,mod3,penguin,pileon,russiansol"
-          + ",simon4,spider2,spider4,unionsquare,wasp,whitehead,yukon";
-  gamesInMenu = gamesInMenu.split(",");
-  buildGamesMenu(gamesInMenu, game);
+  buildGamesMenu(game);
+  migratePrefs();
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -122,6 +117,22 @@ function savePref(name, val) {
   gPrefs.setCharPref(name, val);
 }
 
+
+function migratePrefs() {
+  // The set of games shown in the menu used to be set manually by the user in
+  // a dialogue window using a list of checkboxes, and be stored in a pref. Now
+  // we implement an "intellimenu" -- games played recently show up. To control
+  // the games initally shown (or to migrate the pref) we set dates manually.
+  if(!loadPref("migrated_gamesInMenu")) {
+    savePref("migrated_gamesInMenu", "true");
+    const idstr = loadPref("gamesInMenu")
+      || "freecell,fan,divorce,gypsy4,klondike1,mod3,penguin,pileon,russiansol"
+          + ",simon4,spider2,spider4,unionsquare,wasp,whitehead,yukon";
+    const ids = idstr.split(",");
+    const valid = [id for each(id in ids) if(id in Games)];
+    for each(var id in valid) savePref(id + ".lastplayed", Date.now());
+  }
+}
 
 
 // Not a Pile, nor a View.  Just a <html:canvas> really.
@@ -185,6 +196,7 @@ const gFloatingPile = {
 function playGame(game) {
   if(GameController) GameController.switchFrom();
 
+  savePref(game + ".lastplayed", Date.now());
   savePref("current-game", game);
   document.title = gStrings["game."+game];
 
@@ -193,34 +205,6 @@ function playGame(game) {
 
   updateUI();
   gCmdRedeal.setAttribute("disabled", !Game.redeal);
-}
-
-
-function showGameSelector() {
-  const url = "chrome://cards/content/selectgame.xul";
-  const flags = "dialog,dependent,modal,chrome,resizable";
-
-  var game, name;
-  var names = [];
-  var lookup = {};
-
-  for(game in Games) {
-    names.push(name = gStrings["game."+game]);
-    lookup[name] = game;
-  }
-  names.sort();
-
-  var ids = new Array(names.length);
-  for(var i = 0; i != ids.length; ++i) ids[i] = lookup[names[i]];
-
-  openDialog(url, null, flags, ids, names, gGamesInMenu, Game.id);
-}
-
-
-function gameSelectorClosing(selected, ticked) {
-  savePref("gamesInMenu", ticked.join(","));
-  buildGamesMenu(ticked, selected);
-  playGame(selected);
 }
 
 
@@ -236,37 +220,47 @@ function help() {
 
 
 // |items| is an array of game ids; |selected| a game id for which the menuitem should be checked
-function buildGamesMenu(items, selected) {
+function buildGamesMenu(selected) {
   const menu = gGameMenuPopup;
-  gGamesInMenu = items;
+  const last = menu.lastChild; // the "..." item
 
-  // removing any existing items
-  var separator = menu.childNodes[1];
-  while(separator != menu.lastChild) menu.removeChild(menu.lastChild);
-
-  // decide on menuitem names and sort them
-  var names = [];
-  var lookup = [];
-  for(var i = 0; i != items.length; i++) {
-    var game = items[i];
-    var name = gStrings["game."+game];
-    names.push(name);
-    lookup[name] = game;
-  }
+  const ids = [id for(id in Games)];
+  const nameToId = {};
+  for each(var id in ids) nameToId[gStrings["game." + id]] = id;
+  const names = [name for(name in nameToId)];
   names.sort();
 
-  // build menu
-  for(i in names) {
-    name = names[i];
-    game = lookup[name];
+  for each(name in names) {
+    var game = nameToId[name];
     var mi = document.createElement("menuitem");
     mi.setAttribute("type", "radio");
-    mi.setAttribute("label", names[i]);
+    mi.setAttribute("label", name);
     if(game==selected) mi.setAttribute("checked", "true");
     mi.gameId = game;
-    menu.appendChild(mi);
+    menu.insertBefore(mi, last);
   }
+  // <menuitem>s other than the final expander
+  menu.gameItems = Array.slice(menu.childNodes, 0, menu.childNodes.length - 1);
 }
+
+function onGamesMenuShowing(popup) {
+  popup.className = "gamesmenu_unexpanded";
+  popup.lastChild.hidden = false;
+  const show = {};
+  const minDate = Date.now() - 1000 * 60 * 60 * 24 * 30; // one month ago, ish
+  for(var id in Games) {
+    var lastplayed = parseInt(loadPref(id + ".lastplayed"));
+    if(lastplayed > minDate) show[id] = true;
+  }
+  for each(var mi in popup.gameItems)
+    mi.className = show[mi.gameId] ? "" : "notrecentlyplayed";
+}
+
+function showAllGames(menuitem) {
+  menuitem.parentNode.className = "gamesmenu_expanded";
+  menuitem.hidden = true;
+}
+
 
 
 function newGame() {

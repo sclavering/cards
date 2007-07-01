@@ -103,14 +103,14 @@ const BaseCardGame = {
       if(bytype[letter]) bytype[letter].push(pile);
       else bytype[letter] = [pile];
     }
-    // xxx existince is rather icky, but yay list comprehensions
-    this.dragDropTargets = [f for each(f in this.allpiles) if(f.canDrop)];
 
     for each(var set in bytype)
       for(i = 1; i != set.length; ++i) set[i].prev = set[i-1], set[i-1].next = set[i];
+  },
 
-    var p;
-    // xxx would be nice to kill all of these
+  createPileArrays: function() {
+    const all = this.allpiles;
+    this.dragDropTargets = [f for each(f in all) if(f.canDrop)];
     this.piles = [p for each(p in all) if(p.isPile)];
     this.cells = [p for each(p in all) if(p.isCell)];
     this.reserves = [p for each(p in all) if(p.isReserve)];
@@ -120,9 +120,7 @@ const BaseCardGame = {
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
-    this.stock = bytype.s ? bytype.s[0] : null;
-
-    this.loadPreferredFoundationSuits();
+    this.stock = [p for each(p in all) if(p.isStock)][0] || null;
   },
 
   initCards: function() {
@@ -153,6 +151,8 @@ const BaseCardGame = {
   // shuffled cards.  If not null, it's a permutation of indices
   begin: function(order) {
     this.createPiles();
+    this.createPileArrays();
+    this.loadPreferredFoundationSuits();
     this.init();
     this.initCards();
 
@@ -426,7 +426,7 @@ const BaseCardGame = {
   },
 
   // Call at startup
-  loadPreferredFoundationSuits: function(card, foundation) {
+  loadPreferredFoundationSuits: function() {
     const byIx = this._preferredSuitForFoundationIndex = [null for(ix in this.foundations)];
     const bySuit = this._preferredFoundationIndexesBySuit = {
       S: [], H: [], D: [], C: [] // names must match SPADE/HEART/DIAMOND/CLUB consts

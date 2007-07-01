@@ -4,17 +4,18 @@ const CanfieldBase = {
   layout: CanfieldLayout,
   pilesToBuild: "s w f p f p f p f p r",
   pileTypes: { s: StockDealToWasteOrRefill, p: CanfieldPile },
-  _reserveCards: [12,1],
+  _reserveFaceDown: 12,
+  _reserveFaceUp: 1,
 
   init: function() {
     this.cards = makeDecksMod13(1);
   },
 
   deal: function(cards) {
-    this._dealSomeCards(this.foundations[0], cards, [0, 1]);
-    this._dealSomeCards(this.reserve, cards, this._reserveCards);
-    for(var i = 0; i != 4; i++) this._dealSomeCards(this.piles[i], cards, [0, 1]);
-    this._dealSomeCards(this.stock, cards, [cards.length]);
+    this._dealSomeCards(this.foundations[0], cards, 0, 1);
+    this._dealSomeCards(this.reserve, cards, this._reserveFaceDown, this._reserveFaceUp);
+    for(var i = 0; i != 4; i++) this._dealSomeCards(this.piles[i], cards, 0, 1);
+    this._dealSomeCards(this.stock, cards, cards.length, 0);
 
     const cs = this.cards;
     const num = this.foundations[0].firstCard.displayNum;
@@ -45,5 +46,6 @@ Games.canfield3 = {
 Games.demon = {
   __proto__: CanfieldBase,
   layout: DemonLayout,
-  _reserveCards: [0,13]
+  _reserveFaceDown: 0,
+  _reserveFaceUp: 13
 };

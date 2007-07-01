@@ -203,24 +203,17 @@ const BaseCardGame = {
   // overriding versions should deal out the provided shuffled cards for a new game.
   deal: function(cards) {
     if(!this.dealMap) throw "deal() not overridden, and dealMap not defined";
-    for each([pile, nums] in this.dealMap) this._dealSomeCards(pile, cards, nums);
+    for each([pile, [down, up]] in this.dealMap) this._dealSomeCards(pile, cards, down, up);
     // deal any remaining cards to the stock (keeps the templates simple)
     if(this.stock) this._dealSomeCards(this.stock, cards, [cards.length]);
   },
 
-  // |nums| is an array of ints
-  _dealSomeCards: function(pile, cards, nums) {
-    const cs = [];
-    for(var i = 0, faceDown = true; i != nums.length; ++i, faceDown = !faceDown) {
-      var n = nums[i];
-      for(var j = 0; j != n; ++j) {
-        var c = cards.pop();
-        if(!c) continue; // some games (e.g. Montana) have nulls in their cards array
-        c.faceUp = !faceDown;
-        cs.push(c);
-      }
-    }
-    pile.addCardsFromArray(cs);
+  _dealSomeCards: function(pile, cards, numFaceDown, numFaceUp) {
+    const down = cards.splice(cards.length - numFaceDown, numFaceDown);
+    const up = cards.splice(cards.length - numFaceUp, numFaceUp);
+    for each(var c in up) if(c) c.faceUp = true; // c may be null in Montana
+    down.reverse(); up.reverse(); // match behaviour of old pop()-based version
+    pile.addCardsFromArray(Array.concat(down, up));
   },
 
   // Cards will be shuffled repeatedly until this returns false.

@@ -22,10 +22,10 @@ Games.tripeaks = {
   },
 
   deal: function(cards) {
-    for(var i = 0; i != 18; i++) this._dealSomeCards(this.piles[i], cards, [1]);
-    for(i = 18; i != 28; i++) this._dealSomeCards(this.piles[i], cards, [0, 1]);
-    this._dealSomeCards(this.foundation, cards, [0, 1]);
-    this._dealSomeCards(this.stock, cards, [cards.length]);
+    for(var i = 0; i != 18; i++) this._dealSomeCards(this.piles[i], cards, 1, 0);
+    for(i = 18; i != 28; i++) this._dealSomeCards(this.piles[i], cards, 0, 1);
+    this._dealSomeCards(this.foundation, cards, 0, 1);
+    this._dealSomeCards(this.stock, cards, cards.length);
   },
 
   getBestActionFor: function(card) {

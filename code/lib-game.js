@@ -161,7 +161,7 @@ const BaseCardGame = {
       this.orderCardsDealt = order;
       cardsToDeal = [this.cards[order[i]] for(i in this.cards)];
     } else {
-      var ixs = [i for each(i in range(this.cards.length))];
+      var ixs = range(this.cards.length);
       do {
         this.orderCardsDealt = order = shuffle(ixs);
         cardsToDeal = [this.cards[order[i]] for(i in this.cards)];

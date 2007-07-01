@@ -172,10 +172,6 @@ const CountedView = {
 }
 
 
-function range(N) {
-  for(var i = 0; i < N; ++i) yield i;
-}
-
 const _FanView = {
   __proto__: _View,
 
@@ -226,9 +222,7 @@ const _FanView = {
 
   // This exists to allow games to show a subset of the cards in a pile.
   // 'ix' is like the 'max' of View.update
-  getVisibleCardIndexes: function(ix) {
-    return [i for(i in range(ix))];
-  },
+  getVisibleCardIndexes: range,
 
   _getCoordsForIndex: function(ix) {
     const ixs = this.getVisibleCardIndexes(ix + 1);
@@ -337,7 +331,7 @@ const _Deal3WasteView = {
     const first = this.pile.deal3t - this.pile.deal3v;
     if(!lastIx) return [];
     if(lastIx <= first) return [lastIx - 1]; // gone below the latest 3
-    return [first + i for(i in range(lastIx - first))];
+    return range2(first, lastIx);
   }
 };
 

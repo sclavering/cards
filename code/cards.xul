@@ -69,6 +69,7 @@
 </images_container>
 
 <scripts_container class="hidden">
+<script type="application/javascript;version=1.7" src="util.js"/>
 <script src="main.js"/>
 
 <script src="lib-cards.js"/>

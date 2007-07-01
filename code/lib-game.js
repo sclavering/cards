@@ -170,7 +170,7 @@ const BaseCardGame = {
 
     this.actionList = [];
     this.deal(cardsToDeal);
-    gScoreDisplay.value = this.score = this.initialScore;
+    gScoreDisplay.value = this.score = 0;
   },
 
   _parseDealMapStr: function() {
@@ -223,10 +223,6 @@ const BaseCardGame = {
 
   // === Scoring ==========================================
   // games may override getScoreFor (and hasScoring)
-
-  // score at the start of a game
-  // read after deal() (which is important if a game uses a getter function for this)
-  initialScore: 0,
 
   hasScoring: false,
 

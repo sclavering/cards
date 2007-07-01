@@ -202,7 +202,7 @@ const BaseCardGame = {
     const up = cards.splice(cards.length - numFaceUp, numFaceUp);
     for each(var c in up) if(c) c.faceUp = true; // c may be null in Montana
     down.reverse(); up.reverse(); // match behaviour of old pop()-based version
-    pile.addCardsFromArray(Array.concat(down, up));
+    pile.addCardsFromArray([x for each(x in Array.concat(down, up)) if(x)]);
   },
 
   // Cards will be shuffled repeatedly until this returns false.

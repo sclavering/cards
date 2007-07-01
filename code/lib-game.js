@@ -3,14 +3,14 @@ const BaseCardGame = {
   // by initialise() if it is a number (of decks to be created) or an array [[suits], repeat]
   cards: 1,
 
-  // these are all automatically set up
-  piles: [],       // array of tableau piles
-  foundations: [], // array of foundation piles
-  reserves: [],    // ...
+  // Piles in arrays by type, and the first piles of some types
+  piles: [],
+  foundations: [],
+  reserves: [],
   cells: [],
-  stock: null,     // the stock pile if the game has one, otherwise null
+  stock: null,
   waste: null,
-  foundation: null, // the last foundation created (usually used in games with just one)
+  foundation: null,
   reserve: null,
   dragDropTargets: null, // a list of piles on which cards can be dropped
 

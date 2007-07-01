@@ -60,6 +60,7 @@ const BaseCardGame = {
     this.layout == { __proto__: this.layout };  // avoid weirdness if shared
     this.layout.init();
     this.classInitPilesToBuild();
+    if(this.dealMapStr) this._parseDealMapStr();
   },
 
   // Parse the string representation to create an array of letters and of classes
@@ -74,10 +75,12 @@ const BaseCardGame = {
     const bits = this.pilesToBuild.split(" ");
     const letters = this._pilesToBuildLetters = [];
     const classes = this._pilesToBuildClasses = [];
+    const counts = this._pilesToBuildCounts = {}; // letter -> num
     for(var i = 0; i != bits.length; ++i) {
       var matches = bits[i].match(/(\d*)(\w)/);
       var num = parseInt(matches[1]) || 1; // ""->NaN.  (NaN || 1) == 1
       var letter = matches[2], clas = map[letter];
+      counts[letter] = (counts[letter] || 0) + num;
       for(var j = 0; j != num; ++j) classes.push(clas), letters.push(letter);
     }
   },
@@ -166,22 +169,20 @@ const BaseCardGame = {
     }
 
     this.actionList = [];
-    if(this.dealMapStr) this._parseDealMapStr(cardsToDeal.length);
     this.deal(cardsToDeal);
     gScoreDisplay.value = this.score = this.initialScore;
   },
 
-  _parseDealMapStr: function(numCards) {
+  _parseDealMapStr: function() {
     const map = this.dealMap = {};
     const pilespecs = this.dealMapStr.split(/ *; */);
     for each(var pilespec in pilespecs) {
       var bits = pilespec.split(/ +/);
       var ch = bits[0], lch = ch.toLowerCase();
       var nums = [parseInt(num, 10) for each(num in bits.slice(1))];
-      for each(var num in nums) numCards -= num;
-      var piles = this.pilesByType[lch] || null;
-      if(!piles) throw "dealTemplate contains bad character: " + ch;
-      map[lch] = ch != lch ? [nums for(i in range(piles.length))]
+      var numPiles = this._pilesToBuildCounts[lch] || 0;
+      if(!numPiles) throw "dealTemplate contains bad character: " + ch;
+      map[lch] = ch != lch ? [nums for(i in range(numPiles))]
           : [[nums[2 * i], nums[2 * i + 1]] for(i in range(nums.length / 2))];
     }
   },
@@ -191,7 +192,7 @@ const BaseCardGame = {
     if(!this.dealMap) throw "deal() not overridden, and dealMap not defined";
     for(var type in this.dealMap) {
       var ps = this.pilesByType[type], typemap = this.dealMap[type];
-      for(var i in ps) this._dealSomeCards(ps[i], cards, typemap[i][0], typemap[i][1]);
+      for(var i in typemap) this._dealSomeCards(ps[i], cards, typemap[i][0], typemap[i][1]);
     }
     if(cards.length) this._dealSomeCards(this.stock, cards, cards.length, 0);
   },

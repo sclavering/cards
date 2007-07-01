@@ -4,7 +4,7 @@ Games.pyramid = {
   layout: PyramidLayout,
   pilesToBuild: "s w 28p f",
   pileTypes: { s: StockDealToWasteOrRefill, w: PyramidWaste, f: PyramidFoundation, p: PyramidPile },
-  dealTemplate: "P 0,1",
+  dealMapStr: "P 0 1",
 
   init: function() {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;

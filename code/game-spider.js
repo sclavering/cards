@@ -38,7 +38,7 @@ const SpiderBase = {
 const Spider = {
   __proto__: SpiderBase,
   helpId: "spider",
-  dealTemplate: "p 5,1 5,1 5,1 5,1 4,1 4,1 4,1 4,1 4,1 4,1",
+  dealMapStr: "p 5 1  5 1  5 1  5 1  4 1  4 1  4 1  4 1  4 1  4 1",
 };
 
 
@@ -77,7 +77,7 @@ Games.blackwidow = {
 Games.divorce = {
   __proto__: SpiderBase,
   pileTypes: { s: StockDealToNonemptyPiles },
-  dealTemplate: "P 0,5",
+  dealMapStr: "P 0 5",
 
   init: function() {
     this.cards = makeDecksMod13(2);
@@ -105,7 +105,7 @@ Games.wasp = {
   layout: WaspLayout,
   pilesToBuild: "7p f s",
   pileTypes: { s: StockDealToPiles, p: WaspPile },
-  dealTemplate: "p 3,4 3,4 3,4 0,7 0,7 0,7 0,7",
+  dealMapStr: "p 3 4  3 4  3 4  0 7  0 7  0 7  0 7",
   kings: [12, 25, 38, 51],
   getBestDestinationFor: "to up or nearest space",
 };
@@ -119,7 +119,7 @@ const SimonBase = {
   helpId: "simon",
   pilesToBuild: "10p f",
   layout: SimonLayout,
-  dealTemplate: "p 0,8 0,8 0,8 0,7 0,6 0,5 0,4 0,3 0,2 0,1",
+  dealMapStr: "p 0 8  0 8  0 8  0 7  0 6  0 5  0 4  0 3  0 2  0 1",
   kings: [12, 25, 38, 51],
 };
 

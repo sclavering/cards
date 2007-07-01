@@ -4,7 +4,7 @@ Games.fan = {
   layout: FanLayout,
   pilesToBuild: "4f 18p",
   pileTypes: { p: FanPile, f: FanFoundation },
-  dealTemplate: "P 0,3", // actually deals 1 card to the final pile
+  dealMapStr: "P 0 3", // actually deals 1 card to the final pile
   foundationBaseIndexes: [0, 13, 26, 39],
   cards: 1,
 

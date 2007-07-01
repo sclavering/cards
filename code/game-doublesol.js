@@ -6,7 +6,7 @@ Games.doublesol = {
   layout: DoubleSolLayout,
   pilesToBuild: "s w 4f 10p",
   pileTypes: { s: StockDealToWasteOrRefill, f: DoubleSolFoundation, p: KlondikePile },
-  dealTemplate: "p 0,1 1,1 2,1 3,1 4,1 5,1 6,1 7,1 8,1 9,1",
+  dealMapStr: "p 0 1  1 1  2 1  3 1  4 1  5 1  6 1  7 1  8 1  9 1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 

@@ -128,25 +128,18 @@ const BaseCardGame = {
     else if(!(this.cards[0] instanceof Card)) this.cards = makeCardSuits.apply(null, this.cards);
   },
 
-  // A string, unless deal() is overridden.
-  //  template ::= foo "; " template | foo
-  //  foo ::= [PFCRWS] " " nums | [pfcrws] (" " nums)+
-  //  nums ::= [0-9] ("," [0-9])*
-  //
-  // "nums" lists are alternate numbers of face-down and face-up cards.
-  // Capital letters mean "deal this (nums) pattern to every pile of this type".
-  // Lower-case letters are followed by a pattern for each pile of that type
-  // e.g. "F 0,1; p 0,1 1,2"
-  // would mean "deal a single face-up card to each foundation, a single face-up card to
-  // the first pile, and two-face up cards on top of one face-down card to the second pile"
-  //
-  // p=pile, f=foundation, c=cell, r=reserve, w=waste, s=stock
-  // Once all the cards are dealt, any further instructions will be silently ignored. This
-  // is used by, e.g.,  Fan ("P 0,3") to leave the final pile with just 1 card
-  dealTemplate: null,
+  // An easy way of implementing deal(), via a declarative string.  The format
+  // is a sequence of ;-separated pile-type specs. A pile-type spec is one of:
+  //   "x d1 u1 d2 u2 ..." with x a key in .pilesByType, and the first pile in
+  //     that collection getting d1 face-down cards then u1 face-up cards, the
+  //     second getting d2 face-down, etc.
+  //   "X n m", with X.toLowerCase() a key in .pilesByType, and *all* piles of
+  //     that type getting n face-down cards and m face-up cards
+  // If the cards run out, further instructions are ignored. Excess cards are
+  // dealt to .stock (if it exists).
+  dealMapStr: null,
 
-  // Created by parsing dealTemplate, and used when actually dealing. A list of
-  // [pile, nums] arrays, where 'nums' is the format used by _dealSomeCards.
+  // Parsed result of above, turned into a dict of arrays of integers
   dealMap: null,
 
 
@@ -173,39 +166,34 @@ const BaseCardGame = {
     }
 
     this.actionList = [];
-    if(this.dealTemplate) this._parseDealTemplate();
+    if(this.dealMapStr) this._parseDealMapStr(cardsToDeal.length);
     this.deal(cardsToDeal);
     gScoreDisplay.value = this.score = this.initialScore;
   },
 
-  _parseDealTemplate: function(cards) {
-    const mapbatches = [];
-    const bits = this.dealTemplate.split("; ");
-    // get comma-separated digit-strings for each pile, in batches by pile type
-    for each(var bit in bits) {
-      var ch = bit.charAt(0);
-      var lch = ch.toLowerCase();
+  _parseDealMapStr: function(numCards) {
+    const map = this.dealMap = {};
+    const pilespecs = this.dealMapStr.split(/ *; */);
+    for each(var pilespec in pilespecs) {
+      var bits = pilespec.split(/ +/);
+      var ch = bits[0], lch = ch.toLowerCase();
+      var nums = [parseInt(num, 10) for each(num in bits.slice(1))];
+      for each(var num in nums) numCards -= num;
       var piles = this.pilesByType[lch] || null;
       if(!piles) throw "dealTemplate contains bad character: " + ch;
-      bit = bit.slice(2); // drop the leading "x "
-      if(ch == lch) { // separate nums for each pile
-        var numss = bit.split(" ");
-        mapbatches.push([[piles[j], numss[j]] for(j in numss)]);
-      } else {
-        mapbatches.push([[piles[j], bit] for(j in piles)]);
-      }
+      map[lch] = ch != lch ? [nums for(i in range(piles.length))]
+          : [[nums[2 * i], nums[2 * i + 1]] for(i in range(nums.length / 2))];
     }
-    // flatten batches, and parse digit-strings into arrays of integers
-    const strmap = Array.concat.apply(null, mapbatches);
-    this.dealMap = [[p, [parseInt(i,10) for each(i in s.split(","))]] for each([p,s] in strmap)];
   },
 
   // overriding versions should deal out the provided shuffled cards for a new game.
   deal: function(cards) {
     if(!this.dealMap) throw "deal() not overridden, and dealMap not defined";
-    for each([pile, [down, up]] in this.dealMap) this._dealSomeCards(pile, cards, down, up);
-    // deal any remaining cards to the stock (keeps the templates simple)
-    if(this.stock) this._dealSomeCards(this.stock, cards, [cards.length]);
+    for(var type in this.dealMap) {
+      var ps = this.pilesByType[type], typemap = this.dealMap[type];
+      for(var i in ps) this._dealSomeCards(ps[i], cards, typemap[i][0], typemap[i][1]);
+    }
+    if(cards.length) this._dealSomeCards(this.stock, cards, cards.length, 0);
   },
 
   _dealSomeCards: function(pile, cards, numFaceDown, numFaceUp) {

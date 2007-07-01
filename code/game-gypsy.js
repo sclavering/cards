@@ -5,7 +5,7 @@ const GypsyBase = {
   layout: GypsyLayout,
   pilesToBuild: "8p 8f s",
   pileTypes: { s: StockDealToPiles, p: GypsyPile },
-  dealTemplate: "P 2,1",
+  dealMapStr: "P 2 1",
 
   init: function() {
     const fs = this.foundations;

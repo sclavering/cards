@@ -4,7 +4,7 @@ Games.maze = {
   layout: MazeLayout,
   pilesToBuild: "54p",
   pileTypes: { p: MazePile },
-  dealTemplate: "P 0,1",
+  dealMapStr: "P 0 1",
 
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces

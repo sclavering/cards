@@ -4,7 +4,7 @@ Games.fortythieves = {
   layout: FortyThievesLayout,
   pilesToBuild: "8f s w 10p",
   pileTypes: { s: StockDealToWaste, p: FortyThievesPile },
-  dealTemplate: "P 0,4; W 0,1",
+  dealMapStr: "P 0 4 ; W 0 1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 

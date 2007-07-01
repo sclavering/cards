@@ -10,7 +10,7 @@ Games.mod3 = {
     h: { __proto__: _Mod3Foundation, _baseNum: 4 },
     p: { __proto__: AcesUpPile, isGood: false },
   },
-  dealTemplate: "F 0,1; G 0,1; H 0,1; P 0,1",
+  dealMapStr: "F 0 1 ; G 0 1 ; H 0 1 ; P 0 1",
   cards: null,
   get hintOriginPileCollections() {
     return [this.foundations, this.piles];

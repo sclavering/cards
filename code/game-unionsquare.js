@@ -4,7 +4,7 @@ Games.unionsquare = {
   layout: UnionSquareLayout,
   pilesToBuild: "s w 16p 4f",
   pileTypes: { s: StockDealToWaste, f: UnionSquareFoundation, p: UnionSquarePile },
-  dealTemplate: "P 0,1",
+  dealMapStr: "P 0 1",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 

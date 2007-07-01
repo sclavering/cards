@@ -4,7 +4,7 @@ Games.pileon = {
   layout: PileOnLayout,
   pilesToBuild: "15p",
   pileTypes: { p: PileOnPile },
-  dealTemplate: "P 0,4", // will actually leave last two piles empty
+  dealMapStr: "P 0 4", // actually leaves the last two piles empty
 
   getBestDestinationFor: "legal nonempty, or empty",
 

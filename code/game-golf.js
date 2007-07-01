@@ -21,7 +21,7 @@ const GolfBase = {
 
 Games.golf1 = {
   __proto__: GolfBase,
-  dealTemplate: "F 0,1; P 0,5",
+  dealMapStr: "F 0 1 ; P 0 5",
   init: function() {
     this.cards = makeDecksMod13(1);
   }
@@ -30,7 +30,7 @@ Games.golf1 = {
 
 Games.golf2 = {
   __proto__: GolfBase,
-  dealTemplate: "F 0,1; P 0,8",
+  dealMapStr: "F 0 1 ; P 0 8",
   init: function() {
     this.cards = makeDecksMod13(2);
   }

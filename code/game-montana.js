@@ -5,7 +5,7 @@ Games.montana = {
   layout: MontanaLayout,
   pilesToBuild: "52p",
   pileTypes: { p: MontanaPile },
-  dealTemplate: "P 0,1",
+  dealMapStr: "P 0 1",
 
   init: function() {
     // the four nulls get shuffled with the cards, producing spaces in random places in the lay out

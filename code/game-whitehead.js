@@ -4,7 +4,7 @@ Games.whitehead = {
   layout: KlondikeLayout,
   pilesToBuild: "s w 4f 7p",
   pileTypes: { s: StockDealToWaste, p: WhiteheadPile },
-  dealTemplate: "p 0,1 0,2 0,3 0,4 0,5 0,6 0,7",
+  dealMapStr: "p 0 1  0 2  0 3  0 4  0 5  0 6  0 7",
   foundationBaseIndexes: [0, 13, 26, 39],
 
   init: function() {

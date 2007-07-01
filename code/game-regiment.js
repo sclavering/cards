@@ -4,7 +4,7 @@ Games.regiment = {
   layout: RegimentLayout,
   pilesToBuild: "4a 4k 8p 8r 8p",
   pileTypes: { a: RegimentAceFoundation, k: RegimentKingFoundation, p: RegimentPile },
-  dealTemplate: "P 0,1; R 10,1",
+  dealMapStr: "P 0 1 ; R 10 1",
   cards: 2,
 
   init: function() {

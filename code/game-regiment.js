@@ -72,7 +72,7 @@ Games.regiment = {
   },
 
   autoplay: function() {
-    var pileWhichHasHadCardsRemoved = this.pileWhichLastHadCardRemoved;
+    var pileWhichHasHadCardsRemoved = this._lastActionSourcePile;
     var i, pile, last, card;
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;

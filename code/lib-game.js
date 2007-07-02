@@ -228,7 +228,6 @@ const BaseCardGame = {
   canRedo: false,
 
   doo: function(action) {
-    this.pileWhichLastHadCardRemoved = null; // paranoia
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
     this.actionList[this.actionPtr++] = action;
     this.canUndo = true;
@@ -240,6 +239,7 @@ const BaseCardGame = {
 
     const act = action;
     const pile = action.pileWhichMayNeedCardsRevealing || null;
+    this._lastActionSourcePile = pile;
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;

@@ -1,10 +1,10 @@
 Games.pileon = {
   __proto__: BaseCardGame,
 
-  layout: PileOnLayout,
-  pilesToBuild: "15p",
-  pileTypes: { p: PileOnPile },
-  dealMapStr: "P 0 4", // actually leaves the last two piles empty
+  pileDetails: [
+    "p", 15, PileOnPile, PileOnView, 0, 4, // last two actually empty
+  ],
+  xulTemplate: "h3[p p p p]1[p p p p]1[p p p p]1[p p p]3",
 
   getBestDestinationFor: "legal nonempty, or empty",
 

@@ -1,10 +1,15 @@
 Games.unionsquare = {
   __proto__: BaseCardGame,
 
-  layout: UnionSquareLayout,
-  pilesToBuild: "s w 16p 4f",
-  pileTypes: { s: StockDealToWaste, f: UnionSquareFoundation, p: UnionSquarePile },
-  dealMapStr: "P 0 1",
+  pileDetails: [
+    "s", 1, StockDealToWaste, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 16, UnionSquarePile, UnionSquarePileView, 0, 1,
+    "f", 4, UnionSquareFoundation, UnionSquareFoundationView, 0, 0,
+  ],
+
+  xulTemplate: "h2[s w]2[p p p p] [p p p p] [p p p p] [p p p p]2[f f f f]2",
+
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 

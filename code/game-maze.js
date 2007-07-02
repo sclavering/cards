@@ -1,10 +1,12 @@
 Games.maze = {
   __proto__: BaseCardGame,
 
-  layout: MazeLayout,
-  pilesToBuild: "54p",
-  pileTypes: { p: MazePile },
-  dealMapStr: "P 0 1",
+  pileDetails: [
+    "p", 54, MazePile, View, 0, 1,
+  ],
+
+  xulTemplate: "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
+      + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
 
   init: function() {
     // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces

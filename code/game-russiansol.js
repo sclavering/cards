@@ -1,10 +1,13 @@
 Games.russiansol = {
   __proto__: BaseCardGame,
 
-  layout: RussianLayout,
-  pilesToBuild: "7p 4f",
-  pileTypes: { p: WaspPile, f: FanFoundation },
-  dealMapStr: "p 0 1  1 5  2 5  3 5  4 5  5 5  6 5",
+  pileDetails: [
+    "p", 7, WaspPile, FanDownView, range(7), [1, 5, 5, 5, 5, 5, 5],
+    "f", 4, FanFoundation, View, 0, 0,
+  ],
+
+  xulTemplate: "h1p1p1p1p1p1p1p1[f f f f]1",
+
   foundationBaseIndexes: [0, 13, 26, 39],
 
   getBestDestinationFor: "to up or nearest space",

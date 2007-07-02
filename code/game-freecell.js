@@ -1,10 +1,13 @@
 Games.freecell = {
   __proto__: FreeCellGame,
 
-  layout: FreeCellLayout,
-  pilesToBuild: "4c 4f 8p",
-  pileTypes: { p: FreeCellPile },
-  dealMapStr: "p 0 7  0 7  0 7  0 7  0 6  0 6  0 6  0 6",
+  pileDetails: [
+    "p", 8, FreeCellPile, FanDownView, 0, [7, 7, 7, 7, 6, 6, 6, 6],
+    "f", 4, KlondikeFoundation, View, 0, 0,
+    "c", 4, Cell, View, 0, 0,
+  ],
+  xulTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
+
   foundationBaseIndexes: [0, 13, 26, 39],
   cards: 1,
 

@@ -1,10 +1,14 @@
 Games.fortythieves = {
   __proto__: FreeCellGame,
 
-  layout: FortyThievesLayout,
-  pilesToBuild: "8f s w 10p",
-  pileTypes: { s: StockDealToWaste, p: FortyThievesPile },
-  dealMapStr: "P 0 4 ; W 0 1",
+  pileDetails: [
+    "s", 1, StockDealToWaste, StockView, 0, 0,
+    "w", 1, Waste, FanRightView, 0, 1,
+    "p", 10, FortyThievesPile, FanDownView, 0, 4,
+    "f", 8, KlondikeFoundation, View, 0, 0,
+  ],
+  xulTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w] [2p1p1p1p1p1p1p1p1p1p2]",
+
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
 

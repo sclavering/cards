@@ -1,10 +1,15 @@
 Games.whitehead = {
   __proto__: BaseCardGame,
 
-  layout: KlondikeLayout,
-  pilesToBuild: "s w 4f 7p",
-  pileTypes: { s: StockDealToWaste, p: WhiteheadPile },
-  dealMapStr: "p 0 1  0 2  0 3  0 4  0 5  0 6  0 7",
+  pileDetails: [
+    "s", 1, StockDealToWaste, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 7, WhiteheadPile, FanDownView, 0, [i + 1 for(i in irange(7))],
+    "f", 4, KlondikeFoundation, View, 0, 0,
+  ],
+
+  xulTemplate: "v[2s1w3f1f1f1f2] [1p1p1p1p1p1p1p1]",
+
   foundationBaseIndexes: [0, 13, 26, 39],
 
   init: function() {

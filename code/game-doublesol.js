@@ -3,11 +3,17 @@
 Games.doublesol = {
   __proto__: BaseCardGame,
 
-  layout: DoubleSolLayout,
-  pilesToBuild: "s w 4f 10p",
-  pileTypes: { s: StockDealToWasteOrRefill, f: DoubleSolFoundation, p: KlondikePile },
-  dealMapStr: "p 0 1  1 1  2 1  3 1  4 1  5 1  6 1  7 1  8 1  9 1",
+  pileDetails: [
+    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 10, KlondikePile, FanDownView, range(10), repeat(1, 10),
+    "f", 4, DoubleSolFoundation, DoubleSolFoundationView, 0, 0,
+  ],
+
+  xulTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
+
   cards: 2,
 
   getBestDestinationFor: "legal",

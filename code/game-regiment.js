@@ -1,10 +1,16 @@
 Games.regiment = {
   __proto__: BaseCardGame,
 
-  layout: RegimentLayout,
-  pilesToBuild: "4a 4k 8p 8r 8p",
-  pileTypes: { a: RegimentAceFoundation, k: RegimentKingFoundation, p: RegimentPile },
-  dealMapStr: "P 0 1 ; R 10 1",
+  pileDetails: [
+    "p", 16, RegimentPile, FoundationSlideView, 0, 1,
+    "r", 8, Reserve, FoundationSlideView, 10, 1,
+    // ace+king foundations
+    "a", 4, RegimentAceFoundation, FoundationSlideView, 0, 0,
+    "k", 4, RegimentKingFoundation, FoundationSlideView, 0, 0,
+  ],
+
+  xulTemplate: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
+
   cards: 2,
 
   init: function() {
@@ -74,7 +80,7 @@ Games.regiment = {
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
 
-    const afs = this.pilesByType.a, kfs = this.pilesByType.k;
+    const afs = this.aceFoundations, kfs = this.kingFoundations;
     for(i = 0; i != 4; i++) {
       pile = afs[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {

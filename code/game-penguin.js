@@ -1,9 +1,13 @@
 Games.penguin = {
   __proto__: BaseCardGame,
 
-  layout: PenguinLayout,
-  pilesToBuild: "c p c p c p c p c p c p c p 4f",
-  pileTypes: { p: PenguinPile },
+  pileDetails: [
+    "p", 7, PenguinPile, FanDownView, 0, 0,
+    "f", 4, KlondikeFoundation, View, 0, 0,
+    "c", 7, Cell, View, 0, 0,
+  ],
+
+  xulTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
 
   init: function() {
     this.cards = makeDecksMod13(1);

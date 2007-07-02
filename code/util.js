@@ -10,3 +10,7 @@ function range(end) {
 function range2(start, end) {
   return [start + i for(i in irange(end - start))];
 }
+
+function repeat(item, number) {
+  return [item for(i in irange(number))];
+}

@@ -1,10 +1,15 @@
 const KlondikeBase = {
   __proto__: BaseCardGame,
 
-  pilesToBuild: "s w 4f 7p",
-  pileTypes: { s: StockDealToWasteOrRefill, p: KlondikePile },
-  dealMapStr: "p 0 1  1 1  2 1  3 1  4 1  5 1  6 1",
+  pileDetails: [
+    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 7, KlondikePile, FanDownView, [0,1,2,3,4,5,6], 1,
+    "f", 4, KlondikeFoundation, View, 0, 0,
+  ],
+
   foundationBaseIndexes: [0, 13, 26, 39],
+
   cards: 1,
 
   getBestDestinationFor: "legal",
@@ -37,26 +42,31 @@ const KlondikeBase = {
   scoreForRevealing: 5
 };
 
-
 Games.klondike1 = {
   __proto__: KlondikeBase,
   helpId: "klondike",
-  layout: KlondikeLayout
+  xulTemplate: "v[2s1w3f1f1f1f2] [1p1p1p1p1p1p1p1]"
 };
 
 
-Games.klondike3 = {
+const Klondike3 = Games.klondike3 = {
   __proto__: KlondikeBase,
-  pileTypes: { s: Deal3OrRefillStock },
-  layout: KlondikeDraw3Layout
+  pileDetails: KlondikeBase.pileDetails.slice(), // copy
+  xulTemplate: "v[2s1w2f1f1f1f2] [1p1p1p1p1p1p1p1]"
 };
+Klondike3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
+Klondike3.pileDetails[9] = Deal3HWasteView;    // Waste view
 
 
 Games.doubleklondike = {
   __proto__: KlondikeBase,
-  layout: DoubleKlondikeLayout,
-  pilesToBuild: "s w 8f 10p",
-  dealMapStr: "p 0 1  1 1  2 1  3 1  4 1  5 1  6 1  7 1  8 1  9 1",
+  pileDetails: [
+    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 10, KlondikePile, FanDownView, range(10), 1,
+    "f", 8, KlondikeFoundation, View, 0, 0,
+  ],
+  xulTemplate: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   cards: 2,
   numPreferredFoundationsPerSuit: 2, // == num foundations of a given suit

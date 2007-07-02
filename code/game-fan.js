@@ -1,11 +1,26 @@
 Games.fan = {
   __proto__: BaseCardGame,
 
-  layout: FanLayout,
-  pilesToBuild: "4f 18p",
-  pileTypes: { p: FanPile, f: FanFoundation },
-  dealMapStr: "P 0 3", // actually deals 1 card to the final pile
+  pileDetails: [
+    "p", 18, FanPile, FanRightView, 0, 3, // last pile gets just 1
+    "f", 4, FanFoundation, View, 0, 0,
+  ],
+
+  xulTemplate: "v[3f1f1f1f3] [ [[p p p p p] [p p p p p] [p p p p p] [p p p]]]",
+
+  layout: {
+    __proto__: Layout,
+    // No other layout has a grid of flexible views
+    setFlexibleViewSizes: function(views, width, height) {
+      // 4 is the num <spacer>s.  16 is 3 per pile view, and a space to the left
+      const unitwidth = Math.floor((width - 4 * gSpacerSize) / 16);
+      views[0].element.parentNode.parentNode.previousSibling.width = unitwidth;
+      for each(var v in views) v.widthToUse = unitwidth * 3;
+    }
+  },
+
   foundationBaseIndexes: [0, 13, 26, 39],
+
   cards: 1,
 
   shuffleImpossible: function(cards) {

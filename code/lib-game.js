@@ -14,19 +14,31 @@ const BaseCardGame = {
   reserve: null,
   dragDropTargets: null, // a list of piles on which cards can be dropped
 
-  // a Layout object from liblayout.js
+  // a Layout object, based on those in lib-layouts.js
   layout: null,
 
-  // pilesToBuild should be something like "4c 4f 8p".  "4f" means create 4 piles using pileTypes.f
-  // as the bases.  The entire string leads to 16 piles of various kinds being created, with the
-  // order of creation deciding the correspondence with the elements of this.layout.views.
-  pilesToBuild: null,
-  // When accessing this field, the code will walk up the __proto__ chain for the game such that
-  // overriding the entire object will effectively only override individual fields.
-  pileTypes: { f: KlondikeFoundation, c: Cell, r: Reserve, w: Waste },
+  // Instructions to the code in lib-layout.js on how to create the needed XUL
+  xulTemplate: null,
 
-  _pilesToBuildLetters: [],
-  _pilesToBuildClasses: [],
+  // An array giving details of all the piles to be created.  Consists of parts
+  // in the form:
+  //   letter, number, Pile, View, face-down, face-up
+  // Where 'letter' corresponds to one used in .xulTemplate, 'number' is how
+  // many of that kind exist, Pile and View are the subtypes of those objects
+  // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
+  // to the pile, if .deal() isn't replaced. Either a number (applying to all
+  // of the piles) or an array of numbers (one per pile) can be used.
+  pileDetails: [
+  /* partial example:
+    "s", 1, null, StockView, 0, 0,
+    "w", 1, Waste, CountedView, 0, 0,
+    "p", 1, null, FanDownView, 0, 0,
+    "f", 1, KlondikeFoundation, View, 0, 0,
+    "c", 1, Cell, View, 0, 0,
+    "r", 1, Reserve, View, 0, 0,
+  */
+  ],
+
 
   // ======================================================
   // The following is a mix of initialisation for the "class" (not that JS
@@ -54,54 +66,55 @@ const BaseCardGame = {
 
   classInit: function() {
     this.classInit = null; // to avoid re-calling
-    this.initialised = true;
     // replace strings with functions (see rules.js)
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
-    this.layout == { __proto__: this.layout };  // avoid weirdness if shared
-    this.layout.init();
-    this.classInitPilesToBuild();
-    if(this.dealMapStr) this._parseDealMapStr();
-  },
 
-  // Parse the string representation to create an array of letters and of classes
-  classInitPilesToBuild: function() {
-    const map = this.pileTypes;
-    for(var obj = this.__proto__; obj; obj = obj.__proto__) {
-      if(!obj.pileTypes) continue;
-      var map2 = obj.pileTypes;
-      for(var letter in map2) if(!map[letter]) map[letter] = map2[letter];
+    if(!this.layout) this.layout = { __proto__: Layout };
+    const layout = this.layout
+    layout.template = this.xulTemplate;
+
+    const details = this.pileDetails;
+    const eLen = 6; // length of an entry/row in .pileDetails
+    const numletters = details.length / eLen;
+    const letters = [], nums = {}, impls = {}, downs = {}, ups = {};
+    // get mappings of stuff, grouped by letter used in layout template
+    for(var i in irange(numletters)) {
+      var l = letters[i] = details[i * eLen];
+      nums[l]  = details[i * eLen + 1];
+      impls[l] = details[i * eLen + 2];
+      layout[l] = details[i * eLen + 3]; // for use in layout.init()
+      downs[l] = details[i * eLen + 4];
+      ups[l]   = details[i * eLen + 5];
+      // turn single numbers for face up/down cards into sequences per-pile
+      if(typeof downs[l] == "number") downs[l] = repeat(downs[l], nums[l]);
+      else downs[l] = downs[l].slice(); //copy because we later modify it
+      if(typeof ups[l] == "number") ups[l] = repeat(ups[l], nums[l]);
+      else ups[l] = ups[l].slice();
     }
-  
-    const bits = this.pilesToBuild.split(" ");
-    const letters = this._pilesToBuildLetters = [];
-    const classes = this._pilesToBuildClasses = [];
-    const counts = this._pilesToBuildCounts = {}; // letter -> num
-    for(var i = 0; i != bits.length; ++i) {
-      var matches = bits[i].match(/(\d*)(\w)/);
-      var num = parseInt(matches[1]) || 1; // ""->NaN.  (NaN || 1) == 1
-      var letter = matches[2], clas = map[letter];
-      counts[letter] = (counts[letter] || 0) + num;
-      for(var j = 0; j != num; ++j) classes.push(clas), letters.push(letter);
-    }
+
+    // Returns a sequence of the letters from xulTemplate that referred to
+    // views/piles, excluding, e.g., annotations.
+    const layoutletters = this.layout.init();
+
+    // Convert to flattened lists, ordered the way the layout was created.
+    this._pilesToCreateLetters = layoutletters;
+    this._pilesToCreate = [impls[l] for each(l in layoutletters)];
+    this._cardsToDealDown = [downs[l].shift() for each(l in layoutletters)];
+    this._cardsToDealUp = [ups[l].shift() for each(l in layoutletters)];
   },
 
   createPiles: function() {
-    const views = this.layout.views, numV = views.length;
-    const letters = this._pilesToBuildLetters, num = letters.length;
-    const classes = this._pilesToBuildClasses;
-    const bytype = this.pilesByType = {};
-    const all = this.allpiles = [];
-    if(num != numV) throw "game is trying to create " + num + " piles for " + numV + " views!";
-
-    for(var i = 0; i != num; ++i) {
-      var letter = letters[i], impl = classes[i], view = views[i];
-      var pile = createPile(impl);
-      all.push(pile);
-      var view = views[i];
-      pile.view = view;
-      view.displayPile(pile);
-      if(bytype[letter]) bytype[letter].push(pile);
-      else bytype[letter] = [pile];
+    const views = this.layout.views;
+    const impls = this._pilesToCreate;
+    const letters = this._pilesToCreateLetters;
+    const all = this.allpiles = [createPile(impl) for each(impl in impls)];
+    const bytype = {};
+    for(var i in all) {
+      all[i].view = views[i];
+      all[i].view.displayPile(all[i]);
+      var l = letters[i];
+      if(!bytype[l]) bytype[l] = [];
+      bytype[l].push(all[i]);
     }
 
     for each(var set in bytype)
@@ -129,19 +142,6 @@ const BaseCardGame = {
     else if(!(this.cards[0] instanceof Card)) this.cards = makeCardSuits.apply(null, this.cards);
   },
 
-  // An easy way of implementing deal(), via a declarative string.  The format
-  // is a sequence of ;-separated pile-type specs. A pile-type spec is one of:
-  //   "x d1 u1 d2 u2 ..." with x a key in .pilesByType, and the first pile in
-  //     that collection getting d1 face-down cards then u1 face-up cards, the
-  //     second getting d2 face-down, etc.
-  //   "X n m", with X.toLowerCase() a key in .pilesByType, and *all* piles of
-  //     that type getting n face-down cards and m face-up cards
-  // If the cards run out, further instructions are ignored. Excess cards are
-  // dealt to .stock (if it exists).
-  dealMapStr: null,
-
-  // Parsed result of above, turned into a dict of arrays of integers
-  dealMap: null,
 
 
   // === Start Game =======================================
@@ -173,27 +173,10 @@ const BaseCardGame = {
     gScoreDisplay.value = this.score = 0;
   },
 
-  _parseDealMapStr: function() {
-    const map = this.dealMap = {};
-    const pilespecs = this.dealMapStr.split(/ *; */);
-    for each(var pilespec in pilespecs) {
-      var bits = pilespec.split(/ +/);
-      var ch = bits[0], lch = ch.toLowerCase();
-      var nums = [parseInt(num, 10) for each(num in bits.slice(1))];
-      var numPiles = this._pilesToBuildCounts[lch] || 0;
-      if(!numPiles) throw "dealTemplate contains bad character: " + ch;
-      map[lch] = ch != lch ? [nums for(i in range(numPiles))]
-          : [[nums[2 * i], nums[2 * i + 1]] for(i in range(nums.length / 2))];
-    }
-  },
-
   // overriding versions should deal out the provided shuffled cards for a new game.
   deal: function(cards) {
-    if(!this.dealMap) throw "deal() not overridden, and dealMap not defined";
-    for(var type in this.dealMap) {
-      var ps = this.pilesByType[type], typemap = this.dealMap[type];
-      for(var i in typemap) this._dealSomeCards(ps[i], cards, typemap[i][0], typemap[i][1]);
-    }
+    const ps = this.allpiles, down = this._cardsToDealDown, up = this._cardsToDealUp;
+    for(var i in ps) this._dealSomeCards(ps[i], cards, down[i], up[i]);
     if(cards.length) this._dealSomeCards(this.stock, cards, cards.length, 0);
   },
 

@@ -1,11 +1,15 @@
 const GypsyBase = {
   __proto__: BaseCardGame,
 
+  pileDetails: [
+    "s", 1, StockDealToPiles, StockView, 0, 0,
+    "p", 8, GypsyPile, FanDownView, 2, 1,
+    "f", 8, KlondikeFoundation, View, 0, 0,
+  ],
+
+  xulTemplate: "h2p1p1p1p1p1p1p1p2[{align=center}[[f f f f] [f f f f]] s]2",
+
   helpId: "gypsy",
-  layout: GypsyLayout,
-  pilesToBuild: "8p 8f s",
-  pileTypes: { s: StockDealToPiles, p: GypsyPile },
-  dealMapStr: "P 2 1",
 
   init: function() {
     const fs = this.foundations;

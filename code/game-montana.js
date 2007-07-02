@@ -1,11 +1,12 @@
 Games.montana = {
   __proto__: BaseCardGame,
 
-  helpId: "montana",
-  layout: MontanaLayout,
-  pilesToBuild: "52p",
-  pileTypes: { p: MontanaPile },
-  dealMapStr: "P 0 1",
+  pileDetails: [
+    "p", 52, MontanaPile, View, 0, 1,
+  ],
+
+  xulTemplate: "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
+      + " [1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
 
   init: function() {
     // the four nulls get shuffled with the cards, producing spaces in random places in the lay out

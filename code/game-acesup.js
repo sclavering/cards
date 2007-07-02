@@ -1,10 +1,12 @@
 Games.acesup = {
   __proto__: BaseCardGame,
 
-  layout: AcesUpLayout,
-  pilesToBuild: "s 4p f",
-  pileTypes: { s: StockDealToPiles, f: AcesUpFoundation, p: AcesUpPile },
-  dealMapStr: "P 0 1",
+  pileDetails: [
+    "s", 1, StockDealToPiles, StockView, 0, 0,
+    "p", 4, AcesUpPile, FanDownView, 0, 1,
+    "f", 1, AcesUpFoundation, CountedView, 0, 0,
+  ],
+  xulTemplate: "h2s2p1p1p1p2f2",
 
   init: function() {
     this.cards = makeCardRuns(2, 14); // aces high

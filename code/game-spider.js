@@ -4,9 +4,7 @@
 const SpiderBase = {
   __proto__: BaseCardGame,
 
-  layout: SpiderLayout,
-  pilesToBuild: "10p f s",
-  pileTypes: { s: StockDealToPilesIfNoneAreEmpty, f: SpiderFoundation, p: SpiderPile },
+  xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f s]2",
 
   // Indices of kings within this.cards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
@@ -37,8 +35,12 @@ const SpiderBase = {
 
 const Spider = {
   __proto__: SpiderBase,
-  helpId: "spider",
-  dealMapStr: "p 5 1  5 1  5 1  5 1  4 1  4 1  4 1  4 1  4 1  4 1",
+  pileDetails: [
+    "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
+    "p", 10, SpiderPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
+    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
+  ],
+  helpId: "spider"
 };
 
 
@@ -66,18 +68,24 @@ Games.spider4 = {
 Games.blackwidow = {
   __proto__: Spider,
   helpId: null,
-  pileTypes: { p: BlackWidowPile },
+  pileDetails: [
+    "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
+    "p", 10, BlackWidowPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
+    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
+  ],
   cards: 2
 };
 
 
 
 
-
 Games.divorce = {
   __proto__: SpiderBase,
-  pileTypes: { s: StockDealToNonemptyPiles },
-  dealMapStr: "P 0 5",
+  pileDetails: [
+    "s", 1, StockDealToNonemptyPiles, StockView, 0, 0,
+    "p", 10, SpiderPile, FanDownView, 0, 5,
+    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
+  ],
 
   init: function() {
     this.cards = makeDecksMod13(2);
@@ -101,11 +109,12 @@ Games.divorce = {
 
 Games.wasp = {
   __proto__: SpiderBase,
-
-  layout: WaspLayout,
-  pilesToBuild: "7p f s",
-  pileTypes: { s: StockDealToPiles, p: WaspPile },
-  dealMapStr: "p 3 4  3 4  3 4  0 7  0 7  0 7  0 7",
+  pileDetails: [
+    "s", 1, StockDealToPiles, StockView, 0, 0,
+    "p", 7, WaspPile, FanDownView, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7],
+    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
+  ],
+  xulTemplate: "h2p1p1p1p1p1p1p2[f s]2",
   kings: [12, 25, 38, 51],
   getBestDestinationFor: "to up or nearest space",
 };
@@ -116,16 +125,21 @@ Games.wasp = {
 
 const SimonBase = {
   __proto__: SpiderBase,
+  pileDetails: [
+    "p", 10, SpiderPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
+    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
+  ],
+  xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
   helpId: "simon",
-  pilesToBuild: "10p f",
-  layout: SimonLayout,
-  dealMapStr: "p 0 8  0 8  0 8  0 7  0 6  0 5  0 4  0 3  0 2  0 1",
   kings: [12, 25, 38, 51],
 };
 
 Games.simplersimon = {
   __proto__: SimonBase,
-  pileTypes: { p: BlackWidowPile },
+  pileDetails: [
+    "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
+    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
+  ],
   cards: 1
 }
 

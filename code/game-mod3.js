@@ -1,17 +1,19 @@
 Games.mod3 = {
   __proto__: BaseCardGame,
 
-  layout: Mod3Layout,
-  pilesToBuild: "8f 8g 8h 8p s",
-  pileTypes: {
-    s: { __proto__: StockDealToPiles, isGood: false },
-    f: { __proto__: _Mod3Foundation, _baseNum: 2 },
-    g: { __proto__: _Mod3Foundation, _baseNum: 3 },
-    h: { __proto__: _Mod3Foundation, _baseNum: 4 },
-    p: { __proto__: AcesUpPile, isGood: false },
-  },
-  dealMapStr: "F 0 1 ; G 0 1 ; H 0 1 ; P 0 1",
+  pileDetails: [
+    "s", 1, { __proto__: StockDealToPiles, isGood: false }, StockView, 0, 0,
+    "p", 8, { __proto__: AcesUpPile, isGood: false }, FanDownView, 0, 1,
+    "f", 8, { __proto__: _Mod3Foundation, _baseNum: 2 }, Mod3SlideView, 0, 1,
+    "g", 8, { __proto__: _Mod3Foundation, _baseNum: 3 }, Mod3SlideView, 0, 1,
+    "h", 8, { __proto__: _Mod3Foundation, _baseNum: 4 }, Mod3SlideView, 0, 1,
+  ],
+
+  xulTemplate: "v[1f1f1f1f1f1f1f1f1#1] [1g1g1g1g1g1g1g1g1#1] [1h1h1h1h1h1h1h1h1#1]"
+      + " [1p 1p 1p 1p 1p 1p 1p 1p 1s1]",
+
   cards: null,
+
   get hintOriginPileCollections() {
     return [this.foundations, this.piles];
   },

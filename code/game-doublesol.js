@@ -14,13 +14,13 @@ Games.doublesol = {
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 
-  cards: 2,
+  allcards: [2],
 
   getBestDestinationFor: "legal",
 
   autoplay: function() {
     var triedToFillEmpty = false;
-    const fs = this.foundations, cs = this.cards;
+    const fs = this.foundations, cs = this.allcards;
     const ixs = this.foundationBaseIndexes;
     const nums = this.getAutoplayableNumbers();
 

@@ -23,7 +23,7 @@ const Rules = {
 
     "foundation holds all cards":
     function() {
-      return this.foundation.cards.length == this.cards.length;
+      return this.foundation.cards.length == this.allcards.length;
     }
   },
 
@@ -102,7 +102,7 @@ const Rules = {
       const maxNums = this.getAutoplayableNumbers();
       var triedToFillEmpty = false;
       // numBs matters for Penguin
-      const fs = this.foundations, cs = this.cards;
+      const fs = this.foundations, cs = this.allcards;
       const ixs = this.foundationBaseIndexes, numIxs = ixs.length;
       // Try to put Aces (or whatever) on empty foundations.
       const empty = findEmpty(fs); // used to check move legality

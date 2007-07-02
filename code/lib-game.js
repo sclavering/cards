@@ -1,7 +1,7 @@
 const BaseCardGame = {
-  // This becomes an array of all the cards a game uses, either explicitly in the game's init(), or
-  // by initialise() if it is a number (of decks to be created) or an array [[suits], repeat]
-  cards: 1,
+  // An Card objects used in this game.
+  // Passed as arguments to makeCards() if non-null.
+  allcards: [1],
 
   // Piles in arrays by type, and the first piles of some types
   piles: [],
@@ -134,12 +134,6 @@ const BaseCardGame = {
     this.stock = [p for each(p in all) if(p.isStock)][0] || null;
   },
 
-  initCards: function() {
-    // see comments above
-    if(typeof this.cards == "number") this.cards = makeDecks(this.cards);
-    else if(!(this.cards[0] instanceof Card)) this.cards = makeCardSuits.apply(null, this.cards);
-  },
-
 
 
   // === Start Game =======================================
@@ -151,18 +145,18 @@ const BaseCardGame = {
     this.createPiles();
     this.createPileArrays();
     this.loadPreferredFoundationSuits();
+    if(this.allcards) this.allcards = makeCards.apply(null, this.allcards);
     this.init();
-    this.initCards();
 
     var cardsToDeal;
     if(order) {
       this.orderCardsDealt = order;
-      cardsToDeal = [this.cards[order[i]] for(i in this.cards)];
+      cardsToDeal = [this.allcards[order[i]] for(i in this.allcards)];
     } else {
-      var ixs = range(this.cards.length);
+      var ixs = range(this.allcards.length);
       do {
         this.orderCardsDealt = order = shuffle(ixs);
-        cardsToDeal = [this.cards[order[i]] for(i in this.cards)];
+        cardsToDeal = [this.allcards[order[i]] for(i in this.allcards)];
       } while(this.shuffleImpossible(cardsToDeal));
     }
 

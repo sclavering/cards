@@ -8,8 +8,9 @@ Games.acesup = {
   ],
   xulTemplate: "h2s2p1p1p1p2f2",
 
+  allcards: [null, null, range2(2, 14)], // aces high
+
   init: function() {
-    this.cards = makeCardRuns(2, 14); // aces high
     for(var i = 0; i != 4; i++) this.piles[i].num = i;
     const ps = this.piles;
     ps[0].prev = ps[3];

@@ -6,13 +6,13 @@ const SpiderBase = {
 
   xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f s]2",
 
-  // Indices of kings within this.cards.  Used by .autoplay()
+  // Indices of kings within this.allcards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
   getBestDestinationFor: "down and same suit, or down, or empty",
 
   autoplay: function() {
-    const cs = this.cards, ixs = this.kings, num = ixs.length, f = this.foundation;
+    const cs = this.allcards, ixs = this.kings, num = ixs.length, f = this.foundation;
     for(var i = 0; i != num; i++) {
       var k = cs[ixs[i]], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
@@ -46,19 +46,19 @@ const Spider = {
 
 Games.spider1 = {
   __proto__: Spider,
-  cards: [[SPADE], 8]
+  allcards: [8, "S"]
 };
 
 
 Games.spider2 = {
   __proto__: Spider,
-  cards: [[SPADE, HEART], 4]
+  allcards: [4, "SH"]
 };
 
 
 Games.spider4 = {
   __proto__: Spider,
-  cards: 2
+  allcards: [2]
 };
 
 
@@ -73,7 +73,7 @@ Games.blackwidow = {
     "p", 10, BlackWidowPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],
-  cards: 2
+  allcards: [2]
 };
 
 
@@ -87,9 +87,7 @@ Games.divorce = {
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],
 
-  init: function() {
-    this.cards = makeDecksMod13(2);
-  },
+  allcards: [2, , , true],
 
   autoplay: function() {
     const ps = this.piles, num = ps.length, f = this.foundation;
@@ -140,20 +138,18 @@ Games.simplersimon = {
     "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ],
-  cards: 1
 }
 
 Games.simon1 = {
   __proto__: SimonBase,
-  cards: [[SPADE], 4]
+  allcards: [4, "S"]
 };
 
 Games.simon2 = {
   __proto__: SimonBase,
-  cards: [[SPADE, HEART], 2]
+  allcards: [2, "SH"]
 };
 
 Games.simon4 = {
-  __proto__: SimonBase,
-  cards: 1
+  __proto__: SimonBase
 };

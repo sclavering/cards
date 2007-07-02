@@ -15,9 +15,7 @@ const CanfieldBase = {
 
   helpId: "canfield",
 
-  init: function() {
-    this.cards = makeDecksMod13(1);
-  },
+  allcards: [1, , , true],
 
   deal: function(cards) {
     this._dealSomeCards(this.foundations[0], cards, 0, 1);
@@ -25,7 +23,6 @@ const CanfieldBase = {
     for(var i = 0; i != 4; i++) this._dealSomeCards(this.piles[i], cards, 0, 1);
     this._dealSomeCards(this.stock, cards, cards.length, 0);
 
-    const cs = this.cards;
     const num = this.foundations[0].firstCard.displayNum;
     for each(var c in cards) c.renumber(num);
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];

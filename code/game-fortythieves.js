@@ -10,7 +10,8 @@ Games.fortythieves = {
   xulTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w] [2p1p1p1p1p1p1p1p1p1p2]",
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  cards: 2,
+
+  allcards: [2],
 
   getBestDestinationFor: "legal nonempty, or empty",
 

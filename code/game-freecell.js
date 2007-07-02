@@ -9,7 +9,6 @@ Games.freecell = {
   xulTemplate: "v[1c1c1c1c3f1f1f1f1] [2p1p1p1p1p1p1p1p2]",
 
   foundationBaseIndexes: [0, 13, 26, 39],
-  cards: 1,
 
   // similar to Rules.getBestDestinationFor["legal nonempty, or empty"], but must consider cells,
   // and must check there are enough spaces before moving a card to a space

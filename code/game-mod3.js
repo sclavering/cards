@@ -12,16 +12,15 @@ Games.mod3 = {
   xulTemplate: "v[1f1f1f1f1f1f1f1f1#1] [1g1g1g1g1g1g1g1g1#1] [1h1h1h1h1h1h1h1h1#1]"
       + " [1p 1p 1p 1p 1p 1p 1p 1p 1s1]",
 
-  cards: null,
-
   get hintOriginPileCollections() {
     return [this.foundations, this.piles];
   },
 
+  allcards: null,
   init: function() {
     const css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
     const cards = [makeCards(css[i], null, 2) for(i in css)];
-    this.cards = flattenOnce(cards);
+    this.allcards = flattenOnce(cards);
     const baseIxs =[0, 4, 8, 12, 16, 20, 24, 28]
     this.bases = [[cards[i][ix] for each(ix in baseIxs)] for(i in cards)];
     const fs = this.foundations;

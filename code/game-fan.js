@@ -21,8 +21,6 @@ Games.fan = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  cards: 1,
-
   shuffleImpossible: function(cards) {
     for(var p = 49; p != 1; p -= 3) {
       // these will form a pile c,d,e with c at the bottom

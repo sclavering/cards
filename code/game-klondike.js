@@ -10,8 +10,6 @@ const KlondikeBase = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  cards: 1,
-
   getBestDestinationFor: "legal",
 
   autoplay: "commonish",
@@ -68,7 +66,7 @@ Games.doubleklondike = {
   ],
   xulTemplate: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  cards: 2,
+  allcards: [2],
   numPreferredFoundationsPerSuit: 2, // == num foundations of a given suit
   getAutoplayableNumbers: "gypsy"
 };

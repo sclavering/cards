@@ -13,7 +13,7 @@ Games.whitehead = {
   foundationBaseIndexes: [0, 13, 26, 39],
 
   init: function() {
-    var cs = this.cards = makeDecks(1);
+    const cs = this.allcards;
     const off = [39, 13, -13, -39]; // offsets to other suit of same colour
     for(var i = 0, k = 0; i != 4; i++) {
       for(var j = 0; j != 13; j++, k++) {

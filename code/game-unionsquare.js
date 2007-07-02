@@ -11,7 +11,8 @@ Games.unionsquare = {
   xulTemplate: "h2[s w]2[p p p p] [p p p p] [p p p p] [p p p p]2[f f f f]2",
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  cards: 2,
+
+  allcards: [2],
 
   getBestDestinationFor: function(card) {
     const p = card.pile, ps = p.isPile ? p.following : this.piles, num = ps.length;

@@ -8,10 +8,10 @@ Games.montana = {
   xulTemplate: "v[1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]"
       + " [1p1p1p1p1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1p1p1p1p1]",
 
+  allcards: null,
   init: function() {
-    // the four nulls get shuffled with the cards, producing spaces in random places in the lay out
-    var cs = this.cards = makeCardRuns(2, 13);
-    cs[51] = cs[50] = cs[49] = cs[48] = null;
+    const cs = this.allcards = makeCards(range2(2, 14)); // no Aces
+    cs[51] = cs[50] = cs[49] = cs[48] = null; // spaces instead
 
     this.twos = [cs[0], cs[12], cs[24], cs[36]];
 

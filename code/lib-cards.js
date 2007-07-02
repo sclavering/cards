@@ -2,7 +2,7 @@
 // May also be seen without quotes, since they're used as object field-names.
 const RED = "R", BLACK = "B";
 const SPADE = "S", HEART = "H", DIAMOND = "D", CLUB = "C";
-const SUITS = [SPADE, HEART, DIAMOND, CLUB];
+const SUITS = "SHDC";
 
 
 // takes an array of cards, returns a *new* shuffled array
@@ -29,53 +29,29 @@ function shuffle(cards) {
   return cards;
 }
 
-function makeDecks(num) {
-  return makeCardRuns(1, 13, null, num);
-}
 
-function makeDecksMod13(num) {
-  var cs = makeDecks(num);
-  for(var i = 0; i != cs.length; i+=13) {
-    var a = cs[i], k = cs[i+12];
-    a.down = k; k.up = a; k.upNumber = 1;
-  }
-  return cs;
-}
-
-function makeCardSuits(suits, repeat) {
-  return makeCardRuns(1, 13, suits, repeat);
-}
-
-function makeCardRuns(start, finish, suits, repeat) {
-  finish++; // so we make a run [start..finish], not [start..finish)
-  var nums = new Array(finish - start);
-  for(var i = 0; i != nums.length; i++) nums[i] = start+i;
-  return makeCards(nums, suits, repeat);
-}
-
-function makeCards(numbers, suits, repeat) {
-  if(!suits) suits = [SPADE, HEART, DIAMOND, CLUB];
+function makeCards(repeat, suits, numbers, mod13) {
   if(!repeat) repeat = 1;
-  var cards = [], cs, numNums = numbers.length, numSuits = suits.length;
-  // make cards and init |up| and |down| fields
-  for(var r = 0; r != repeat; r++) {
-    for(var s = 0; s != numSuits; s++) {
-      cards.push(cs = new Array(numNums));
-      for(var i = 0; i != numNums; i++) {
-        cs[i] = new Card(numbers[i], suits[s]);
-        if(i != 0) cs[i-1].up = cs[i], cs[i].down = cs[i-1];
-      }
-    }
-  }
-  // init |twin| fields
-  if(repeat!=1) {
-    const numSets = cards.length;
-    for(s = 0; s != numSets; s++) {
-      var set = cards[s], twins = cards[(s+numSuits) % numSets];
-      for(i = 0; i != numNums; i++) set[i].twin = twins[i];
-    }
-  }
-  return flattenOnce(cards);
+  if(!suits) suits = SUITS;
+  if(!numbers) numbers = range2(1, 14);
+  if(!mod13) mod13 = false;
+  const cardsss = [_makeCardSeqs(repeat, suit, numbers, mod13) for each(suit in suits)];
+  return [c for each(css in cardsss) for each(cs in css) for each(c in cs)]; // flattened
+}
+
+function _makeCardSeqs(repeat, suit, numbers, mod13) {
+  const css = [_makeCardSeq(numbers, suit, mod13) for(i in irange(repeat))];
+  // set twin fields
+  if(repeat > 1)
+    for(var r in irange(css.length)) // irange make r a number, rather than a string
+      for(var i in css[r]) css[r][i].twin = css[(r + 1) % repeat][i];
+  return css;
+}
+
+function _makeCardSeq(numbers, suit, mod13) {
+  const cs = [new Card(num, suit) for each(num in numbers)];
+  if(mod13) cs[cs.length - 1].upNumber = 1; // copied from old code, may be unnecessary
+  return linkList(cs, "down", "up", mod13);
 }
 
 

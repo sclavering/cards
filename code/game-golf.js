@@ -26,17 +26,13 @@ const GolfBase = {
 
 Games.golf1 = {
   __proto__: GolfBase,
-  init: function() {
-    this.cards = makeDecksMod13(1);
-  }
+  allcards: [2, , , true]
 };
 
 
 const Golf2 = Games.golf2 = {
   __proto__: GolfBase,
-  init: function() {
-    this.cards = makeDecksMod13(2);
-  }
+  allcards: [1, , , true]
 };
 // tweak to get 8 cards dealt per pile
 Golf2.pileDetails = Golf2.pileDetails.slice();

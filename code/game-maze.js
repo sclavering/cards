@@ -8,10 +8,10 @@ Games.maze = {
   xulTemplate: "v[1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]"
       + " [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1] [1p1p1p1p1p1p1p1p1p1]",
 
+  allcards: null,
   init: function() {
-    // one deck with 6 nulls instead of the 4 kings. nulls lead to empty spaces
-    var cs = this.cards = makeCardRuns(1, 12);
-    cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null;
+    const cs = this.allcards = makeCards(range2(1, 13)); // no kings
+    cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null; // 6 spaces instead
 
     var ps = this.piles;
     ps[53].next = ps[0]; ps[0].prev = ps[53]; // prev/next are not usually circular

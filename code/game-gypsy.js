@@ -52,10 +52,10 @@ const GypsyBase = {
 
 Games.gypsy2 = {
   __proto__: GypsyBase,
-  cards: [[SPADE, HEART], 4]
+  allcards: [4, "SH"]
 };
 
 Games.gypsy4 = {
   __proto__: GypsyBase,
-  cards: 2
+  allcards: [2]
 };

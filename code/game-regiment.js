@@ -11,10 +11,10 @@ Games.regiment = {
 
   xulTemplate: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
 
-  cards: 2,
+  allcards: [2],
 
   init: function() {
-    const cs = this.cards = makeDecks(2);
+    const cs = this.allcards;
     const fs = this.foundations, ps = this.piles, rs = this.reserves;
     this.aceFoundations = fs.slice(0,4);
     this.kingFoundations = fs.slice(4,8);

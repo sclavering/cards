@@ -18,7 +18,7 @@ Games.penguin = {
     // "Aces" are cards with the first's number.  Other "aces" start on foundations
     const beak = cards[51];
     this.foundationBaseIndexes = [this.cards.indexOf(beak)];
-    renumberCards(this.cards, beak.displayNum);
+    for each(var c in cards) c.renumber(beak.displayNum);
     const aces = [c for each(c in cards) if(c.isAce)];
     aces.pop(); // remove the beak, which would otherwise be dealt to a foundation
     for(var i = 0; i != 3; ++i) this._dealSomeCards(this.foundations[i], aces, 0, 1);

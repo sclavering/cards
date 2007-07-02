@@ -78,17 +78,6 @@ function makeCards(numbers, suits, repeat) {
   return flattenOnce(cards);
 }
 
-// Used for Penguin, Canfield, Demon
-// |cards| should be concatenated series of A-K runs within suit
-// |num| is the number (as displayed) of the cards which should be made to behave like Aces (1's)
-function renumberCards(cards, num) {
-  var neg = 1 - num, pos = 14 - num;
-  for(var i = 0; i != cards.length; ++i) {
-    var c = cards[i], n = c.displayNum, m = n >= num ? neg : pos;
-//    dump("renumbering "+c.displayStr+" to "+(n+m)+"\n");
-    c.renumber(n + m);
-  }
-}
 
 // pass number==14 for a "high" Ace
 function Card(number, suit) {
@@ -96,7 +85,7 @@ function Card(number, suit) {
   this.suit = suit;
   this.displayNum = number == 14 ? 1 : number
   this.displayStr = suit + this.displayNum;
-  this.renumber(number);
+  this.setNumber(number);
 }
 Card.prototype = {
   // Pointers to next card up and down in the same suit. For Mod3 3C.up==6C etc.
@@ -122,13 +111,21 @@ Card.prototype = {
   // used by pile views
   get image() { return images[this.faceUp ? this.displayStr : "facedowncard"]; },
 
-  renumber: function(number) {
+  setNumber: function(number) {
     this.number = number;
     this.upNumber = number + 1; // this.number==other.number+1 used to be very common
     this.isAce = number == 1 || number == 14;
     this.isKing = number == 13;
     this.isQueen = number == 12;
     this.str = this.suit + number;
+  },
+
+  // Change the logical number to fit with newAceNumber being number==1.
+  // Used in games where the starting card for foundations varies.
+  renumber: function(newAceNumber) {
+    // numbers being 1-based makes this messy
+    const neg = 1 - newAceNumber, pos = 14 - newAceNumber, n = this.displayNum;
+    this.setNumber(n + (n >= newAceNumber ? neg : pos));
   },
 
   // pass a boolean

@@ -27,7 +27,7 @@ const CanfieldBase = {
 
     const cs = this.cards;
     const num = this.foundations[0].firstCard.displayNum;
-    renumberCards(cs, num);
+    for each(var c in cards) c.renumber(num);
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },
 

@@ -45,6 +45,7 @@ const Pile = {
   next: null,
 
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
+  // Note that this *must* handle the case of card.pile==this
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
 
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
@@ -298,15 +299,15 @@ function mayAddSingleCardToEmpty(card) {
 }
 
 function mayAddOntoDotUpOrEmpty(card) {
-  return !this.hasCards || this.lastCard == card.up;
+  return !this.hasCards || (card.pile != this && this.lastCard == card.up);
 }
 
 function mayAddOntoUpNumberOrEmpty(card) {
-  return !this.hasCards || this.lastCard.number == card.upNumber;
+  return !this.hasCards || (card.pile != this && this.lastCard.number == card.upNumber);
 }
 
 function mayAddOntoDotUpOrPutKingInSpace(card) {
-  return this.hasCards ? card.up == this.lastCard : card.isKing;
+  return this.hasCards ? (card.pile != this && card.up == this.lastCard) : card.isKing;
 }
 
 
@@ -519,6 +520,7 @@ const RegimentPile = {
   mayTakeCard: mayTakeSingleCard,
 
   mayAddCard: function(card) {
+    if(card.pile == this) return false;
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
@@ -702,7 +704,6 @@ const _Mod3Foundation = {
     return first ? first.number == this._baseNum : false;
   },
   mayAddCard: function(card) {
-    if(card.pile == this) return false;
     const last = this.lastCard;
     if(!this.hasCards) return card.number == this._baseNum;
     return this.isGood && (card.down==last || card.twin.down==last)

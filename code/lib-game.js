@@ -349,9 +349,9 @@ const BaseCardGame = {
     const ds = [];
     for each(var p in this.piles)
       // suggesting moves to empty piles is ugly/annoying/pointless
-      if(p != card.pile && p.hasCards && p.mayAddCard(card)) ds.push(p);
+      if(p.hasCards && p.mayAddCard(card)) ds.push(p);
     for each(var f in this.foundations)
-      if(f != card.pile && f.mayAddCard(card)) ds.push(f);
+      if(f.mayAddCard(card)) ds.push(f);
     if(ds.length) this.addHints(card, ds);
   },
 

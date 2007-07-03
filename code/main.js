@@ -1,6 +1,3 @@
-// function for use on Arrays.  this used to be a getter function to hide it from for..in loops, but that does not work anymore in gecko 1.8x
-function flattenOnce(a) { return a.concat.apply([], a); }
-
 function extendObj(obj, stuffToAdd, allowReplacement) {
   for(var m in stuffToAdd) {
     if(!allowReplacement && (m in obj)) throw "extendObj: trying to replace an existing property";

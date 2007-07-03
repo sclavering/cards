@@ -36,7 +36,7 @@ function makeCards(repeat, suits, numbers, mod13) {
   if(!numbers) numbers = range2(1, 14);
   if(!mod13) mod13 = false;
   const cardsss = [_makeCardSeqs(repeat, suit, numbers, mod13) for each(suit in suits)];
-  return [c for each(css in cardsss) for each(cs in css) for each(c in cs)]; // flattened
+  return flatten(cardsss, 3);
 }
 
 function _makeCardSeqs(repeat, suit, numbers, mod13) {

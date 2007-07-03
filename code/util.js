@@ -27,3 +27,8 @@ function linkList(items, prevPropName, nextPropName, loop) {
   last[nextPropName] = first;
   return items;
 }
+
+function flatten(items, times) {
+  for(var i in irange(times)) items = Array.concat.apply(null, items);
+  return items;
+}

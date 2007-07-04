@@ -57,6 +57,8 @@ halfpilespacer {
 
 .pyramid > * { margin-bottom: -60px; }
 .pyramid { padding-bottom: 60px; }
+/* this *does* pass clicks through to other elements, thankfully */
+.pyramid-collapse { visibility: hidden; }
 
 /* for card <image>s */
 .hidden { display: none }

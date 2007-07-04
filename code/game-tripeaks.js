@@ -3,14 +3,13 @@ Games.tripeaks = {
 
   pileDetails: [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "p", 28, TriPeaksPile, View, 0, 0,
+    "y", 3, TriPeaksPile, View, 0, 0, // the three peaks
+    "p", 25, TriPeaksPile, PyramidView, 0, 0,
     "f", 1, GolfFoundation, View, 0, 0,
   ],
 
-  xulTemplate: "v<{class=pyramid}[41-2+2p2+2+2p2+2+2p2+2-14][42+2p2p2+2p2p2+2p2p2+24]"
+  xulTemplate: "v<{class=pyramid}{align=}[41-2+2y2+2+2y2+2+2y2+2-14][42+2p2p2+2p2p2+2p2p2+24]"
      + "[41-2p2p2p2p2p2p2p2p2p2-14][42p2p2p2p2p2p2p2p2p2p24]>3[3s2f3]2",
-
-  layout: { __proto__: _PyramidLayout },
 
   allcards: [1, , , true],
 

@@ -375,6 +375,16 @@ const PileOnView = {
   fixedWidth: gCardWidth + 3 * gHFanOffset
 };
 
+// Collapses to nothing when it has no cards
+const PyramidView = {
+  __proto__: _FlexFanView, // so it's just an <html:canvas>
+  fixedWidth: gCardWidth,
+  _update: function(cs, num) {
+    if(num) _FlexFanView._update.apply(this, arguments);
+    this._canvas.className = num ? "pyramid-uncollapse" : "pyramid-collapse";
+  }
+};
+
 const _SpiderFoundationView = {
   __proto__: _FanView,
   _vOffset: gVFanOffset,

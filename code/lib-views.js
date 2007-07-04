@@ -129,7 +129,6 @@ const _View = {
   initView: function() {
     const el = this.element = document.createElement("vbox");
     el.pileViewObj = this;
-    el.className = this.className;
     const HTMLns = "http://www.w3.org/1999/xhtml";
     this._canvas = document.createElementNS(HTMLns, "canvas");
     el.appendChild(this._canvas);
@@ -314,7 +313,6 @@ const FanRightView = {
 
 const _SlideView = {
   __proto__: _FlexFanView,
-  className: "pile slide",
   _basicHOffset: gHSlideOffset,
   _basicVOffset: gVSlideOffset,
   // Adequate in all the games it's used in

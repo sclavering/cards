@@ -207,7 +207,7 @@ const BaseCardGame = {
     return 0;
   },
 
-  // score for each card revealed.  done() handles the revealing of cards
+  // score for each card revealed.  doo() handles the revealing of cards
   scoreForRevealing: 0,
 
 

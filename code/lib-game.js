@@ -142,27 +142,25 @@ const BaseCardGame = {
   // 'order' is used to "restart" games - by starting a new one with the same
   // shuffled cards.  If not null, it's a permutation of indices
   begin: function(order) {
+    this.actionList = [];
+    gScoreDisplay.value = this.score = 0;
     this.createPiles();
     this.createPileArrays();
     this.loadPreferredFoundationSuits();
     if(this.allcards) this.allcards = makeCards.apply(null, this.allcards);
     this.init();
+    this.orderCardsDealt = order || this._getDealOrder();
+    this.deal([this.allcards[ix] for each(ix in this.orderCardsDealt)]);
+  },
 
-    var cardsToDeal;
-    if(order) {
-      this.orderCardsDealt = order;
-      cardsToDeal = [this.allcards[order[i]] for(i in this.allcards)];
-    } else {
-      var ixs = range(this.allcards.length);
-      do {
-        this.orderCardsDealt = order = shuffle(ixs);
-        cardsToDeal = [this.allcards[order[i]] for(i in this.allcards)];
-      } while(this.shuffleImpossible(cardsToDeal));
-    }
-
-    this.actionList = [];
-    this.deal(cardsToDeal);
-    gScoreDisplay.value = this.score = 0;
+  _getDealOrder: function() {
+    const ixs = range(this.allcards.length);
+    var order, cards;
+    do {
+      order = shuffle(ixs);
+      cards = [this.allcards[ix] for each(ix in order)];
+    } while(this.shuffleImpossible(cards));
+    return order;
   },
 
   // overriding versions should deal out the provided shuffled cards for a new game.

@@ -10,7 +10,7 @@ Games.maze = {
 
   allcards: null,
   init: function() {
-    const cs = this.allcards = makeCards(range2(1, 13)); // no kings
+    const cs = this.allcards = makeCards(1, null, range2(1, 13)); // no kings
     cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null; // 6 spaces instead
 
     var ps = this.piles;

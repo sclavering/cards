@@ -19,7 +19,7 @@ Games.mod3 = {
   allcards: null,
   init: function() {
     const css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
-    const cards = [makeCards(css[i], null, 2) for(i in css)];
+    const cards = [makeCards(2, null, css[i]) for(i in css)];
     this.allcards = flatten(cards, 1);
     const baseIxs =[0, 4, 8, 12, 16, 20, 24, 28]
     this.bases = [[cards[i][ix] for each(ix in baseIxs)] for(i in cards)];

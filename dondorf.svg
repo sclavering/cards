@@ -133,35 +133,19 @@
  </g>
  <g id="index_nums">
   <use x="1" y="-.5" xlink:href="#it" stroke="#000000"/>
-  <use x="63" y="-.5" xlink:href="#it" stroke="#000000"/>
   <use x="-1" y=".5" xlink:href="#ib" stroke="#000000"/>
-  <use x="-63" y=".5" xlink:href="#ib" stroke="#000000"/>
   <use x="1" y="122.5" xlink:href="#it" stroke="#DF0000"/>
-  <use x="63" y="122.5" xlink:href="#it" stroke="#DF0000"/>
   <use x="-1" y="123.5" xlink:href="#ib" stroke="#DF0000"/>
-  <use x="-63" y="123.5" xlink:href="#ib" stroke="#DF0000"/>
   <use x="1" y="245.5" xlink:href="#it" stroke="#DF0000"/>
-  <use x="63" y="245.5" xlink:href="#it" stroke="#DF0000"/>
   <use x="-1" y="246.5" xlink:href="#ib" stroke="#DF0000"/>
-  <use x="-63" y="246.5" xlink:href="#ib" stroke="#DF0000"/>
   <use x="1" y="368.5" xlink:href="#it" stroke="#000000"/>
-  <use x="63" y="368.5" xlink:href="#it" stroke="#000000"/>
   <use x="-1" y="369.5" xlink:href="#ib" stroke="#000000"/>
-  <use x="-63" y="369.5" xlink:href="#ib" stroke="#000000"/>
  </g>
  <g id="index_pips">
   <use transform="translate(8.5,24.5)" xlink:href="#cs"/>
   <use transform="translate(8.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(8.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(8.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(8.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(8.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(8.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(8.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(70.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(70.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(70.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(70.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(70.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(70.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(70.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -170,14 +154,6 @@
   <use transform="translate(87.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(87.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(87.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(87.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(87.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(87.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(87.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(149.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(149.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(149.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(149.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(149.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(149.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(149.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -186,14 +162,6 @@
   <use transform="translate(166.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(166.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(166.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(166.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(166.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(166.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(166.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(228.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(228.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(228.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(228.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(228.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(228.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(228.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -202,14 +170,6 @@
   <use transform="translate(245.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(245.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(245.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(245.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(245.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(245.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(245.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(307.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(307.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(307.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(307.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(307.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(307.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(307.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -218,14 +178,6 @@
   <use transform="translate(324.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(324.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(324.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(324.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(324.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(324.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(324.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(386.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(386.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(386.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(386.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(386.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(386.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(386.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -234,14 +186,6 @@
   <use transform="translate(403.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(403.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(403.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(403.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(403.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(403.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(403.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(465.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(465.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(465.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(465.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(465.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(465.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(465.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -250,14 +194,6 @@
   <use transform="translate(482.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(482.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(482.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(482.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(482.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(482.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(482.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(544.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(544.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(544.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(544.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(544.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(544.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(544.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -266,14 +202,6 @@
   <use transform="translate(561.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(561.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(561.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(561.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(561.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(561.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(561.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(623.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(623.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(623.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(623.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(623.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(623.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(623.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -282,14 +210,6 @@
   <use transform="translate(640.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(640.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(640.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(640.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(640.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(640.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(640.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(702.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(702.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(702.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(702.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(702.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(702.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(702.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -298,14 +218,6 @@
   <use transform="translate(719.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(719.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(719.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(719.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(719.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(719.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(719.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(781.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(781.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(781.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(781.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(781.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(781.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(781.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -314,14 +226,6 @@
   <use transform="translate(798.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(798.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(798.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(798.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(798.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(798.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(798.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(860.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(860.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(860.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(860.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(860.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(860.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(860.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -330,14 +234,6 @@
   <use transform="translate(877.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(877.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(877.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(877.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(877.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(877.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(877.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(939.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(939.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(939.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(939.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(939.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(939.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(939.5,344.5) rotate(180)" xlink:href="#hs"/>
@@ -346,14 +242,6 @@
   <use transform="translate(956.5,147.5)" xlink:href="#ds"/>
   <use transform="translate(956.5,270.5)" xlink:href="#hs"/>
   <use transform="translate(956.5,393.5)" xlink:href="#ss"/>
-  <use transform="translate(956.5,98.5) rotate(180)" xlink:href="#cs"/>
-  <use transform="translate(956.5,221.5)" xlink:href="#ds"/>
-  <use transform="translate(956.5,344.5) rotate(180)" xlink:href="#hs"/>
-  <use transform="translate(956.5,467.5) rotate(180)" xlink:href="#ss"/>
-  <use transform="translate(1018.5,24.5)" xlink:href="#cs"/>
-  <use transform="translate(1018.5,147.5)" xlink:href="#ds"/>
-  <use transform="translate(1018.5,270.5)" xlink:href="#hs"/>
-  <use transform="translate(1018.5,393.5)" xlink:href="#ss"/>
   <use transform="translate(1018.5,98.5) rotate(180)" xlink:href="#cs"/>
   <use transform="translate(1018.5,221.5)" xlink:href="#ds"/>
   <use transform="translate(1018.5,344.5) rotate(180)" xlink:href="#hs"/>

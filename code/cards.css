@@ -47,12 +47,12 @@ toolbarbutton { margin-left: 10px; }
 }
 
 canvas, pilespacer {
-  min-width: 71px;
-  min-height: 96px;
+  min-width: 79px;
+  min-height: 123px;
 }
 halfpilespacer {
-  min-width: 35px;
-  min-height: 96px;
+  min-width: 40px;
+  min-height: 123px;
 }
 
 .pyramid > * { margin-bottom: -60px; }

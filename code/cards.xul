@@ -68,44 +68,7 @@
 <html:img id="facedowncard" src="images/facedown.png"/>
 </images_container>
 
-<scripts_container class="hidden">
-<script type="application/javascript;version=1.7" src="util.js"/>
-<script src="main.js"/>
-
-<script src="lib-cards.js"/>
-<script type="application/javascript;version=1.7" src="lib-views.js"/>
-<script src="lib-layouts.js"/>
-<script src="lib-piles.js"/>
-<script src="lib-animation.js"/>
-<script src="lib-rules.js"/>
-<script src="lib-actions.js"/>
-<script type="application/javascript;version=1.7" src="lib-game.js"/>
-<script src="lib-freecell-move-sequencer.js"/>
-
-<script src="game-acesup.js"/>
-<script src="game-canfield.js"/>
-<script src="game-doublesol.js"/>
-<script src="game-fan.js"/>
-<script src="game-fortythieves.js"/>
-<script src="game-freecell.js"/>
-<script src="game-golf.js"/>
-<script src="game-gypsy.js"/>
-<script src="game-klondike.js"/>
-<script src="game-maze.js"/>
-<script type="application/javascript;version=1.7" src="game-mod3.js"/>
-<script type="application/x-javascript;version=1.7" src="game-montana.js"/>
-<script type="application/javascript;version=1.7" src="game-penguin.js"/>
-<script src="game-pileon.js"/>
-<script src="game-pyramid.js"/>
-<script type="application/javascript;version=1.7" src="game-regiment.js"/>
-<script src="game-russiansol.js"/>
-<script src="game-spider.js"/>
-<script src="game-towers.js"/>
-<script src="game-tripeaks.js"/>
-<script src="game-unionsquare.js"/>
-<script src="game-whitehead.js"/>
-<script src="game-yukon.js"/>
-</scripts_container>
+<script type="application/javascript;version=1.7" src="all.js"/>
 
 <commandset id="cards-commands">
   <command id="cmd:newgame" oncommand="newGame();"/>

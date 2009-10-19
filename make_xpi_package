@@ -1,2 +1,3 @@
+cat js/util.js js/main.js js/lib*.js js/game*.js > code/all.js
 zip -ur0 cards.zip code lang
 zip -ur9 cards.xpi cards.zip install.rdf chrome.manifest

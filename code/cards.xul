@@ -10,6 +10,8 @@
   title="&window.title;"
   id     ="cards-window"
   persist="screenX screenY width height sizemode"
+  width="800"
+  height="600"
   >
 
 <images_container class="hidden" id="images">

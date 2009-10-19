@@ -86,6 +86,7 @@
   <key id="key:undo"    key="&key.undo;"    modifiers="accel" command="cmd:undo"/>
   <key id="key:redo"    key="&key.undo;"    modifiers="accel,shift" command="cmd:redo"/>
   <key id="key:hint"    key="&key.hint;"    modifiers="accel" command="cmd:hint"/>
+  <key id="key:hint"    key="&key.hint2;"   modifiers="accel" command="cmd:hint"/>
 </keyset>
 
 <!-- replaces the non-functional browser menubar on Mac OS with an empty one -->

@@ -35,6 +35,7 @@
 <!ENTITY hint.label "Подсказка">
 <!ENTITY hint.tooltip "Предлагаемый ход">
 <!ENTITY key.hint "П">
+<!ENTITY key.hint2 "">
 
 <!ENTITY redeal.label "Пересдать">
 <!ENTITY redeal.tooltip "Раздать карты ещё раз">

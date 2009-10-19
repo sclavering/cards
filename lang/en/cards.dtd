@@ -28,6 +28,7 @@
 <!ENTITY hint.label "Hint">
 <!ENTITY hint.tooltip "Suggest a move">
 <!ENTITY key.hint "H">
+<!ENTITY key.hint2 "i">
 
 <!ENTITY redeal.label "Redeal">
 <!ENTITY redeal.tooltip "Redeal remaining cards">

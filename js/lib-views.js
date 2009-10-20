@@ -4,8 +4,8 @@ function createPileView(viewType) {
   return view;
 }
 
-var gVFanOffset = 22; // num pixels between top edges of two cards in a vertical fan
-var gHFanOffset = 12; // num pixels between left edges of two cards in a horizontal fan
+var gVFanOffset = 25; // num pixels between top edges of two cards in a vertical fan
+var gHFanOffset = 15; // num pixels between left edges of two cards in a horizontal fan
 var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
 var gHSlideOffset = 2;
 var gCardHeight = 123;

@@ -477,7 +477,7 @@ const PileOnPile = {
   // No more than 4 cards may ever be in any single pile.
   mayAddCard: function(card) {
     const last = this.lastCard;
-    if(last && last.number!=card.number) return false;
+    if(card.pile == this || (last && last.number != card.number)) return false;
     const numCards = card.pile.cards.length - card.index;
     return this.cards.length + numCards <= 4;
   }

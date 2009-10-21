@@ -8,7 +8,7 @@ Games.acesup = {
   ],
   xulTemplate: "h2s2p1p1p1p2f2",
 
-  allcards: [null, null, range2(2, 14)], // aces high
+  allcards: [null, null, range2(2, 15)], // aces high
 
   init: function() {
     for(var i = 0; i != 4; i++) this.piles[i].num = i;

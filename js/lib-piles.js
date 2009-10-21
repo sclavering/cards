@@ -285,6 +285,7 @@ function mayTakeRunningFlush(card) {
 }
 
 function mayAddToGypsyPile(card) {
+  if(card.pile == this) return false; // Gypsy and Canfield don't need this, but Yukon does
   const last = this.lastCard;
   return !last || (last.colour!=card.colour && last.number==card.upNumber);
 }

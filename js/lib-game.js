@@ -116,7 +116,10 @@ const BaseCardGame = {
       if(!bytype[l]) bytype[l] = [];
       bytype[l].push(all[i]);
     }
-    for each(var set in bytype) linkList(set, "prev", "next");
+    for(let [l, set] in Iterator(bytype)) {
+      for(let i = 0; i != set.length; ++i) set[i].p_name = l + i;
+      linkList(set, "prev", "next");
+    }
   },
 
   createPileArrays: function() {

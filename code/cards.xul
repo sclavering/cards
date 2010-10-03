@@ -88,10 +88,6 @@
   <key id="key:hint"    key="i"   modifiers="accel" command="cmd:hint"/>
 </keyset>
 
-<!-- replaces the non-functional browser menubar on Mac OS with an empty one -->
-<menubar hidden="true"/>
-
-<toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="Game">
     <menupopup id="menupopup-gametypes"
@@ -117,9 +113,6 @@
     <label id="score-display"/>
   </hbox></vbox>
 </toolbar>
-</toolbox>
-
-<!-- Individual games' layouts are stored in a DSL in strings in their .js files -->
 
 <stack id="games">
   <vbox id="message" hidden="true">

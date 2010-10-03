@@ -101,7 +101,7 @@
   <toolbarbutton command="cmd:hint"    label="Hint"    tooltiptext="Highlight a possible non-trivial move"/>
   <toolbarbutton command="cmd:redeal"  label="Redeal"  tooltiptext="Redeal remaining cards"/>
   <toolbarbutton command="cmd.help"    label="Help"    tooltiptext="Show the rules for this game"/>
-  <flex/>
+  <spacer style="-moz-box-flex:1"/>
   <vbox id="score-panel" align="center" pack="center"><hbox>
     <label value="Score: "/>
     <label id="score-display"/>

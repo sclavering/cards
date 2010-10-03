@@ -55,7 +55,7 @@ const BaseCardGame = {
     this.layout.show();
     if(this.getHints) gCmdHint.removeAttribute("disabled");
     else gCmdHint.setAttribute("disabled","true");
-    gScorePanel.hidden = !this.hasScoring;
+    setVisibility(gScorePanel, this.hasScoring);
     gScoreDisplay.value = this.score;
   },
 

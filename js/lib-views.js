@@ -22,16 +22,16 @@ const _View = {
   element: null,
 
   // These will mask XULElement.boxObject.* vs HMTLElement.offset*
-  get pixelLeft() { return this.element.boxObject.x; },
-  get pixelTop() { return this.element.boxObject.y; },
-  get pixelWidth() { return this.element.boxObject.width; },
-  get pixelHeight() { return this.element.boxObject.height; },
+  get pixelLeft() { return document.getBoxObjectFor(this.element).x; },
+  get pixelTop() { return document.getBoxObjectFor(this.element).y; },
+  get pixelWidth() { return document.getBoxObjectFor(this.element).width; },
+  get pixelHeight() { return document.getBoxObjectFor(this.element).height; },
   get pixelRight() { return this.pixelLeft + this.pixelWidth; },
   get pixelBottom() { return this.pixelTop + this.pixelHeight; },
 
   // The (x,y) coords in terms of gGameStack's positioning (which starts at the
   // inside of its padding).
-  get relativePixelTop() { return this.pixelTop - Game.layout._node.boxObject.y; },
+  get relativePixelTop() { return this.pixelTop - document.getBoxObjectFor(Game.layout._node).y; },
   get relativePixelLeft() { return this.pixelLeft; }, // pixelLeft minus zero
 
   _counter: null, // if set true, a <label> will be created and replace it
@@ -127,14 +127,14 @@ const _View = {
   needsUpdateOnResize: false,
 
   initView: function() {
-    const el = this.element = document.createElement("vbox");
+    const el = this.element = createHTML("vbox");
     el.pileViewObj = this;
     const HTMLns = "http://www.w3.org/1999/xhtml";
     this._canvas = document.createElementNS(HTMLns, "canvas");
     el.appendChild(this._canvas);
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
-      this._counter = el.appendChild(document.createElement("label"));
+      this._counter = el.appendChild(createHTML("label"));
       this._counter.className = "counter";
     }
   }
@@ -150,7 +150,7 @@ const View = {
     this._canvas.height = gCardHeight;
     if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
     else this._drawBackgroundForEmpty();
-    if(this._counter) this._counter.setAttribute("value", this.pile.counter);
+    if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   drawIntoFloatingPile: function(card) {
@@ -192,7 +192,7 @@ const _FanView = {
     for(var i = 0; i != num; ++i)
       this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
     if(!num) this._drawBackgroundForEmpty();
-    if(this._counter) this._counter.setAttribute("value", this.pile.counter);
+    if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   _updateOffsets: null,
@@ -381,6 +381,7 @@ const PyramidView = {
   fixedWidth: gCardWidth,
   _update: function(cs, num) {
     if(num) _FlexFanView._update.apply(this, arguments);
+    // xxx is this correct ?
     this._canvas.className = num ? "pyramid-uncollapse" : "pyramid-collapse";
   }
 };

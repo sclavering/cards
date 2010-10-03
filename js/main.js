@@ -151,8 +151,8 @@ const gFloatingPile = {
   showFor: function(card, x, y) {
     this.lastCard = card;
     // context widths already set appropriately in sizeCanvas
-    this.element.width = this.context.canvas.width;
-    this.element.height = this.context.canvas.height;
+    this.element.style.width = this.context.canvas.width + 'px';
+    this.element.style.height = this.context.canvas.height + 'px';
     this.moveTo(x, y);
   },
 
@@ -163,8 +163,12 @@ const gFloatingPile = {
 
   moveTo: function(x, y) {
     const self = gFloatingPile;
-    self.element.left = self._left = x;
-    self.element.top = self._top = y;
+    self._left = x;
+    self._top = y;
+    self.element.style.left = self._left + 'px';
+    // xxx this seems to sometimes cause warnings to show on the error console (seen in Fx 3.0):
+    // "Warning: Error in parsing value for property 'top'.  Declaration dropped."
+    self.element.style.top = self._top + 'px';
   }
 };
 
@@ -349,4 +353,17 @@ function doneShowingMessage() {
   window.onclick = null;
   gMessageBox.hidden = true;
   if(gMessageCallback) gMessageCallback();
+}
+
+
+function createHTML(class_name) {
+  var el = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+  el.className = class_name;
+  return el;
+}
+
+
+function setVisibility(el, visible) {
+  if(visible) el.style.display = '';
+  else el.style.display = 'none';
 }

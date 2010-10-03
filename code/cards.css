@@ -15,13 +15,18 @@ window {
 }
 
 
-/* custom elements */
-flex { -moz-box-flex: 1; }
-flex2 { -moz-box-flex: 2; }
-flex3 { -moz-box-flex: 3; }
-flex4 { -moz-box-flex: 4; }
-flex5 { -moz-box-flex: 5; }
-space { min-width: 10px; min-height: 10px; }
+
+/* various <div>s used to display the piles and control their layout */
+.flex, .hbox, .vbox, .space, .pilespacer, .halfpilespacer, .game {
+  display: -moz-box;
+}
+.vbox { -moz-box-orient: vertical; }
+.flex { -moz-box-flex: 1; }
+.flex2 { -moz-box-flex: 2; }
+.flex3 { -moz-box-flex: 3; }
+.flex4 { -moz-box-flex: 4; }
+.flex5 { -moz-box-flex: 5; }
+.space { min-width: 10px; min-height: 10px; }
 
 
 #games {
@@ -59,11 +64,11 @@ toolbarbutton { margin-left: 10px; }
   padding-top: 0.2em;
 }
 
-canvas, pilespacer {
+canvas, .pilespacer {
   min-width: 79px;
   min-height: 123px;
 }
-halfpilespacer {
+.halfpilespacer {
   min-width: 40px;
   min-height: 123px;
 }

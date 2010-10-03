@@ -3,8 +3,6 @@ const Layout = {
   // or an <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined below
   template: null,
 
-  pilespacerClass: "",
-
   views: [],
 
   // The root XUL element for this layout.
@@ -15,14 +13,14 @@ const Layout = {
 
   show: function() {
     if(!this._node) throw "layout not init()'d";
-    this._node.hidden = false;
+    setVisibility(this._node, true);
     this._resetHandlers();
     this.onWindowResize();
     window.onresize = this.onWindowResize;
   },
 
   hide: function() {
-    this._node.hidden = true;
+    setVisibility(this._node, false);
     window.onresize = null;
   },
 
@@ -33,16 +31,15 @@ const Layout = {
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
     const containerIsVbox = template[0] == "v";
-    const container = this._node = document.createElement(containerIsVbox ? "vbox" : "hbox");
-    container.className = "game";
+    const container = this._node = createHTML(containerIsVbox ? "vbox" : "hbox");
+    container.className += " game";
     gGameStack.insertBefore(container, gGameStack.firstChild);
-    container.top = container.left = 0; // to make explicit sizing work
+    container.style.top = container.style.left = 0; // to make explicit sizing work
     // Typically what we want
-    if(!containerIsVbox) container.align = "start";
+    if(!containerIsVbox) container.style.MozBoxAlign = "start";
 
     var box = container;
     var nextBoxVertical = !containerIsVbox;
-    var p;
 
     // first char is "h"/"v", not of interest here
     for(var i = 1; i != len; ++i) {
@@ -54,10 +51,10 @@ const Layout = {
           // fall through
         case "<": // in current direction
           var old = box;
-          old.appendChild(box = document.createElement(nextBoxVertical ? "hbox" : "vbox"));
+          old.appendChild(box = createHTML(nextBoxVertical ? "hbox" : "vbox"));
           // "stretch" is the default, and usually not what we want.
           // Also, setting via CSS sometimes fails to have any effect!
-          box.align = "start";
+          box.style.MozBoxAlign = "start";
           break;
       // finish a box
         case "]":
@@ -77,22 +74,20 @@ const Layout = {
           throw "Layout.init: reached a } in template (without a { first)";
       // add spaces
         case "-":
-          box.appendChild(document.createElement("halfpilespacer")); break;
+          box.appendChild(createHTML("halfpilespacer")); break;
         case "+":
         case "#":
-          p = document.createElement("pilespacer");
-          p.className = this.pilespacerClass;
-          box.appendChild(p);
+          box.appendChild(createHTML("pilespacer"));
           break;
         case " ":
-          box.appendChild(document.createElement("space")); break;
+          box.appendChild(createHTML("space")); break;
         case "1":
-          box.appendChild(document.createElement("flex")); break;
+          box.appendChild(createHTML("flex")); break;
         case "2":
         case "3":
         case "4":
         case "5":
-          box.appendChild(document.createElement("flex" + ch)); break;
+          box.appendChild(createHTML("flex flex" + ch)); break;
       // add pile views
         case "p":
         case "f":
@@ -167,7 +162,7 @@ const Layout = {
     const self = Game.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
-    const box = gFloatingPile.element.boxObject;
+    const box = document.getBoxObjectFor(gFloatingPile.element);
     const l = box.x, r = box.x + box.width;
     const t = box.y, b = box.y + box.height;
 
@@ -232,9 +227,9 @@ const Layout = {
     animations.interrupt();
     const self = Game.layout;
     const width = window.innerWidth
-    const height = window.innerHeight - self._node.boxObject.y;
-    self._node.width = width;
-    self._node.height = height;
+    const height = window.innerHeight - document.getBoxObjectFor(self._node).y;
+    self._node.style.width = width + 'px';
+    self._node.style.height = height + 'px';
     const vs = self.viewsNeedingUpdateOnResize;
     self.setFlexibleViewSizes(vs, width, height);
     for each(var v in vs) v.update();

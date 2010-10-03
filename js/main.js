@@ -17,8 +17,6 @@ function overrideGetter(obj, prop, val) {
 
 var gPrefs = null; // nsIPrefBranch for "games.cards."
 
-var gStrings = []; // the contents of the stringbundle
-
 var Game = null;  // the current games
 var GameController = null;
 
@@ -75,14 +73,6 @@ function init() {
   // init the pref branch
   gPrefs = CC["@mozilla.org/preferences-service;1"]
       .getService(CI.nsIPrefService).getBranch("games.cards.");
-
-  // load stringbundle
-  var svc = CC["@mozilla.org/intl/stringbundle;1"].getService(CI.nsIStringBundleService);
-  var bundle = svc.createBundle("chrome://cards/locale/cards.properties").getSimpleEnumeration();
-  while(bundle.hasMoreElements()) {
-    var property = bundle.getNext().QueryInterface(CI.nsIPropertyElement);
-    gStrings[property.key] = property.value;
-  }
 
   // make controllers for each game type
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);

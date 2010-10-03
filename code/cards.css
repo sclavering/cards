@@ -1,4 +1,19 @@
-@import url(chrome://global/skin/);
+label[disabled="true"] {
+  color: GrayText;
+}
+
+menulist > menupopup,
+.menulist-menupopup {
+  -moz-binding: url("chrome://global/content/bindings/popup.xml#popup-scrollbars");
+}
+
+window {
+  -moz-appearance: dialog;
+  background-color: #FFFFFF;
+  color: -moz-DialogText;
+  font: message-box;
+}
+
 
 /* custom elements */
 flex { -moz-box-flex: 1; }
@@ -8,7 +23,6 @@ flex4 { -moz-box-flex: 4; }
 flex5 { -moz-box-flex: 5; }
 space { min-width: 10px; min-height: 10px; }
 
-label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwanted margins */
 
 #games {
   /* avoid manually spacing on every game */
@@ -39,7 +53,6 @@ label { margin-left: 0; margin-right: 0 } /* global formatting.css provides unwa
 
 #score-panel { margin-right: 10px }
 toolbarbutton { margin-left: 10px; }
-#score-panel label { margin: 0 }
 
 .counter {
   text-align: center;

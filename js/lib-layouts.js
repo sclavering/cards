@@ -74,20 +74,24 @@ const Layout = {
           throw "Layout.init: reached a } in template (without a { first)";
       // add spaces
         case "-":
-          box.appendChild(createHTML("halfpilespacer")); break;
+          box.appendChild(createHTML("halfpilespacer"));
+          break;
         case "+":
         case "#":
           box.appendChild(createHTML("pilespacer"));
           break;
         case " ":
-          box.appendChild(createHTML("space")); break;
+          box.appendChild(createHTML("space"));
+          break;
         case "1":
-          box.appendChild(createHTML("flex")); break;
+          box.appendChild(createHTML("flex"));
+          break;
         case "2":
         case "3":
         case "4":
         case "5":
-          box.appendChild(createHTML("flex flex" + ch)); break;
+          box.appendChild(createHTML("flex flex" + ch));
+          break;
       // add pile views
         case "p":
         case "f":

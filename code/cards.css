@@ -80,12 +80,3 @@ canvas, .pilespacer {
 
 /* for card <image>s */
 .hidden { display: none }
-
-
-/* Stuff for the Games menu */
-
-.gamesmenu_unexpanded .notrecentlyplayed { display: none; }
-.notrecentlyplayed { font-style: italic; }
-
-/* hide the normal anonymous content for the autorepeatbutton */
-#gametypes-showall > image { display: none }

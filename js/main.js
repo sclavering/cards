@@ -75,7 +75,6 @@ function init() {
   if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
 
   buildGamesMenu(game);
-  migratePrefs();
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -91,23 +90,6 @@ function loadPref(name) {
 
 function savePref(name, val) {
   gPrefs[name] = val;
-}
-
-
-function migratePrefs() {
-  // The set of games shown in the menu used to be set manually by the user in
-  // a dialogue window using a list of checkboxes, and be stored in a pref. Now
-  // we implement an "intellimenu" -- games played recently show up. To control
-  // the games initally shown (or to migrate the pref) we set dates manually.
-  if(!loadPref("migrated_gamesInMenu")) {
-    savePref("migrated_gamesInMenu", "true");
-    const idstr = loadPref("gamesInMenu")
-      || "freecell,fan,divorce,gypsy4,klondike1,mod3,penguin,pileon,russiansol"
-          + ",simon4,spider2,spider4,unionsquare,wasp,whitehead,yukon";
-    const ids = idstr.split(",");
-    const valid = [id for each(id in ids) if(id in Games)];
-    for each(var id in valid) savePref(id + ".lastplayed", Date.now());
-  }
 }
 
 
@@ -176,7 +158,6 @@ const gFloatingPile = {
 function playGame(game) {
   if(GameController) GameController.switchFrom();
 
-  savePref(game + ".lastplayed", Date.now());
   savePref("current-game", game);
   document.title = gStrings["game."+game];
 
@@ -222,25 +203,6 @@ function buildGamesMenu(selected) {
   // <menuitem>s other than the final expander
   menu.gameItems = Array.slice(menu.childNodes, 0, menu.childNodes.length - 1);
 }
-
-function onGamesMenuShowing(popup) {
-  popup.className = "gamesmenu_unexpanded";
-  popup.lastChild.hidden = false;
-  const show = {};
-  const minDate = Date.now() - 1000 * 60 * 60 * 24 * 30; // one month ago, ish
-  for(var id in Games) {
-    var lastplayed = parseInt(loadPref(id + ".lastplayed"));
-    if(lastplayed > minDate) show[id] = true;
-  }
-  for each(var mi in popup.gameItems)
-    mi.className = show[mi.gameId] ? "" : "notrecentlyplayed";
-}
-
-function showAllGames(menuitem) {
-  menuitem.parentNode.className = "gamesmenu_expanded";
-  menuitem.hidden = true;
-}
-
 
 
 function newGame() {

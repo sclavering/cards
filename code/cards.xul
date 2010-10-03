@@ -85,14 +85,8 @@
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="Game">
     <menupopup id="menupopup-gametypes"
-        onpopupshowing="onGamesMenuShowing(this);"
-        oncommand="playGame(event.target.gameId);">
-      <!-- Semantically wrong, but gives nice event handling. Supressing hiding
-           of the menu when clicking a normal menuitem is v. difficult, too -->
-      <autorepeatbutton id="gametypes-showall" oncommand="showAllGames(this); event.stopPropagation(); return false">
-        <label value="..."/>
-      </autorepeatbutton>
-    </menupopup>
+        oncommand="playGame(event.target.gameId);"
+        />
   </toolbarbutton>
   <toolbarbutton command="cmd:newgame" label="New" tooltiptext="Start a new game"/>
   <toolbarbutton command="cmd:restart" label="Restart" tooltiptext="Restart the current game"/>

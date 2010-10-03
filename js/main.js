@@ -191,7 +191,7 @@ function help() {
   const t = Math.floor(screenY + (outerHeight - h) / 3);
   const l = Math.floor(screenX + (outerWidth - w) / 2);
   const featureStr = "dialog=no,width=" + w + ",height=" + h + ",top=" + t + ",left=" + l;
-  openDialog("chrome://cards/locale/help.html#" + helpid, null, featureStr);
+  window.open("help.html#" + helpid, null, featureStr);
 }
 
 

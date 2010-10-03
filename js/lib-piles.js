@@ -470,7 +470,6 @@ const PenguinPile = {
 const PileOnPile = {
   __proto__: Pile,
   isPile: true,
-  className: "fan-right pileon",
   // May move any group of cards all of the same rank.
   mayTakeCard: function(card) {
     const num = card.number, cs = card.pile.cards, len = cs.length;

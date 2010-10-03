@@ -4,5 +4,3 @@
 LIB_JS_FILES="js/lib-cards.js js/lib-views.js js/lib-layouts.js js/lib-piles.js js/lib-animation.js js/lib-rules.js js/lib-actions.js js/lib-game.js js/lib-freecell-move-sequencer.js"
 
 cat js/util.js js/main.js $LIB_JS_FILES js/game*.js > code/all.js
-zip -ur0 cards.zip code lang
-zip -ur9 cards.xpi cards.zip install.rdf chrome.manifest

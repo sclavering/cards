@@ -63,29 +63,19 @@
 <img id="facedowncard" src="images/facedown.png"/>
 </div>
 
-<commandset id="cards-commands">
-  <command id="cmd:newgame" oncommand="newGame();"/>
-  <command id="cmd:restart" oncommand="restartGame();"/>
-  <command id="cmd:undo" oncommand="undo();"/>
-  <command id="cmd:redo" oncommand="redo();"/>
-  <command id="cmd:hint" oncommand="hint();"/>
-  <command id="cmd:redeal" oncommand="redeal();"/>
-  <command id="cmd.help" oncommand="help();"/>  
-</commandset>
-
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="Game">
     <menupopup id="menupopup-gametypes"
         oncommand="playGame(event.target.gameId);"
         />
   </toolbarbutton>
-  <toolbarbutton command="cmd:newgame" label="New" tooltiptext="Start a new game"/>
-  <toolbarbutton command="cmd:restart" label="Restart" tooltiptext="Restart the current game"/>
-  <toolbarbutton command="cmd:undo"    label="Undo"/>
-  <toolbarbutton command="cmd:redo"    label="Redo"/>
-  <toolbarbutton command="cmd:hint"    label="Hint"    tooltiptext="Highlight a possible non-trivial move"/>
-  <toolbarbutton command="cmd:redeal"  label="Redeal"  tooltiptext="Redeal remaining cards"/>
-  <toolbarbutton command="cmd.help"    label="Help"    tooltiptext="Show the rules for this game"/>
+  <toolbarbutton id="cmd:newgame" oncommand="newGame();" label="New" tooltiptext="Start a new game"/>
+  <toolbarbutton id="cmd:restart" oncommand="restartGame();" label="Restart" tooltiptext="Restart the current game"/>
+  <toolbarbutton id="cmd:undo" oncommand="undo();" label="Undo"/>
+  <toolbarbutton id="cmd:redo" oncommand="redo();" label="Redo"/>
+  <toolbarbutton id="cmd:hint" oncommand="hint();" label="Hint" tooltiptext="Highlight a possible non-trivial move"/>
+  <toolbarbutton id="cmd:redeal" oncommand="redeal();" label="Redeal" tooltiptext="Redeal remaining cards"/>
+  <toolbarbutton oncommand="help();" label="Help" tooltiptext="Show the rules for this game"/>
   <spacer style="-moz-box-flex:1"/>
   <vbox id="score-panel" align="center" pack="center"><hbox>
     <label value="Score: "/>

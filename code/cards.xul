@@ -5,7 +5,7 @@
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   windowtype="cardgames-main"
-  title="&window.title;"
+  title="Cards"
   id     ="cards-window"
   persist="screenX screenY width height sizemode"
   width="800"
@@ -81,12 +81,12 @@
 </commandset>
 
 <keyset id="cards-keys">
-  <key id="key:newgame" key="&key.newgame;" modifiers="accel" command="cmd:newgame"/>
-  <key id="key:restart" key="&key.restart;" modifiers="accel" command="cmd:restart"/>
-  <key id="key:undo"    key="&key.undo;"    modifiers="accel" command="cmd:undo"/>
-  <key id="key:redo"    key="&key.undo;"    modifiers="accel,shift" command="cmd:redo"/>
-  <key id="key:hint"    key="&key.hint;"    modifiers="accel" command="cmd:hint"/>
-  <key id="key:hint"    key="&key.hint2;"   modifiers="accel" command="cmd:hint"/>
+  <key id="key:newgame" key="n" modifiers="accel" command="cmd:newgame"/>
+  <key id="key:restart" key="r" modifiers="accel" command="cmd:restart"/>
+  <key id="key:undo"    key="z"    modifiers="accel" command="cmd:undo"/>
+  <key id="key:redo"    key="z"    modifiers="accel,shift" command="cmd:redo"/>
+  <key id="key:hint"    key="h"    modifiers="accel" command="cmd:hint"/>
+  <key id="key:hint"    key="i"   modifiers="accel" command="cmd:hint"/>
 </keyset>
 
 <!-- replaces the non-functional browser menubar on Mac OS with an empty one -->
@@ -94,27 +94,27 @@
 
 <toolbox id="cards-toolbox">
 <toolbar id="cards-toolbar">
-  <toolbarbutton id="game-type-menu" type="menu" label="&gamesMenu.label;">
+  <toolbarbutton id="game-type-menu" type="menu" label="Game">
     <menupopup id="menupopup-gametypes"
         onpopupshowing="onGamesMenuShowing(this);"
         oncommand="playGame(event.target.gameId);">
       <!-- Semantically wrong, but gives nice event handling. Supressing hiding
            of the menu when clicking a normal menuitem is v. difficult, too -->
       <autorepeatbutton id="gametypes-showall" oncommand="showAllGames(this); event.stopPropagation(); return false">
-        <label value="&show_all_games_marker;"/>
+        <label value="..."/>
       </autorepeatbutton>
     </menupopup>
   </toolbarbutton>
-  <toolbarbutton command="cmd:newgame" label="&newgame.label;" tooltiptext="&newgame.tooltip;"/>
-  <toolbarbutton command="cmd:restart" label="&restart.label;" tooltiptext="&restart.tooltip;"/>
-  <toolbarbutton command="cmd:undo"    label="&undo.label;"    tooltiptext="&undo.tooltip;"/>
-  <toolbarbutton command="cmd:redo"    label="&redo.label;"    tooltiptext="&redo.tooltip;"/>
-  <toolbarbutton command="cmd:hint"    label="&hint.label;"    tooltiptext="&hint.tooltip;"/>
-  <toolbarbutton command="cmd:redeal"  label="&redeal.label;"  tooltiptext="&redeal.tooltip;"/>
-  <toolbarbutton command="cmd.help"    label="&help.label;"    tooltiptext="&help.tooltip;"/>
+  <toolbarbutton command="cmd:newgame" label="New" tooltiptext="Start a new game"/>
+  <toolbarbutton command="cmd:restart" label="Restart" tooltiptext="Restart the current game"/>
+  <toolbarbutton command="cmd:undo"    label="Undo"/>
+  <toolbarbutton command="cmd:redo"    label="Redo"/>
+  <toolbarbutton command="cmd:hint"    label="Hint"    tooltiptext="Highlight a possible non-trivial move"/>
+  <toolbarbutton command="cmd:redeal"  label="Redeal"  tooltiptext="Redeal remaining cards"/>
+  <toolbarbutton command="cmd.help"    label="Help"    tooltiptext="Show the rules for this game"/>
   <flex/>
   <vbox id="score-panel" align="center" pack="center"><hbox>
-    <label value="&score-label;"/>
+    <label value="Score: "/>
     <label id="score-display"/>
   </hbox></vbox>
 </toolbar>

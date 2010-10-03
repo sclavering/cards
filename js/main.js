@@ -15,7 +15,7 @@ function overrideGetter(obj, prop, val) {
   return val;
 }
 
-var gPrefs = null; // nsIPrefBranch for "games.cards."
+var gPrefs = {};
 
 var Game = null;  // the current games
 var GameController = null;
@@ -46,9 +46,6 @@ const images = {};
 
 var gFloatingPileNeedsHiding = false; // see done()
 
-const CI = Components.interfaces;
-const CC = Components.classes;
-
 
 function init() {
   const things = ["gCmdNewGame", "gCmdRestartGame", "gCmdUndo", "gCmdRedo",
@@ -70,10 +67,6 @@ function init() {
 
   gFloatingPile.init();
 
-  // init the pref branch
-  gPrefs = CC["@mozilla.org/preferences-service;1"]
-      .getService(CI.nsIPrefService).getBranch("games.cards.");
-
   // make controllers for each game type
   for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
 
@@ -93,15 +86,11 @@ window.addEventListener("load", init, false);
 
 
 function loadPref(name) {
-  try {
-    return gPrefs.getCharPref(name);
-  } catch(e) {}
-  return null;
+  return name in gPrefs ? gPrefs[name] : null;
 }
 
 function savePref(name, val) {
-//   alert("saving: "+name+"="+val);
-  gPrefs.setCharPref(name, val);
+  gPrefs[name] = val;
 }
 
 

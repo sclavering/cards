@@ -528,6 +528,7 @@ GameControllerObj.prototype = {
   },
 
   restorePastGame: function() {
+    if(!this.havePastGames) return;
     if(this.futureGames.length == 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
     this.haveFutureGames = true;
@@ -537,6 +538,7 @@ GameControllerObj.prototype = {
   },
 
   restoreFutureGame: function() {
+    if(!this.haveFutureGames) return;
     if(this.pastGames.length == 2) this.pastGames.shift();
     this.pastGames.push(this.currentGame);
     this.havePastGames = true;

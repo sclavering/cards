@@ -57,6 +57,8 @@ function init() {
     window[thing] = document.getElementById(window[thing]);
   }
 
+  document.addEventListener('keypress', keyPressHandler, false);
+
   const images_el = document.getElementById("images");
   for each(var img in images_el.childNodes) images[img.id] = img;
   // high aces are treated as cards with number 14
@@ -82,6 +84,33 @@ function init() {
 }
 
 window.addEventListener("load", init, false);
+
+
+function keyPressHandler(e) {
+  if(e.ctrlKey || e.metaKey) return; // don't interfere with browser shortcuts
+  switch(e.charCode) {
+    case 104: // h
+    case 105: // i
+      hint();
+      break;
+    case 110: // n
+      newGame();
+      break;
+    case 114: // r
+      restartGame();
+      break;
+    case 117: // u
+    case 122: // z
+      undo();
+      break;
+    case 90: // Z
+      redo();
+      break;
+    default:
+      return; // avoid the code below
+  }
+  e.preventDefault();
+}
 
 
 function loadPref(name) {
@@ -250,7 +279,10 @@ function done() {
 
 
 function interrupt() {
-  animations.interrupt()
+  // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
+  if(!gMessageBox.hidden) { doneShowingMessage(); return; }
+
+  animations.interrupt();
   if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 

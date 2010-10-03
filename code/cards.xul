@@ -73,15 +73,6 @@
   <command id="cmd.help" oncommand="help();"/>  
 </commandset>
 
-<keyset id="cards-keys">
-  <key id="key:newgame" key="n" modifiers="accel" command="cmd:newgame"/>
-  <key id="key:restart" key="r" modifiers="accel" command="cmd:restart"/>
-  <key id="key:undo"    key="z"    modifiers="accel" command="cmd:undo"/>
-  <key id="key:redo"    key="z"    modifiers="accel,shift" command="cmd:redo"/>
-  <key id="key:hint"    key="h"    modifiers="accel" command="cmd:hint"/>
-  <key id="key:hint"    key="i"   modifiers="accel" command="cmd:hint"/>
-</keyset>
-
 <toolbar id="cards-toolbar">
   <toolbarbutton id="game-type-menu" type="menu" label="Game">
     <menupopup id="menupopup-gametypes"

@@ -86,25 +86,34 @@ body {
   background: rgba(0, 0, 0, 0.3);
 }
 
-#game-chooser > div {
+#game-chooser-inner {
+  padding: 10px;
   margin: 50px;
-  border: 1px solid red;
-  background: black;
-  color: white;
+  background: #ddd;
 }
 
-#game-chooser a {
+#game-chooser-inner h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+#game-chooser-inner > div {
+  color: black;
+}
+
+#game-chooser-inner a {
+  margin: 0;
   display: block;
   float: left;
-  width: 50%;
-  margin: 3px 0;
-  font-size: 18px;
-  background: black;
-  color: white;
+  width: 33%;
+  font-size: 14px;
+  padding: 0.2em 0;
+  color: black;
 }
 
 #game-chooser a:hover {
-  background: grey;
+  text-decoration: underline;
 }
 
 .game_chooser_clear {

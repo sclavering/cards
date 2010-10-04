@@ -210,7 +210,7 @@ function help() {
 
 
 function buildGameChooser(selected) {
-  const div = gGameChooser.firstChild;
+  const div = gGameChooser.getElementsByTagName('div')[1];
 
   const ids = [id for(id in Games)];
   const nameToId = {};

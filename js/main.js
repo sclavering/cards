@@ -34,7 +34,7 @@ var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
 var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
-var gGameStack = "games"; // the main <stack>
+var gGameStack = "games";
 var gGameChooser = "game-chooser";
 var gGameName = "game-name";
 var gGameNameSub = "game-name-sub";
@@ -119,8 +119,7 @@ function savePref(name, val) {
 }
 
 
-// Not a Pile, nor a View.  Just a <html:canvas> really.
-// Needs a <xul:box> so it can be positioned in the <xul:stack>
+// A <div><canvas/></div> used to show cards being dragged or animated.
 const gFloatingPile = {
   init: function() {
     this.element = document.getElementById("floatingpile");

@@ -154,8 +154,6 @@ body {
   font-size: 1.2em;
 }
 
-#score-panel { margin-right: 10px }
-toolbarbutton { margin-left: 10px; }
 
 .counter {
   text-align: center;

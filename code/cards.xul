@@ -2,12 +2,12 @@
 
 <?xml-stylesheet href="cards.css" type="text/css"?>
 
-<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml"
+<xul:window xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns="http://www.w3.org/1999/xhtml"
   >
 <script type="application/javascript;version=1.7" src="all.js"/>
 
-<div style="display:none" id="images" xmlns="http://www.w3.org/1999/xhtml">
+<div style="display:none" id="images">
 <img id="S1" src="images/S1.png"/>
 <img id="S2" src="images/S2.png"/>
 <img id="S3" src="images/S3.png"/>
@@ -63,19 +63,19 @@
 <img id="facedowncard" src="images/facedown.png"/>
 </div>
 
-<div xmlns="http://www.w3.org/1999/xhtml" id="game-chooser" class="fullpageoverlay"><div/></div>
-<div xmlns="http://www.w3.org/1999/xhtml" id="message" class="fullpageoverlay">
+<div id="game-chooser" class="fullpageoverlay"><div/></div>
+<div id="message" class="fullpageoverlay">
   <div id="message-inner">
     <p id="message1"/>
     <p id="message2"/>
   </div>
 </div>
 
-<hbox>
+<div style="display: -moz-box">
 
-<stack id="games"/>
+<xul:stack id="games"/>
 
-<div id="sidebarmenu" xmlns="http://www.w3.org/1999/xhtml">
+<div id="sidebarmenu">
   <h1 id="game-name"/>
   <h2 id="game-name-sub"/>
   <p id="score-panel">Score: <span id="score-display"/></p>
@@ -92,6 +92,6 @@
   <a href="#" id="cmd:redeal" onclick="redeal(); return false">Redeal</a>
 </div>
 
-</hbox>
+</div>
 
-</window>
+</xul:window>

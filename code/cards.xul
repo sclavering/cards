@@ -64,17 +64,16 @@
 </div>
 
 <div xmlns="http://www.w3.org/1999/xhtml" id="game-chooser" class="fullpageoverlay"><div/></div>
+<div xmlns="http://www.w3.org/1999/xhtml" id="message" class="fullpageoverlay">
+  <div id="message-inner">
+    <p id="message1"/>
+    <p id="message2"/>
+  </div>
+</div>
 
 <hbox>
 
-<stack id="games">
-  <vbox id="message" hidden="true">
-    <vbox id="message-inner">
-      <label id="message1"/>
-      <label id="message2"/>
-    </vbox>
-  </vbox>
-</stack>
+<stack id="games"/>
 
 <div id="sidebarmenu" xmlns="http://www.w3.org/1999/xhtml">
   <h1 id="game-name"/>

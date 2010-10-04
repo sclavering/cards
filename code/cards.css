@@ -105,13 +105,12 @@ window {
   overflow: hidden;
 }
 
-#message {
-  -moz-box-orient: vertical;
-  -moz-box-align: center;
-  -moz-box-pack: center;
-  -moz-box-flex: 1;
-}
 #message-inner {
+  /* we're trying to center it in the window */
+  position: relative;
+  top: 50%;
+  margin: -5em auto 0;
+  width: 60%;
   padding: 1.8em;
   background: -moz-dialog;
   border: 1px solid;
@@ -119,9 +118,10 @@ window {
 #message1 {
   font-size: 1.3em;
   font-weight: bold;
+  margin: 0;
 }
 #message2 {
-  margin-top: 1em;
+  margin: 1em 0 0 0;
   font-size: 1.2em;
 }
 

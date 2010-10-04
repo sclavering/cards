@@ -354,18 +354,19 @@ var gMessageCallback = null;
 
 function showMessage(msg, fun) {
   gMessageCallback = fun;
-  gMessageLine1.value = gStrings["message."+msg];
-  gMessageLine2.value = gStrings["message2."+msg];
-  gMessageBox.hidden = false;
-
+  gMessageLine1.textContent = gStrings['message.' + msg];
+  gMessageLine2.textContent = gStrings['message2.' + msg];
+  gMessageBox.style.display = 'block';
   // the setTimeout is to flush any mouse event that led to the showMessage() call
   setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
 }
 
 function doneShowingMessage() {
   window.onclick = null;
-  gMessageBox.hidden = true;
-  if(gMessageCallback) gMessageCallback();
+  gMessageBox.style.display = 'none';
+  var f = gMessageCallback;
+  gMessageCallback = null;
+  if(f) f();
 }
 
 

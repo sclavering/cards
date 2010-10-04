@@ -33,7 +33,7 @@ const Layout = {
     const containerIsVbox = template[0] == "v";
     const container = this._node = createHTML(containerIsVbox ? "vbox" : "hbox");
     container.className += " game";
-    gGameStack.insertBefore(container, gGameStack.firstChild);
+    gGameStack.appendChild(container);
     container.style.top = container.style.left = 0; // to make explicit sizing work
     // Typically what we want
     if(!containerIsVbox) container.style.MozBoxAlign = "start";

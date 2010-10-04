@@ -3,23 +3,43 @@
   -moz-user-select: -moz-none;
 }
 
+html {
+  overflow: hidden;
+}
+
 body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
-  -moz-appearance: dialog;
-  background: #ededed;
-  color: black;
   font: message-box;
-
-  display: -moz-box;
-  overflow: -moz-hidden-unscrollable;
-  -moz-box-orient: vertical;
 }
 
 
+#games, #sidebarmenu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+}
+
+#games {
+  background: #ddd;
+  left: 0;
+  right: 130px;
+  display: -moz-stack;
+  overflow: hidden;
+}
+
+#games > .game {
+  width: 100%;
+  padding-top: 10px;
+}
+
 #sidebarmenu {
-  /* Note: this is currently behaving as if box-sizing:border-box were set.  presumably XUL's fault */
-  width: 130px;
+  right: 0;
+  width: 110px;
+  /* Note: this is currently behaving as if box-sizing:border-box were set.  not sure why */
   padding: 10px;
   background: #ccc;
   color: black;
@@ -104,14 +124,6 @@ body {
 .flex5 { -moz-box-flex: 5; }
 .space { min-width: 10px; min-height: 10px; }
 
-
-#games {
-  display: -moz-stack;
-  /* avoid manually spacing on every game */
-  padding-top: 10px;
-  /* stops toolbar stretching right when cards are dragged beyond the window edge */
-  overflow: hidden;
-}
 
 #message-inner {
   /* we're trying to center it in the window */

@@ -136,7 +136,7 @@ const Layout = {
     interrupt();
     self._ex0 = e.pageX;
     self._ey0 = e.pageY;
-    gGameStack.onmousemove = self.beginDrag;
+    window.onmousemove = self.beginDrag;
   },
 
   beginDrag: function(e) {
@@ -149,9 +149,9 @@ const Layout = {
     card.pile.view.updateForAnimationOrDrag(card);
     self._tx = ex0 - gFloatingPile._left;
     self._ty = ey0 - gFloatingPile._top;
-    gGameStack.onmousemove = self.mouseMoveInDrag;
-    gGameStack.onmouseup = self.endDrag;
-    gGameStack.oncontextmenu = null;
+    window.onmousemove = self.mouseMoveInDrag;
+    window.onmouseup = self.endDrag;
+    window.oncontextmenu = null;
   },
 
   // (_tx, _ty) is the pixel coords of the mouse relative to gFloatingPile
@@ -214,10 +214,10 @@ const Layout = {
 
   _resetHandlers: function(e) {
     this._eventTargetCard = null;
-    gGameStack.oncontextmenu = this.rightClick;
-    gGameStack.onmousedown = this.onmousedown;
-    gGameStack.onmouseup = this.onmouseup;
-    gGameStack.onmousemove = null;
+    window.oncontextmenu = this.rightClick;
+    window.onmousedown = this.onmousedown;
+    window.onmouseup = this.onmouseup;
+    window.onmousemove = null;
   },
 
   _getTargetCard: function(e) {
@@ -231,8 +231,7 @@ const Layout = {
     animations.interrupt();
     const self = Game.layout;
     const width = window.innerWidth - 130; // the sidebar is 130px wide
-    const height = window.innerHeight - document.getBoxObjectFor(self._node).y;
-    self._node.style.width = width + 'px';
+    const height = window.innerHeight;
     self._node.style.height = height + 'px';
     const vs = self.viewsNeedingUpdateOnResize;
     self.setFlexibleViewSizes(vs, width, height);

@@ -123,9 +123,8 @@ function savePref(name, val) {
 // Needs a <xul:box> so it can be positioned in the <xul:stack>
 const gFloatingPile = {
   init: function() {
-    this.element = createHTML("box");
+    this.element = document.getElementById("floatingpile");
     this.hide();
-    gGameStack.appendChild(this.element);
     const HTMLns = "http://www.w3.org/1999/xhtml";
     const canvas = document.createElementNS(HTMLns, "canvas");
     this.element.appendChild(canvas);

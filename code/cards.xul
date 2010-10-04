@@ -63,6 +63,8 @@
 <img id="facedowncard" src="images/facedown.png"/>
 </div>
 
+<div xmlns="http://www.w3.org/1999/xhtml" id="game-chooser" class="fullpageoverlay"><div/></div>
+
 <hbox>
 
 <stack id="games">
@@ -72,7 +74,6 @@
       <label id="message2"/>
     </vbox>
   </vbox>
-  <div xmlns="http://www.w3.org/1999/xhtml" id="game-chooser" style="display:none"><div/></div>
 </stack>
 
 <div id="sidebarmenu" xmlns="http://www.w3.org/1999/xhtml">

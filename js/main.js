@@ -36,6 +36,8 @@ var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
 var gGameChooser = "game-chooser";
+var gGameName = "game-name";
+var gGameNameSub = "game-name-sub";
 
 // <html:img>s for use by canvases.  Keys are typically of the form "S3"
 const images = {};
@@ -45,7 +47,8 @@ var gFloatingPileNeedsHiding = false; // see done()
 
 function init() {
   const things = ['gCmdUndo', 'gCmdRedo', 'gCmdHint', 'gCmdRedeal', 'gGameStack', 'gGameChooser',
-    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay'];
+    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gGameName',
+    'gGameNameSub'];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
@@ -182,7 +185,11 @@ function playGame(game) {
   if(GameController) GameController.switchFrom();
 
   savePref("current-game", game);
-  document.title = gStrings["game."+game];
+
+  var full_name = gStrings["game."+game];
+  var parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
+  gGameName.textContent = parts ? parts[1] : full_name;
+  gGameNameSub.textContent = parts ? parts[2] : '';
 
   GameController = Games[game];
   GameController.switchTo();
@@ -231,10 +238,12 @@ function onGameSelected(ev) {
 }
 
 
-function showGameChooser() {
+function showGameChooser(ev) {
   interrupt();
   gGameChooser.style.display = 'block';
   window.onclick = hideGameChooser;
+  // So the event doesn't trigger the .onclick handler we just installed
+  ev.stopPropagation();
 }
 
 

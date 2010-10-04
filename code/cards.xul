@@ -63,21 +63,7 @@
 <img id="facedowncard" src="images/facedown.png"/>
 </div>
 
-<toolbar id="cards-toolbar">
-  <toolbarbutton id="game-type-menu" oncommand="showGameChooser();" label="Game"/>
-  <toolbarbutton oncommand="newGame();" label="New" tooltiptext="Start a new game"/>
-  <toolbarbutton oncommand="restartGame();" label="Restart" tooltiptext="Restart the current game"/>
-  <toolbarbutton id="cmd:undo" oncommand="undo();" label="Undo"/>
-  <toolbarbutton id="cmd:redo" oncommand="redo();" label="Redo"/>
-  <toolbarbutton id="cmd:hint" oncommand="hint();" label="Hint" tooltiptext="Highlight a possible non-trivial move"/>
-  <toolbarbutton id="cmd:redeal" oncommand="redeal();" label="Redeal" tooltiptext="Redeal remaining cards"/>
-  <toolbarbutton oncommand="help();" label="Help" tooltiptext="Show the rules for this game"/>
-  <spacer style="-moz-box-flex:1"/>
-  <vbox id="score-panel" align="center" pack="center"><hbox>
-    <label value="Score: "/>
-    <label id="score-display"/>
-  </hbox></vbox>
-</toolbar>
+<hbox>
 
 <stack id="games">
   <vbox id="message" hidden="true">
@@ -88,5 +74,24 @@
   </vbox>
   <div xmlns="http://www.w3.org/1999/xhtml" id="game-chooser" style="display:none"><div/></div>
 </stack>
+
+<div id="sidebarmenu" xmlns="http://www.w3.org/1999/xhtml">
+  <h1 id="game-name"/>
+  <h2 id="game-name-sub"/>
+  <p id="score-panel">Score: <span id="score-display"/></p>
+  <br/>
+  <br/>
+  <a href="#" id="game-type-menu" onclick="showGameChooser(event); return false">Choose Game</a>
+  <br/>
+  <a href="#" onclick="newGame(); return false">New</a>
+  <a href="#" onclick="restartGame(); return false">Restart</a>
+  <a href="#" id="cmd:undo" onclick="undo(); return false">Undo</a>
+  <a href="#" id="cmd:redo" onclick="redo(); return false">Redo</a>
+  <a href="#" id="cmd:hint" onclick="hint(); return false">Hint</a>
+  <a href="#" onclick="help(); return false">Show Rules</a>
+  <a href="#" id="cmd:redeal" onclick="redeal(); return false">Redeal</a>
+</div>
+
+</hbox>
 
 </window>

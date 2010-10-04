@@ -9,6 +9,43 @@ window {
   font: message-box;
 }
 
+
+#sidebarmenu {
+  /* Note: this is currently behaving as if box-sizing:border-box were set.  presumably XUL's fault */
+  width: 130px;
+  padding: 10px;
+  background: #ccc;
+  color: black;
+}
+
+#sidebarmenu h1 {
+  font-size: 1.4em;
+  margin: 0;
+}
+
+#sidebarmenu h2 {
+  font-size: 1em;
+  font-weight: normal;
+}
+
+#sidebarmenu a {
+  display: block;
+  text-decoration: none;
+  color: black;
+  padding: 0.2em 0;
+  margin-top: 0.1em;
+}
+
+#sidebarmenu a[disabled=true] {
+  color: grey;
+}
+
+#sidebarmenu a:focus {
+  -moz-outline: none;
+  outline: none;
+}
+
+
 #game-chooser {
   background: rgba(0, 0, 0, 0.3);
 }

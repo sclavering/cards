@@ -230,7 +230,7 @@ const Layout = {
   onWindowResize: function(e) {
     animations.interrupt();
     const self = Game.layout;
-    const width = window.innerWidth
+    const width = window.innerWidth - 130; // the sidebar is 130px wide
     const height = window.innerHeight - document.getBoxObjectFor(self._node).y;
     self._node.style.width = width + 'px';
     self._node.style.height = height + 'px';

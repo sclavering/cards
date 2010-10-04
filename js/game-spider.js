@@ -114,7 +114,7 @@ Games.wasp = {
   ],
   xulTemplate: "h2p1p1p1p1p1p1p2[f s]2",
   kings: [12, 25, 38, 51],
-  getBestDestinationFor: "to up or nearest space",
+  getBestDestinationFor: "to up or nearest space"
 };
 
 
@@ -129,7 +129,7 @@ const SimonBase = {
   ],
   xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
   helpId: "simon",
-  kings: [12, 25, 38, 51],
+  kings: [12, 25, 38, 51]
 };
 
 Games.simplersimon = {
@@ -137,7 +137,7 @@ Games.simplersimon = {
   pileDetails: [
     "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
-  ],
+  ]
 }
 
 Games.simon1 = {

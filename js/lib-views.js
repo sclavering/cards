@@ -366,7 +366,7 @@ const FoundationSlideView = {
 const Mod3SlideView = {
   __proto__: _SlideView,
   fixedWidth: gCardWidth + 3 * gHSlideOffset,
-  fixedHeight: gCardHeight + 3 * gVSlideOffset,
+  fixedHeight: gCardHeight + 3 * gVSlideOffset
 };
 
 const PileOnView = {

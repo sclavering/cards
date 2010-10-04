@@ -22,9 +22,7 @@ var GameController = null;
 
 var Games = {}; // all the game controllers, indexed by game id
 
-// <command/> elements
-var gCmdNewGame = "cmd:newgame";
-var gCmdRestartGame = "cmd:restart";
+// <toolbarbutton/> elements
 var gCmdUndo = "cmd:undo";
 var gCmdRedo = "cmd:redo";
 var gCmdHint = "cmd:hint";
@@ -34,12 +32,10 @@ var gCmdRedeal = "cmd:redeal";
 var gMessageBox = "message";
 var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
-var gOptionsMenu = "options-menu";
-var gGameSelector = "game-type-menu";
-var gGameMenuPopup = "menupopup-gametypes";
 var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
 var gGameStack = "games"; // the main <stack>
+var gGameChooser = "game-chooser";
 
 // <html:img>s for use by canvases.  Keys are typically of the form "S3"
 const images = {};
@@ -48,10 +44,8 @@ var gFloatingPileNeedsHiding = false; // see done()
 
 
 function init() {
-  const things = ["gCmdNewGame", "gCmdRestartGame", "gCmdUndo", "gCmdRedo",
-    "gCmdHint", "gCmdRedeal", "gMessageBox", "gMessageLine1", "gMessageLine2",
-    "gOptionsMenu", "gGameSelector", "gScorePanel", "gScoreDisplay",
-    "gGameStack", "gGameMenuPopup"];
+  const things = ['gCmdUndo', 'gCmdRedo', 'gCmdHint', 'gCmdRedeal', 'gGameStack', 'gGameChooser',
+    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay'];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
@@ -76,7 +70,7 @@ function init() {
   var game = loadPref("current-game");
   if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
 
-  buildGamesMenu(game);
+  buildGameChooser(game);
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -209,10 +203,8 @@ function help() {
 }
 
 
-// |items| is an array of game ids; |selected| a game id for which the menuitem should be checked
-function buildGamesMenu(selected) {
-  const menu = gGameMenuPopup;
-  const last = menu.lastChild; // the "..." item
+function buildGameChooser(selected) {
+  const div = gGameChooser.firstChild;
 
   const ids = [id for(id in Games)];
   const nameToId = {};
@@ -222,15 +214,33 @@ function buildGamesMenu(selected) {
 
   for each(name in names) {
     var game = nameToId[name];
-    var mi = document.createElement("menuitem");
-    mi.setAttribute("type", "radio");
-    mi.setAttribute("label", name);
-    if(game==selected) mi.setAttribute("checked", "true");
+    var mi = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+    mi.onclick = onGameSelected;
+    mi.textContent = name;
     mi.gameId = game;
-    menu.insertBefore(mi, last);
+    div.appendChild(mi);
   }
-  // <menuitem>s other than the final expander
-  menu.gameItems = Array.slice(menu.childNodes, 0, menu.childNodes.length - 1);
+  div.appendChild(createHTML('game_chooser_clear'));
+}
+
+
+function onGameSelected(ev) {
+  hideGameChooser();
+  playGame(ev.target.gameId);
+  return false;
+}
+
+
+function showGameChooser() {
+  interrupt();
+  gGameChooser.style.display = 'block';
+  window.onclick = hideGameChooser;
+}
+
+
+function hideGameChooser() {
+  gGameChooser.style.display = 'none';
+  window.onclick = null;
 }
 
 

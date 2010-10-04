@@ -2,11 +2,6 @@ label[disabled="true"] {
   color: GrayText;
 }
 
-menulist > menupopup,
-.menulist-menupopup {
-  -moz-binding: url("chrome://global/content/bindings/popup.xml#popup-scrollbars");
-}
-
 window {
   -moz-appearance: dialog;
   background-color: #FFFFFF;
@@ -14,6 +9,34 @@ window {
   font: message-box;
 }
 
+#game-chooser {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+#game-chooser > div {
+  margin: 50px;
+  border: 1px solid red;
+  background: black;
+  color: white;
+}
+
+#game-chooser a {
+  display: block;
+  float: left;
+  width: 50%;
+  margin: 3px 0;
+  font-size: 18px;
+  background: black;
+  color: white;
+}
+
+#game-chooser a:hover {
+  background: grey;
+}
+
+.game_chooser_clear {
+  clear: left;
+}
 
 
 /* various <div>s used to display the piles and control their layout */

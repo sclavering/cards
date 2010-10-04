@@ -22,16 +22,16 @@ const _View = {
   element: null,
 
   // These will mask XULElement.boxObject.* vs HMTLElement.offset*
-  get pixelLeft() { return document.getBoxObjectFor(this.element).x; },
-  get pixelTop() { return document.getBoxObjectFor(this.element).y; },
-  get pixelWidth() { return document.getBoxObjectFor(this.element).width; },
-  get pixelHeight() { return document.getBoxObjectFor(this.element).height; },
+  get pixelLeft() { return this.element.getBoundingClientRect().left; },
+  get pixelTop() { return this.element.getBoundingClientRect().top; },
+  get pixelWidth() { return this.element.getBoundingClientRect().width; },
+  get pixelHeight() { return this.element.getBoundingClientRect().height; },
   get pixelRight() { return this.pixelLeft + this.pixelWidth; },
   get pixelBottom() { return this.pixelTop + this.pixelHeight; },
 
   // The (x,y) coords in terms of gGameStack's positioning (which starts at the
   // inside of its padding).
-  get relativePixelTop() { return this.pixelTop - document.getBoxObjectFor(Game.layout._node).y; },
+  get relativePixelTop() { return this.pixelTop - Game.layout._node.getBoundingClientRect().top; },
   get relativePixelLeft() { return this.pixelLeft; }, // pixelLeft minus zero
 
   _counter: null, // if set true, a <label> will be created and replace it

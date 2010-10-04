@@ -166,9 +166,9 @@ const Layout = {
     const self = Game.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
-    const box = document.getBoxObjectFor(gFloatingPile.element);
-    const l = box.x, r = box.x + box.width;
-    const t = box.y, b = box.y + box.height;
+    const box = gFloatingPile.element.getBoundingClientRect();
+    const l = box.left, r = l + box.width;
+    const t = box.top, b = t + box.height;
 
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;

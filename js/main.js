@@ -125,8 +125,7 @@ const gFloatingPile = {
   init: function() {
     this.element = document.getElementById("floatingpile");
     this.hide();
-    const HTMLns = "http://www.w3.org/1999/xhtml";
-    const canvas = document.createElementNS(HTMLns, "canvas");
+    const canvas = document.createElement("canvas");
     this.element.appendChild(canvas);
     this.context = canvas.getContext("2d");
   },
@@ -220,7 +219,7 @@ function buildGameChooser(selected) {
 
   for each(name in names) {
     var game = nameToId[name];
-    var mi = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+    var mi = document.createElement("a");
     mi.onclick = onGameSelected;
     mi.textContent = name;
     mi.gameId = game;
@@ -370,7 +369,7 @@ function doneShowingMessage() {
 
 
 function createHTML(class_name) {
-  var el = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+  var el = document.createElement("div");
   el.className = class_name;
   return el;
 }

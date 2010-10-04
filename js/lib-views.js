@@ -129,8 +129,7 @@ const _View = {
   initView: function() {
     const el = this.element = createHTML("vbox");
     el.pileViewObj = this;
-    const HTMLns = "http://www.w3.org/1999/xhtml";
-    this._canvas = document.createElementNS(HTMLns, "canvas");
+    this._canvas = document.createElement("canvas");
     el.appendChild(this._canvas);
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
@@ -291,8 +290,7 @@ const _FlexFanView = {
   needsUpdateOnResize: true,
 
   initView: function() {
-    const HTMLns = "http://www.w3.org/1999/xhtml";
-    const el = document.createElementNS(HTMLns, "canvas");
+    const el = document.createElement("canvas");
     this.element = this._canvas = el;
     el.pileViewObj = this;
     this._context = this._canvas.getContext("2d");

@@ -1,12 +1,19 @@
-label[disabled="true"] {
-  color: GrayText;
+* {
+  -moz-user-focus: ignore;
+  -moz-user-select: -moz-none;
 }
 
-window {
+body {
+  margin: 0;
+  padding: 0;
   -moz-appearance: dialog;
-  background-color: #FFFFFF;
-  color: -moz-DialogText;
+  background: #ededed;
+  color: black;
   font: message-box;
+
+  display: -moz-box;
+  overflow: -moz-hidden-unscrollable;
+  -moz-box-orient: vertical;
 }
 
 
@@ -99,6 +106,7 @@ window {
 
 
 #games {
+  display: -moz-stack;
   /* avoid manually spacing on every game */
   padding-top: 10px;
   /* stops toolbar stretching right when cards are dragged beyond the window edge */

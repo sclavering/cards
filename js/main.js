@@ -123,7 +123,7 @@ function savePref(name, val) {
 // Needs a <xul:box> so it can be positioned in the <xul:stack>
 const gFloatingPile = {
   init: function() {
-    this.element = document.createElement("box");
+    this.element = createHTML("box");
     this.hide();
     gGameStack.appendChild(this.element);
     const HTMLns = "http://www.w3.org/1999/xhtml";

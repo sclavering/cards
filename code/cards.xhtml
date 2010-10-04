@@ -1,11 +1,13 @@
-<?xml version="1.0"?>
+<!DOCTYPE html>
 
-<?xml-stylesheet href="cards.css" type="text/css"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<head>
+  <title>Cards</title>
+  <link rel="stylesheet" href="cards.css"/>
+  <script type="application/javascript;version=1.7" src="all.js"/>
+</head>
 
-<xul:window xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns="http://www.w3.org/1999/xhtml"
-  >
-<script type="application/javascript;version=1.7" src="all.js"/>
+<body>
 
 <div style="display:none" id="images">
 <img id="S1" src="images/S1.png"/>
@@ -73,7 +75,7 @@
 
 <div style="display: -moz-box">
 
-<xul:stack id="games"/>
+<div id="games"/>
 
 <div id="sidebarmenu">
   <h1 id="game-name"/>
@@ -94,4 +96,5 @@
 
 </div>
 
-</xul:window>
+</body>
+</html>

@@ -38,9 +38,7 @@ var gGameStack = "games";
 var gGameChooser = "game-chooser";
 var gGameName = "game-name";
 var gGameNameSub = "game-name-sub";
-
-// <html:img>s for use by canvases.  Keys are typically of the form "S3"
-const images = {};
+var gCardImages = "cardsimg";
 
 var gFloatingPileNeedsHiding = false; // see done()
 
@@ -48,21 +46,13 @@ var gFloatingPileNeedsHiding = false; // see done()
 function init() {
   const things = ['gCmdUndo', 'gCmdRedo', 'gCmdHint', 'gCmdRedeal', 'gGameStack', 'gGameChooser',
     'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gGameName',
-    'gGameNameSub'];
+    'gGameNameSub', 'gCardImages'];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
   }
 
   document.addEventListener('keypress', keyPressHandler, false);
-
-  const images_el = document.getElementById("images");
-  for each(var img in images_el.childNodes) images[img.id] = img;
-  // high aces are treated as cards with number 14
-  images.S14 = images.S1;
-  images.H14 = images.H1;
-  images.D14 = images.D1;
-  images.C14 = images.C1;
 
   gFloatingPile.init();
 

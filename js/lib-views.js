@@ -13,6 +13,25 @@ var gCardWidth = 79;
 var gSpacerSize = 10;
 
 
+var gCardImageOffsets = null;
+
+function drawCard(canvascx, card, x, y) {
+  if(!gCardImageOffsets) initCardImageOffsets();
+  var srcY = gCardImageOffsets[card.faceUp ? card.displayStr : ''] * gCardHeight;
+  // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+  canvascx.drawImage(gCardImages, 0, srcY, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
+}
+
+function initCardImageOffsets() {
+  var off = gCardImageOffsets = {};
+  for(let [l, n] in Iterator({ 'S': 0, 'H': 1, 'D': 2, 'C': 3 }))
+    for(var i = 1; i != 14; ++i)
+      off[l + i] = n * 13 + i - 1;
+  off[''] = 4 * 13; // facedown image is last
+}
+
+
+
 // This defines the interface expected of pile views, and also provides basic
 // infrastructure for one based on <xul:box><html:canvas/></xul:box>. The box
 // is used because other code used to expect a .boxObject, and to allow
@@ -136,14 +155,14 @@ const View = {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
-    if(num) this._context.drawImage(cs[num - 1].image, 0, 0);
+    if(num) drawCard(this._context, cs[num - 1], 0, 0);
     else this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   drawIntoFloatingPile: function(card) {
     gFloatingPile.sizeCanvas(gCardWidth, gCardHeight);
-    gFloatingPile.context.drawImage(card.image, 0, 0);
+    drawCard(gFloatingPile.context, card, 0, 0);
     return { x: 0, y: 0 };
   },
 
@@ -177,8 +196,7 @@ const _FanView = {
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
     if(this._updateOffsets) this._updateOffsets(num - 1);
     const h = this._hOffset, v = this._vOffset;
-    for(var i = 0; i != num; ++i)
-      this._context.drawImage(cs[ixs[i]].image, h * i, v * i);
+    for(var i = 0; i != num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
     if(!num) this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
@@ -194,8 +212,7 @@ const _FanView = {
     const extras = numFloating - 1;
     const width = extras * h + gCardWidth, height = extras * v + gCardHeight;
     gFloatingPile.sizeCanvas(width, height);
-    for(var i = 0, j = first; i < numFloating; ++i, ++j)
-      gFloatingPile.context.drawImage(cs[ixs[j]].image, h * i, v * i);
+    for(var i = 0, j = first; i < numFloating; ++i, ++j) drawCard(gFloatingPile.context, cs[ixs[j]], h * i, v * i);
     return { x: first * h, y: first * v };
   },
 

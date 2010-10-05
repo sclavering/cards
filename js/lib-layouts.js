@@ -166,20 +166,17 @@ const Layout = {
     const self = Game.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
-    const box = gFloatingPile.element.getBoundingClientRect();
-    const l = box.left, r = l + box.width;
-    const t = box.top, b = t + box.height;
-
+    const fr = gFloatingPile.element.getBoundingClientRect();
     // try dropping cards on each possible target
     var targets = Game.dragDropTargets;
     for(var i = 0; i != targets.length; i++) {
       var target = targets[i];
       if(target == card.pile) continue;
       var view = target.view;
-      var l2 = view.pixelLeft, r2 = view.pixelRight;
-      var t2 = view.pixelTop, b2 = view.pixelBottom;
-      var overlaps = (((l2<=l&&l<=r2)||(l2<=r&&r<=r2)) && ((t2<=t&&t<=b2)||(t2<=b&&b<=b2)));
-      if(!overlaps) continue;
+      var tr = view.pixelRect();
+      // skip if we don't overlap the target at all
+      if(fr.right < tr.left || fr.left > tr.right) continue;
+      if(fr.bottom < tr.top || fr.top > tr.bottom) continue;
       var act = target.getActionForDrop(card);
       if(!act) continue;
       if(act instanceof ErrorMsg) {
@@ -241,8 +238,9 @@ const Layout = {
 
   setFlexibleViewSizes: function(views, width, height) {
     for each(var v in views) {
-      v.heightToUse = height - v.pixelTop;
-      v.widthToUse = width - v.pixelLeft;
+      var r = v.pixelRect();
+      v.heightToUse = height - r.top;
+      v.widthToUse = width - r.left;
     }
   }
 };

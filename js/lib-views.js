@@ -21,13 +21,7 @@ const _View = {
   // The root XUL element for this view.  Must have .pileViewObj field set.
   element: null,
 
-  // These will mask XULElement.boxObject.* vs HMTLElement.offset*
-  get pixelLeft() { return this.element.getBoundingClientRect().left; },
-  get pixelTop() { return this.element.getBoundingClientRect().top; },
-  get pixelWidth() { return this.pixelRight - this.pixelLeft },
-  get pixelHeight() { return this.pixelBottom - this.pixelTop },
-  get pixelRight() { return this.element.getBoundingClientRect().right; },
-  get pixelBottom() { return this.element.getBoundingClientRect().bottom; },
+  pixelRect: function() { return this.element.getBoundingClientRect(); },
 
   _counter: null, // if set true, a <label> will be created and replace it
 
@@ -55,8 +49,8 @@ const _View = {
   // after it, and draw them in gFloatingPile instead.
   updateForAnimationOrDrag: function(card) {
     const coords = this.drawIntoFloatingPile(card);
-    const vx = this.pixelLeft, vy = this.pixelTop;
-    gFloatingPile.showFor(card, vx + coords.x, vy + coords.y);
+    const r = this.pixelRect();
+    gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
     this._update(cs, cs.length);
   },
@@ -257,17 +251,13 @@ const _FlexFanView = {
   _basicVOffset: 0,
   _basicHOffset: 0,
 
-  get pixelLeft() { return this.element.offsetLeft; },
-  get pixelTop() { return this.element.offsetTop; },
-  get pixelWidth() { return this.element.offsetWidth; },
-  get pixelHeight() { return this.element.offsetHeight; },
-
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
     var h = this._basicHOffset, v = this._basicVOffset;
     if(num > 0) { // avoid divide by zero
-      h = Math.min((this.pixelWidth - gCardWidth) / num, h);
-      v = Math.min((this.pixelHeight - gCardHeight) / num, v);
+      var r = this.pixelRect();
+      h = Math.min(((r.right - r.left) - gCardWidth) / num, h);
+      v = Math.min(((r.bottom - r.top) - gCardHeight) / num, v);
       // use integer offset where possible to avoid fuzzyness
       if(h > 2) h = Math.floor(h);
       if(v > 2) v = Math.floor(v);

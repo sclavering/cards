@@ -41,9 +41,9 @@ function moveCards(firstCard, target, doneFunc) {
   const finalOffset = target.view.getAnimationDestination();
 
   // final coords (relative to gGameStack)
-  const tview = target.view;
-  const tx = tview.pixelLeft + finalOffset.x;
-  const ty = tview.pixelTop + finalOffset.y;
+  const r = target.view.pixelRect();
+  const tx = r.left + finalOffset.x;
+  const ty = r.top + finalOffset.y;
 
   scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
   animations.schedule(moveCards_callback, 0, target, doneFunc);

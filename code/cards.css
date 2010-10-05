@@ -140,7 +140,7 @@ body {
   margin: -5em auto 0;
   width: 60%;
   padding: 1.8em;
-  background: -moz-dialog;
+  background: #ddd;
   border: 1px solid;
 }
 #message1 {

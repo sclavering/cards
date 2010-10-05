@@ -230,8 +230,9 @@ const Layout = {
   onWindowResize: function(e) {
     animations.interrupt();
     const self = Game.layout;
-    const width = window.innerWidth - 130; // the sidebar is 130px wide
-    const height = window.innerHeight;
+    const rect = gGameStack.getBoundingClientRect();
+    const width = rect.right - rect.left;
+    const height = rect.bottom - rect.top;
     self._node.style.height = height + 'px';
     const vs = self.viewsNeedingUpdateOnResize;
     self.setFlexibleViewSizes(vs, width, height);

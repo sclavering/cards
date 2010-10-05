@@ -29,11 +29,6 @@ const _View = {
   get pixelRight() { return this.element.getBoundingClientRect().right; },
   get pixelBottom() { return this.element.getBoundingClientRect().bottom; },
 
-  // The (x,y) coords in terms of gGameStack's positioning (which starts at the
-  // inside of its padding).
-  get relativePixelTop() { return this.pixelTop - Game.layout._node.getBoundingClientRect().top; },
-  get relativePixelLeft() { return this.pixelLeft; }, // pixelLeft minus zero
-
   _counter: null, // if set true, a <label> will be created and replace it
 
   // Redraw the pile.
@@ -60,7 +55,7 @@ const _View = {
   // after it, and draw them in gFloatingPile instead.
   updateForAnimationOrDrag: function(card) {
     const coords = this.drawIntoFloatingPile(card);
-    const vx = this.relativePixelLeft, vy = this.relativePixelTop;
+    const vx = this.pixelLeft, vy = this.pixelTop;
     gFloatingPile.showFor(card, vx + coords.x, vy + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
     this._update(cs, cs.length);

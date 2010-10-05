@@ -241,8 +241,8 @@ const Layout = {
 
   setFlexibleViewSizes: function(views, width, height) {
     for each(var v in views) {
-      v.heightToUse = height - v.relativePixelTop;
-      v.widthToUse = width - v.relativePixelLeft;
+      v.heightToUse = height - v.pixelTop;
+      v.widthToUse = width - v.pixelLeft;
     }
   }
 };

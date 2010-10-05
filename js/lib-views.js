@@ -24,10 +24,10 @@ const _View = {
   // These will mask XULElement.boxObject.* vs HMTLElement.offset*
   get pixelLeft() { return this.element.getBoundingClientRect().left; },
   get pixelTop() { return this.element.getBoundingClientRect().top; },
-  get pixelWidth() { return this.element.getBoundingClientRect().width; },
-  get pixelHeight() { return this.element.getBoundingClientRect().height; },
-  get pixelRight() { return this.pixelLeft + this.pixelWidth; },
-  get pixelBottom() { return this.pixelTop + this.pixelHeight; },
+  get pixelWidth() { return this.pixelRight - this.pixelLeft },
+  get pixelHeight() { return this.pixelBottom - this.pixelTop },
+  get pixelRight() { return this.element.getBoundingClientRect().right; },
+  get pixelBottom() { return this.element.getBoundingClientRect().bottom; },
 
   // The (x,y) coords in terms of gGameStack's positioning (which starts at the
   // inside of its padding).

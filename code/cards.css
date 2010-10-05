@@ -27,7 +27,6 @@ body {
   background: #ddd;
   left: 0;
   right: 130px;
-  display: -moz-stack;
   overflow: hidden;
 }
 

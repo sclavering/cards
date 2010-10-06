@@ -128,7 +128,6 @@ const gFloatingPile = {
   // starting when dropping a card on a new valid pile.
   lastCard: null,
 
-  // putting the pile where it's not visible is faster than setting it's |hidden| property
   hide: function() {
     this.moveTo(-1000, -1000);
     this.lastCard = null;

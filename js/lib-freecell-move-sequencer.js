@@ -6,10 +6,13 @@ const FreeCellGame = {
     if(!card.pile.mayTakeCard(card)) return null;
     const dest = this.getBestDestinationFor(card);
     if(!dest) return null;
+    return new Move(card, dest);
+    /* FreeCellMoveAction doesn't work correctly at the moment, so don't try using it
     if(card.isLast) return new Move(card, dest);
     const spaces = [p for each(p in this.piles) if(p != dest && !p.hasCards)];
     const cells = [c for each(c in this.cells) if(!c.hasCards)];
     return new FreeCellMoveAction(card, dest, cells, spaces);
+    */
   },
 
   get numEmptyCells() {

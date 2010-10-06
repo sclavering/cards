@@ -131,6 +131,11 @@ body {
 .flex5 { -moz-box-flex: 5; }
 .space { min-width: 10px; min-height: 10px; }
 
+.hbox {
+  /* "stretch" is the default, and usually not what we want. */
+  -moz-box-align: start;
+}
+
 
 #message-inner {
   /* we're trying to center it in the window */
@@ -167,8 +172,22 @@ canvas, .pilespacer {
   min-height: 123px;
 }
 
-.pyramid > * { margin-bottom: -60px; }
-.pyramid { padding-bottom: 60px; }
+
+.gypsy-right-col {
+  /* so the Stock is in the middle of two columns of Foundations */
+  -moz-box-align: center;
+}
+
+
+.pyramidlayout {
+  -moz-box-flex: 5;
+  padding-bottom: 60px;
+}
+
+.pyramidlayout > * {
+  margin-bottom: -60px;
+}
+
 /* this *does* pass clicks through to other elements, thankfully */
 .pyramid-collapse { visibility: hidden; }
 

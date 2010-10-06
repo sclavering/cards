@@ -8,7 +8,7 @@ Games.pyramid = {
     "f", 1, PyramidFoundation, CountedView, 0, 0,
   ],
 
-  xulTemplate: "h1[s w]1[{flex=5}{class=pyramid}{align=}[1y1][4-++p1p++-4][3++p1p1p++3]"
+  xulTemplate: "h1[s w]1[{pyramidlayout}[1y1][4-++p1p++-4][3++p1p1p++3]"
       + "[3-+p1p1p1p+-3][2+p1p1p1p1p+2][2-p1p1p1p1p1p-2][1p1p1p1p1p1p1p1]]1f1",
 
   init: function() {

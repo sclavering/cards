@@ -35,8 +35,6 @@ const Layout = {
     container.className += " game";
     gGameStack.appendChild(container);
     container.style.top = container.style.left = 0; // to make explicit sizing work
-    // Typically what we want
-    if(!containerIsVbox) container.style.MozBoxAlign = "start";
 
     var box = container;
     var nextBoxVertical = !containerIsVbox;
@@ -52,9 +50,6 @@ const Layout = {
         case "<": // in current direction
           var old = box;
           old.appendChild(box = createHTML(nextBoxVertical ? "hbox" : "vbox"));
-          // "stretch" is the default, and usually not what we want.
-          // Also, setting via CSS sometimes fails to have any effect!
-          box.style.MozBoxAlign = "start";
           break;
       // finish a box
         case "]":
@@ -63,12 +58,12 @@ const Layout = {
         case ">":
           box = box.parentNode;
           break;
-      // annotations: "{attrname=val}", applies to most-recent pile or box
+      // "{extraClassName}", applies to most-recent pile or box
         case "{":
           var i0 = i;
           while(template[i] != "}") ++i;
-          var blob = template.substring(i0 + 1, i).split("=");
-          (box.lastChild || box).setAttribute(blob[0], blob[1]);
+          var extraClassName = template.substring(i0 + 1, i);
+          (box.lastChild || box).className += ' ' + extraClassName;
           break;
         case "}":
           throw "Layout.init: reached a } in template (without a { first)";

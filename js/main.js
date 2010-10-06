@@ -183,6 +183,8 @@ function playGame(game) {
 
   updateUI();
   gCmdRedeal.setAttribute("disabled", !Game.redeal);
+  // Mostly this will be triggered by something else, but when the app is first loading, it's not.
+  gFloatingPile.hide();
 }
 
 

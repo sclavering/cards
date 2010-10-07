@@ -8,8 +8,7 @@ Games.tripeaks = {
     "f", 1, GolfFoundation, View, 0, 0,
   ],
 
-  xulTemplate: "v<{pyramidlayout}[41-2+2y2+2+2y2+2+2y2+2-14][42+2p2p2+2p2p2+2p2p2+24]"
-     + "[41-2p2p2p2p2p2p2p2p2p2-14][42p2p2p2p2p2p2p2p2p2p24]>3[3s2f3]2",
+  xulTemplate: "v<{pyramidlayout}[41-2+2y2+2+2y2+2+2y2+2-14][42+2p2p2+2p2p2+2p2p2+24][41-2p2p2p2p2p2p2p2p2p2-14][42p2p2p2p2p2p2p2p2p2p24]>3[3s2f3]2",
 
   allcards: [1, , , true],
 

@@ -40,6 +40,7 @@ var gGameName = "game-name";
 var gGameNameSub = "game-name-sub";
 var gCardImages = "cardsimg";
 
+var gMessageBoxIsShowing = false;
 var gFloatingPileNeedsHiding = false; // see done()
 
 
@@ -287,7 +288,7 @@ function done() {
 
 function interrupt() {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
-  if(!gMessageBox.hidden) { doneShowingMessage(); return; }
+  if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
 
   animations.interrupt();
   if(gFloatingPileNeedsHiding) gFloatingPile.hide();
@@ -345,6 +346,7 @@ function showMessage(msg, fun) {
   gMessageLine1.textContent = gStrings['message.' + msg];
   gMessageLine2.textContent = gStrings['message2.' + msg];
   gMessageBox.style.display = 'block';
+  gMessageBoxIsShowing = true;
   // the setTimeout is to flush any mouse event that led to the showMessage() call
   setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
 }
@@ -352,6 +354,7 @@ function showMessage(msg, fun) {
 function doneShowingMessage() {
   window.onclick = null;
   gMessageBox.style.display = 'none';
+  gMessageBoxIsShowing = false;
   var f = gMessageCallback;
   gMessageCallback = null;
   if(f) f();

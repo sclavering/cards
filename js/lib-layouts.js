@@ -96,7 +96,7 @@ const Layout = {
         case "s":
         default:
           var viewType = this[ch] || null;
-          if(!viewType) throw "Layout._build: unrecognised char '" + ch + "' found in template";
+          if(!viewType) throw "Layout.init(): unrecognised char '" + ch + "' found in template";
           letters.push(ch);
           var viewObj = createPileView(viewType);
           box.appendChild(viewObj.element);
@@ -104,7 +104,7 @@ const Layout = {
       }
     }
     // sanity check
-    if(box != container) throw "Layout._build: layout had unclosed box";
+    if(box != container) throw "Layout.init(): layout had unclosed box";
     this.viewsNeedingUpdateOnResize = [v for each(v in this.views) if(v.needsUpdateOnResize)];
     return letters;
   },

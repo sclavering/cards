@@ -190,6 +190,3 @@ canvas, .pilespacer {
 
 /* this *does* pass clicks through to other elements, thankfully */
 .pyramid-collapse { visibility: hidden; }
-
-/* for card <image>s */
-.hidden { display: none }

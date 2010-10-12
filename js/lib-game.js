@@ -296,7 +296,7 @@ const BaseCardGame = {
     return null;
   },
 
-  // Called when a user right-clicks on a card.  Should return an Action (or null).
+  // Called when a user left-clicks on a card.  Should return an Action (or null).
   // Generally it's easier to override getBestDestinationFor instead of getBestActionFor
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;

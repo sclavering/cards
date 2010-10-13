@@ -64,8 +64,6 @@ function init() {
   var game = loadPref("current-game");
   if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
 
-  buildGameChooser(game);
-
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
   setTimeout(playGame, 0, game);
@@ -199,30 +197,10 @@ function help() {
 }
 
 
-function buildGameChooser(selected) {
-  const div = gGameChooser.getElementsByTagName('div')[1];
-
-  const ids = [id for(id in Games)];
-  const nameToId = {};
-  for each(var id in ids) nameToId[gStrings["game." + id]] = id;
-  const names = [name for(name in nameToId)];
-  names.sort();
-
-  for each(name in names) {
-    var game = nameToId[name];
-    var mi = document.createElement("a");
-    mi.onclick = onGameSelected;
-    mi.textContent = name;
-    mi.gameId = game;
-    div.appendChild(mi);
-  }
-  div.appendChild(createHTML('game_chooser_clear'));
-}
-
-
 function onGameSelected(ev) {
   hideGameChooser();
-  playGame(ev.target.gameId);
+  const gameid = ev.originalTarget.getAttribute("data-gameid");
+  if(gameid) playGame(gameid);
   return false;
 }
 

@@ -91,23 +91,37 @@ body {
 }
 
 #game-chooser-inner h2 {
-  margin: 0 0 10px;
+  margin: 0 0 25px 0;
   font-size: 16px;
   font-weight: normal;
 }
 
 #game-chooser-inner > div {
   color: black;
+  float: left;
+  width: 25%;
+  font-size: 14px;
 }
 
-#game-chooser-inner a {
-  margin: 0;
-  display: block;
-  float: left;
-  width: 33%;
-  font-size: 14px;
-  padding: 0.2em 0;
-  color: black;
+#game-chooser-inner h6 {
+  font-size: 1em;
+  font-weight: normal;
+  color: #555;
+  font-style: italic;
+}
+
+#game-chooser-inner p + h6 {
+  margin-top: 24px; /* font-size + 2 * margint-bottom */
+}
+
+#game-chooser-inner h6,
+#game-chooser-inner p {
+  margin: 0 0 5px 0;
+}
+
+#game-chooser-inner p {
+  margin-left: 1.5em;
+  display: list-item;
 }
 
 #game-chooser a:hover {
@@ -115,6 +129,7 @@ body {
 }
 
 .game_chooser_clear {
+  display: block;
   clear: left;
 }
 

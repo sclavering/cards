@@ -163,9 +163,7 @@ const Layout = {
 
     const fr = gFloatingPile.element.getBoundingClientRect();
     // try dropping cards on each possible target
-    var targets = Game.dragDropTargets;
-    for(var i = 0; i != targets.length; i++) {
-      var target = targets[i];
+    for each(let target in Game.dragDropTargets) {
       if(target == card.pile) continue;
       var view = target.view;
       var tr = view.pixelRect();

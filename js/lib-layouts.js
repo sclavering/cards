@@ -200,6 +200,8 @@ const Layout = {
     interrupt();
     if(card) doo(Game.getFoundationMoveFor(card));
     self._resetHandlers();
+    e.preventDefault();
+    return false;
   },
 
   _resetHandlers: function(e) {

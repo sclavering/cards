@@ -171,7 +171,7 @@ function playGame(game) {
 
   savePref("current-game", game);
 
-  var full_name = gStrings["game."+game];
+  var full_name = document.getElementById('choosegame-' + game).textContent;
   var parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
   gGameName.textContent = parts ? parts[1] : full_name;
   gGameNameSub.textContent = parts ? parts[2] : '';
@@ -199,8 +199,8 @@ function help() {
 
 function onGameSelected(ev) {
   hideGameChooser();
-  const gameid = ev.originalTarget.getAttribute("data-gameid");
-  if(gameid) playGame(gameid);
+  const m = ev.originalTarget.id.match(/^choosegame-(.*)$/);
+  if(m) playGame(m[1]);
   return false;
 }
 

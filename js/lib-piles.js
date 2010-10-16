@@ -388,7 +388,7 @@ const _FreeCellPile = {
   getActionForDrop: function(card) {
     const may = this.mayAddCard(card);
     if(may) return new Move(card, this);
-    return may === 0 ? new ErrorMsg("notEnoughSpaces") : null;
+    return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;
   }
 };
 

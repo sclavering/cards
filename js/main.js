@@ -313,16 +313,16 @@ function updateUI() {
 
 
 function showGameWon() {
-  showMessage("won", newGame);
+  showMessage("Congratulations – you've won!", "Click to play again", newGame);
 }
 
 
 var gMessageCallback = null;
 
-function showMessage(msg, fun) {
+function showMessage(msgText1, msgText2, fun) {
   gMessageCallback = fun;
-  gMessageLine1.textContent = gStrings['message.' + msg];
-  gMessageLine2.textContent = gStrings['message2.' + msg];
+  gMessageLine1.textContent = msgText1;
+  gMessageLine2.textContent = msgText2;
   gMessageBox.style.display = 'block';
   gMessageBoxIsShowing = true;
   // the setTimeout is to flush any mouse event that led to the showMessage() call

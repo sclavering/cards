@@ -159,11 +159,12 @@ RemovePair.prototype = {
 
 
 
-function ErrorMsg(msg) {
-  this.msg = msg;
+function ErrorMsg(msgText1, msgText2) {
+  this._msgText1 = msgText1;
+  this._msgText2 = msgText2;
 }
 ErrorMsg.prototype = {
   show: function() {
-    showMessage(this.msg);
+    showMessage(this._msgText1, this._msgText2);
   }
 }

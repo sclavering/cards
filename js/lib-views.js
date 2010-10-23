@@ -245,11 +245,11 @@ const _FanView = {
   _getTargetCardVisualIndex: function(event, numVisible) {
     var pos, offset, cardsize;
     if(this._hOffset) {
-      pos = event.pageX - this._canvas.offsetLeft;
+      pos = event.pageX - this._canvas.getBoundingClientRect().left;
       offset = this._hOffset;
       cardsize = gCardHeight;
     } else {
-      pos = event.pageY - this._canvas.offsetTop;
+      pos = event.pageY - this._canvas.getBoundingClientRect().top;
       offset = this._vOffset;
       cardsize = gCardWidth;
     }

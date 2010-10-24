@@ -133,7 +133,7 @@ const _View = {
 
   // Takes an event (mousedown or contextmenu, at present) and returns a Card
   getTargetCard: function(event) {
-    throw "getTargetCard not implemented for a canvas-based view";
+    throw "getTargetCard not implemented";
   },
 
   needsUpdateOnResize: false,

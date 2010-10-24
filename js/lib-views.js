@@ -38,14 +38,14 @@ function initCardImageOffsets() {
 // control of whether the canvas should be stretched or not.
 const _View = {
   insertInto: function(parentNode) {
-    parentNode.appendChild(this.element);
+    parentNode.appendChild(this._fragment || this._canvas);
   },
 
-  // The root XUL element for this view.  Must have .pileViewObj field set.
-  element: null,
+  pixelRect: function() { return this._canvas.getBoundingClientRect(); },
 
-  pixelRect: function() { return this.element.getBoundingClientRect(); },
-
+  _fragment: null,
+  _canvas: null, // the <canvas>; all views use one
+  _context: null,
   _counter: null, // if set true, a <label> will be created and replace it
 
   // Redraw the pile.
@@ -139,13 +139,13 @@ const _View = {
   needsUpdateOnResize: false,
 
   initView: function() {
-    const el = this.element = createHTML("");
-    el.pileViewObj = this;
     this._canvas = document.createElement("canvas");
-    el.appendChild(this._canvas);
+    this._canvas.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
-      this._counter = el.appendChild(createHTML("label"));
+      this._fragment = document.createDocumentFragment();
+      this._fragment.appendChild(this._canvas);
+      this._counter = this._fragment.appendChild(createHTML("label"));
       this._counter.className = "counter";
     }
   }
@@ -297,7 +297,7 @@ const _FlexFanView = {
 
   initView: function() {
     const el = document.createElement("canvas");
-    this.element = this._canvas = el;
+    this._canvas = el;
     el.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
   }

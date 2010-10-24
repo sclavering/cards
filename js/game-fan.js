@@ -17,7 +17,7 @@ Games.fan = {
       // 5 units per each of the 5 piles, plus 2 to the left of everything, and 3 to the right.
       const unitwidth = (width - kSpaceBetweenPiles) / (5 * 5 + 2 + 2);
       // div.thinspacer in the previous <td>
-      views[0].element.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
+      views[0]._canvas.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
       for each(var v in views) v.widthToUse = unitwidth * 5;
     }
   },

@@ -9,7 +9,7 @@ Games.mod3 = {
     "h", 8, { __proto__: _Mod3Foundation, _baseNum: 4 }, Mod3SlideView, 0, 1,
   ],
 
-  xulTemplate: "v[1f1f1f1f1f1f1f1f1#1] [1g1g1g1g1g1g1g1g1#1] [1h1h1h1h1h1h1h1h1#1] [1p 1p 1p 1p 1p 1p 1p 1p 1s1]",
+  layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
 
   get hintOriginPileCollections() {
     return [this.foundations, this.piles];

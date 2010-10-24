@@ -27,66 +27,89 @@ const Layout = {
   init: function() {
     if(this._node) throw "reinitialising layout";
 
-    const template = this.template, len = template.length;
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
-    const containerIsVbox = template[0] == "v";
-    const container = this._node = createHTML(containerIsVbox ? "vbox" : "hbox");
-    container.className += " game";
+
+    const container = this._node = createHTML("gamelayout game");
     gGameStack.appendChild(container);
     container.style.top = container.style.left = 0; // to make explicit sizing work
 
     var box = container;
-    var nextBoxVertical = !containerIsVbox;
+    var stack = [];
 
-    // first char is "h"/"v", not of interest here
-    for(var i = 1; i != len; ++i) {
+    function pushBox(tagName, className) {
+      stack.push(box);
+      var el = document.createElement(tagName);
+      if(tagName === 'tr') el.isTR = true; // avoid the string case mess in .tagName and .localName
+      el.className = className;
+      pushItem(el);
+      box = el;
+    }
+
+    function pushItem(el) {
+      if(box.isTR) {
+        var td = document.createElement('td');
+        if(el) td.appendChild(el);
+        el = td;
+      }
+      if(el) box.appendChild(el);
+    }
+
+    const template = this.template, len = template.length;
+    for(var i = 0; i != len; ++i) {
       var ch = template[i];
       switch(ch) {
-      // start a box
-        case "[": // in opposite direction
-          nextBoxVertical = !nextBoxVertical;
-          // fall through
-        case "<": // in current direction
-          var old = box;
-          old.appendChild(box = createHTML(nextBoxVertical ? "hbox" : "vbox"));
+      // boxes
+        case "#":
+          pushBox('table', 'gamelayout-table');
           break;
-      // finish a box
-        case "]":
-          nextBoxVertical = !nextBoxVertical;
-          // fall through
+        case "<":
+          pushBox('tr', 'gamelayout-fixedheightrow');
+          break;
+        case "(":
+          pushBox('div', 'shortcolumn');
+          break;
+        case "[":
+          pushBox('div', 'longcolumn-outer');
+          pushBox('div', 'longcolumn-inner');
+          stack.pop(); // div.longcolumn-outer doesn't belong there
+          break;
+        case " ":
+          pushItem(null);
+          break;
         case ">":
-          box = box.parentNode;
+          // Set <td> widths, but only on the first row (so that subsequent rows can omit trailing empties).
+          if(!box.previousSibling) {
+            let empties = Array.filter(box.childNodes, function(x) { return !x.hasChildNodes(); });
+            let cellWidth = (100 / empties.length) + '%';
+            for each(let td in empties) td.style.width = cellWidth;
+          }
+          // fall through
+        case ")":
+        case "]":
+        case ".":
+          box = stack.pop();
           break;
-      // "{extraClassName}", applies to most-recent pile or box
+      // spacers
+        case "_":
+          pushItem(createHTML("thinspacer"));
+          break;
+        case "-":
+          pushItem(createHTML("halfpilespacer"));
+          break;
+        case "=":
+          pushItem(createHTML("pilespacer"));
+          break;
+      // "{attr=val}", applies to most-recent pile or box
         case "{":
           var i0 = i;
           while(template[i] != "}") ++i;
-          var extraClassName = template.substring(i0 + 1, i);
-          (box.lastChild || box).className += ' ' + extraClassName;
+          var blob = template.substring(i0 + 1, i);
+          let ix = blob.indexOf('='), k = blob.slice(0, ix), v = blob.slice(ix + 1);
+          (box.lastChild || box).setAttribute(k, v);
           break;
         case "}":
           throw "Layout.init: reached a } in template (without a { first)";
-      // add spaces
-        case "-":
-          box.appendChild(createHTML("halfpilespacer"));
-          break;
-        case "+":
-        case "#":
-          box.appendChild(createHTML("pilespacer"));
-          break;
-        case " ":
-          box.appendChild(createHTML("space"));
-          break;
-        case "1":
-          box.appendChild(createHTML("flex"));
-          break;
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-          box.appendChild(createHTML("flex flex" + ch));
-          break;
       // add pile views
         case "p":
         case "f":
@@ -99,8 +122,9 @@ const Layout = {
           if(!viewType) throw "Layout.init(): unrecognised char '" + ch + "' found in template";
           letters.push(ch);
           var viewObj = createPileView(viewType);
-          box.appendChild(viewObj.element);
           views.push(viewObj);
+          pushItem(viewObj.element);
+          break;
       }
     }
     // sanity check

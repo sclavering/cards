@@ -9,7 +9,7 @@ Games.regiment = {
     "k", 4, RegimentKingFoundation, FoundationSlideView, 0, 0,
   ],
 
-  xulTemplate: "v[1a1a1a1a2k1k1k1k1]  [1p1p1p1p1p1p1p1p1] [1r1r1r1r1r1r1r1r1] [1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: '#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.',
 
   allcards: [2],
 

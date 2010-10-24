@@ -4,7 +4,7 @@
 const SpiderBase = {
   __proto__: BaseCardGame,
 
-  xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2[f s]2",
+  layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
 
   // Indices of kings within this.allcards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
@@ -112,7 +112,7 @@ Games.wasp = {
     "p", 7, WaspPile, FanDownView, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ],
-  xulTemplate: "h2p1p1p1p1p1p1p2[f s]2",
+  layoutTemplate: '#<   p p p p p p p  [fs]   >.',
   kings: [12, 25, 38, 51],
   getBestDestinationFor: "to up or nearest space"
 };
@@ -127,7 +127,7 @@ const SimonBase = {
     "p", 10, SpiderPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ],
-  xulTemplate: "h2p1p1p1p1p1p1p1p1p1p2f2",
+  layoutTemplate: '#<   p p p p p p p p p p  f   >.',
   helpId: "simon",
   kings: [12, 25, 38, 51]
 };

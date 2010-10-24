@@ -17,13 +17,13 @@ const BaseCardGame = {
   // a Layout object, based on those in lib-layouts.js
   layout: null,
 
-  // Instructions to the code in lib-layout.js on how to create the needed XUL
-  xulTemplate: null,
+  // Instructions to the code in lib-layout.js on how to create the needed HTML
+  layoutTemplate: null,
 
   // An array giving details of all the piles to be created.  Consists of parts
   // in the form:
   //   letter, number, Pile, View, face-down, face-up
-  // Where 'letter' corresponds to one used in .xulTemplate, 'number' is how
+  // Where 'letter' corresponds to one used in .layoutTemplate, 'number' is how
   // many of that kind exist, Pile and View are the subtypes of those objects
   // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
   // to the pile, if .deal() isn't replaced. Either a number (applying to all
@@ -71,7 +71,7 @@ const BaseCardGame = {
 
     if(!this.layout) this.layout = { __proto__: Layout };
     const layout = this.layout
-    layout.template = this.xulTemplate;
+    layout.template = this.layoutTemplate;
 
     const details = this.pileDetails;
     const eLen = 6; // length of an entry/row in .pileDetails
@@ -92,7 +92,7 @@ const BaseCardGame = {
       else ups[l] = ups[l].slice();
     }
 
-    // Returns a sequence of the letters from xulTemplate that referred to
+    // Returns a sequence of the letters from layoutTemplate that referred to
     // views/piles, excluding, e.g., annotations.
     const layoutletters = this.layout.init();
 

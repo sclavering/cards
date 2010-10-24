@@ -43,14 +43,14 @@ const KlondikeBase = {
 Games.klondike1 = {
   __proto__: KlondikeBase,
   helpId: "klondike",
-  xulTemplate: "v[2s1w3f1f1f1f2] [1p1p1p1p1p1p1p1]"
+  layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 };
 
 
 const Klondike3 = Games.klondike3 = {
   __proto__: KlondikeBase,
   pileDetails: KlondikeBase.pileDetails.slice(), // copy
-  xulTemplate: "v[2s1w2f1f1f1f2] [1p1p1p1p1p1p1p1]"
+  layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 };
 Klondike3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
 Klondike3.pileDetails[9] = Deal3HWasteView;    // Waste view
@@ -64,7 +64,8 @@ Games.doubleklondike = {
     "p", 10, KlondikePile, FanDownView, range(10), 1,
     "f", 8, KlondikeFoundation, View, 0, 0,
   ],
-  xulTemplate: "v[1s1w4f1f1f1f1f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: '#<   s w   f f f f f f f f   >.#<   p p p p p p p p p p   >.',
+
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   allcards: [2],
   numPreferredFoundationsPerSuit: 2, // == num foundations of a given suit

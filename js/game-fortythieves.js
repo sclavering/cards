@@ -7,7 +7,8 @@ Games.fortythieves = {
     "p", 10, FortyThievesPile, FanDownView, 0, 4,
     "f", 8, KlondikeFoundation, View, 0, 0,
   ],
-  xulTemplate: "v[2f1f1f1f1f1f1f1f2] [  s w] [2p1p1p1p1p1p1p1p1p1p2]",
+
+  layoutTemplate: '#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 

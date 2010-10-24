@@ -1,5 +1,6 @@
 Games.pyramid = {
   __proto__: BaseCardGame,
+
   pileDetails: [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, PyramidWaste, CountedView, 0, 0,
@@ -8,7 +9,7 @@ Games.pyramid = {
     "f", 1, PyramidFoundation, CountedView, 0, 0,
   ],
 
-  xulTemplate: "h1[s w]1[{pyramidlayout}[1y1][4-++p1p++-4][3++p1p1p++3][3-+p1p1p1p+-3][2+p1p1p1p1p+2][2-p1p1p1p1p1p-2][1p1p1p1p1p1p1p1]]1f1",
+  layoutTemplate: '#<   [s w] [{class=pyramidlayout}#< y >.#< p_p >.#< p_p_p >.#< p_p_p_p >.#< p_p_p_p_p >.#< p_p_p_p_p_p >.#<p_p_p_p_p_p_p>.] f   >.',
 
   init: function() {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;

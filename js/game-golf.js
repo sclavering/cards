@@ -7,7 +7,7 @@ const GolfBase = {
     "f", 1, GolfFoundation, CountedView, 0, 1,
   ],
 
-  xulTemplate: "v[3s2f3] [2p1p1p1p1p1p1p2]",
+  layoutTemplate: '#<   s  f   >.#<   p p p p p p p   >.',
 
   helpId: "golf",
 

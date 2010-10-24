@@ -135,7 +135,7 @@ const _View = {
   needsUpdateOnResize: false,
 
   initView: function() {
-    const el = this.element = createHTML("vbox");
+    const el = this.element = createHTML("");
     el.pileViewObj = this;
     this._canvas = document.createElement("canvas");
     el.appendChild(this._canvas);

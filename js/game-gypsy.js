@@ -7,7 +7,7 @@ const GypsyBase = {
     "f", 8, KlondikeFoundation, View, 0, 0,
   ],
 
-  xulTemplate: "h2p1p1p1p1p1p1p1p2[{gypsy-right-col}[[f f f f] [f f f f]] s]2",
+  layoutTemplate: '#<   p p p p p p p p  (#<f_f><f_f><f_f><f_f>.s)   >.',
 
   helpId: "gypsy",
 

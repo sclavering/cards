@@ -134,24 +134,6 @@ body {
 }
 
 
-/* various <div>s used to display the piles and control their layout */
-.flex, .hbox, .vbox, .space, .pilespacer, .halfpilespacer, .game {
-  display: -moz-box;
-}
-.vbox { -moz-box-orient: vertical; }
-.flex { -moz-box-flex: 1; }
-.flex2 { -moz-box-flex: 2; }
-.flex3 { -moz-box-flex: 3; }
-.flex4 { -moz-box-flex: 4; }
-.flex5 { -moz-box-flex: 5; }
-.space { min-width: 10px; min-height: 10px; }
-
-.hbox {
-  /* "stretch" is the default, and usually not what we want. */
-  -moz-box-align: start;
-}
-
-
 #message-inner {
   /* we're trying to center it in the window */
   position: relative;
@@ -182,26 +164,57 @@ canvas, .pilespacer {
   min-width: 79px;
   min-height: 123px;
 }
+
 .halfpilespacer {
   min-width: 40px;
   min-height: 123px;
 }
 
-
-.gypsy-right-col {
-  /* so the Stock is in the middle of two columns of Foundations */
-  -moz-box-align: center;
+.thinspacer {
+  width: 10px;
+  height: 10px;
 }
 
 
 .pyramidlayout {
-  -moz-box-flex: 5;
-  padding-bottom: 60px;
+  padding-bottom: 70px;
 }
 
 .pyramidlayout > * {
-  margin-bottom: -60px;
+  margin-bottom: -70px;
 }
 
 /* this *does* pass clicks through to other elements, thankfully */
 .pyramid-collapse { visibility: hidden; }
+
+
+.gamelayout-table {
+  width: 100%;
+  overflow: hidden;
+  border-collapse: collapse;
+}
+
+.gamelayout-table canvas {
+  display: block; /* to avoid baseline weirdness */
+}
+
+.shortcolumn canvas {
+  margin: 0 auto;
+}
+
+.gamelayout-table td {
+  padding: 0;
+  text-align: center;
+  vertical-align: top;
+  /* so we get gaps between rows in grids */
+  padding-bottom: 10px;
+}
+
+.longcolumn-outer {
+  min-width: 79px;
+  position: relative;
+}
+
+.longcolumn-inner {
+  position: absolute;
+}

@@ -4,7 +4,7 @@ Games.pileon = {
   pileDetails: [
     "p", 15, PileOnPile, PileOnView, 0, 4, // last two actually empty
   ],
-  xulTemplate: "h3[p p p p]1[p p p p]1[p p p p]1[p p p]3",
+  layoutTemplate: '#<   p p p p   ><   p p p p><   p p p p><   p p p>.',
 
   getBestDestinationFor: "legal nonempty, or empty",
 

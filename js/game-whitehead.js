@@ -8,7 +8,7 @@ Games.whitehead = {
     "f", 4, KlondikeFoundation, View, 0, 0,
   ],
 
-  xulTemplate: "v[2s1w3f1f1f1f2] [1p1p1p1p1p1p1p1]",
+  layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39],
 

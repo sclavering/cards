@@ -7,7 +7,7 @@ Games.penguin = {
     "c", 7, Cell, View, 0, 0,
   ],
 
-  xulTemplate: "h2[c p]1[c p]1[c p]1[c p]1[c p]1[c p]1[c p]2[f f f f]2",
+  layoutTemplate: '#<   c c c c c c c  [f_f_f_f]   ><   p p p p p p p>.',
 
   allcards: [1, , , true],
 

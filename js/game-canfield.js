@@ -11,7 +11,7 @@ const CanfieldBase = {
   _reserveFaceDown: 12,
   _reserveFaceUp: 1,
 
-  xulTemplate: "h2[s w]2[f p]1[f p]1[f p]1[f p]2r2",
+  layoutTemplate: '#<   s  f f f f  [r]   ><   w  p p p p>.',
 
   helpId: "canfield",
 

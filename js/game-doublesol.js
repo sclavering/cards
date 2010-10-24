@@ -10,7 +10,7 @@ Games.doublesol = {
     "f", 4, DoubleSolFoundation, DoubleSolFoundationView, 0, 0,
   ],
 
-  xulTemplate: "v[1s1w4f1f1f1f1] [1p1p1p1p1p1p1p1p1p1p1]",
+  layoutTemplate: '#<   s w   f f f f   >.#<   p p p p p p p p p p   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 

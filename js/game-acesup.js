@@ -6,7 +6,8 @@ Games.acesup = {
     "p", 4, AcesUpPile, FanDownView, 0, 1,
     "f", 1, AcesUpFoundation, CountedView, 0, 0,
   ],
-  xulTemplate: "h2s2p1p1p1p2f2",
+
+  layoutTemplate: '#<   s  p p p p  f   >.',
 
   allcards: [null, null, range2(2, 15)], // aces high
 

@@ -7,7 +7,7 @@ Games.towers = {
     "c", 4, Cell, View, 0, [0, 1, 1, 0],
   ],
 
-  xulTemplate: "v[1c1c1c1c5f1f1f1f1] [2p1p1p1p1p1p1p1p1p1p2]",
+  layoutTemplate: '#<  c c c c    f f f f  >.#<   p p p p p p p p p p   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39],
 

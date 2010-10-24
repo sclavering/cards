@@ -6,16 +6,19 @@ Games.fan = {
     "f", 4, FanFoundation, View, 0, 0,
   ],
 
-  xulTemplate: "v[3f1f1f1f3] [ [[p p p p p] [p p p p p] [p p p p p] [p p p]]]",
+  // We disable width:100% on the main grid because we're manually sizing everything, and don't want the browser to distribute any extra width proportionately.
+  layoutTemplate: "#<  f f f f  >.#{style=width:auto}<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
 
   layout: {
     __proto__: Layout,
     // No other layout has a grid of flexible views
     setFlexibleViewSizes: function(views, width, height) {
-      // 4 is the num <spacer>s.  16 is 3 per pile view, and a space to the left
-      const unitwidth = Math.floor((width - 4 * gSpacerSize) / 16);
-      views[0].element.parentNode.parentNode.previousSibling.width = unitwidth;
-      for each(var v in views) v.widthToUse = unitwidth * 3;
+      const kSpaceBetweenPiles = 4 * gSpacerSize;
+      // 5 units per each of the 5 piles, plus 2 to the left of everything, and 3 to the right.
+      const unitwidth = (width - kSpaceBetweenPiles) / (5 * 5 + 2 + 2);
+      // div.thinspacer in the previous <td>
+      views[0].element.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
+      for each(var v in views) v.widthToUse = unitwidth * 5;
     }
   },
 

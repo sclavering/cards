@@ -42,17 +42,15 @@ const Layout = {
       var el = document.createElement(tagName);
       if(tagName === 'tr') el.isTR = true; // avoid the string case mess in .tagName and .localName
       el.className = className;
-      pushItem(el);
+      boxOrTd().appendChild(el);
       box = el;
     }
 
-    function pushItem(el) {
-      if(box.isTR) {
-        var td = document.createElement('td');
-        if(el) td.appendChild(el);
-        el = td;
-      }
-      if(el) box.appendChild(el);
+    function boxOrTd() {
+      if(!box.isTR) return box;
+      var td = document.createElement('td');
+      box.appendChild(td);
+      return td;
     }
 
     const template = this.template, len = template.length;
@@ -75,7 +73,7 @@ const Layout = {
           stack.pop(); // div.longcolumn-outer doesn't belong there
           break;
         case " ":
-          pushItem(null);
+          boxOrTd();
           break;
         case ">":
           // Set <td> widths, but only on the first row (so that subsequent rows can omit trailing empties).
@@ -92,13 +90,13 @@ const Layout = {
           break;
       // spacers
         case "_":
-          pushItem(createHTML("thinspacer"));
+          boxOrTd().appendChild(createHTML("thinspacer"));
           break;
         case "-":
-          pushItem(createHTML("halfpilespacer"));
+          boxOrTd().appendChild(createHTML("halfpilespacer"));
           break;
         case "=":
-          pushItem(createHTML("pilespacer"));
+          boxOrTd().appendChild(createHTML("pilespacer"));
           break;
       // "{attr=val}", applies to most-recent pile or box
         case "{":
@@ -123,7 +121,7 @@ const Layout = {
           letters.push(ch);
           var viewObj = createPileView(viewType);
           views.push(viewObj);
-          pushItem(viewObj.element);
+          viewObj.insertInto(boxOrTd());
           break;
       }
     }

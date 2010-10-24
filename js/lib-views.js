@@ -37,6 +37,10 @@ function initCardImageOffsets() {
 // is used because other code used to expect a .boxObject, and to allow
 // control of whether the canvas should be stretched or not.
 const _View = {
+  insertInto: function(parentNode) {
+    parentNode.appendChild(this.element);
+  },
+
   // The root XUL element for this view.  Must have .pileViewObj field set.
   element: null,
 

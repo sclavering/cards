@@ -381,12 +381,15 @@ const PileOnView = {
 
 // Collapses to nothing when it has no cards
 const PyramidView = {
-  __proto__: _FlexFanView, // so it's just an <html:canvas>
-  fixedWidth: gCardWidth,
+  __proto__: View,
+  insertInto: function(parentNode) {
+    parentNode.appendChild(this._canvas);
+    this._canvas.parentNode.className += ' pyramid-pile-parent';
+  },
   _update: function(cs, num) {
-    if(num) _FlexFanView._update.apply(this, arguments);
-    // xxx is this correct ?
-    this._canvas.className = num ? "pyramid-uncollapse" : "pyramid-collapse";
+    View._update.apply(this, arguments);
+    // We don't want to collapse roots
+    if(this.pile.leftParent || this.pile.rightParent) this._canvas.className = num ? "pyramid-uncollapse" : "pyramid-collapse";
   }
 };
 

@@ -3,12 +3,11 @@ Games.tripeaks = {
 
   pileDetails: [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "y", 3, TriPeaksPile, View, 0, 0, // the three peaks
-    "p", 25, TriPeaksPile, PyramidView, 0, 0,
+    "p", 28, TriPeaksPile, PyramidView, 0, 0,
     "f", 1, GolfFoundation, View, 0, 0,
   ],
 
-  layoutTemplate: '[{class=pyramidlayout}#<     -  =  y  =  =  y  =  =  y  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.',
+  layoutTemplate: '[{class=pyramidlayout}#<     -  =  p  =  =  p  =  =  p  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.',
 
   allcards: [1, , , true],
 

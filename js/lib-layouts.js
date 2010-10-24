@@ -93,10 +93,10 @@ const Layout = {
           boxOrTd().appendChild(createHTML("thinspacer"));
           break;
         case "-":
-          boxOrTd().appendChild(createHTML("halfpilespacer"));
+          boxOrTd().appendChild(createHTML("horizontal-halfpilespacer"));
           break;
         case "=":
-          boxOrTd().appendChild(createHTML("pilespacer"));
+          boxOrTd().appendChild(createHTML("horizontal-pilespacer"));
           break;
       // "{attr=val}", applies to most-recent pile or box
         case "{":

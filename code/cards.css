@@ -160,14 +160,17 @@ body {
   padding-top: 0.2em;
 }
 
-canvas, .pilespacer {
+canvas {
   min-width: 79px;
   min-height: 123px;
 }
 
-.halfpilespacer {
+.horizontal-pilespacer {
+  min-width: 79px;
+}
+
+.horizontal-halfpilespacer {
   min-width: 40px;
-  min-height: 123px;
 }
 
 .thinspacer {
@@ -177,12 +180,30 @@ canvas, .pilespacer {
 
 
 .pyramidlayout {
-  padding-bottom: 70px;
+  padding-bottom: 123px; /* height of the bottom row of cards, which are actually position:absolute */
 }
 
 .pyramidlayout > * {
-  margin-bottom: -70px;
+  margin-bottom: 40px; /* aethetically-chosen offset between top edges of rows */
 }
+
+.pyramidlayout .thinspacer {
+  height: 0;
+}
+
+.pyramidlayout td {
+  padding-bottom: 0 !important;
+}
+
+.pyramid-pile-parent {
+  min-width: 79px;
+  position: relative;
+}
+
+.pyramidlayout canvas {
+  position: absolute;
+}
+
 
 /* this *does* pass clicks through to other elements, thankfully */
 .pyramid-collapse { visibility: hidden; }

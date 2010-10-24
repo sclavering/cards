@@ -111,14 +111,16 @@ function savePref(name, val) {
 // A <div><canvas/></div> used to show cards being dragged or animated.
 const gFloatingPile = {
   init: function() {
-    this.element = document.getElementById("floatingpile");
+    this._element = document.getElementById("floatingpile");
     this.hide();
     const canvas = document.createElement("canvas");
-    this.element.appendChild(canvas);
+    this._element.appendChild(canvas);
     this.context = canvas.getContext("2d");
   },
 
-  element: null,
+  boundingRect: function() { return this._element.getBoundingClientRect(); },
+
+  _element: null,
   context: null, // <canvas> 2d rendering context
   _left: 0,
   _top: 0,
@@ -144,8 +146,8 @@ const gFloatingPile = {
   showFor: function(card, x, y) {
     this.lastCard = card;
     // context widths already set appropriately in sizeCanvas
-    this.element.style.width = this.context.canvas.width + 'px';
-    this.element.style.height = this.context.canvas.height + 'px';
+    this._element.style.width = this.context.canvas.width + 'px';
+    this._element.style.height = this.context.canvas.height + 'px';
     this.moveTo(x, y);
   },
 
@@ -158,10 +160,10 @@ const gFloatingPile = {
     const self = gFloatingPile;
     self._left = x;
     self._top = y;
-    self.element.style.left = self._left + 'px';
+    self._element.style.left = self._left + 'px';
     // xxx this seems to sometimes cause warnings to show on the error console (seen in Fx 3.0):
     // "Warning: Error in parsing value for property 'top'.  Declaration dropped."
-    self.element.style.top = self._top + 'px';
+    self._element.style.top = self._top + 'px';
   }
 };
 

@@ -275,16 +275,18 @@ const _FlexFanView = {
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
     var h = this._basicHOffset, v = this._basicVOffset;
-    if(num > 0) { // avoid divide by zero
-      var r = this.pixelRect();
+    if(num <= 0) return; // avoid divide by zero
+    const r = this.pixelRect();
+    if(h) {
       h = Math.min(((r.right - r.left) - gCardWidth) / num, h);
-      v = Math.min(((r.bottom - r.top) - gCardHeight) / num, v);
-      // use integer offset where possible to avoid fuzzyness
-      if(h > 2) h = Math.floor(h);
-      if(v > 2) v = Math.floor(v);
+      if(h > 2) h = Math.floor(h); // use integer offsets if possible to avoid fuzzyness
+      this._hOffset = h;
     }
-    this._hOffset = h;
-    this._vOffset = v;
+    if(v) {
+      v = Math.min(((r.bottom - r.top) - gCardHeight) / num, v);
+      if(v > 2) v = Math.floor(v);
+      this._vOffset = v;
+    }
   },
 
   _drawBackgroundForEmpty: function() {

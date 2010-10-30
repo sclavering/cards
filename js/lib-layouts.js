@@ -237,8 +237,7 @@ const Layout = {
   _getTargetCard: function(e) {
     for(var t = e.target; t && !t.pileViewObj; t = t.parentNode);
     if(!t || !t.pileViewObj) return null;
-    t = t.pileViewObj;
-    return t != gFloatingPile ? t.getTargetCard(e) : null;
+    return t.pileViewObj.getTargetCard(e);
   },
 
   onWindowResize: function(e) {

@@ -49,7 +49,7 @@ const _View = {
   _counter: null, // if set true, a <label> will be created and replace it
 
   // Redraw the pile.
-  update: function(card) {
+  update: function() {
     const cs = this.pile.cards;
     this._update(cs, cs.length);
   },

@@ -56,7 +56,7 @@ const _View = {
 
   // Show the specified array of cards (which may be a prefix of the actual
   // cards, during animation or dragging).  num == cards.length
-  _update: function(card, num) {
+  _update: function(cards, num) {
     throw "_View._update not overridden!";
   },
 

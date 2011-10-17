@@ -405,7 +405,7 @@ const BaseCardGame = {
   loadPreferredFoundationSuits: function() {
     const byIx = this._preferredSuitForFoundationIndex = [null for(ix in this.foundations)];
     const bySuit = this._preferredFoundationIndexesBySuit = {
-      S: [], H: [], D: [], C: [] // names must match SPADE/HEART/DIAMOND/CLUB consts
+      S: [], H: [], D: [], C: []
     };
     const pref = this.loadPref("suits_preferred_foundations");
     const max = this.numPreferredFoundationsPerSuit;

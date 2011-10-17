@@ -1,10 +1,3 @@
-// constants for colours and suits
-// May also be seen without quotes, since they're used as object field-names.
-const RED = "R", BLACK = "B";
-const SPADE = "S", HEART = "H", DIAMOND = "D", CLUB = "C";
-const SUITS = "SHDC";
-
-
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
   cards = cards.slice(0); // copy
@@ -32,7 +25,7 @@ function shuffle(cards) {
 
 function makeCards(repeat, suits, numbers, mod13) {
   if(!repeat) repeat = 1;
-  if(!suits) suits = SUITS;
+  if(!suits) suits = 'SHDC';
   if(!numbers) numbers = range2(1, 14);
   if(!mod13) mod13 = false;
   const cardsss = [_makeCardSeqs(repeat, suit, numbers, mod13) for each(suit in suits)];
@@ -57,7 +50,7 @@ function _makeCardSeq(numbers, suit, mod13) {
 
 // pass number==14 for a "high" Ace
 function Card(number, suit) {
-  this.colour = { S: BLACK, H: RED, D: RED, C: BLACK }[suit];
+  this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
   this.suit = suit;
   this.displayNum = number == 14 ? 1 : number
   this.displayStr = suit + this.displayNum;

@@ -40,7 +40,7 @@ Games.whitehead = {
 
   getAutoplayableNumbers: function() {
     const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
-    const suitmap = { S: CLUB, H: DIAMOND, D: HEART, C: SPADE }; // other suit of same colour
+    const suitmap = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
       var c = fs[i].lastCard;

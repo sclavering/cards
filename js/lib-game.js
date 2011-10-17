@@ -279,7 +279,7 @@ const BaseCardGame = {
 
   // called after each move (unless interrupted by user).
   // Should return an Action, or null.  Generally shouldn't handle revealing of cards
-  autoplay: function(pileWhichHasHadCardsRemoved) {
+  autoplay: function() {
     return null;
   },
 

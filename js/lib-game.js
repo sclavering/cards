@@ -68,6 +68,9 @@ const BaseCardGame = {
     this.classInit = null; // to avoid re-calling
     // replace strings with functions (see rules.js)
     for(var r in Rules) if(typeof this[r] == "string") this[r] = Rules[r][this[r]];
+    if(typeof this.isWon === 'string') this.isWon = isWon[this.isWon];
+    if(typeof this.getAutoplayableNumbers === 'string') this.getAutoplayableNumbers = getAutoplayableNumbers[this.getAutoplayableNumbers];
+    if(typeof this.getBestDestinationFor === 'string') this.getBestDestinationFor = getBestDestinationFor[this.getBestDestinationFor];
 
     if(!this.layout) this.layout = { __proto__: Layout };
     const layout = this.layout

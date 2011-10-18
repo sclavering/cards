@@ -10,10 +10,10 @@ cat \
     js/lib-layouts.js \
     js/lib-piles.js \
     js/lib-animation.js \
+    js/autoplay.js \
     js/getAutoplayableNumbers.js \
     js/getBestDestinationFor.js \
     js/isWon.js \
-    js/lib-rules.js \
     js/lib-actions.js \
     js/lib-game.js \
     js/lib-freecell-move-sequencer.js \

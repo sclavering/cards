@@ -36,3 +36,12 @@ function flatten(items, times) {
   for(var i in irange(times)) items = Array.concat.apply(null, items);
   return items;
 }
+
+function findEmpty(piles) {
+  const num = piles.length;
+  for(var i = 0; i != num; i++) {
+    var p = piles[i];
+    if(!p.hasCards) return p;
+  }
+  return null;
+}

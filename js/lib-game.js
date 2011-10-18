@@ -458,32 +458,26 @@ const BaseCardGame = {
   loadPref: function(name) {
     return loadPref(this.id + "." + name);
   },
+
   savePref: function(name, val) {
     savePref(this.id + "." + name, val);
   },
 
+
   // === Miscellany =======================================
 
   get firstEmptyFoundation() {
-    var fs = this.foundations, len = fs.length;
-    for(var i = 0; i != len; i++) if(!fs[i].hasCards) return fs[i];
-    return null;
+    return findEmpty(this.foundations);
   },
 
   get firstEmptyPile() {
-    var ps = this.piles, len = ps.length;
-    for(var i = 0; i != len; i++) if(!ps[i].hasCards) return ps[i];
-    return null;
+    return findEmpty(this.piles);
   },
 
   get emptyCell() {
-    const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++) if(!cs[i].hasCards) return cs[i];
-    return null;
+    return findEmpty(this.cells);
   }
 }
-
-
 
 
 

@@ -5,6 +5,8 @@ const YukonBase = {
 
   autoplay: "commonish",
 
+  getAutoplayableNumbers: "yukon",
+
   isWon: "13 cards on each foundation"
 };
 
@@ -16,8 +18,7 @@ Games.yukon = {
     "f", 4, KlondikeFoundation, View, 0, 0,
   ],
   layoutTemplate: '#<   p p p p p p p  [f_f_f_f]   >.',
-  foundationBaseIndexes: [0, 13, 26, 39],
-  getAutoplayableNumbers: "klondike"
+  foundationBaseIndexes: [0, 13, 26, 39]
 };
 
 
@@ -31,6 +32,5 @@ Games.sanibel = {
   ],
   layoutTemplate: '#<  s w    f f f f f f f f  >.#<   p p p p p p p p p p   >.',
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  allcards: [2],
-  getAutoplayableNumbers: "gypsy"
+  allcards: [2]
 };

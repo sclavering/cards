@@ -153,3 +153,15 @@ Games.simon2 = {
 Games.simon4 = {
   __proto__: SimonBase
 };
+
+Games.doublesimon = {
+  __proto__: SimonBase,
+  allcards: [2],
+  pileDetails: [
+    "p", 10, SpiderPile, FanDownView, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1],
+    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
+  ],
+  layoutTemplate: '#<   p p p p p p p p p p p p  f   >.',
+  helpId: "simon",
+  kings: [12, 25, 38, 51, 64, 77, 90, 103]
+};

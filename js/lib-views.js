@@ -375,10 +375,16 @@ const Mod3SlideView = {
   fixedHeight: gCardHeight + 3 * gVSlideOffset
 };
 
-const PileOnView = {
+const PileOnView4 = {
   __proto__: _FanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + 3 * gHFanOffset
+};
+
+const PileOnView8 = {
+  __proto__: _FanView,
+  _hOffset: gHFanOffset,
+  fixedWidth: gCardWidth + 7 * gHFanOffset
 };
 
 // Collapses to nothing when it has no cards

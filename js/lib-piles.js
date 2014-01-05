@@ -467,8 +467,9 @@ const PenguinPile = {
   mayAddCard: mayAddOntoDotUpOrPutKingInSpace
 };
 
-const PileOnPile = {
+const _PileOnPile = {
   __proto__: Pile,
+  _depth: NaN,
   isPile: true,
   // May move any group of cards all of the same rank.
   mayTakeCard: function(card) {
@@ -482,8 +483,18 @@ const PileOnPile = {
     const last = this.lastCard;
     if(card.pile == this || (last && last.number != card.number)) return false;
     const numCards = card.pile.cards.length - card.index;
-    return this.cards.length + numCards <= 4;
+    return this.cards.length + numCards <= this._depth;
   }
+};
+
+const PileOnPile4 = {
+  __proto__: _PileOnPile,
+  _depth: 4,
+};
+
+const PileOnPile8 = {
+  __proto__: _PileOnPile,
+  _depth: 8,
 };
 
 const _PyramidPile = { // used by TriPeaks too

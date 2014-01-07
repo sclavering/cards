@@ -28,3 +28,21 @@ function _getAutoplayableNumbers_klondike(fs, always_allow_twos) {
   const black = colour_nums.R + 1, red = colour_nums.B + 1; // note the flip
   return { S: black, H: red, D: red, C: black };
 }
+
+// e.g. can autoplay 5D when all 4Ds are on foundations.
+// Assumes two full decks are in use.
+function autoplay_any_where_all_lower_of_same_suit_are_on_foundations() {
+  const nums = { S: 20, H: 20, D: 20, C: 20 }; // suit -> lowest rank seen on fs
+  const counts = { S: 0, H: 0, D: 0, C: 0 }; // suit -> num of such on fs
+  for each(let f in this.foundations) {
+    let c = f.lastCard;
+    if(!c) continue;
+    ++counts[c.suit];
+    if(c.number < nums[c.suit]) nums[c.suit] = c.number;
+  }
+  for(let i in counts) {
+    if(counts[i] < 2) nums[i] = 1;
+    else ++nums[i];
+  }
+  return nums;
+}

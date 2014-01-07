@@ -18,7 +18,7 @@ Games.whitehead = {
     for(var i = 0, k = 0; i != 4; i++) {
       for(var j = 0; j != 13; j++, k++) {
         var c = cs[k];
-        c.on = j==12 ? null : cs[k+off[i]+1];
+        c.on = j == 12 ? null : cs[k + off[i] + 1];
       }
     }
   },

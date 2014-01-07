@@ -21,14 +21,14 @@ Games.regiment = {
 
     for(var i = 0; i != 8; i++) {
       rs[i].up = ps[i];
-      rs[i].down = ps[i+8];
+      rs[i].down = ps[i + 8];
       rs[i].col = i;
     }
 
     for(i = 0; i != 16; i++) {
       var p = ps[i], col = p.col = i % 8;
       p.reserve = rs[col];
-//      p.following = ps.slice(i+1).concat(ps.slice(0, i));
+//      p.following = ps.slice(i + 1).concat(ps.slice(0, i));
     }
 
     this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];

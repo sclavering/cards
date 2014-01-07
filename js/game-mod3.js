@@ -29,7 +29,7 @@ Games.mod3 = {
   // games that start with no cards in the correct place on the foundations are impossible
   shuffleImpossible: function(cards) {
     for(var i = 95; i != 87; i--)
-      if(cards[i].number==2 || cards[i-8].number==3 || cards[i-16].number==4)
+      if(cards[i].number == 2 || cards[i - 8].number == 3 || cards[i - 16].number == 4)
         return false;
     return true;
   },

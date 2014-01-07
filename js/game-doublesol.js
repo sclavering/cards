@@ -29,7 +29,7 @@ Games.doublesol = {
       if(f.hasCards) {
         var last = f.getCard(-1), prv = f.getCard(-2);
         var c1 = null, c2 = null;
-        if(prv==last.twin) c1 = last.up, c2 = prv.up;
+        if(prv == last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
         if(!c1 || c1.number > nums[c1.suit]) continue;
         if(c1.faceUp && c1.isLast) return new Move(c1, f);

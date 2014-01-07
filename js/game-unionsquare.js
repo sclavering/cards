@@ -49,8 +49,8 @@ Games.unionsquare = {
     const fs = this.foundations;
     for(var i = 0; i != 4; ++i) {
       var f = fs[i], len = f.cards.length, last = f.lastCard;
-      if(len<12 || len==26) continue;
-      var c = len==12 ? last.up : (len==13 ? last.twin : last.down), cp = c.pile;
+      if(len < 12 || len == 26) continue;
+      var c = len == 12 ? last.up : (len == 13 ? last.twin : last.down), cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
       c = c.twin, cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);

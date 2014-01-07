@@ -17,8 +17,8 @@ const getBestDestinationFor = {
         if(!empty) empty = p;
         continue;
       }
-      if(card.upNumber!=last.number) continue;
-      if(card.suit==last.suit) return p;
+      if(card.upNumber != last.number) continue;
+      if(card.suit == last.suit) return p;
       if(!maybe) maybe = p;
     }
     return maybe || empty;

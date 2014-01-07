@@ -87,7 +87,7 @@ DealToPiles.prototype = {
   },
   undo: function() {
     const s = Game.stock, ps = Game.piles;
-    for(var i = this.dealt; i != 0; i--) s.undealCardFrom(ps[i-1]);
+    for(var i = this.dealt; i != 0; i--) s.undealCardFrom(ps[i - 1]);
   }
 }
 

@@ -157,7 +157,7 @@ const Layout = {
   },
 
   beginDrag: function(e) {
-    const self = Game.layout; // this==window
+    const self = Game.layout; // this == window
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;

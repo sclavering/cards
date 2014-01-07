@@ -517,7 +517,7 @@ GameControllerObj.prototype = {
 
   newGame: function(cardsOrder) {
     if(this.currentGame) {
-      if(this.pastGames.length==2) this.pastGames.shift();
+      if(this.pastGames.length == 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
       this.havePastGames = true;
     }

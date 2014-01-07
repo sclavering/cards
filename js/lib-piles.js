@@ -49,7 +49,7 @@ const Pile = {
   next: null,
 
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
-  // Note that this *must* handle the case of card.pile==this
+  // Note that this *must* handle the case of card.pile == this
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
 
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
@@ -291,12 +291,12 @@ function mayTakeRunningFlush(card) {
 function mayAddToGypsyPile(card) {
   if(card.pile == this) return false; // Gypsy and Canfield don't need this, but Yukon does
   const last = this.lastCard;
-  return !last || (last.colour!=card.colour && last.number==card.upNumber);
+  return !last || (last.colour != card.colour && last.number == card.upNumber);
 }
 
 function mayAddToKlondikePile(card) {
   const last = this.lastCard;
-  return last ? last.number==card.upNumber && last.colour!=card.colour : card.isKing;
+  return last ? last.number == card.upNumber && last.colour != card.colour : card.isKing;
 }
 
 function mayAddSingleCardToEmpty(card) {
@@ -372,7 +372,7 @@ const FortyThievesPile = {
 
   mayAddCard: function(card) {
     var last = this.lastCard;
-    if(last && (card.suit!=last.suit || card.upNumber!=last.number)) return false;
+    if(last && (card.suit != last.suit || card.upNumber != last.number)) return false;
 
     // check there are enough spaces to perform the move
 
@@ -405,7 +405,7 @@ const FreeCellPile = {
 
   mayAddCard: function(card) {
     var last = this.lastCard;
-    if(last && (last.colour==card.colour || last.number!=card.upNumber)) return false
+    if(last && (last.colour == card.colour || last.number != card.upNumber)) return false;
 
     // check there are enough cells+spaces to perform the move
 
@@ -450,8 +450,8 @@ const MazePile = {
     var prev = this.prev.lastCard, next = this.next.lastCard;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
-        || (prev && prev==card.down)
-        || (next && next==card.up);
+        || (prev && prev == card.down)
+        || (next && next == card.up);
   }
 };
 
@@ -555,13 +555,13 @@ const RegimentPile = {
     if(reserve.hasCards) return false;
 
     var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasCards && prev!=source) prev = prev.prev, prevDist++;
+    while(prev && !prev.hasCards && prev != source) prev = prev.prev, prevDist++;
     var next = reserve.next, nextDist = 1;
-    while(next && !next.hasCards && next!=source) next = next.next, nextDist++;
+    while(next && !next.hasCards && next != source) next = next.next, nextDist++;
 
     // if trying to move from a reserve to the right
-    if(source.col > this.col) return next==source && (!prev || prevDist>=nextDist);
-    return prev==source && (!next || nextDist>=prevDist);
+    if(source.col > this.col) return next == source && (!prev || prevDist >= nextDist);
+    return prev == source && (!next || nextDist >= prevDist);
   }
 };
 
@@ -624,7 +624,7 @@ const WhiteheadPile = {
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
     const lst = this.lastCard;
-    return !lst || lst==card.up || lst==card.on;
+    return !lst || lst == card.up || lst == card.on;
   }
 };
 
@@ -638,7 +638,7 @@ const YukonPile = {
 
 function mayAddCardToKlondikeFoundation(card) {
   const last = this.lastCard;
-  return card.isLast && (last ? last.suit==card.suit && last.upNumber==card.number : card.isAce);
+  return card.isLast && (last ? last.suit == card.suit && last.upNumber == card.number : card.isAce);
 }
 
 const NoWorryingBackFoundation = {
@@ -669,7 +669,7 @@ const GolfFoundation = {
 
   mayAddCard: function(card) {
     const l = this.lastCard;
-    return l.number==card.upNumber || card.number==l.upNumber;
+    return l.number == card.upNumber || card.number == l.upNumber;
   }
 };
 
@@ -711,7 +711,7 @@ const DoubleSolFoundation = {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     const last = this.getCard(-1), prv = this.getCard(-2);
-    return prv==last.twin ? card.down==last || card.down==prv : card.twin==last;
+    return prv == last.twin ? card.down == last || card.down == prv : card.twin == last;
   }
 };
 
@@ -726,7 +726,7 @@ const _Mod3Foundation = {
   mayAddCard: function(card) {
     const last = this.lastCard;
     if(!this.hasCards) return card.number == this._baseNum;
-    return this.isGood && (card.down==last || card.twin.down==last)
+    return this.isGood && (card.down == last || card.twin.down == last);
   },
   getHintSources: function() {
     const c = this.firstCard;
@@ -770,8 +770,8 @@ const UnionSquareFoundation = {
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit != card.suit) return false;
-    if(pos < 13) return last.upNumber==card.number;
-    if(pos > 13) return last.number==card.upNumber;
+    if(pos < 13) return last.upNumber == card.number;
+    if(pos > 13) return last.number == card.upNumber;
     return card.isKing;
   }
 };

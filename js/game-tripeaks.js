@@ -16,7 +16,7 @@ Games.tripeaks = {
     // indices of the leftChild's of piles 0-17 (piles 18+ have no children)
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
     for(var i = 0; i != 18; i++) {
-      var p = ps[i], n = lefts[i], l = ps[n], r = ps[n+1];
+      var p = ps[i], n = lefts[i], l = ps[n], r = ps[n + 1];
       p.leftChild = l;
       l.rightParent = p;
       p.rightChild = r;
@@ -36,7 +36,7 @@ Games.tripeaks = {
 
   getBestActionFor: function(card) {
     const f = Game.foundation, c = f.lastCard;
-    return card.faceUp && (c.number==card.upNumber || c.upNumber==card.number) && new Move(card, f);
+    return card.faceUp && (c.number == card.upNumber || c.upNumber == card.number) && new Move(card, f);
   },
 
   getCardsToReveal: function(pileWhichHasHadCardsRemoved) {

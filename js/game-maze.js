@@ -49,10 +49,10 @@ Games.maze = {
       } else if(!c2) {
         if(!c1.isQueen) return false;
       } else {
-        if(!(c1.up==c2 || (c1.isQueen && c2.isAce))) return false;
+        if(!(c1.up == c2 || (c1.isQueen && c2.isAce))) return false;
       }
       pile = next;
-    } while(pile!=first);
+    } while(pile != first);
     return true;
   }
 }

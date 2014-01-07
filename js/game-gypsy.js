@@ -13,7 +13,7 @@ const GypsyBase = {
 
   init: function() {
     const fs = this.foundations;
-    for(var i = 0; i != 4; i++) fs[i].twin = fs[i+4], fs[i+4].twin = fs[i];
+    for(var i = 0; i != 4; i++) fs[i].twin = fs[i + 4], fs[i + 4].twin = fs[i];
   },
 
   getBestDestinationFor: "legal nonempty, or empty",

@@ -16,7 +16,7 @@ Games.pyramid = {
 
     for(var i = 0; i != lknum; ++i) {
       var lk = leftkid[i];
-      var p = ps[i], l = ps[lk], r = ps[lk+1];
+      let p = ps[i], l = ps[lk], r = ps[lk + 1];
       p.leftChild = l; l.rightParent = p;
       p.rightChild = r; r.leftParent = p;
     }

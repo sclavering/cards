@@ -15,12 +15,12 @@ Games.montana = {
     this.twos = [cs[0], cs[12], cs[24], cs[36]];
 
     var ps = this.piles;
-    for(var i = 0; i != 52; i++) ps[i].col = i % 13;
+    for(let i = 0; i != 52; i++) ps[i].col = i % 13;
 
     var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
 
     // leftp == left pile.  .left already exists (used for positioning in <stack>s)
-    for(i = 0; i != ps.length - 1; i++) ps[i].rightp = ps[i+1], ps[i+1].leftp = ps[i];
+    for(let i = 0; i != ps.length - 1; i++) ps[i].rightp = ps[i + 1], ps[i + 1].leftp = ps[i];
     ps[0].leftp = ps[13].leftp = ps[26].leftp = ps[39].leftp = null;
     ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
 
@@ -45,7 +45,7 @@ Games.montana = {
       if(!card || card.down) return false;
       while(pile.rightp) {
         pile = pile.rightp; prv = card; card = pile.lastCard;
-        if(prv.up!=card) return false; // this works fine even when prv is a King
+        if(prv.up != card) return false; // this works fine even when prv is a King
       }
     }
     return true;

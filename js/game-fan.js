@@ -44,4 +44,4 @@ Games.fan = {
   getAutoplayableNumbers: "any",
 
   isWon: "13 cards on each foundation"
-}
+};

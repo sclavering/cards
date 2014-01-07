@@ -68,7 +68,6 @@ const BaseCardGame = {
     this.classInit = null; // to avoid re-calling
 
     if(typeof this.autoplay === 'string') this.autoplay = autoplay[this.autoplay];
-    if(typeof this.getAutoplayableNumbers === 'string') this.getAutoplayableNumbers = getAutoplayableNumbers[this.getAutoplayableNumbers];
     if(typeof this.getBestDestinationFor === 'string') this.getBestDestinationFor = getBestDestinationFor[this.getBestDestinationFor];
     if(typeof this.isWon === 'string') this.isWon = isWon[this.isWon];
 

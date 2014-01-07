@@ -30,7 +30,7 @@ Games.freecell = {
 
   autoplay: "commonish",
 
-  getAutoplayableNumbers: "klondike",
+  getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 
   isWon: "13 cards on each foundation"
 };

@@ -1,14 +1,15 @@
-// returns a suit -> number map
-// If result.S = x then any spade with rank >=x may be autoplayed
-const getAutoplayableNumbers = {
-  // Can put 5H up if 4C and 4S are up (since there's then no reason to keep 5H down).
-  // Can always put A* up, and also 2* (because they're never needed to put an Ace on).
-  klondike: function() { return _getAutoplayableNumbers_klondike(this.foundations, true); },
+// These are commonly-used implementations of games' .getAutoplayableNumbers().
+// They return a suit -> number map, where e.g. if .S = 7 then any spade of number 7 or lower is eligible for autoplay.
 
-  "any": function() {
-    return { S: 13, H: 13, D: 13, C: 13 };
-  },
-};
+function autoplay_any_card() {
+  return { S: 13, H: 13, D: 13, C: 13 };
+}
+
+// Can put 5H up if 4C and 4S are up (since there's then no reason to keep 5H down).
+// Can always put A* up, and also 2* (because they're never needed to put an Ace on).
+function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two() {
+  return _getAutoplayableNumbers_klondike(this.foundations, true);
+}
 
 function autoplay_any_where_all_lower_of_other_colour_are_on_foundations() {
   return _getAutoplayableNumbers_klondike(this.foundations, false);

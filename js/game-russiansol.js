@@ -14,7 +14,7 @@ Games.russiansol = {
 
   autoplay: "commonish",
 
-  getAutoplayableNumbers: "any",
+  getAutoplayableNumbers: autoplay_any_card,
 
   isWon: "13 cards on each foundation"
 }

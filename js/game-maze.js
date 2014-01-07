@@ -19,6 +19,8 @@ Games.maze = {
     this.queens = [cs[11], cs[23], cs[35], cs[47]];
   },
 
+  deal: function(cards) this._deal_cards_with_nulls_for_spaces(cards),
+
   getBestDestinationFor: function(card) {
     if(card.isAce) {
       var start = card.pile, pile = start.next;

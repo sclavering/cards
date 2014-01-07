@@ -28,6 +28,15 @@ Games.penguin = {
     for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], others, 0, 7);
   },
 
+  // old version of ._deal_cards()
+  _dealSomeCards: function(pile, cards, numFaceDown, numFaceUp) {
+    const down = cards.splice(cards.length - numFaceDown, numFaceDown);
+    const up = cards.splice(cards.length - numFaceUp, numFaceUp);
+    for each(var c in up) if(c) c.faceUp = true; // c may be null in Montana
+    down.reverse(); up.reverse(); // match behaviour of old pop()-based version
+    pile.addCardsFromArray([x for each(x in Array.concat(down, up)) if(x)]);
+  },
+
   getBestDestinationFor: "towers/penguin",
 
   autoplay: "commonish",

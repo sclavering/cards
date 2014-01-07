@@ -21,10 +21,11 @@ const CanfieldBase = {
     const num = cards[51].displayNum;
     for each(let c in cards) c.renumber(num);
 
-    this._dealSomeCards(this.foundations[0], cards, 0, 1);
-    this._dealSomeCards(this.reserve, cards, this._reserveFaceDown, this._reserveFaceUp);
-    for(var i = 0; i != 4; i++) this._dealSomeCards(this.piles[i], cards, 0, 1);
-    this._dealSomeCards(this.stock, cards, cards.length, 0);
+    let ix = 0;
+    ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);
+    ix = this._deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
+    for(let i = 0; i != 4; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
+    this._deal_cards(cards, ix, this.stock, 52, 0);
 
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },

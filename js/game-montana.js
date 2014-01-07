@@ -27,6 +27,8 @@ Games.montana = {
     this.rowStarts = [ps[0], ps[13], ps[26], ps[39]];
   },
 
+  deal: function(cards) this._deal_cards_with_nulls_for_spaces(cards),
+
   getBestDestinationFor: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.pile.rightp;

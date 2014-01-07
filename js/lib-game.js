@@ -172,16 +172,25 @@ const BaseCardGame = {
   // overriding versions should deal out the provided shuffled cards for a new game.
   deal: function(cards) {
     const ps = this.allpiles, down = this._cardsToDealDown, up = this._cardsToDealUp;
-    for(var i in ps) this._dealSomeCards(ps[i], cards, down[i], up[i]);
-    if(cards.length) this._dealSomeCards(this.stock, cards, cards.length, 0);
+    let ix = 0;
+    for(let [i, p] in Iterator(ps)) ix = this._deal_cards(cards, ix, p, down[i], up[i]);
+    if(ix < cards.length) ix = this._deal_cards(cards, ix, this.stock, cards.length, 0);
   },
 
-  _dealSomeCards: function(pile, cards, numFaceDown, numFaceUp) {
-    const down = cards.splice(cards.length - numFaceDown, numFaceDown);
-    const up = cards.splice(cards.length - numFaceUp, numFaceUp);
-    for each(var c in up) if(c) c.faceUp = true; // c may be null in Montana
-    down.reverse(); up.reverse(); // match behaviour of old pop()-based version
-    pile.addCardsFromArray([x for each(x in Array.concat(down, up)) if(x)]);
+  // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
+  _deal_cards: function(cards, ix, pile, num_face_down, num_face_up) {
+    const cs = cards.slice(ix, ix + num_face_down + num_face_up);
+    for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
+    pile.addCardsFromArray(cs);
+    return ix + cs.length;
+  },
+
+  // For Montana and Maze
+  _deal_cards_with_nulls_for_spaces: function(cards) {
+    for(let [i, c] in Iterator(cards)) if(c) {
+      c.faceUp = true;
+      this.piles[i].addCardsFromArray([c]);
+    }
   },
 
   // Cards will be shuffled repeatedly until this returns false.

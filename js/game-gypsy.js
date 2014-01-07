@@ -45,7 +45,8 @@ const GypsyBase = {
     return null;
   },
 
-  getAutoplayableNumbers: "gypsy",
+  // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
+  getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
 
   isWon: "13 cards on each foundation"
 };

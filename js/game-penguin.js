@@ -9,32 +9,15 @@ Games.penguin = {
 
   layoutTemplate: '#<   c c c c c c c  [f_f_f_f]   ><   p p p p p p p>.',
 
-  allcards: [1, , , true],
-
-  init: function() {
-    this.pilesAndCells = this.piles.concat(this.cells);
-  },
+  foundationBaseIndexes: [0, 13, 26, 39],
 
   deal: function(cards) {
-    // "Aces" are cards with the first's number.  Other "aces" start on foundations
-    const beak = cards[51];
-    this.foundationBaseIndexes = [this.allcards.indexOf(beak)];
-    for each(var c in cards) c.renumber(beak.displayNum);
-    const aces = [c for each(c in cards) if(c.isAce)];
-    aces.pop(); // remove the beak, which would otherwise be dealt to a foundation
-    for(var i = 0; i != 3; ++i) this._dealSomeCards(this.foundations[i], aces, 0, 1);
-    const others = [c for each(c in cards) if(!c.isAce)];
-    others.push(beak);
-    for(i = 0; i != 7; i++) this._dealSomeCards(this.piles[i], others, 0, 7);
-  },
-
-  // old version of ._deal_cards()
-  _dealSomeCards: function(pile, cards, numFaceDown, numFaceUp) {
-    const down = cards.splice(cards.length - numFaceDown, numFaceDown);
-    const up = cards.splice(cards.length - numFaceUp, numFaceUp);
-    for each(var c in up) if(c) c.faceUp = true; // c may be null in Montana
-    down.reverse(); up.reverse(); // match behaviour of old pop()-based version
-    pile.addCardsFromArray([x for each(x in Array.concat(down, up)) if(x)]);
+    const aces = cards.filter(function(c) c.isAce);
+    const others = cards.filter(function(c) !c.isAce);
+    this._deal_cards(aces, 0, this.piles[0], 0, 1);
+    for(let i = 0; i < 3; ++i) this._deal_cards(aces, i + 1, this.foundations[i], 0, 1);
+    let ix = 0;
+    for(let i = 0; i < 7; ++i) ix = this._deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
   },
 
   getBestDestinationFor: "towers/penguin",

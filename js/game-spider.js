@@ -9,7 +9,20 @@ const SpiderBase = {
   // Indices of kings within this.allcards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
-  getBestDestinationFor: "down and same suit, or down, or empty",
+  getBestDestinationFor: function(card) {
+    let maybe = null, empty = null;
+    for each(let p in card.pile.surrounding) {
+      let last = p.lastCard;
+      if(!last) {
+        if(!empty) empty = p;
+        continue;
+      }
+      if(card.upNumber !== last.number) continue;
+      if(card.suit === last.suit) return p;
+      if(!maybe) maybe = p;
+    }
+    return maybe || empty;
+  },
 
   autoplay: function() {
     const cs = this.allcards, ixs = this.kings, num = ixs.length, f = this.foundation;

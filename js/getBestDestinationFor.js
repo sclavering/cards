@@ -7,23 +7,6 @@ const getBestDestinationFor = {
     return e && e.mayAddCard(card) ? e : null;
   },
 
-  "down and same suit, or down, or empty":
-  function(card) {
-    const ps = card.pile.surrounding, num = ps.length;
-    var maybe = null, empty = null;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i], last = p.lastCard;
-      if(!last) {
-        if(!empty) empty = p;
-        continue;
-      }
-      if(card.upNumber != last.number) continue;
-      if(card.suit == last.suit) return p;
-      if(!maybe) maybe = p;
-    }
-    return maybe || empty;
-  },
-
   "legal nonempty, or empty":
   function(card) {
     var p = card.pile, ps = p.isPile ? p.surrounding : this.piles, num = ps.length;

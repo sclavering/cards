@@ -68,7 +68,6 @@ const BaseCardGame = {
     this.classInit = null; // to avoid re-calling
 
     if(typeof this.autoplay === 'string') this.autoplay = autoplay[this.autoplay];
-    if(typeof this.getBestDestinationFor === 'string') this.getBestDestinationFor = getBestDestinationFor[this.getBestDestinationFor];
 
     if(!this.layout) this.layout = { __proto__: Layout };
     const layout = this.layout
@@ -310,14 +309,15 @@ const BaseCardGame = {
   },
 
   // Called when a user left-clicks on a card.  Should return an Action (or null).
-  // Generally it's easier to override getBestDestinationFor instead of getBestActionFor
+  // Generally it's easier to override .best_destination_for() instead.
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
-    const target = this.getBestDestinationFor(card);
+    const target = this.best_destination_for(card);
     return target ? new Move(card, target) : null;
   },
 
-  getBestDestinationFor: function(card) {
+  // Should return a pile, or null.
+  best_destination_for: function(card) {
     return null;
   },
 

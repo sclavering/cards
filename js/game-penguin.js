@@ -20,7 +20,7 @@ Games.penguin = {
     for(let i = 0; i < 7; ++i) ix = this._deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
   },
 
-  getBestDestinationFor: "towers/penguin",
+  best_destination_for: find_destination__nearest_legal_pile_or_cell,
 
   autoplay: "commonish",
 

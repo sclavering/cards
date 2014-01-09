@@ -10,7 +10,7 @@ const KlondikeBase = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  getBestDestinationFor: "legal",
+  best_destination_for: find_destination__nearest_legal_pile,
 
   autoplay: "commonish",
 

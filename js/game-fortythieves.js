@@ -14,7 +14,7 @@ Games.fortythieves = {
 
   allcards: [2],
 
-  getBestDestinationFor: "legal nonempty, or empty",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: "commonish",
 

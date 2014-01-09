@@ -4,7 +4,7 @@ const FreeCellGame = {
 
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
-    const dest = this.getBestDestinationFor(card);
+    const dest = this.best_destination_for(card);
     if(!dest) return null;
     return new Move(card, dest);
     /* FreeCellMoveAction doesn't work correctly at the moment, so don't try using it

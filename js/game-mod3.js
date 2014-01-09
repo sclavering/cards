@@ -34,7 +34,7 @@ Games.mod3 = {
     return true;
   },
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     if(card.down) {
       var d1p = card.down.pile, d2p = card.twin.down.pile;
       // won't return non-foundations, because you can only add there if empty

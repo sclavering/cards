@@ -26,7 +26,7 @@ Games.doublefan = {
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 
-  getBestDestinationFor: "legal",
+  best_destination_for: find_destination__nearest_legal_pile,
 
   autoplay: "commonish",
 

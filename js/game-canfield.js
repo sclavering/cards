@@ -30,7 +30,7 @@ const CanfieldBase = {
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },
 
-  getBestDestinationFor: "legal nonempty, or empty",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: "commonish",
 

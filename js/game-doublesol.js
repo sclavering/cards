@@ -16,7 +16,7 @@ Games.doublesol = {
 
   allcards: [2],
 
-  getBestDestinationFor: "legal",
+  best_destination_for: find_destination__nearest_legal_pile,
 
   autoplay: function() {
     var triedToFillEmpty = false;

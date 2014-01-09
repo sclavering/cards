@@ -11,7 +11,7 @@ Games.towers = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  getBestDestinationFor: "towers/penguin",
+  best_destination_for: find_destination__nearest_legal_pile_or_cell,
 
   autoplay: "commonish",
 

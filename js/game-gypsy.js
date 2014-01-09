@@ -16,7 +16,7 @@ const GypsyBase = {
     for(var i = 0; i != 4; i++) fs[i].twin = fs[i + 4], fs[i + 4].twin = fs[i];
   },
 
-  getBestDestinationFor: "legal nonempty, or empty",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   getFoundationDestinationFor: function(card) {
     if(!card.isLast) return null;

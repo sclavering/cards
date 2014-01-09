@@ -11,21 +11,9 @@ Games.freecell = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  // similar to Rules.getBestDestinationFor["legal nonempty, or empty"], but must consider cells,
-  // and must check there are enough spaces before moving a card to a space
-  getBestDestinationFor: function(card) {
-    const pr = card.pile, ps = pr.isPile ? pr.surrounding : this.piles, num = ps.length;
-    var empty = null;
-    for(var i = 0; i != num; i++) {
-      var p = ps[i];
-      if(p.hasCards) {
-        if(p.mayAddCard(card)) return p;
-      } else if(!empty) {
-        empty = p;
-      }
-    }
-    return (card.isLast && !card.pile.isCell && this.emptyCell)
-        || (empty && empty.mayAddCard(card) ? empty : null);
+  best_destination_for: function(card) {
+    const p = find_destination__nearest_legal_pile_preferring_nonempty.call(this, card);
+    return p || (card.isLast ? this.emptyCell : null);
   },
 
   autoplay: "commonish",

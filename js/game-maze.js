@@ -21,7 +21,7 @@ Games.maze = {
 
   deal: function(cards) this._deal_cards_with_nulls_for_spaces(cards),
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     if(card.isAce) {
       var start = card.pile, pile = start.next;
       while(pile != start && (pile.hasCards || !(pile.next.lastCard == card.up

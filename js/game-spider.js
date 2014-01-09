@@ -9,7 +9,7 @@ const SpiderBase = {
   // Indices of kings within this.allcards.  Used by .autoplay()
   kings: [12, 25, 38, 51, 64, 77, 90, 103],
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     let maybe = null, empty = null;
     for each(let p in card.pile.surrounding) {
       let last = p.lastCard;
@@ -125,7 +125,7 @@ Games.wasp = {
   ],
   layoutTemplate: '#<   p p p p p p p  [fs]   >.',
   kings: [12, 25, 38, 51],
-  getBestDestinationFor: "to up or nearest space"
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 };
 
 

@@ -18,7 +18,7 @@ Games.acesup = {
     ps[3].next = ps[0];
   },
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     const f = this.foundation;
     if(f.mayAddCard(card)) return f;
     // return next empty pile

@@ -23,7 +23,7 @@ Games.whitehead = {
     }
   },
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     var up = card.up, on = card.on;
     if(up) {
       var p = up.pile;

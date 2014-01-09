@@ -29,7 +29,7 @@ Games.montana = {
 
   deal: function(cards) this._deal_cards_with_nulls_for_spaces(cards),
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
     var pile = card.down.pile.rightp;
     return pile && !pile.hasCards ? pile : null;

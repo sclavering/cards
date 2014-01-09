@@ -1,7 +1,7 @@
 const PileOnBase = {
   __proto__: BaseCardGame,
 
-  getBestDestinationFor: "legal nonempty, or empty",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   // Won when each pile is either empty or holds four cards of the same rank.
   is_won: function() {

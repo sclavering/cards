@@ -1,7 +1,7 @@
 const YukonBase = {
   __proto__: BaseCardGame,
 
-  getBestDestinationFor: "legal nonempty, or empty",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: "commonish",
 

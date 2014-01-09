@@ -14,7 +14,7 @@ Games.unionsquare = {
 
   allcards: [2],
 
-  getBestDestinationFor: function(card) {
+  best_destination_for: function(card) {
     const p = card.pile, ps = p.isPile ? p.following : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; ++i) {

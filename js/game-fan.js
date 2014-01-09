@@ -37,7 +37,7 @@ Games.fan = {
     return false;
   },
 
-  getBestDestinationFor: "to up or nearest space",
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: "commonish",
 

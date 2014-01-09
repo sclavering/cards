@@ -18,7 +18,7 @@ const CanfieldBase = {
   allcards: [1, , , true],
 
   deal: function(cards) {
-    const num = cards[51].displayNum;
+    const num = cards[0].displayNum;
     for each(let c in cards) c.renumber(num);
 
     let ix = 0;

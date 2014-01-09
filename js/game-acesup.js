@@ -29,12 +29,9 @@ Games.acesup = {
 
   // no autoplay for this game
 
-  isWon: function() {
-    if(this.stock.hasCards) return false;
-    for(var i = 0; i != 4; i++) {
-      var cs = this.piles[i].cards;
-      if(cs.length != 1 || !cs[0].isAce) return false;
-    }
+  is_won: function() {
+    if(this.stock.cards.length) return false;
+    for each(let p in this.piles) if(p.cards.length != 1 || !p.cards[0].isAce) return false;
     return true;
-  }
+  },
 };

@@ -28,7 +28,7 @@ Games.pyramid = {
 
   // this game has no autoplay
 
-  isWon: function() {
+  is_won: function() {
     // won when the tip of the pyramid has been removed
     return !this.piles[0].hasCards;
   }

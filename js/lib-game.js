@@ -69,7 +69,6 @@ const BaseCardGame = {
 
     if(typeof this.autoplay === 'string') this.autoplay = autoplay[this.autoplay];
     if(typeof this.getBestDestinationFor === 'string') this.getBestDestinationFor = getBestDestinationFor[this.getBestDestinationFor];
-    if(typeof this.isWon === 'string') this.isWon = isWon[this.isWon];
 
     if(!this.layout) this.layout = { __proto__: Layout };
     const layout = this.layout
@@ -201,9 +200,12 @@ const BaseCardGame = {
 
 
   // === Winning ==========================================
-  // Games should obviously override this
-  isWon: function() {
-    return false;
+
+  // This version works for most games.
+  is_won: function() {
+    const expected_foundation_length = this.allcards.length / this.foundations.length;
+    for each(let f in this.foundations) if(f.cards.length != expected_foundation_length) return false;
+    return true;
   },
 
 

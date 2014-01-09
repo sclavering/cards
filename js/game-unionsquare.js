@@ -57,6 +57,4 @@ Games.unionsquare = {
     }
     return null;
   },
-
-  isWon: "26 cards on each foundation"
 };

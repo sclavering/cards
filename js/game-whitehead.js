@@ -48,6 +48,4 @@ Games.whitehead = {
     }
     return nums;
   },
-
-  isWon: "13 cards on each foundation"
 };

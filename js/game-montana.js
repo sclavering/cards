@@ -39,7 +39,7 @@ Games.montana = {
     doo(new MontanaRedealAction());
   },
 
-  isWon: function() {
+  is_won: function() {
     for(var i = 0; i != 4; i++) {
       var pile = this.rowStarts[i], card = pile.lastCard, prv;
       if(!card || card.down) return false;

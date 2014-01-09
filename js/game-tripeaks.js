@@ -47,7 +47,7 @@ Games.tripeaks = {
     return res;
   },
 
-  isWon: function() {
+  is_won: function() {
     // won when the the peaks are empty
     for(var i = 0; i != 3; i++) if(this.piles[i].hasCards) return false;
     return true;

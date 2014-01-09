@@ -40,7 +40,7 @@ Games.maze = {
 
   // Autoplay not used
 
-  isWon: function() {
+  is_won: function() {
     var pile = this.piles[0], first = pile;
     do {
       var next = pile.next, c1 = pile.lastCard, c2 = next.lastCard;
@@ -55,4 +55,4 @@ Games.maze = {
     } while(pile != first);
     return true;
   }
-}
+};

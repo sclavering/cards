@@ -97,6 +97,4 @@ Games.regiment = {
     }
     return null;
   },
-
-  isWon: "13 cards on each foundation"
 };

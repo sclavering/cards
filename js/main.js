@@ -261,7 +261,7 @@ function done() {
     doo(act);
   } else {
     if(gFloatingPileNeedsHiding) gFloatingPile.hide();
-    if(Game.isWon()) showGameWon();
+    if(Game.is_won()) showGameWon();
   }
 }
 

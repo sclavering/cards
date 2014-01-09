@@ -13,7 +13,6 @@ cat \
     js/autoplay.js \
     js/getAutoplayableNumbers.js \
     js/getBestDestinationFor.js \
-    js/isWon.js \
     js/lib-actions.js \
     js/lib-game.js \
     js/lib-freecell-move-sequencer.js \

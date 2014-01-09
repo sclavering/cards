@@ -4,7 +4,7 @@ const PileOnBase = {
   getBestDestinationFor: "legal nonempty, or empty",
 
   // Won when each pile is either empty or holds four cards of the same rank.
-  isWon: function() {
+  is_won: function() {
     for each(let p in this.piles) {
       let cs = p.cards;
       if(!cs.length) continue;

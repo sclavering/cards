@@ -20,8 +20,6 @@ const SpiderBase = {
     return null;
   },
 
-  isWon: "foundation holds all cards",
-
   hasScoring: true,
 
   getScoreFor: function(act) {

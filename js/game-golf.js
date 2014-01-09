@@ -16,11 +16,10 @@ const GolfBase = {
     return card.pile.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;
   },
 
-  isWon: function() {
-    const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; ++i) if(ps[i].hasCards) return false;
+  is_won: function() {
+    for each(let p in this.piles) if(p.cards.length) return false;
     return true;
-  }
+  },
 };
 
 

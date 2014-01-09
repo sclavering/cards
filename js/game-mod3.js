@@ -77,12 +77,9 @@ Games.mod3 = {
     return null;
   },
 
-  isWon: function() {
+  is_won: function() {
     if(this.stock.hasCards) return false;
-    const ps = this.piles;
-    for(var i = 0; i != 8; i++)
-      if(ps[i].hasCards) return false
+    for each(let p in this.piles) if(p.cards.length) return false;
     return true;
-  }
-}
-
+  },
+};

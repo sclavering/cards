@@ -6,7 +6,7 @@ const CanfieldBase = {
     "w", 1, Waste, CountedView, 0, 0,
     "p", 4, CanfieldPile, FanDownView, 0, 0,
     "f", 4, KlondikeFoundation, CountedView, 0, 0,
-    "r", 1, Reserve, View, 0, 0,
+    "r", 1, Reserve, CountedView, 0, 0,
   ],
   _reserveFaceDown: 12,
   _reserveFaceUp: 1,
@@ -38,15 +38,16 @@ const CanfieldBase = {
 };
 
 Games.canfield = {
-  __proto__: CanfieldBase
+  __proto__: CanfieldBase,
+  pileDetails: CanfieldBase.pileDetails.slice(), // copy
 };
 
-const Canfield3 = Games.canfield3 = {
+Games.canfield3 = {
   __proto__: CanfieldBase,
   pileDetails: CanfieldBase.pileDetails.slice() // copy
 };
-Canfield3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
-Canfield3.pileDetails[9] = Deal3VWasteView;    // Waste view
+Games.canfield3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
+Games.canfield3.pileDetails[9] = Deal3VWasteView;    // Waste view
 
 Games.demon = {
   __proto__: CanfieldBase,

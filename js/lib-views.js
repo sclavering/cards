@@ -198,14 +198,15 @@ const _FanView = {
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = this.fixedHeight || this.heightToUse;
     const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
-    if(this._updateOffsets) this._updateOffsets(num - 1);
+    this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
     for(var i = 0; i != num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
     if(!num) this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
-  _updateOffsets: null,
+  // Change offsets to allow num cards to fit in the space
+  _updateOffsets: function(num) {},
 
   drawIntoFloatingPile: function(card) {
     const cs = this.pile.cards;
@@ -274,19 +275,15 @@ const _FlexFanView = {
 
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
-    var h = this._basicHOffset, v = this._basicVOffset;
-    if(num <= 0) return; // avoid divide by zero
-    const r = this.pixelRect();
-    if(h) {
-      h = Math.min(((r.right - r.left) - gCardWidth) / num, h);
-      if(h > 2) h = Math.floor(h); // use integer offsets if possible to avoid fuzzyness
-      this._hOffset = h;
-    }
-    if(v) {
-      v = Math.min(((r.bottom - r.top) - gCardHeight) / num, v);
-      if(v > 2) v = Math.floor(v);
-      this._vOffset = v;
-    }
+    const r = this.pixelRect(), h = this._basicHOffset, v = this._basicVOffset;
+    if(h) this._hOffset = this._calculate_new_offset(h, r.right - r.left - gCardWidth, num);
+    if(v) this._vOffset = this._calculate_new_offset(v, r.bottom - r.top - gCardHeight, num);
+  },
+
+  _calculate_new_offset: function(preferred_offset, available_space, num_cards) {
+    let offset = Math.min(num_cards ? available_space / num_cards - 1 : available_space, preferred_offset);
+    if(offset > 2) offset = Math.floor(offset); // use integer offsets if possible, to avoid fuzzyness
+    return offset;
   },
 
   _drawBackgroundForEmpty: function() {

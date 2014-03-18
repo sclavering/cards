@@ -8,7 +8,7 @@ Games.unionsquare = {
     "f", 4, UnionSquareFoundation, UnionSquareFoundationView, 0, 0,
   ],
 
-  layoutTemplate: '#<   [s_w]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.',
+  layoutTemplate: '#<   [sw]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.',
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 

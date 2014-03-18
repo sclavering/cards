@@ -7,7 +7,7 @@ Games.penguin = {
     "c", 7, Cell, View, 0, 0,
   ],
 
-  layoutTemplate: '#<   c c c c c c c  [f_f_f_f]   ><   p p p p p p p>.',
+  layoutTemplate: '#<   c c c c c c c  [ffff]   ><   p p p p p p p>.',
 
   foundationBaseIndexes: [0, 13, 26, 39],
 

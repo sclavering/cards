@@ -6,7 +6,7 @@ Games.russiansol = {
     "f", 4, FanFoundation, View, 0, 0,
   ],
 
-  layoutTemplate: '#<   p p p p p p p  [f_f_f_f]   >.',
+  layoutTemplate: '#<   p p p p p p p  [ffff]   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39],
 

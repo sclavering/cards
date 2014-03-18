@@ -239,3 +239,11 @@ canvas {
 .longcolumn-inner {
   position: absolute;
 }
+
+.longcolumn-inner canvas {
+  margin-top: 10px;
+}
+
+.longcolumn-inner canvas:first-child {
+  margin-top: 0;
+}

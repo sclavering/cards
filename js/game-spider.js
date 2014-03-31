@@ -31,16 +31,8 @@ const SpiderBase = {
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
     return null;
-  },
-
-  hasScoring: true,
-
-  getScoreFor: function(act) {
-    return act instanceof Move ? (act.destination.isFoundation ? 100 : -1) : 0;
   }
 };
-
-
 
 
 
@@ -54,25 +46,20 @@ const Spider = {
   helpId: "spider"
 };
 
-
 Games.spider1 = {
   __proto__: Spider,
   allcards: [8, "S"]
 };
-
 
 Games.spider2 = {
   __proto__: Spider,
   allcards: [4, "SH"]
 };
 
-
 Games.spider4 = {
   __proto__: Spider,
   allcards: [2]
 };
-
-
 
 
 
@@ -86,7 +73,6 @@ Games.blackwidow = {
   ],
   allcards: [2]
 };
-
 
 
 
@@ -114,8 +100,6 @@ Games.divorce = {
 
 
 
-
-
 Games.wasp = {
   __proto__: SpiderBase,
   pileDetails: [
@@ -127,8 +111,6 @@ Games.wasp = {
   kings: [12, 25, 38, 51],
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 };
-
-
 
 
 
@@ -149,7 +131,7 @@ Games.simplersimon = {
     "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ]
-}
+};
 
 Games.simon1 = {
   __proto__: SimonBase,

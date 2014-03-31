@@ -34,6 +34,7 @@ var gMessageLine1 = "message1";
 var gMessageLine2 = "message2";
 var gScorePanel = "score-panel";
 var gScoreDisplay = "score-display";
+var gMovesDisplay = "moves-display";
 var gGameStack = "games";
 var gGameChooser = "game-chooser";
 var gGameName = "game-name";
@@ -46,8 +47,8 @@ var gFloatingPileNeedsHiding = false; // see done()
 
 function init() {
   const things = ['gCmdUndo', 'gCmdRedo', 'gCmdHint', 'gCmdRedeal', 'gGameStack', 'gGameChooser',
-    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gGameName',
-    'gGameNameSub', 'gCardImages'];
+    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gMovesDisplay',
+    'gGameName', 'gGameNameSub', 'gCardImages'];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);

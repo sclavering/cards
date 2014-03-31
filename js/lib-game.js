@@ -57,6 +57,7 @@ const BaseCardGame = {
     else gCmdHint.setAttribute("disabled","true");
     setVisibility(gScorePanel, this.hasScoring);
     gScoreDisplay.textContent = this.score;
+    gMovesDisplay.textContent = this.actionPtr;
   },
 
   hide: function() {
@@ -147,6 +148,7 @@ const BaseCardGame = {
   begin: function(order) {
     this.actionList = [];
     gScoreDisplay.textContent = this.score = 0;
+    gMovesDisplay.textContent = this.actionPtr;
     this.createPiles();
     this.createPileArrays();
     this.loadPreferredFoundationSuits();
@@ -251,6 +253,7 @@ const BaseCardGame = {
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
     gScoreDisplay.textContent = this.score += act.score;
+    gMovesDisplay.textContent = this.actionPtr;
   },
 
   // overridden by TriPeaks
@@ -266,6 +269,7 @@ const BaseCardGame = {
     this.canUndo = ptr != 0;
 
     gScoreDisplay.textContent = (this.score -= action.score);
+    gMovesDisplay.textContent = this.actionPtr;
     this.hintsReady = false;
 
     action.undo();
@@ -281,6 +285,7 @@ const BaseCardGame = {
     this.canRedo = acts.length > ptr;
 
     gScoreDisplay.textContent = (this.score += action.score);
+    gMovesDisplay.textContent = this.actionPtr;
     this.hintsReady = false;
 
     if(action.redo) action.redo();

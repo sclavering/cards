@@ -19,7 +19,7 @@ function drawCard(canvascx, card, x, y) {
   if(!gCardImageOffsets) initCardImageOffsets();
   var srcY = gCardImageOffsets[card.faceUp ? card.displayStr : ''] * gCardHeight;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  canvascx.drawImage(gCardImages, 0, srcY, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
+  canvascx.drawImage(ui.cardImages, 0, srcY, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
 }
 
 function initCardImageOffsets() {

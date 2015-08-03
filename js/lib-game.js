@@ -55,9 +55,9 @@ const BaseCardGame = {
     this.layout.show();
     if(this.getHints) ui.btnHint.removeAttribute("disabled");
     else ui.btnHint.setAttribute("disabled","true");
-    setVisibility(gScorePanel, this.hasScoring);
-    gScoreDisplay.textContent = this.score;
-    gMovesDisplay.textContent = this.actionPtr;
+    setVisibility(ui.scorePanel, this.hasScoring);
+    ui.scoreDisplay.textContent = this.score;
+    ui.movesDisplay.textContent = this.actionPtr;
   },
 
   hide: function() {
@@ -147,8 +147,8 @@ const BaseCardGame = {
   // shuffled cards.  If not null, it's a permutation of indices
   begin: function(order) {
     this.actionList = [];
-    gScoreDisplay.textContent = this.score = 0;
-    gMovesDisplay.textContent = this.actionPtr;
+    ui.scoreDisplay.textContent = this.score = 0;
+    ui.movesDisplay.textContent = this.actionPtr;
     this.createPiles();
     this.createPileArrays();
     this.loadPreferredFoundationSuits();
@@ -216,7 +216,7 @@ const BaseCardGame = {
 
   hasScoring: false,
 
-  // when adjusting this you should also adjust gScoreDisplay.textContent
+  // when adjusting this you should also adjust ui.scoreDisplay.textContent
   score: 0,
 
   // action is an Action object
@@ -252,8 +252,8 @@ const BaseCardGame = {
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
     for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
-    gScoreDisplay.textContent = this.score += act.score;
-    gMovesDisplay.textContent = this.actionPtr;
+    ui.scoreDisplay.textContent = this.score += act.score;
+    ui.movesDisplay.textContent = this.actionPtr;
   },
 
   // overridden by TriPeaks
@@ -268,8 +268,8 @@ const BaseCardGame = {
     this.canRedo = true;
     this.canUndo = ptr != 0;
 
-    gScoreDisplay.textContent = (this.score -= action.score);
-    gMovesDisplay.textContent = this.actionPtr;
+    ui.scoreDisplay.textContent = (this.score -= action.score);
+    ui.movesDisplay.textContent = this.actionPtr;
     this.hintsReady = false;
 
     action.undo();
@@ -284,8 +284,8 @@ const BaseCardGame = {
     this.canUndo = true;
     this.canRedo = acts.length > ptr;
 
-    gScoreDisplay.textContent = (this.score += action.score);
-    gMovesDisplay.textContent = this.actionPtr;
+    ui.scoreDisplay.textContent = (this.score += action.score);
+    ui.movesDisplay.textContent = this.actionPtr;
     this.hintsReady = false;
 
     if(action.redo) action.redo();

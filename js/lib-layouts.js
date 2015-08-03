@@ -31,7 +31,7 @@ const Layout = {
     const letters = []; // seq of view letters, to return to caller
 
     const container = this._node = createHTML("gamelayout game");
-    gGameStack.appendChild(container);
+    ui.gameStack.appendChild(container);
     container.style.top = container.style.left = 0; // to make explicit sizing work
 
     var box = container;
@@ -243,7 +243,7 @@ const Layout = {
   onWindowResize: function(e) {
     animations.interrupt();
     const self = Game.layout;
-    const rect = gGameStack.getBoundingClientRect();
+    const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;
     self._node.style.height = height + 'px';

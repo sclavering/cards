@@ -22,39 +22,29 @@ var GameController = null;
 
 var Games = {}; // all the game controllers, indexed by game id
 
-// <toolbarbutton/> elements
 var ui = {
   btnUndo: "btn-undo",
   btnRedo: "btn-redo",
   btnHint: "btn-hint",
   btnRedeal: "btn-redeal",
+  messageBox: "message",
+  messageLine1: "message1",
+  messageLine2: "message2",
+  scorePanel: "score-panel",
+  scoreDisplay: "score-display",
+  movesDisplay: "moves-display",
+  gameStack: "games",
+  gameChooser: "game-chooser",
+  gameName: "game-name",
+  gameNameSub: "game-name-sub",
+  cardImages: "cardsimg",
 };
-
-// other bits of UI
-var gMessageBox = "message";
-var gMessageLine1 = "message1";
-var gMessageLine2 = "message2";
-var gScorePanel = "score-panel";
-var gScoreDisplay = "score-display";
-var gMovesDisplay = "moves-display";
-var gGameStack = "games";
-var gGameChooser = "game-chooser";
-var gGameName = "game-name";
-var gGameNameSub = "game-name-sub";
-var gCardImages = "cardsimg";
 
 var gMessageBoxIsShowing = false;
 var gFloatingPileNeedsHiding = false; // see done()
 
 
 function init() {
-  const things = ['gGameStack', 'gGameChooser',
-    'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gMovesDisplay',
-    'gGameName', 'gGameNameSub', 'gCardImages'];
-  for(var i = 0; i != things.length; ++i) {
-    var thing = things[i];
-    window[thing] = document.getElementById(window[thing]);
-  }
   for(var k in ui) ui[k] = document.getElementById(ui[k]);
 
   document.addEventListener('keypress', keyPressHandler, false);
@@ -179,8 +169,8 @@ function playGame(game) {
 
   var full_name = document.getElementById('choosegame-' + game).textContent;
   var parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
-  gGameName.textContent = parts ? parts[1] : full_name;
-  gGameNameSub.textContent = parts ? parts[2] : '';
+  ui.gameName.textContent = parts ? parts[1] : full_name;
+  ui.gameNameSub.textContent = parts ? parts[2] : '';
 
   GameController = Games[game];
   GameController.switchTo();
@@ -213,7 +203,7 @@ function onGameSelected(ev) {
 
 function showGameChooser(ev) {
   interrupt();
-  gGameChooser.style.display = 'block';
+  ui.gameChooser.style.display = 'block';
   window.onclick = hideGameChooser;
   // So the event doesn't trigger the .onclick handler we just installed
   ev.stopPropagation();
@@ -221,7 +211,7 @@ function showGameChooser(ev) {
 
 
 function hideGameChooser() {
-  gGameChooser.style.display = 'none';
+  ui.gameChooser.style.display = 'none';
   window.onclick = null;
 }
 
@@ -327,9 +317,9 @@ var gMessageCallback = null;
 
 function showMessage(msgText1, msgText2, fun) {
   gMessageCallback = fun;
-  gMessageLine1.textContent = msgText1;
-  gMessageLine2.textContent = msgText2;
-  gMessageBox.style.display = 'block';
+  ui.messageLine1.textContent = msgText1;
+  ui.messageLine2.textContent = msgText2;
+  ui.messageBox.style.display = 'block';
   gMessageBoxIsShowing = true;
   // the setTimeout is to flush any mouse event that led to the showMessage() call
   setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
@@ -337,7 +327,7 @@ function showMessage(msgText1, msgText2, fun) {
 
 function doneShowingMessage() {
   window.onclick = null;
-  gMessageBox.style.display = 'none';
+  ui.messageBox.style.display = 'none';
   gMessageBoxIsShowing = false;
   var f = gMessageCallback;
   gMessageCallback = null;

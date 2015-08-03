@@ -40,7 +40,7 @@ function moveCards(firstCard, target, doneFunc) {
   if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
 
-  // final coords (relative to gGameStack)
+  // final coords (relative to ui.gameStack)
   const r = target.view.pixelRect();
   const tx = r.left + finalOffset.x;
   const ty = r.top + finalOffset.y;

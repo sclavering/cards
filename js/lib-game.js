@@ -53,8 +53,8 @@ const BaseCardGame = {
     const all = this.allpiles, num = all.length;
     for(var i = 0; i != num; ++i) all[i].view.displayPile(all[i]);
     this.layout.show();
-    if(this.getHints) gCmdHint.removeAttribute("disabled");
-    else gCmdHint.setAttribute("disabled","true");
+    if(this.getHints) ui.btnHint.removeAttribute("disabled");
+    else ui.btnHint.setAttribute("disabled","true");
     setVisibility(gScorePanel, this.hasScoring);
     gScoreDisplay.textContent = this.score;
     gMovesDisplay.textContent = this.actionPtr;

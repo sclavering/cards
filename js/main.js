@@ -23,10 +23,12 @@ var GameController = null;
 var Games = {}; // all the game controllers, indexed by game id
 
 // <toolbarbutton/> elements
-var gCmdUndo = "cmd:undo";
-var gCmdRedo = "cmd:redo";
-var gCmdHint = "cmd:hint";
-var gCmdRedeal = "cmd:redeal";
+var ui = {
+  btnUndo: "btn-undo",
+  btnRedo: "btn-redo",
+  btnHint: "btn-hint",
+  btnRedeal: "btn-redeal",
+};
 
 // other bits of UI
 var gMessageBox = "message";
@@ -46,13 +48,14 @@ var gFloatingPileNeedsHiding = false; // see done()
 
 
 function init() {
-  const things = ['gCmdUndo', 'gCmdRedo', 'gCmdHint', 'gCmdRedeal', 'gGameStack', 'gGameChooser',
+  const things = ['gGameStack', 'gGameChooser',
     'gMessageBox', 'gMessageLine1', 'gMessageLine2', 'gScorePanel', 'gScoreDisplay', 'gMovesDisplay',
     'gGameName', 'gGameNameSub', 'gCardImages'];
   for(var i = 0; i != things.length; ++i) {
     var thing = things[i];
     window[thing] = document.getElementById(window[thing]);
   }
+  for(var k in ui) ui[k] = document.getElementById(ui[k]);
 
   document.addEventListener('keypress', keyPressHandler, false);
 
@@ -183,7 +186,7 @@ function playGame(game) {
   GameController.switchTo();
 
   updateUI();
-  gCmdRedeal.setAttribute("disabled", !Game.redeal);
+  ui.btnRedeal.setAttribute("disabled", !Game.redeal);
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
   gFloatingPile.hide();
 }
@@ -243,8 +246,8 @@ function restartGame() {
 function doo(action) { // "do" is a reserved word
   if(!action) return;
   // enable undo + disable redo (but avoid doing so unnecessarily)
-  if(!Game.canUndo && !GameController.havePastGames) gCmdUndo.removeAttribute("disabled");
-  if(Game.canRedo || GameController.haveFutureGames) gCmdRedo.setAttribute("disabled","true");
+  if(!Game.canUndo && !GameController.havePastGames) ui.btnUndo.removeAttribute("disabled");
+  if(Game.canRedo || GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 
   if(GameController.haveFutureGames) GameController.clearFutureGames();
   Game.doo(action);
@@ -281,8 +284,8 @@ function undo() {
   var couldRedo = Game.canRedo || GameController.haveFutureGames;
   if(Game.canUndo) Game.undo();
   else GameController.restorePastGame();
-  if(!Game.canUndo && !GameController.havePastGames) gCmdUndo.setAttribute("disabled","true");
-  if(!couldRedo) gCmdRedo.removeAttribute("disabled");
+  if(!Game.canUndo && !GameController.havePastGames) ui.btnUndo.setAttribute("disabled","true");
+  if(!couldRedo) ui.btnRedo.removeAttribute("disabled");
 }
 
 
@@ -291,8 +294,8 @@ function redo() {
   var couldUndo = Game.canUndo || GameController.havePastGames;
   if(Game.canRedo) Game.redo();
   else GameController.restoreFutureGame();
-  if(!couldUndo) gCmdUndo.removeAttribute("disabled");
-  if(!Game.canRedo && !GameController.haveFutureGames) gCmdRedo.setAttribute("disabled","true");
+  if(!couldUndo) ui.btnUndo.removeAttribute("disabled");
+  if(!Game.canRedo && !GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 }
 
 
@@ -310,8 +313,8 @@ function redeal() {
 
 
 function updateUI() {
-  gCmdUndo.setAttribute("disabled", !(Game.canUndo || GameController.havePastGames));
-  gCmdRedo.setAttribute("disabled", !(Game.canRedo || GameController.haveFutureGames));
+  ui.btnUndo.setAttribute("disabled", !(Game.canUndo || GameController.havePastGames));
+  ui.btnRedo.setAttribute("disabled", !(Game.canRedo || GameController.haveFutureGames));
 }
 
 

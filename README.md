@@ -16,9 +16,9 @@ Notable feature include:
 
 ## Building/Running
 
-Just run the make_all_js.sh script (which concatenates all the .js source files into a single one), and then load code/cards.html
+Just run the build.py script (which generates code/cards.html by combining all the .js and other source files), and then load code/cards.html
 
-Only the contents of code/ (including the generated all.js) are needed to play the game.
+Only the contents of code/ (including the generated cards.html) are needed to play the game.
 
 
 ## Copyright/Licence

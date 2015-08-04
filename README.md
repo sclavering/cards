@@ -16,14 +16,14 @@ Notable feature include:
 
 ## Building/Running
 
-Just run the build.py script (which generates code/cards.html by combining all the .js and other source files), and then load code/cards.html
+Running ./build.py script will populate dist/ with a runnable self-contained copy of the games.
 
-Only the contents of code/ (including the generated cards.html) are needed to play the game.
+Basically it just copies a few static files, and generates cards.html by combining all the various .js files with the .html skeleton and the .css file.
 
 
 ## Copyright/Licence
 
-Copyright 2003-2014 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
+Copyright 2003-2015 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
 Copyright 2003 Neil Rashbrook &lt;neil@parkwaycc.co.uk&gt;
 Copyright 2003 Derek Seabury &lt;drokzilla@seabury.net&gt;
 

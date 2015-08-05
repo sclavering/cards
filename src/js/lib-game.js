@@ -511,8 +511,8 @@ GameControllerObj.prototype = {
 
   switchTo: function() {
     if(!this.currentGame) this.newGame();
-    else Game = this.currentGame;
-    Game.show();
+    else gCurrentGame = this.currentGame;
+    gCurrentGame.show();
   },
 
   switchFrom: function() {
@@ -527,9 +527,9 @@ GameControllerObj.prototype = {
     }
 
     if(this.instanceProto.classInit) this.instanceProto.classInit();
-    Game = this.currentGame = { __proto__: this.instanceProto };
-    Game.begin(cardsOrder || null);
-    const act = Game.autoplay();
+    gCurrentGame = this.currentGame = { __proto__: this.instanceProto };
+    gCurrentGame.begin(cardsOrder || null);
+    const act = gCurrentGame.autoplay();
     if(act) doo(act);
   },
 
@@ -542,9 +542,9 @@ GameControllerObj.prototype = {
     if(this.futureGames.length == 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
     this.haveFutureGames = true;
-    Game = this.currentGame = this.pastGames.pop();
+    gCurrentGame = this.currentGame = this.pastGames.pop();
     this.havePastGames = this.pastGames.length!=0;
-    Game.show();
+    gCurrentGame.show();
   },
 
   restoreFutureGame: function() {
@@ -552,9 +552,9 @@ GameControllerObj.prototype = {
     if(this.pastGames.length == 2) this.pastGames.shift();
     this.pastGames.push(this.currentGame);
     this.havePastGames = true;
-    Game = this.currentGame = this.futureGames.pop();
+    gCurrentGame = this.currentGame = this.futureGames.pop();
     this.haveFutureGames = this.futureGames.length!=0;
-    Game.show();
+    gCurrentGame.show();
   },
 
   clearFutureGames: function() {

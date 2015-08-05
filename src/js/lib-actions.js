@@ -2,7 +2,7 @@
 This file holds "Action" objects, i.e. things that cane be done, undone, and
 redone (also called Commands, but that name has other meanings in XUL). They
 usually correspond to moving cards, removing a pair etc. (though not turning
-cards face up, as that is handled in Game.doo).  The required interface is:
+cards face up, as that is handled in gCurrentGame.doo).  The required interface is:
 
 perform()
   Carry out the action.  May start an animation, in which case the Action must
@@ -13,7 +13,7 @@ redo()
   If redo() is omitted, perform() is used instead, and must not use animation.
 pileWhichMayNeedCardsRevealing
   An optional field holding a Pile.  Used to automatically turn up face-down
-  cards at the top of the Pile, in Game.doo()
+  cards at the top of the Pile, in gCurrentGame.doo()
 
 Pile.getActionForDrop() normally returns an Action, but in FreeCell and similar
 it may return an ErrorMsg instead.
@@ -26,11 +26,11 @@ DealToPile.prototype = {
   synchronous: true,
 
   perform: function() {
-    const s = Game.stock;
+    const s = gCurrentGame.stock;
     s.dealCardTo(this.to);
   },
   undo: function() {
-    const s = Game.stock;
+    const s = gCurrentGame.stock;
     s.undealCardFrom(this.to);
   }
 }
@@ -41,11 +41,11 @@ RefillStock.prototype = {
   synchronous: true,
 
   perform: function() {
-    const s = Game.stock, w = Game.waste;
+    const s = gCurrentGame.stock, w = gCurrentGame.waste;
     while(w.hasCards) s.undealCardFrom(w);
   },
   undo: function() {
-    const s = Game.stock, w = Game.waste;
+    const s = gCurrentGame.stock, w = gCurrentGame.waste;
     while(s.hasCards) s.dealCardTo(w);
   }
 }
@@ -56,7 +56,7 @@ Deal3Action.prototype = {
   synchronous: true,
 
   perform: function() {
-    const s = Game.stock, w = Game.waste;
+    const s = gCurrentGame.stock, w = gCurrentGame.waste;
     this.old_deal3v = w.deal3v;
     this.old_deal3t = w.deal3t;
     const cs = s.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
@@ -66,7 +66,7 @@ Deal3Action.prototype = {
   },
 
   undo: function() {
-    const s = Game.stock, w = Game.waste, num = this.numMoved;
+    const s = gCurrentGame.stock, w = gCurrentGame.waste, num = this.numMoved;
     w.deal3v = this.old_deal3v;
     w.deal3t = this.old_deal3t;
     for(var i = 0; i != num; ++i) s.undealCardFrom(w);
@@ -81,12 +81,12 @@ DealToPiles.prototype = {
   dealt: 0,
 
   perform: function() {
-    const s = Game.stock, ps = Game.piles, len = ps.length;
+    const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
     for(var i = 0; i != len && s.hasCards; ++i) s.dealCardTo(ps[i]);
     this.dealt = i;
   },
   undo: function() {
-    const s = Game.stock, ps = Game.piles;
+    const s = gCurrentGame.stock, ps = gCurrentGame.piles;
     for(var i = this.dealt; i != 0; i--) s.undealCardFrom(ps[i - 1]);
   }
 }
@@ -99,7 +99,7 @@ DealToNonEmptyPilesAction.prototype = {
   num: 0, // num piles dealt to
 
   perform: function() {
-    const s = Game.stock, ps = Game.piles, len = ps.length;
+    const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
     var num = 0;
     for(var i = 0; i != len && s.hasCards; ++i) {
       if(!ps[i].hasCards) continue;
@@ -110,7 +110,7 @@ DealToNonEmptyPilesAction.prototype = {
     this.num = num;
   },
   undo: function() {
-    const s = Game.stock, ps = Game.piles;
+    const s = gCurrentGame.stock, ps = gCurrentGame.piles;
     for(var i = this.last; i != -1; i--)
       if(ps[i].hasCards) s.undealCardFrom(ps[i]);
   }
@@ -148,8 +148,8 @@ RemovePair.prototype = {
   synchronous: true,
 
   perform: function() {
-    Game.foundation.addCards(this.c1);
-    if(this.c2) Game.foundation.addCards(this.c2);
+    gCurrentGame.foundation.addCards(this.c1);
+    if(this.c2) gCurrentGame.foundation.addCards(this.c2);
   },
   undo: function(undo) {
     if(this.c2) this.p2.addCards(this.c2);

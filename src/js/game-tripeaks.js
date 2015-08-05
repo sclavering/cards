@@ -35,7 +35,7 @@ Games.tripeaks = {
   },
 
   getBestActionFor: function(card) {
-    const f = Game.foundation, c = f.lastCard;
+    const f = gCurrentGame.foundation, c = f.lastCard;
     return card.faceUp && (c.number == card.upNumber || c.upNumber == card.number) && new Move(card, f);
   },
 

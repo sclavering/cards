@@ -147,7 +147,7 @@ const Layout = {
 
   onmousedown: function(e) {
     if(e.button) return;
-    const self = Game.layout;
+    const self = gCurrentGame.layout;
     const card = self._eventTargetCard = self._getTargetCard(e);
     if(!card || !card.pile.mayTakeCard(card)) return;
     interrupt();
@@ -157,7 +157,7 @@ const Layout = {
   },
 
   beginDrag: function(e) {
-    const self = Game.layout; // this == window
+    const self = gCurrentGame.layout; // this == window
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
@@ -175,17 +175,17 @@ const Layout = {
   _tx: 0,
   _ty: 0,
   mouseMoveInDrag: function(e) {
-    const self = Game.layout;
+    const self = gCurrentGame.layout;
     gFloatingPile.moveTo(e.pageX - self._tx, e.pageY - self._ty);
   },
 
   endDrag: function(e) {
-    const self = Game.layout, card = self._eventTargetCard;
+    const self = gCurrentGame.layout, card = self._eventTargetCard;
     self._resetHandlers();
 
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
-    for each(let target in Game.dragDropTargets) {
+    for each(let target in gCurrentGame.dragDropTargets) {
       if(target == card.pile) continue;
       var view = target.view;
       var tr = view.pixelRect();
@@ -210,17 +210,17 @@ const Layout = {
   },
 
   onmouseup: function(e) {
-    const self = Game.layout, card = self._eventTargetCard;
+    const self = gCurrentGame.layout, card = self._eventTargetCard;
     if(!card) return;
     doo(card.pile.getClickAction(card));
     self._resetHandlers();
   },
 
   rightClick: function(e) {
-    const self = Game.layout;
+    const self = gCurrentGame.layout;
     const card = self._getTargetCard(e);
     interrupt();
-    if(card) doo(Game.getFoundationMoveFor(card));
+    if(card) doo(gCurrentGame.getFoundationMoveFor(card));
     self._resetHandlers();
     e.preventDefault();
     return false;
@@ -242,7 +242,7 @@ const Layout = {
 
   onWindowResize: function(e) {
     animations.interrupt();
-    const self = Game.layout;
+    const self = gCurrentGame.layout;
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;

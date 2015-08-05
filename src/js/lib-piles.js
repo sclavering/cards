@@ -15,7 +15,7 @@ const Pile = {
   isWaste: false,
   isPile: false,
 
-  // the index in Game.piles/Game.foundations/etc. at which this pile appears
+  // the index in gCurrentGame.piles/gCurrentGame.foundations/etc. at which this pile appears
   index: -1,
 
   // An integer that may be displayed below the pile.
@@ -55,7 +55,7 @@ const Pile = {
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
   getActionForDrop: function(card) {
     const act = this.mayAddCard(card) ? new Move(card, this) : null;
-    if(this.isFoundation && act) Game.setPreferredFoundationSuit(card, this); // xxx ick!!
+    if(this.isFoundation && act) gCurrentGame.setPreferredFoundationSuit(card, this); // xxx ick!!
     return act;
   },
 
@@ -109,7 +109,7 @@ const Pile = {
 
   // card may be null if the pile is empty
   getClickAction: function(card) {
-    return card ? Game.getBestActionFor(card) : null;
+    return card ? gCurrentGame.getBestActionFor(card) : null;
   },
 
   // Return an array of cards to consider moving when computing hints
@@ -166,14 +166,14 @@ const _Stock = {
 const StockDealToWaste = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(Game.waste) : null;
+    return this.hasCards ? new DealToPile(gCurrentGame.waste) : null;
   }
 };
 
 const StockDealToWasteOrRefill = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(Game.waste) : new RefillStock();
+    return this.hasCards ? new DealToPile(gCurrentGame.waste) : new RefillStock();
   }
 };
 
@@ -187,17 +187,17 @@ const Deal3OrRefillStock = {
 const StockDealToFoundation = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(Game.foundation) : null;
+    return this.hasCards ? new DealToPile(gCurrentGame.foundation) : null;
   }
 };
 
 const StockDealToPiles = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPiles(Game.piles) : null;
+    return this.hasCards ? new DealToPiles(gCurrentGame.piles) : null;
   },
   get counter() {
-    return Math.ceil(this.cards.length / Game.piles.length);
+    return Math.ceil(this.cards.length / gCurrentGame.piles.length);
   }
 };
 
@@ -205,7 +205,7 @@ const StockDealToPilesIfNoneAreEmpty = {
   __proto__: StockDealToPiles,
   deal: function() {
     if(!this.hasCards) return null;
-    const ps = Game.piles, num = ps.length;
+    const ps = gCurrentGame.piles, num = ps.length;
     for(var i = 0; i != num; ++i) if(!ps[i].hasCards) return null;
     return new DealToPiles(ps);
   }
@@ -378,7 +378,7 @@ const FortyThievesPile = {
 
     if(card.isLast) return true;
 
-    var canMove = Game.countEmptyPiles(this, card.pile);
+    var canMove = gCurrentGame.countEmptyPiles(this, card.pile);
     if(canMove) canMove = canMove * (canMove + 1) / 2;
     canMove++;
 
@@ -411,9 +411,9 @@ const FreeCellPile = {
 
     if(card.isLast) return true;
 
-    var spaces = Game.countEmptyPiles(this, card.pile);
+    var spaces = gCurrentGame.countEmptyPiles(this, card.pile);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
-    var canMove = (Game.numEmptyCells + 1) * (spaces + 1);
+    var canMove = (gCurrentGame.numEmptyCells + 1) * (spaces + 1);
     const toMove = card.pile.cards.length - card.index;
     return toMove <= canMove ? true : 0;
   }
@@ -580,7 +580,7 @@ const TowersPile = {
     var last = this.lastCard;
     if(last ? last != card.up : !card.isKing) return false;
     const toMove = card.pile.cards.length - card.index;
-    return toMove <= 1 + Game.numEmptyCells ? true : 0;
+    return toMove <= 1 + gCurrentGame.numEmptyCells ? true : 0;
   }
 };
 

@@ -17,7 +17,7 @@ function overrideGetter(obj, prop, val) {
 
 var gPrefs = {};
 
-var Game = null;  // the current games
+var gCurrentGame = null;
 var GameController = null;
 
 var Games = {}; // all the game controllers, indexed by game id
@@ -176,14 +176,14 @@ function playGame(game) {
   GameController.switchTo();
 
   updateUI();
-  ui.btnRedeal.setAttribute("disabled", !Game.redeal);
+  ui.btnRedeal.setAttribute("disabled", !gCurrentGame.redeal);
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
   gFloatingPile.hide();
 }
 
 
 function help() {
-  const helpid = Game.helpId || Game.id;
+  const helpid = gCurrentGame.helpId || gCurrentGame.id;
   // position the help window roughly centered on the Cards window
   const w = 450, h = 350;
   const t = Math.floor(screenY + (outerHeight - h) / 3);
@@ -227,7 +227,7 @@ function restartGame() {
   interrupt();
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
-  if(!Game.canUndo) return;
+  if(!gCurrentGame.canUndo) return;
   GameController.restart();
   updateUI();
 }
@@ -236,11 +236,11 @@ function restartGame() {
 function doo(action) { // "do" is a reserved word
   if(!action) return;
   // enable undo + disable redo (but avoid doing so unnecessarily)
-  if(!Game.canUndo && !GameController.havePastGames) ui.btnUndo.removeAttribute("disabled");
-  if(Game.canRedo || GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
+  if(!gCurrentGame.canUndo && !GameController.havePastGames) ui.btnUndo.removeAttribute("disabled");
+  if(gCurrentGame.canRedo || GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 
   if(GameController.haveFutureGames) GameController.clearFutureGames();
-  Game.doo(action);
+  gCurrentGame.doo(action);
 
   // Animated actions schedule done() approptiately themselves
   if(action.synchronous) animations.schedule(done, kAnimationDelay);
@@ -250,12 +250,12 @@ function doo(action) { // "do" is a reserved word
 
 
 function done() {
-  const act = Game.autoplay();
+  const act = gCurrentGame.autoplay();
   if(act) {
     doo(act);
   } else {
     if(gFloatingPileNeedsHiding) gFloatingPile.hide();
-    if(Game.is_won()) showGameWon();
+    if(gCurrentGame.is_won()) showGameWon();
   }
 }
 
@@ -271,40 +271,40 @@ function interrupt() {
 
 function undo() {
   interrupt();
-  var couldRedo = Game.canRedo || GameController.haveFutureGames;
-  if(Game.canUndo) Game.undo();
+  var couldRedo = gCurrentGame.canRedo || GameController.haveFutureGames;
+  if(gCurrentGame.canUndo) gCurrentGame.undo();
   else GameController.restorePastGame();
-  if(!Game.canUndo && !GameController.havePastGames) ui.btnUndo.setAttribute("disabled","true");
+  if(!gCurrentGame.canUndo && !GameController.havePastGames) ui.btnUndo.setAttribute("disabled","true");
   if(!couldRedo) ui.btnRedo.removeAttribute("disabled");
 }
 
 
 function redo() {
   interrupt();
-  var couldUndo = Game.canUndo || GameController.havePastGames;
-  if(Game.canRedo) Game.redo();
+  var couldUndo = gCurrentGame.canUndo || GameController.havePastGames;
+  if(gCurrentGame.canRedo) gCurrentGame.redo();
   else GameController.restoreFutureGame();
   if(!couldUndo) ui.btnUndo.removeAttribute("disabled");
-  if(!Game.canRedo && !GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
+  if(!gCurrentGame.canRedo && !GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 }
 
 
 function hint() {
   interrupt();
-  Game.hint();
+  gCurrentGame.hint();
 }
 
 
 function redeal() {
   interrupt();
-  Game.redeal();
+  gCurrentGame.redeal();
   updateUI();
 }
 
 
 function updateUI() {
-  ui.btnUndo.setAttribute("disabled", !(Game.canUndo || GameController.havePastGames));
-  ui.btnRedo.setAttribute("disabled", !(Game.canRedo || GameController.haveFutureGames));
+  ui.btnUndo.setAttribute("disabled", !(gCurrentGame.canUndo || GameController.havePastGames));
+  ui.btnRedo.setAttribute("disabled", !(gCurrentGame.canRedo || GameController.haveFutureGames));
 }
 
 

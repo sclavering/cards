@@ -63,7 +63,7 @@ MontanaRedealAction.prototype = {
 
   perform: function() {
     var c, i, p, r, row;
-    const rows = Game.rows;
+    const rows = gCurrentGame.rows;
 
     // store old card locations
     const map = [[p.firstCard for each(p in row)] for each(row in rows)];
@@ -89,7 +89,7 @@ MontanaRedealAction.prototype = {
   },
 
   _change: function(map) {
-    const ps = Game.piles;
+    const ps = gCurrentGame.piles;
     for(var i = 0; i != 52; ++i) ps[i].removeCardsAfter(0);
     for(i = 0; i != 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
   },

@@ -191,16 +191,13 @@ canvas {
   padding-bottom: 0 !important;
 }
 
-.pyramid-pile-parent {
+.pyramid-pile-wrapper {
   min-width: 79px;
 }
 
 .pyramidlayout canvas {
   position: absolute;
 }
-
-/* this *does* pass clicks through to other elements, thankfully */
-.pyramid-collapse { visibility: hidden; }
 
 
 .gamelayout-table {

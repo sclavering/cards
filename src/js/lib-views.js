@@ -35,12 +35,12 @@ function initCardImageOffsets() {
 // Base class for pile views.
 const _View = {
   insertInto: function(parentNode) {
-    parentNode.appendChild(this._fragment || this._canvas);
+    parentNode.appendChild(this._rootNode);
   },
 
   pixelRect: function() { return this._canvas.getBoundingClientRect(); },
 
-  _fragment: null,
+  _rootNode: null,
   _canvas: null, // the <canvas>; all views use one
   _context: null,
   _counter: null, // if set true, a <label> will be created and replace it
@@ -131,13 +131,13 @@ const _View = {
   needsUpdateOnResize: false,
 
   initView: function() {
-    this._canvas = document.createElement("canvas");
+    this._rootNode = this._canvas = document.createElement("canvas");
     this._canvas.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
-      this._fragment = document.createDocumentFragment();
-      this._fragment.appendChild(this._canvas);
-      this._counter = this._fragment.appendChild(document.createElement("div"));
+      this._rootNode = document.createDocumentFragment();
+      this._rootNode.appendChild(this._canvas);
+      this._counter = this._rootNode.appendChild(document.createElement("div"));
       this._counter.className = "counter";
     }
   }
@@ -289,7 +289,7 @@ const _FlexFanView = {
 
   initView: function() {
     const el = document.createElement("canvas");
-    this._canvas = el;
+    this._rootNode = this._canvas = el;
     el.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
   }
@@ -377,17 +377,20 @@ const PileOnView8 = {
   fixedWidth: gCardWidth + 7 * gHFanOffset
 };
 
-// Collapses to nothing when it has no cards
 const PyramidView = {
   __proto__: View,
-  insertInto: function(parentNode) {
-    parentNode.appendChild(this._canvas);
-    this._canvas.parentNode.className += ' pyramid-pile-parent';
+  initView: function() {
+    View.initView.call(this);
+    // We need this <div> to set a minimum-width on and thus space the piles out properly (the <canvas> is position:absolute).
+    // Note: you might expect the <div> to need position:relative too to get the <canvas> in the right place, but actually setting that makes the <canvas> invisible (I don't know why).  It works fine without it, because we're leaving top/left unspecified (rather than setting them to 0), so the <canvas> retains the position it would've got from position:static, rather than being positioned relative to the nearest position:relative/absolute ancestor.
+    const wrapper = this._rootNode = document.createElement("div");
+    wrapper.className = "pyramid-pile-wrapper";
+    wrapper.appendChild(this._canvas);
   },
   _update: function(cs) {
     View._update.call(this, cs);
-    // We don't want to collapse roots
-    if(this.pile.leftParent || this.pile.rightParent) this._canvas.className = cs.length ? "pyramid-uncollapse" : "pyramid-collapse";
+    // We want empty piles to be hidden, so mouse clicks go to any pile that was overlapped instead.  But not for piles at the root of a pyramid (where we draw the empty-pile graphic instead).
+    if(this.pile.leftParent || this.pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
   }
 };
 

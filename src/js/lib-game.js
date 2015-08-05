@@ -68,8 +68,6 @@ const BaseCardGame = {
   classInit: function() {
     this.classInit = null; // to avoid re-calling
 
-    if(typeof this.autoplay === 'string') this.autoplay = autoplay[this.autoplay];
-
     if(!this.layout) this.layout = { __proto__: Layout };
     const layout = this.layout
     layout.template = this.layoutTemplate;

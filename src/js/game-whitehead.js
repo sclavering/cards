@@ -36,7 +36,7 @@ Games.whitehead = {
     return this.firstEmptyPile;
   },
 
-  autoplay: "commonish",
+  autoplay: autoplay_default,
 
   getAutoplayableNumbers: function() {
     const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two

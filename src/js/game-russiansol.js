@@ -12,7 +12,7 @@ Games.russiansol = {
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: "commonish",
+  autoplay: autoplay_default,
 
   getAutoplayableNumbers: autoplay_any_card,
 };

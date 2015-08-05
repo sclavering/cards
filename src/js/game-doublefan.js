@@ -28,7 +28,7 @@ Games.doublefan = {
 
   best_destination_for: find_destination__nearest_legal_pile,
 
-  autoplay: "commonish",
+  autoplay: autoplay_default,
 
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_same_suit_are_on_foundations,
 };

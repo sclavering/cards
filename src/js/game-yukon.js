@@ -3,7 +3,7 @@ const YukonBase = {
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: "commonish",
+  autoplay: autoplay_default,
 
   // Keeping a 2 down so you can put an Ace on it can be useful if the Ace has other junk on top of it.
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,

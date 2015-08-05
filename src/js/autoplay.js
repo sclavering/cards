@@ -1,6 +1,4 @@
-const autoplay = {
-  "commonish":
-  function() {
+function autoplay_default() {
     // suit -> maximum number of that suit that can be autoplayed
     const maxNums = this.getAutoplayableNumbers();
     var triedToFillEmpty = false;
@@ -30,5 +28,4 @@ const autoplay = {
         return new Move(c, f);
     }
     return null;
-  }
 };

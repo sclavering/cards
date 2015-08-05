@@ -13,7 +13,7 @@ Games.towers = {
 
   best_destination_for: find_destination__nearest_legal_pile_or_cell,
 
-  autoplay: "commonish",
+  autoplay: autoplay_default,
 
   getAutoplayableNumbers: autoplay_any_card,
 };

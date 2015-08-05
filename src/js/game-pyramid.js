@@ -1,7 +1,7 @@
 gGameClasses.pyramid = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, PyramidWaste, CountedView, 0, 0,
     "p", 28, PyramidPile, PyramidView, 0, 1,

@@ -38,7 +38,7 @@ const SpiderBase = {
 
 const Spider = {
   __proto__: SpiderBase,
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
     "p", 10, SpiderPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
@@ -66,7 +66,7 @@ gGameClasses.spider4 = {
 gGameClasses.blackwidow = {
   __proto__: Spider,
   helpId: null,
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
     "p", 10, BlackWidowPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
@@ -78,7 +78,7 @@ gGameClasses.blackwidow = {
 
 gGameClasses.divorce = {
   __proto__: SpiderBase,
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToNonemptyPiles, StockView, 0, 0,
     "p", 10, SpiderPile, FanDownView, 0, 5,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
@@ -102,7 +102,7 @@ gGameClasses.divorce = {
 
 gGameClasses.wasp = {
   __proto__: SpiderBase,
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToPiles, StockView, 0, 0,
     "p", 7, WaspPile, FanDownView, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
@@ -116,7 +116,7 @@ gGameClasses.wasp = {
 
 const SimonBase = {
   __proto__: SpiderBase,
-  pileDetails: [
+  pileDetails: function() [
     "p", 10, SpiderPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ],
@@ -127,7 +127,7 @@ const SimonBase = {
 
 gGameClasses.simplersimon = {
   __proto__: SimonBase,
-  pileDetails: [
+  pileDetails: function() [
     "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ]
@@ -150,7 +150,7 @@ gGameClasses.simon4 = {
 gGameClasses.doublesimon = {
   __proto__: SimonBase,
   allcards: [2],
-  pileDetails: [
+  pileDetails: function() [
     "p", 12, SpiderPile, FanDownView, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1],
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],

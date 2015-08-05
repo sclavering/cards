@@ -1,7 +1,7 @@
 gGameClasses.freecell = {
   __proto__: FreeCellGame,
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 8, FreeCellPile, FanDownView, 0, [7, 7, 7, 7, 6, 6, 6, 6],
     "f", 4, KlondikeFoundation, View, 0, 0,
     "c", 4, Cell, View, 0, 0,

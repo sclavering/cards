@@ -21,15 +21,15 @@ const Game = {
   // Instructions to the code in lib-layout.js on how to create the needed HTML
   layoutTemplate: null,
 
-  // An array giving details of all the piles to be created.  Consists of parts
-  // in the form:
+  // Returns an array giving details of all the piles to be created.
+  // Consists of parts in the form:
   //   letter, number, Pile, View, face-down, face-up
   // Where 'letter' corresponds to one used in .layoutTemplate, 'number' is how
   // many of that kind exist, Pile and View are the subtypes of those objects
   // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
   // to the pile, if .deal() isn't replaced. Either a number (applying to all
   // of the piles) or an array of numbers (one per pile) can be used.
-  pileDetails: [
+  pileDetails: function() [
   /* partial example:
     "s", 1, null, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
@@ -73,8 +73,8 @@ const Game = {
     const layout = this.layout
     layout.template = this.layoutTemplate;
 
-    const details = this.pileDetails;
-    const eLen = 6; // length of an entry/row in .pileDetails
+    const details = this.pileDetails();
+    const eLen = 6; // length of an entry/row in .pileDetails()
     const numletters = details.length / eLen;
     const letters = [], nums = {}, impls = {}, downs = {}, ups = {};
     // get mappings of stuff, grouped by letter used in layout template

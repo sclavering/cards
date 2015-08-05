@@ -1,7 +1,7 @@
 gGameClasses.penguin = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 7, PenguinPile, FanDownView, 0, 0,
     "f", 4, KlondikeFoundation, View, 0, 0,
     "c", 7, Cell, View, 0, 0,

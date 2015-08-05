@@ -3,7 +3,7 @@
 gGameClasses.doublesol = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 10, KlondikePile, FanDownView, range(10), repeat(1, 10),

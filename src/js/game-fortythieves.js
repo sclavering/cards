@@ -1,7 +1,7 @@
 gGameClasses.fortythieves = {
   __proto__: FreeCellGame,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWaste, StockView, 0, 0,
     "w", 1, Waste, FanRightView, 0, 1,
     "p", 10, FortyThievesPile, FanDownView, 0, 4,

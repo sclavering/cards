@@ -1,7 +1,7 @@
 const KlondikeBase = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 7, KlondikePile, FanDownView, [0,1,2,3,4,5,6], 1,
@@ -45,18 +45,21 @@ gGameClasses.klondike1 = {
 };
 
 
-const Klondike3 = gGameClasses.klondike3 = {
+gGameClasses.klondike3 = {
   __proto__: KlondikeBase,
-  pileDetails: KlondikeBase.pileDetails.slice(), // copy
+  pileDetails: function() {
+    const rv = KlondikeBase.pileDetails();
+    rv[2] = Deal3OrRefillStock; // Stock pile
+    rv[9] = Deal3HWasteView; // Waste view
+    return rv;
+  },
   layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 };
-Klondike3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
-Klondike3.pileDetails[9] = Deal3HWasteView;    // Waste view
 
 
 gGameClasses.doubleklondike = {
   __proto__: KlondikeBase,
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 10, KlondikePile, FanDownView, range(10), 1,

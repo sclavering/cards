@@ -1,7 +1,7 @@
 gGameClasses.maze = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 54, MazePile, View, 0, 1,
   ],
 

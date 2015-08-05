@@ -1,7 +1,7 @@
 const GypsyBase = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToPiles, StockView, 0, 0,
     "p", 8, GypsyPile, FanDownView, 2, 1,
     "f", 8, KlondikeFoundation, View, 0, 0,

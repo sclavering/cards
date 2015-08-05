@@ -1,7 +1,7 @@
 gGameClasses.regiment = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 16, RegimentPile, FoundationSlideView, 0, 1,
     "r", 8, Reserve, FoundationSlideView, 10, 1,
     // ace+king foundations

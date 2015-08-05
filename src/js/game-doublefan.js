@@ -3,7 +3,7 @@ gGameClasses.doublefan = {
 
   allcards: [2],
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 24, FanPile, FanRightView, 0, 5,
     "f", 8, FanFoundation, View, 0, 0,
   ],

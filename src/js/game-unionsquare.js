@@ -1,7 +1,7 @@
 gGameClasses.unionsquare = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWaste, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 16, UnionSquarePile, UnionSquarePileView, 0, 1,

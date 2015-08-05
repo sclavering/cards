@@ -1,7 +1,7 @@
 const CanfieldBase = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 4, CanfieldPile, FanDownView, 0, 0,
@@ -39,20 +39,25 @@ const CanfieldBase = {
 
 gGameClasses.canfield = {
   __proto__: CanfieldBase,
-  pileDetails: CanfieldBase.pileDetails.slice(), // copy
 };
 
 gGameClasses.canfield3 = {
   __proto__: CanfieldBase,
-  pileDetails: CanfieldBase.pileDetails.slice() // copy
+  pileDetails: function() {
+    const rv = CanfieldBase.pileDetails();
+    rv[2] = Deal3OrRefillStock; // Stock pile
+    rv[9] = Deal3VWasteView; // Waste view
+    return rv;
+  },
 };
-gGameClasses.canfield3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
-gGameClasses.canfield3.pileDetails[9] = Deal3VWasteView;    // Waste view
 
 gGameClasses.demon = {
   __proto__: CanfieldBase,
-  pileDetails: CanfieldBase.pileDetails.slice(), // copy
+  pileDetails: function() {
+    const rv = CanfieldBase.pileDetails();
+    rv[27] = FanDownView; // Reserve view
+    return rv;
+  },
   _reserveFaceDown: 0,
   _reserveFaceUp: 13
 };
-gGameClasses.demon.pileDetails[27] = FanDownView; // Reserve view

@@ -1,7 +1,7 @@
 gGameClasses.tripeaks = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
     "p", 28, TriPeaksPile, PyramidView, 0, 0,
     "f", 1, GolfFoundation, View, 0, 0,

@@ -1,7 +1,7 @@
 gGameClasses.fan = {
   __proto__: Game,
 
-  pileDetails: [
+  pileDetails: function() [
     "p", 18, FanPile, FanRightView, 0, 3, // last pile gets just 1
     "f", 4, FanFoundation, View, 0, 0,
   ],

@@ -137,7 +137,7 @@ const _View = {
     if(this._counter) {
       this._fragment = document.createDocumentFragment();
       this._fragment.appendChild(this._canvas);
-      this._counter = this._fragment.appendChild(createHTML("label"));
+      this._counter = this._fragment.appendChild(document.createElement("div"));
       this._counter.className = "counter";
     }
   }

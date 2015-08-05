@@ -350,13 +350,13 @@ const Game = {
   },
 
   // can be overridden e.g. to show hints from foundations
-  get hintOriginPileCollections() {
+  hintOriginPileCollections: function() {
     return [this.reserves, this.cells, this.wastes, this.piles];
   },
 
   // If set null the Hint toolbar button will be disabled.
   getHints: function() {
-    const collections = this.hintOriginPileCollections;
+    const collections = this.hintOriginPileCollections();
     for each(var ps in collections)
       for each(var p in ps)
         for each(var source in p.getHintSources())

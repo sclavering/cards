@@ -11,7 +11,7 @@ gGameClasses.mod3 = {
 
   layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
 
-  get hintOriginPileCollections() {
+  hintOriginPileCollections: function() {
     return [this.foundations, this.piles];
   },
 

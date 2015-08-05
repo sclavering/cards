@@ -97,8 +97,9 @@ body {
 }
 
 #game-chooser-inner > div {
+  display: inline-block;
+  vertical-align: top;
   color: black;
-  float: left;
   width: 25%;
   font-size: 14px;
 }
@@ -126,11 +127,6 @@ body {
 
 #game-chooser a:hover {
   text-decoration: underline;
-}
-
-.game_chooser_clear {
-  display: block;
-  clear: left;
 }
 
 

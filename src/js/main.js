@@ -95,19 +95,16 @@ function savePref(name, val) {
 // A <div><canvas/></div> used to show cards being dragged or animated.
 const gFloatingPile = {
   init: function() {
-    this._element = document.getElementById("floatingpile");
+    this._canvas = document.createElement("canvas");
+    this._canvas.style.position = "absolute";
+    document.body.appendChild(this._canvas);
     this.hide();
-    const canvas = document.createElement("canvas");
-    this._element.appendChild(canvas);
-    this.context = canvas.getContext("2d");
+    this.context = this._canvas.getContext("2d");
+    this._left = 0;
+    this._top = 0;
   },
 
-  boundingRect: function() { return this._element.getBoundingClientRect(); },
-
-  _element: null,
-  context: null, // <canvas> 2d rendering context
-  _left: 0,
-  _top: 0,
+  boundingRect: function() { return this._canvas.getBoundingClientRect(); },
 
   // Used to suppress repositioning/redrawing between mouseup and animation
   // starting when dropping a card on a new valid pile.
@@ -130,8 +127,8 @@ const gFloatingPile = {
   showFor: function(card, x, y) {
     this.lastCard = card;
     // context widths already set appropriately in sizeCanvas
-    this._element.style.width = this.context.canvas.width + 'px';
-    this._element.style.height = this.context.canvas.height + 'px';
+    this._canvas.style.width = this.context.canvas.width + 'px';
+    this._canvas.style.height = this.context.canvas.height + 'px';
     this.moveTo(x, y);
   },
 
@@ -144,10 +141,10 @@ const gFloatingPile = {
     const self = gFloatingPile;
     self._left = x;
     self._top = y;
-    self._element.style.left = self._left + 'px';
+    self._canvas.style.left = self._left + 'px';
     // xxx this seems to sometimes cause warnings to show on the error console (seen in Fx 3.0):
     // "Warning: Error in parsing value for property 'top'.  Declaration dropped."
-    self._element.style.top = self._top + 'px';
+    self._canvas.style.top = self._top + 'px';
   }
 };
 

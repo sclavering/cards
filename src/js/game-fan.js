@@ -1,5 +1,5 @@
 Games.fan = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 18, FanPile, FanRightView, 0, 3, // last pile gets just 1

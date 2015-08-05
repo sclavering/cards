@@ -1,5 +1,5 @@
 Games.whitehead = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "s", 1, StockDealToWaste, StockView, 0, 0,

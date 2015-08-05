@@ -1,5 +1,5 @@
 Games.regiment = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 16, RegimentPile, FoundationSlideView, 0, 1,

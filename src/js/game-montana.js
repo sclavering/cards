@@ -1,5 +1,5 @@
 Games.montana = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 52, MontanaPile, View, 0, 1,

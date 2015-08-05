@@ -1,5 +1,5 @@
 Games.mod3 = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "s", 1, { __proto__: StockDealToPiles, isGood: false }, StockView, 0, 0,

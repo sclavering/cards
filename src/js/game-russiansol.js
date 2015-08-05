@@ -1,5 +1,5 @@
 Games.russiansol = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 7, WaspPile, FanDownView, range(7), [1, 5, 5, 5, 5, 5, 5],

@@ -1,5 +1,5 @@
 Games.doublefan = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   allcards: [2],
 

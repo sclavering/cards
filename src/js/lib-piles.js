@@ -44,7 +44,7 @@ const Pile = {
   },
 
   // previous and next pile of the same type
-  // BaseCardGame.buildLayout() forms these into doubly-linked non-circular lists
+  // Game.buildLayout() forms these into doubly-linked non-circular lists
   prev: null,
   next: null,
 

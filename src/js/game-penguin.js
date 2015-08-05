@@ -1,5 +1,5 @@
 Games.penguin = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 7, PenguinPile, FanDownView, 0, 0,

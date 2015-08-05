@@ -1,5 +1,5 @@
 Games.acesup = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "s", 1, StockDealToPiles, StockView, 0, 0,

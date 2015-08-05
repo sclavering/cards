@@ -1,5 +1,5 @@
 Games.tripeaks = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "s", 1, StockDealToFoundation, StockView, 0, 0,

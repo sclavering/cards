@@ -1,6 +1,6 @@
 // base class for FreeCell, Seahaven Towers and Forty Thieves
 const FreeCellGame = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;

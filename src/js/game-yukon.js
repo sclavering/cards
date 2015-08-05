@@ -1,5 +1,5 @@
 const YukonBase = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 

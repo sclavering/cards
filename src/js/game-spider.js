@@ -2,7 +2,7 @@
 // ids: blackwidow, divorce, wasp, spider-1suit, spider-2suits, spider, simon-1suit, simon-2suits, simon
 
 const SpiderBase = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
 

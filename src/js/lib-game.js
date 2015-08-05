@@ -1,4 +1,5 @@
-const BaseCardGame = {
+// The base-type for all games
+const Game = {
   // An Card objects used in this game.
   // Passed as arguments to makeCards() if non-null.
   allcards: [1],

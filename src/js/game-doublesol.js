@@ -1,7 +1,7 @@
 // An interesting variant of (Double) Klondike where foundations are built A,A,2,2,3,...,Q,Q,K,K
 
 Games.doublesol = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,

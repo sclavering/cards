@@ -1,5 +1,5 @@
 Games.maze = {
-  __proto__: BaseCardGame,
+  __proto__: Game,
 
   pileDetails: [
     "p", 54, MazePile, View, 0, 1,

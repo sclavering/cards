@@ -1,4 +1,4 @@
-Games.fan = {
+gGameClasses.fan = {
   __proto__: Game,
 
   pileDetails: [

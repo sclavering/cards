@@ -1,4 +1,4 @@
-Games.towers = {
+gGameClasses.towers = {
   __proto__: FreeCellGame,
 
   pileDetails: [

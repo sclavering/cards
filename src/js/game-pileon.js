@@ -17,7 +17,7 @@ const PileOnBase = {
 };
 
 
-Games.pileon = {
+gGameClasses.pileon = {
   __proto__: PileOnBase,
   _pileon_depth: 4,
   pileDetails: [
@@ -27,7 +27,7 @@ Games.pileon = {
 };
 
 
-Games.doublepileon = {
+gGameClasses.doublepileon = {
   __proto__: PileOnBase,
   allcards: [2],
   _pileon_depth: 8,

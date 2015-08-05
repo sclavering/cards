@@ -1,4 +1,4 @@
-Games.whitehead = {
+gGameClasses.whitehead = {
   __proto__: Game,
 
   pileDetails: [

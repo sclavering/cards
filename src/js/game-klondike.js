@@ -38,14 +38,14 @@ const KlondikeBase = {
   scoreForRevealing: 5
 };
 
-Games.klondike1 = {
+gGameClasses.klondike1 = {
   __proto__: KlondikeBase,
   helpId: "klondike",
   layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 };
 
 
-const Klondike3 = Games.klondike3 = {
+const Klondike3 = gGameClasses.klondike3 = {
   __proto__: KlondikeBase,
   pileDetails: KlondikeBase.pileDetails.slice(), // copy
   layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
@@ -54,7 +54,7 @@ Klondike3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
 Klondike3.pileDetails[9] = Deal3HWasteView;    // Waste view
 
 
-Games.doubleklondike = {
+gGameClasses.doubleklondike = {
   __proto__: KlondikeBase,
   pileDetails: [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,

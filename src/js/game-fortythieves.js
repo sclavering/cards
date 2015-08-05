@@ -1,4 +1,4 @@
-Games.fortythieves = {
+gGameClasses.fortythieves = {
   __proto__: FreeCellGame,
 
   pileDetails: [

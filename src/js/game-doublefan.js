@@ -1,4 +1,4 @@
-Games.doublefan = {
+gGameClasses.doublefan = {
   __proto__: Game,
 
   allcards: [2],

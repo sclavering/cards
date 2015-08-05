@@ -10,8 +10,8 @@ var gPrefs = {};
 
 var gCurrentGame = null;
 var gCurrentGameType = null;
-
-var Games = {}; // all the game controllers, indexed by game id
+const gGameClasses = {}; // game-id -> Game subclass, filled by game-*.js
+const gGameTypes = {}; // game-id -> GameType object
 
 var ui = {
   btnUndo: "btn-undo",
@@ -42,11 +42,11 @@ function init() {
 
   gFloatingPile.init();
 
-  for(var game in Games) Games[game] = new GameType(game, Games[game]);
+  for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
 
   // work out which game was played last
   var game = loadPref("current-game");
-  if(!(game in Games)) game = "klondike1"; // if pref corrupted or missing
+  if(!(game in gGameTypes)) game = "klondike1"; // if pref corrupted or missing
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -162,7 +162,7 @@ function playGame(game) {
   ui.gameName.textContent = parts ? parts[1] : full_name;
   ui.gameNameSub.textContent = parts ? parts[2] : '';
 
-  gCurrentGameType = Games[game];
+  gCurrentGameType = gGameTypes[game];
   gCurrentGameType.switchTo();
 
   updateUI();

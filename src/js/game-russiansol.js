@@ -1,4 +1,4 @@
-Games.russiansol = {
+gGameClasses.russiansol = {
   __proto__: Game,
 
   pileDetails: [

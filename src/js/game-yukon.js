@@ -10,7 +10,7 @@ const YukonBase = {
 };
 
 
-Games.yukon = {
+gGameClasses.yukon = {
   __proto__: YukonBase,
   pileDetails: [
     "p", 7, YukonPile, FanDownView, [0, 1, 2, 3, 4, 5, 6], [1, 5, 5, 5, 5, 5, 5],
@@ -21,7 +21,7 @@ Games.yukon = {
 };
 
 
-Games.sanibel = {
+gGameClasses.sanibel = {
   __proto__: YukonBase,
   pileDetails: [
     "s", 1, StockDealToWaste, StockView, 0, 0,

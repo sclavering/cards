@@ -1,4 +1,4 @@
-Games.unionsquare = {
+gGameClasses.unionsquare = {
   __proto__: Game,
 
   pileDetails: [

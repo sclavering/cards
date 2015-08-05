@@ -1,4 +1,4 @@
-Games.regiment = {
+gGameClasses.regiment = {
   __proto__: Game,
 
   pileDetails: [

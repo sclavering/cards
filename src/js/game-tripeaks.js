@@ -1,4 +1,4 @@
-Games.tripeaks = {
+gGameClasses.tripeaks = {
   __proto__: Game,
 
   pileDetails: [

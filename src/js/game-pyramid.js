@@ -1,4 +1,4 @@
-Games.pyramid = {
+gGameClasses.pyramid = {
   __proto__: Game,
 
   pileDetails: [

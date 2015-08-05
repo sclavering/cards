@@ -1,4 +1,4 @@
-Games.freecell = {
+gGameClasses.freecell = {
   __proto__: FreeCellGame,
 
   pileDetails: [

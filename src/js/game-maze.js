@@ -1,4 +1,4 @@
-Games.maze = {
+gGameClasses.maze = {
   __proto__: Game,
 
   pileDetails: [

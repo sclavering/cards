@@ -1,4 +1,4 @@
-Games.mod3 = {
+gGameClasses.mod3 = {
   __proto__: Game,
 
   pileDetails: [

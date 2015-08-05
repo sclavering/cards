@@ -46,24 +46,24 @@ const Spider = {
   helpId: "spider"
 };
 
-Games.spider1 = {
+gGameClasses.spider1 = {
   __proto__: Spider,
   allcards: [8, "S"]
 };
 
-Games.spider2 = {
+gGameClasses.spider2 = {
   __proto__: Spider,
   allcards: [4, "SH"]
 };
 
-Games.spider4 = {
+gGameClasses.spider4 = {
   __proto__: Spider,
   allcards: [2]
 };
 
 
 
-Games.blackwidow = {
+gGameClasses.blackwidow = {
   __proto__: Spider,
   helpId: null,
   pileDetails: [
@@ -76,7 +76,7 @@ Games.blackwidow = {
 
 
 
-Games.divorce = {
+gGameClasses.divorce = {
   __proto__: SpiderBase,
   pileDetails: [
     "s", 1, StockDealToNonemptyPiles, StockView, 0, 0,
@@ -100,7 +100,7 @@ Games.divorce = {
 
 
 
-Games.wasp = {
+gGameClasses.wasp = {
   __proto__: SpiderBase,
   pileDetails: [
     "s", 1, StockDealToPiles, StockView, 0, 0,
@@ -125,7 +125,7 @@ const SimonBase = {
   kings: [12, 25, 38, 51]
 };
 
-Games.simplersimon = {
+gGameClasses.simplersimon = {
   __proto__: SimonBase,
   pileDetails: [
     "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
@@ -133,21 +133,21 @@ Games.simplersimon = {
   ]
 };
 
-Games.simon1 = {
+gGameClasses.simon1 = {
   __proto__: SimonBase,
   allcards: [4, "S"]
 };
 
-Games.simon2 = {
+gGameClasses.simon2 = {
   __proto__: SimonBase,
   allcards: [2, "SH"]
 };
 
-Games.simon4 = {
+gGameClasses.simon4 = {
   __proto__: SimonBase
 };
 
-Games.doublesimon = {
+gGameClasses.doublesimon = {
   __proto__: SimonBase,
   allcards: [2],
   pileDetails: [

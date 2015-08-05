@@ -1,4 +1,4 @@
-Games.acesup = {
+gGameClasses.acesup = {
   __proto__: Game,
 
   pileDetails: [

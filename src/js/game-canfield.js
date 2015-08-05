@@ -37,22 +37,22 @@ const CanfieldBase = {
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 };
 
-Games.canfield = {
+gGameClasses.canfield = {
   __proto__: CanfieldBase,
   pileDetails: CanfieldBase.pileDetails.slice(), // copy
 };
 
-Games.canfield3 = {
+gGameClasses.canfield3 = {
   __proto__: CanfieldBase,
   pileDetails: CanfieldBase.pileDetails.slice() // copy
 };
-Games.canfield3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
-Games.canfield3.pileDetails[9] = Deal3VWasteView;    // Waste view
+gGameClasses.canfield3.pileDetails[2] = Deal3OrRefillStock; // Stock impl
+gGameClasses.canfield3.pileDetails[9] = Deal3VWasteView;    // Waste view
 
-Games.demon = {
+gGameClasses.demon = {
   __proto__: CanfieldBase,
   pileDetails: CanfieldBase.pileDetails.slice(), // copy
   _reserveFaceDown: 0,
   _reserveFaceUp: 13
 };
-Games.demon.pileDetails[27] = FanDownView; // Reserve view
+gGameClasses.demon.pileDetails[27] = FanDownView; // Reserve view

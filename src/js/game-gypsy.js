@@ -49,12 +49,12 @@ const GypsyBase = {
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
 };
 
-Games.gypsy2 = {
+gGameClasses.gypsy2 = {
   __proto__: GypsyBase,
   allcards: [4, "SH"]
 };
 
-Games.gypsy4 = {
+gGameClasses.gypsy4 = {
   __proto__: GypsyBase,
   allcards: [2]
 };

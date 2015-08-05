@@ -1,4 +1,4 @@
-Games.penguin = {
+gGameClasses.penguin = {
   __proto__: Game,
 
   pileDetails: [

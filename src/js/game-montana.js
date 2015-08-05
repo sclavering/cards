@@ -1,4 +1,4 @@
-Games.montana = {
+gGameClasses.montana = {
   __proto__: Game,
 
   pileDetails: [

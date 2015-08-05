@@ -23,13 +23,13 @@ const GolfBase = {
 };
 
 
-Games.golf1 = {
+gGameClasses.golf1 = {
   __proto__: GolfBase,
   allcards: [1, , , true]
 };
 
 
-const Golf2 = Games.golf2 = {
+const Golf2 = gGameClasses.golf2 = {
   __proto__: GolfBase,
   allcards: [2, , , true]
 };

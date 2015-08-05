@@ -1,12 +1,3 @@
-function extendObj(obj, stuffToAdd, allowReplacement) {
-  for(var m in stuffToAdd) {
-    if(!allowReplacement && (m in obj)) throw "extendObj: trying to replace an existing property";
-    var getter = stuffToAdd.__lookupGetter__(m);
-    if(getter) obj.__defineGetter__(m, getter);
-    else obj[m] = stuffToAdd[m];
-  }
-}
-
 function overrideGetter(obj, prop, val) {
   const proto = obj.__proto__;
   obj.__proto__ = {};

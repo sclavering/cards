@@ -9,7 +9,7 @@ function overrideGetter(obj, prop, val) {
 var gPrefs = {};
 
 var gCurrentGame = null;
-var GameController = null;
+var gCurrentGameType = null;
 
 var Games = {}; // all the game controllers, indexed by game id
 
@@ -154,7 +154,7 @@ const gFloatingPile = {
 
 
 function playGame(game) {
-  if(GameController) GameController.switchFrom();
+  if(gCurrentGameType) gCurrentGameType.switchFrom();
 
   savePref("current-game", game);
 
@@ -163,8 +163,8 @@ function playGame(game) {
   ui.gameName.textContent = parts ? parts[1] : full_name;
   ui.gameNameSub.textContent = parts ? parts[2] : '';
 
-  GameController = Games[game];
-  GameController.switchTo();
+  gCurrentGameType = Games[game];
+  gCurrentGameType.switchTo();
 
   updateUI();
   ui.btnRedeal.setAttribute("disabled", !gCurrentGame.redeal);
@@ -209,7 +209,7 @@ function hideGameChooser() {
 
 function newGame() {
   interrupt();
-  GameController.newGame();
+  gCurrentGameType.newGame();
   updateUI();
 }
 
@@ -219,7 +219,7 @@ function restartGame() {
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
   if(!gCurrentGame.canUndo) return;
-  GameController.restart();
+  gCurrentGameType.restart();
   updateUI();
 }
 
@@ -227,10 +227,10 @@ function restartGame() {
 function doo(action) { // "do" is a reserved word
   if(!action) return;
   // enable undo + disable redo (but avoid doing so unnecessarily)
-  if(!gCurrentGame.canUndo && !GameController.havePastGames) ui.btnUndo.removeAttribute("disabled");
-  if(gCurrentGame.canRedo || GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
+  if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.removeAttribute("disabled");
+  if(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 
-  if(GameController.haveFutureGames) GameController.clearFutureGames();
+  if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
   gCurrentGame.doo(action);
 
   // Animated actions schedule done() approptiately themselves
@@ -262,21 +262,21 @@ function interrupt() {
 
 function undo() {
   interrupt();
-  var couldRedo = gCurrentGame.canRedo || GameController.haveFutureGames;
+  var couldRedo = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames;
   if(gCurrentGame.canUndo) gCurrentGame.undo();
-  else GameController.restorePastGame();
-  if(!gCurrentGame.canUndo && !GameController.havePastGames) ui.btnUndo.setAttribute("disabled","true");
+  else gCurrentGameType.restorePastGame();
+  if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.setAttribute("disabled","true");
   if(!couldRedo) ui.btnRedo.removeAttribute("disabled");
 }
 
 
 function redo() {
   interrupt();
-  var couldUndo = gCurrentGame.canUndo || GameController.havePastGames;
+  var couldUndo = gCurrentGame.canUndo || gCurrentGameType.havePastGames;
   if(gCurrentGame.canRedo) gCurrentGame.redo();
-  else GameController.restoreFutureGame();
+  else gCurrentGameType.restoreFutureGame();
   if(!couldUndo) ui.btnUndo.removeAttribute("disabled");
-  if(!gCurrentGame.canRedo && !GameController.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
+  if(!gCurrentGame.canRedo && !gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 }
 
 
@@ -294,8 +294,8 @@ function redeal() {
 
 
 function updateUI() {
-  ui.btnUndo.setAttribute("disabled", !(gCurrentGame.canUndo || GameController.havePastGames));
-  ui.btnRedo.setAttribute("disabled", !(gCurrentGame.canRedo || GameController.haveFutureGames));
+  ui.btnUndo.setAttribute("disabled", !(gCurrentGame.canUndo || gCurrentGameType.havePastGames));
+  ui.btnRedo.setAttribute("disabled", !(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames));
 }
 
 

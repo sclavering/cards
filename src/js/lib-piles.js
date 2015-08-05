@@ -61,6 +61,7 @@ const Pile = {
 
   // the sourrounding piles
   get surrounding() {
+    if(this._surrounding) return this._surrounding;
     const ps = [];
     var prev = this.prev, next = this.next;
     while(prev && next) {
@@ -69,18 +70,21 @@ const Pile = {
     }
     while(next) { ps.push(next); next = next.next; }
     while(prev) { ps.push(prev); prev = prev.prev; }
-    return overrideGetter(this, "surrounding", ps);
+    return this._surrounding = ps;
   },
+  _surrounding: null,
 
   get following() {
+    if(this._following) return this._following;
     const ps = [];
     for(var p = this.next; p && p != this; p = p.next) ps.push(p);
     if(!p) { // next/prev links have *not* been formed into a loop
       for(var fst = this; fst.prev; fst = fst.prev);
       for(p = fst; p != this; p = p.next) ps.push(p);
     }
-    return overrideGetter(this, "following", ps);
+    return this._following = ps;
   },
+  _following: null,
 
   addCardsFromArray: function(cards, doNotUpdateView) {
     const cs = this.cards, num = cards.length;

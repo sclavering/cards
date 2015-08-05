@@ -120,10 +120,6 @@ const _View = {
 
   // Return relative CSS-pixel coords for where an animated move should finish.
   getAnimationDestination: function() {
-    return this._getCoordsForIndex(this.pile.cards.length);
-  },
-
-  _getCoordsForIndex: function(ix) {
     return { x: 0, y: 0 };
   },
 
@@ -229,7 +225,8 @@ const _FanView = {
   // 'ix' is like the 'max' of View.update
   getVisibleCardIndexes: range,
 
-  _getCoordsForIndex: function(ix) {
+  getAnimationDestination: function() {
+    const ix = this.pile.cards.length;
     const ixs = this.getVisibleCardIndexes(ix + 1);
     const visualIx = ixs.indexOf(ix);
     return { x: visualIx * this._hOffset, y: visualIx * this._vOffset };

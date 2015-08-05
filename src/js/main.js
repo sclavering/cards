@@ -322,13 +322,6 @@ function doneShowingMessage() {
 }
 
 
-function createHTML(class_name) {
-  var el = document.createElement("div");
-  el.className = class_name;
-  return el;
-}
-
-
 function setVisibility(el, visible) {
   if(visible) el.style.display = '';
   else el.style.display = 'none';

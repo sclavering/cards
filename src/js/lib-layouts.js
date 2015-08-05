@@ -27,7 +27,7 @@ const Layout = {
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
 
-    const container = this._node = createHTML("gamelayout game");
+    const container = this._node = createDIV("gamelayout game");
     ui.gameStack.appendChild(container);
     container.style.top = container.style.left = 0; // to make explicit sizing work
 
@@ -87,13 +87,13 @@ const Layout = {
           break;
       // spacers
         case "_":
-          boxOrTd().appendChild(createHTML("thinspacer"));
+          boxOrTd().appendChild(createDIV("thinspacer"));
           break;
         case "-":
-          boxOrTd().appendChild(createHTML("horizontal-halfpilespacer"));
+          boxOrTd().appendChild(createDIV("horizontal-halfpilespacer"));
           break;
         case "=":
-          boxOrTd().appendChild(createHTML("horizontal-pilespacer"));
+          boxOrTd().appendChild(createDIV("horizontal-pilespacer"));
           break;
       // "{attr=val}", applies to most-recent pile or box
         case "{":
@@ -255,4 +255,11 @@ const Layout = {
       v.widthToUse = width - r.left;
     }
   }
+};
+
+
+function createDIV(class_name) {
+  const el = document.createElement("div");
+  el.className = class_name;
+  return el;
 };

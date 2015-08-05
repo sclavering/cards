@@ -193,13 +193,11 @@ canvas {
 
 .pyramid-pile-parent {
   min-width: 79px;
-  position: relative;
 }
 
 .pyramidlayout canvas {
   position: absolute;
 }
-
 
 /* this *does* pass clicks through to other elements, thankfully */
 .pyramid-collapse { visibility: hidden; }

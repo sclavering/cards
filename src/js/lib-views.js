@@ -48,12 +48,11 @@ const _View = {
   // Redraw the pile.
   update: function() {
     const cs = this.pile.cards;
-    this._update(cs, cs.length);
+    this._update(cs);
   },
 
-  // Show the specified array of cards (which may be a prefix of the actual
-  // cards, during animation or dragging).  num == cards.length
-  _update: function(cards, num) {
+  // Show the supplied array of cards (which may be a prefix of pile's cards, during animation or dragging).
+  _update: function(cards) {
     throw "_View._update not overridden!";
   },
 
@@ -72,7 +71,7 @@ const _View = {
     const r = this.pixelRect();
     gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
-    this._update(cs, cs.length);
+    this._update(cs);
   },
 
   // Attach this view to a Pile
@@ -152,11 +151,11 @@ const _View = {
 const View = {
   __proto__: _View,
 
-  _update: function(cs, num) {
+  _update: function(cs) {
     this._canvas.width = gCardWidth;
     this._canvas.height = 0; // changed values clears the canvas
     this._canvas.height = gCardHeight;
-    if(num) drawCard(this._context, cs[num - 1], 0, 0);
+    if(cs.length) drawCard(this._context, cs[cs.length - 1], 0, 0);
     else this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
@@ -190,11 +189,11 @@ const _FanView = {
   _hOffset: 0,
   _vOffset: 0,
 
-  _update: function(cs, max) {
+  _update: function(cs) {
     this._canvas.width = this.fixedWidth || this.widthToUse;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = this.fixedHeight || this.heightToUse;
-    const ixs = this.getVisibleCardIndexes(max), num = ixs.length;
+    const ixs = this.getVisibleCardIndexes(cs.length), num = ixs.length;
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
     for(var i = 0; i != num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
@@ -388,10 +387,10 @@ const PyramidView = {
     parentNode.appendChild(this._canvas);
     this._canvas.parentNode.className += ' pyramid-pile-parent';
   },
-  _update: function(cs, num) {
-    View._update.apply(this, arguments);
+  _update: function(cs) {
+    View._update.call(this, cs);
     // We don't want to collapse roots
-    if(this.pile.leftParent || this.pile.rightParent) this._canvas.className = num ? "pyramid-uncollapse" : "pyramid-collapse";
+    if(this.pile.leftParent || this.pile.rightParent) this._canvas.className = cs.length ? "pyramid-uncollapse" : "pyramid-collapse";
   }
 };
 

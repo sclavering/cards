@@ -495,14 +495,14 @@ const Game = {
 
 
 
-function GameControllerObj(id, proto) {
+function GameType(id, proto) {
   this.id = id;
   proto.id = id; // main.js still uses this
   this.instanceProto = proto;
   this.pastGames = [];
   this.futureGames = [];
 }
-GameControllerObj.prototype = {
+GameType.prototype = {
   instanceProto: null,
   pastGames: [],
   havePastGames: false,

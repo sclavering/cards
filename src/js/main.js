@@ -42,8 +42,7 @@ function init() {
 
   gFloatingPile.init();
 
-  // make controllers for each game type
-  for(var game in Games) Games[game] = new GameControllerObj(game, Games[game]);
+  for(var game in Games) Games[game] = new GameType(game, Games[game]);
 
   // work out which game was played last
   var game = loadPref("current-game");

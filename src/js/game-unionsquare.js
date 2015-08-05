@@ -36,7 +36,7 @@ gGameClasses.unionsquare = {
       return twinp.cards.length > 13 && twinp.lastCard.number == card.upNumber ? twinp : null;
     }
     // can now assume twin is not on foundation
-    if(card.isAce) return this.firstEmptyFoundation;
+    if(card.isAce) return findEmpty(this.foundations);
     var down = card.down, downp = down.pile;
     if(downp.isFoundation && down.isLast) return downp;
     down = down.twin, downp = down.pile;

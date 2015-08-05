@@ -476,22 +476,7 @@ const Game = {
   savePref: function(name, val) {
     savePref(this.id + "." + name, val);
   },
-
-
-  // === Miscellany =======================================
-
-  get firstEmptyFoundation() {
-    return findEmpty(this.foundations);
-  },
-
-  get firstEmptyPile() {
-    return findEmpty(this.piles);
-  },
-
-  get emptyCell() {
-    return findEmpty(this.cells);
-  }
-}
+};
 
 
 

@@ -22,7 +22,7 @@ const GypsyBase = {
     if(!card.isLast) return null;
     if(card.isAce) {
       var twinp = card.twin.pile;
-      return twinp.isFoundation && !twinp.twin.hasCards ? twinp.twin : this.firstEmptyFoundation;
+      return twinp.isFoundation && !twinp.twin.hasCards ? twinp.twin : findEmpty(this.foundations);
     }
     var down = card.down, c = down;
     do {

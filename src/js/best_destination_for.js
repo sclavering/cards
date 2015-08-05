@@ -19,5 +19,5 @@ function find_destination__nearest_legal_pile(card) {
 
 function find_destination__nearest_legal_pile_or_cell(card) {
   const p = find_destination__nearest_legal_pile.call(this, card);
-  return p || (card.isLast ? this.emptyCell : null);;
+  return p || (card.isLast ? findEmpty(this.cells) : null);;
 }

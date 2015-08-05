@@ -33,7 +33,7 @@ gGameClasses.whitehead = {
       p = on.pile;
       if(p.isPile && on.isLast) return p;
     }
-    return this.firstEmptyPile;
+    return findEmpty(this.piles);
   },
 
   autoplay: autoplay_default,

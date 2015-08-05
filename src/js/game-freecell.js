@@ -13,7 +13,7 @@ gGameClasses.freecell = {
 
   best_destination_for: function(card) {
     const p = find_destination__nearest_legal_pile_preferring_nonempty.call(this, card);
-    return p || (card.isLast ? this.emptyCell : null);
+    return p || (card.isLast ? findEmpty(this.cells) : null);
   },
 
   autoplay: autoplay_default,

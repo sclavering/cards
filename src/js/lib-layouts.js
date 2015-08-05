@@ -5,7 +5,7 @@ const Layout = {
 
   views: [],
 
-  // The root XUL element for this layout.
+  // The root DOM element for this layout.
   // The size is explicitly set (in onWindowResize) to match the *visible part*
   // of the parent <stack>, not the full area as expanded when cards are being
   // dragged or animated beyond the bottom and/or right edges of the window.

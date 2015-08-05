@@ -1,8 +1,9 @@
 /*
-This file holds "Action" objects, i.e. things that cane be done, undone, and
-redone (also called Commands, but that name has other meanings in XUL). They
-usually correspond to moving cards, removing a pair etc. (though not turning
-cards face up, as that is handled in gCurrentGame.doo).  The required interface is:
+"Action" objects are card-moves that can be done, undone, and redone.
+
+Turning cards face up is handled implicitly in gCurrentGame.doo, rather than being a stand-alone Action.
+
+The required interface is:
 
 perform()
   Carry out the action.  May start an animation, in which case the Action must

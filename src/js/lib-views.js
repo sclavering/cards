@@ -32,10 +32,7 @@ function initCardImageOffsets() {
 
 
 
-// This defines the interface expected of pile views, and also provides basic
-// infrastructure for one based on <xul:box><html:canvas/></xul:box>. The box
-// is used because other code used to expect a .boxObject, and to allow
-// control of whether the canvas should be stretched or not.
+// Base class for pile views.
 const _View = {
   insertInto: function(parentNode) {
     parentNode.appendChild(this._fragment || this._canvas);

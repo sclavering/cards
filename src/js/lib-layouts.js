@@ -6,9 +6,6 @@ const Layout = {
   views: [],
 
   // The root DOM element for this layout.
-  // The size is explicitly set (in onWindowResize) to match the *visible part*
-  // of the parent <stack>, not the full area as expanded when cards are being
-  // dragged or animated beyond the bottom and/or right edges of the window.
   _node: null,
 
   show: function() {
@@ -246,7 +243,6 @@ const Layout = {
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;
-    self._node.style.height = height + 'px';
     const vs = self.viewsNeedingUpdateOnResize;
     self.setFlexibleViewSizes(vs, width, height);
     for each(var v in vs) v.update();

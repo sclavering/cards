@@ -28,7 +28,7 @@ function makeCards(repeat, suits, numbers, mod13) {
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = range2(1, 14);
   if(!mod13) mod13 = false;
-  const cardsss = [_makeCardSeqs(repeat, suit, numbers, mod13) for each(suit in suits)];
+  const cardsss = [for(suit of suits) _makeCardSeqs(repeat, suit, numbers, mod13)];
   return flatten(cardsss, 3);
 }
 
@@ -42,7 +42,7 @@ function _makeCardSeqs(repeat, suit, numbers, mod13) {
 }
 
 function _makeCardSeq(numbers, suit, mod13) {
-  const cs = [new Card(num, suit) for each(num in numbers)];
+  const cs = [for(num of numbers) new Card(num, suit)];
   if(mod13) cs[cs.length - 1].upNumber = 1; // copied from old code, may be unnecessary
   return linkList(cs, "down", "up", mod13);
 }

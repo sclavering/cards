@@ -98,16 +98,16 @@ const Game = {
 
     // Convert to flattened lists, ordered the way the layout was created.
     this._pilesToCreateLetters = layoutletters;
-    this._pilesToCreate = [impls[l] for each(l in layoutletters)];
-    this._cardsToDealDown = [downs[l].shift() for each(l in layoutletters)];
-    this._cardsToDealUp = [ups[l].shift() for each(l in layoutletters)];
+    this._pilesToCreate = [for(l of layoutletters) impls[l]];
+    this._cardsToDealDown = [for(l of layoutletters) downs[l].shift()];
+    this._cardsToDealUp = [for(l of layoutletters) ups[l].shift()];
   },
 
   createPiles: function() {
     const views = this.layout.views;
     const impls = this._pilesToCreate;
     const letters = this._pilesToCreateLetters;
-    const all = this.allpiles = [createPile(impl) for each(impl in impls)];
+    const all = this.allpiles = [for(impl of impls) createPile(impl)];
     const bytype = {};
     for(var i in all) {
       all[i].view = views[i];
@@ -124,17 +124,17 @@ const Game = {
 
   createPileArrays: function() {
     const all = this.allpiles;
-    this.dragDropTargets = [f for each(f in all) if(f.canDrop)];
-    this.piles = [p for each(p in all) if(p.isPile)];
-    this.cells = [p for each(p in all) if(p.isCell)];
-    this.reserves = [p for each(p in all) if(p.isReserve)];
-    this.foundations = [p for each(p in all) if(p.isFoundation)];
+    this.dragDropTargets = [for(f of all) if(f.canDrop) f];
+    this.piles = [for(p of all) if(p.isPile) p];
+    this.cells = [for(p of all) if(p.isCell) p];
+    this.reserves = [for(p of all) if(p.isReserve) p];
+    this.foundations = [for(p of all) if(p.isFoundation) p];
     for(i in this.foundations) this.foundations[i].index = i;
-    this.wastes = [p for each(p in all) if(p.isWaste)];
+    this.wastes = [for(p of all) if(p.isWaste) p];
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
-    this.stock = [p for each(p in all) if(p.isStock)][0] || null;
+    this.stock = [for(p of all) if(p.isStock) p][0] || null;
   },
 
 
@@ -153,7 +153,7 @@ const Game = {
     if(this.allcards) this.allcards = makeCards.apply(null, this.allcards);
     this.init();
     this.orderCardsDealt = order || this._getDealOrder();
-    this.deal([this.allcards[ix] for each(ix in this.orderCardsDealt)]);
+    this.deal([for(ix of this.orderCardsDealt) this.allcards[ix]]);
   },
 
   _getDealOrder: function() {
@@ -161,7 +161,7 @@ const Game = {
     var order, cards;
     do {
       order = shuffle(ixs);
-      cards = [this.allcards[ix] for each(ix in order)];
+      cards = [for(ix of order) this.allcards[ix]];
     } while(this.shuffleImpossible(cards));
     return order;
   },
@@ -410,7 +410,7 @@ const Game = {
   // the code managing the preferences goes wrong, but meh.)
   getFoundationForAce: function(card) {
     const suit = card.suit, fs = this.foundations;
-    const prefs = [fs[i] for each(i in this._preferredFoundationIndexesBySuit[suit])];
+    const prefs = [for(i of this._preferredFoundationIndexesBySuit[suit]) fs[i]];
     const unpref = this._unpreferredFoundations;
     return findEmpty(prefs) || findEmpty(unpref) || findEmpty(fs);
   },

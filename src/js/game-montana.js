@@ -66,7 +66,7 @@ MontanaRedealAction.prototype = {
     const rows = gCurrentGame.rows;
 
     // store old card locations
-    const map = [[p.firstCard for each(p in row)] for each(row in rows)];
+    const map = [for(row of rows) [for(p of row) p.firstCard]];
     this._pre_map = [].concat.apply([], map);
 
     // decide which cards need to move
@@ -76,7 +76,7 @@ MontanaRedealAction.prototype = {
       for(var c = 0; row[c].hasCards && row[c].firstCard.isA(suit, c + 2);) ++c;
       return c;
     }
-    const col_indexes = [get_last_good_col(row) for each(row in rows)];
+    const col_indexes = [for(row of rows) get_last_good_col(row)];
 
     // decide post-redeal layout
     var to_shuffle = [].concat.apply([], [map[i].slice(col_indexes[i]) for(i in map)]);

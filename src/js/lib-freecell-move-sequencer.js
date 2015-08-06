@@ -9,8 +9,8 @@ const FreeCellGame = {
     return new Move(card, dest);
     /* FreeCellMoveAction doesn't work correctly at the moment, so don't try using it
     if(card.isLast) return new Move(card, dest);
-    const spaces = [p for each(p in this.piles) if(p !== dest && !p.hasCards)];
-    const cells = [c for each(c in this.cells) if(!c.hasCards)];
+    const spaces = [for(p of this.piles) if(p !== dest && !p.hasCards) p];
+    const cells = [for(c of this.cells) if(!c.hasCards) c];
     return new FreeCellMoveAction(card, dest, cells, spaces);
     */
   },

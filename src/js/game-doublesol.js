@@ -20,12 +20,11 @@ gGameClasses.doublesol = {
 
   autoplay: function() {
     var triedToFillEmpty = false;
-    const fs = this.foundations, cs = this.allcards;
+    const cs = this.allcards;
     const ixs = this.foundationBaseIndexes;
     const nums = this.getAutoplayableNumbers();
 
-    for(var i = 0; i !== 4; i++) {
-      var f = fs[i];
+    for(let f of this.foundations) {
       if(f.hasCards) {
         var last = f.getCard(-1), prv = f.getCard(-2);
         var c1 = null, c2 = null;

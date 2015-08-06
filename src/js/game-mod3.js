@@ -68,11 +68,7 @@ gGameClasses.mod3 = {
       }
       // we've reached the end of the row, but might have found an empty pile we could fill
       if(!shouldFillEmpty || !empty) continue;
-      var bs = this.bases[r];
-      for(var i = 0; i !== 8; i++) {
-        var card = bs[i];
-        if(!card.pile.isGood && card.mayTake) return new Move(card, empty);
-      }
+      for(let card of this.bases[r]) if(!card.pile.isGood && card.mayTake) return new Move(card, empty);
     }
     return null;
   },

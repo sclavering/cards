@@ -34,10 +34,6 @@ function flatten(items, times) {
 }
 
 function findEmpty(piles) {
-  const num = piles.length;
-  for(var i = 0; i !== num; i++) {
-    var p = piles[i];
-    if(!p.hasCards) return p;
-  }
+  for(let p of piles) if(!p.hasCards) return p;
   return null;
 }

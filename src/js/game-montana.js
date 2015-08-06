@@ -90,8 +90,8 @@ MontanaRedealAction.prototype = {
 
   _change: function(map) {
     const ps = gCurrentGame.piles;
-    for(var i = 0; i !== 52; ++i) ps[i].removeCardsAfter(0);
-    for(i = 0; i !== 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
+    for(let p of ps) p.removeCardsAfter(0);
+    for(let i = 0; i !== 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
   },
 
   undo: function() {

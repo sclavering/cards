@@ -25,9 +25,9 @@ const SpiderBase = {
   },
 
   autoplay: function() {
-    const cs = this.allcards, ixs = this.kings, num = ixs.length, f = this.foundation;
-    for(var i = 0; i !== num; i++) {
-      var k = cs[ixs[i]], p = k.pile;
+    const cs = this.allcards, ixs = this.kings, f = this.foundation;
+    for(let ix of ixs) {
+      let k = cs[ix], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
     return null;
@@ -87,15 +87,15 @@ gGameClasses.divorce = {
   allcards: [2, , , true],
 
   autoplay: function() {
-    const ps = this.piles, num = ps.length, f = this.foundation;
-    for(var i = 0; i !== num; i++) {
-      var p = ps[i], n = p.cards.length - 13;
+    const f = this.foundation;
+    for(let p of this.piles) {
+      let n = p.cards.length - 13;
       if(n < 0) continue;
       var c = p.cards[n];
       if(p.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
     }
     return null;
-  }
+  },
 };
 
 

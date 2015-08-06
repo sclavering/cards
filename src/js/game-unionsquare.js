@@ -15,10 +15,9 @@ gGameClasses.unionsquare = {
   allcards: [2],
 
   best_destination_for: function(card) {
-    const p = card.pile, ps = p.isPile ? p.following() : this.piles, num = ps.length;
-    var empty = null;
-    for(var i = 0; i !== num; ++i) {
-      var q = ps[i];
+    const p = card.pile, ps = p.isPile ? p.following() : this.piles;
+    let empty = null;
+    for(let q of ps) {
       if(q.hasCards) {
         if(q.mayAddCard(card)) return q;
       } else if(!empty) {
@@ -46,9 +45,8 @@ gGameClasses.unionsquare = {
 
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
   autoplay: function() {
-    const fs = this.foundations;
-    for(var i = 0; i !== 4; ++i) {
-      var f = fs[i], len = f.cards.length, last = f.lastCard;
+    for(let f of this.foundations) {
+      let len = f.cards.length, last = f.lastCard;
       if(len < 12 || len === 26) continue;
       var c = len === 12 ? last.up : (len === 13 ? last.twin : last.down), cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);

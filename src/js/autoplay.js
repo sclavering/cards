@@ -3,10 +3,10 @@ function autoplay_default() {
     const maxNums = this.getAutoplayableNumbers();
     var triedToFillEmpty = false;
     // numBs matters for Penguin
-    const fs = this.foundations, cs = this.allcards;
+    const cs = this.allcards;
     const ixs = this.foundationBaseIndexes, numIxs = ixs.length;
     // Try to put Aces (or whatever) on empty foundations.
-    const empty = findEmpty(fs); // used to check move legality
+    const empty = findEmpty(this.foundations); // used to check move legality
     if(empty) {
       for(var j = 0; j !== numIxs; ++j) {
         var b = cs[ixs[j]];
@@ -15,8 +15,7 @@ function autoplay_default() {
       }
     }
     // Now try non-empty foundations
-    for(var i = 0; i !== fs.length; i++) {
-      var f = fs[i];
+    for(let f of this.foundations) {
       if(!f.hasCards) continue;
       var c = f.lastCard.up;
       if(!c || c.number > maxNums[c.suit]) continue;

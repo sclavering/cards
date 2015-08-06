@@ -50,9 +50,8 @@ const Game = {
   init: function() {},
 
   show: function() {
-    // some other game may have been using the layout, so need to reassociate piles+views
-    const all = this.allpiles, num = all.length;
-    for(var i = 0; i !== num; ++i) all[i].view.displayPile(all[i]);
+    // Some other game may have been using the layout, so need to reassociate piles+views
+    for(let p of this.allpiles) p.view.displayPile(p);
     this.layout.show();
     if(this.getHints) ui.btnHint.removeAttribute("disabled");
     else ui.btnHint.setAttribute("disabled","true");
@@ -248,7 +247,7 @@ const Game = {
     const pile = action.pileWhichMayNeedCardsRevealing || null;
     this._lastActionSourcePile = pile;
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
-    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(true);
+    for(let c of cs) c.setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
     ui.scoreDisplay.textContent = this.score += act.score;
     ui.movesDisplay.textContent = this.actionPtr;
@@ -272,7 +271,7 @@ const Game = {
 
     action.undo();
     const cs = action.revealedCards || [];
-    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(false);
+    for(let c of cs) c.setFaceUp(false);
   },
 
   redo: function() {
@@ -289,7 +288,7 @@ const Game = {
     if(action.redo) action.redo();
     else action.perform();
     const cs = action.revealedCards;
-    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(true);
+    for(let c of cs) c.setFaceUp(true);
   },
 
   // called after each move (unless interrupted by user).

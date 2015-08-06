@@ -56,3 +56,18 @@ gGameClasses.maze = {
     return true;
   }
 };
+
+
+const MazePile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: yes,
+  mayAddCard: function(card) {
+    if(this.hasCards) return false;
+    var prev = this.prev.lastCard, next = this.next.lastCard;
+    return (card.isQueen && next && next.isAce)
+        || (card.isAce && prev && prev.isQueen)
+        || (prev && prev == card.down)
+        || (next && next == card.up);
+  }
+};

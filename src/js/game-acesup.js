@@ -35,3 +35,19 @@ gGameClasses.acesup = {
     return true;
   },
 };
+
+
+const AcesUpFoundation = {
+  __proto__: NoWorryingBackFoundation,
+  mayAddCard: function(card) {
+    const suit = card.suit, num = card.number, src = card.pile;
+    var c = src.getCard(-2); // the card beneath |card|
+    if(c && suit == c.suit && num < c.number) return true;
+    const ps = src.following;
+    for(var i = 0; i != 3; ++i) {
+      var c = ps[i].lastCard;
+      if(c && suit == c.suit && num < c.number) return true;
+    }
+    return false;
+  }
+};

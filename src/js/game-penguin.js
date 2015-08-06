@@ -26,3 +26,11 @@ gGameClasses.penguin = {
 
   getAutoplayableNumbers: autoplay_any_card,
 };
+
+
+const PenguinPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: mayTakeRunningFlush,
+  mayAddCard: mayAddOntoDotUpOrPutKingInSpace
+};

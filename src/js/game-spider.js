@@ -158,3 +158,47 @@ gGameClasses.doublesimon = {
   helpId: "simon",
   kings: [12, 25, 38, 51, 64, 77, 90, 103]
 };
+
+
+const SpiderPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: mayTakeRunningFlush,
+  mayAddCard: mayAddOntoUpNumberOrEmpty
+};
+
+
+const BlackWidowPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: mayTakeDescendingRun,
+  mayAddCard: mayAddOntoUpNumberOrEmpty,
+  getHintSources: function() {
+    const sources = [];
+    const cs = this.cards;
+    for(var j = cs.length; j;) {
+      var card = cs[--j];
+      if(!card.faceUp) break;
+      var prv = this.getCard(j - 1);
+      if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
+      sources.push(card);
+      if(prv.number != card.upNumber) break;
+    }
+    // longer-run hints are probably better, so show those first
+    return sources.reverse();
+  }
+};
+
+const SpiderFoundation = {
+  __proto__: NoWorryingBackFoundation,
+
+  // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
+  // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
+  mayAddCard: function(card) {
+    const cs = card.pile.cards, len = cs.length, suit = card.suit;
+    if(card.index != len - 13) return false;
+    for(var i = card.index, j = i + 1; j != len; ++i, ++j)
+      if(cs[i].suit != cs[j].suit || cs[i].number != cs[j].upNumber) return false;
+    return true;
+  }
+};

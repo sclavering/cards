@@ -73,5 +73,11 @@ gGameClasses.tripeaks = {
       score += (ps[0].hasCards + ps[1].hasCards + ps[2].hasCards == 1) ? 30 : 15;
 
     return score;
-  }
-}
+  },
+};
+
+
+const TriPeaksPile = {
+  __proto__: _PyramidPile,
+  mayTakeCard: no
+};

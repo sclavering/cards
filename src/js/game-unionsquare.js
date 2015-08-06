@@ -58,3 +58,38 @@ gGameClasses.unionsquare = {
     return null;
   },
 };
+
+
+const UnionSquarePile = {
+  __proto__: Pile,
+
+  isPile: true,
+
+  mayTakeCard: ifLast,
+
+  // Piles built up or down in suit, but not both ways at once.
+  mayAddCard: function(card) {
+    const cs = this.cards, num = cs.length, last = this.lastCard;
+    if(!last) return true;
+    if(last.suit != card.suit) return false;
+    if(num == 1) return last.number == card.upNumber || last.upNumber == card.number;
+    return cs[0].number == cs[1].upNumber // going down?
+        ? last.number == card.upNumber
+        : last.upNumber == card.number;
+  }
+};
+
+// built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
+// from the a->k, so that it's clear what card should be plauyed next
+const UnionSquareFoundation = {
+  __proto__: NoWorryingBackFoundation,
+
+  mayAddCard: function(card) {
+    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
+    const last = this.lastCard, pos = this.cards.length;
+    if(last.suit != card.suit) return false;
+    if(pos < 13) return last.upNumber == card.number;
+    if(pos > 13) return last.number == card.upNumber;
+    return card.isKing;
+  }
+};

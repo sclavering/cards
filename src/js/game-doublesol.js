@@ -48,3 +48,17 @@ gGameClasses.doublesol = {
 
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 };
+
+
+// built A,A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
+// top *two* cards visible, so you can tell if they have the same number
+const DoubleSolFoundation = {
+  __proto__: WorryingBackFoundation,
+
+  mayAddCard: function(card) {
+    if(!card.isLast) return false;
+    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
+    const last = this.getCard(-1), prv = this.getCard(-2);
+    return prv == last.twin ? card.down == last || card.down == prv : card.twin == last;
+  }
+};

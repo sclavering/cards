@@ -20,3 +20,26 @@ gGameClasses.freecell = {
 
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 };
+
+
+const FreeCellPile = {
+  __proto__: _FreeCellPile,
+  isPile: true,
+
+  mayTakeCard: mayTakeFromFreeCellPile,
+
+  mayAddCard: function(card) {
+    var last = this.lastCard;
+    if(last && (last.colour == card.colour || last.number != card.upNumber)) return false;
+
+    // check there are enough cells+spaces to perform the move
+
+    if(card.isLast) return true;
+
+    var spaces = gCurrentGame.countEmptyPiles(this, card.pile);
+    if(spaces) spaces = spaces * (spaces + 1) / 2;
+    var canMove = (gCurrentGame.numEmptyCells + 1) * (spaces + 1);
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= canMove ? true : 0;
+  }
+};

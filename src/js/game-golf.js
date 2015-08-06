@@ -38,3 +38,12 @@ gGameClasses.golf2 = {
     return rv;
   },
 };
+
+
+const GolfPile = {
+  __proto__: Pile,
+  isPile: true,
+  // don't allow drag_drop because it's slower than just clicking the cards
+  mayTakeCard: mayTakeSingleCard,
+  mayAddCard: no
+};

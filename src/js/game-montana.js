@@ -101,4 +101,15 @@ MontanaRedealAction.prototype = {
   redo: function() {
     this._change(this._post_map);
   }
-}
+};
+
+
+const MontanaPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: yes,
+  mayAddCard: function(card) {
+    const lp = this.leftp;
+    return !this.hasCards && (card.number == 2 ? !lp : card.down.pile == lp);
+  }
+};

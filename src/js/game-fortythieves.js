@@ -20,3 +20,27 @@ gGameClasses.fortythieves = {
 
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_same_suit_are_on_foundations,
 };
+
+
+const FortyThievesPile = {
+  __proto__: Pile,
+  isPile: true,
+
+  mayTakeCard: mayTakeRunningFlush,
+
+  mayAddCard: function(card) {
+    var last = this.lastCard;
+    if(last && (card.suit != last.suit || card.upNumber != last.number)) return false;
+
+    // check there are enough spaces to perform the move
+
+    if(card.isLast) return true;
+
+    var canMove = gCurrentGame.countEmptyPiles(this, card.pile);
+    if(canMove) canMove = canMove * (canMove + 1) / 2;
+    canMove++;
+
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= canMove ? true : 0;
+  }
+};

@@ -33,3 +33,38 @@ gGameClasses.pyramid = {
     return !this.piles[0].hasCards;
   }
 };
+
+
+const PyramidPile = {
+  __proto__: _PyramidPile,
+  mayTakeCard: function(card) {
+    const lc = this.leftChild, rc = this.rightChild;
+    return !lc || (!lc.hasCards && !rc.hasCards);
+  },
+  getActionForDrop: function(card) {
+    const c = this.firstCard;
+    if(!c || card.number + c.number != 13) return null;
+    const l = this.leftChild, lc = l && l.firstCard;
+    const r = this.rightChild, rc = r && r.firstCard;
+    // can move if the only card covering this is the card being dragged
+    // (which remains part of its source pile during dragging)
+    return !l || ((!lc || lc == card) && (!rc || rc == card)) ? new RemovePair(card, c) : null;
+  }
+};
+
+const PyramidFoundation = {
+  __proto__: NoWorryingBackFoundation,
+  getActionForDrop: function(card) {
+    return card.isKing ? new RemovePair(card, null) : null;
+  },
+  mayAddCard: no
+};
+
+const PyramidWaste = {
+  __proto__: Waste,
+  canDrop: true,
+  getActionForDrop: function(card) {
+    const c = this.lastCard;
+    return c && card.number + c.number == 13 ? new RemovePair(card, c) : null;
+  }
+};

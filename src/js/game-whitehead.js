@@ -49,3 +49,14 @@ gGameClasses.whitehead = {
     return nums;
   },
 };
+
+
+const WhiteheadPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: mayTakeRunningFlush,
+  mayAddCard: function(card) {
+    const lst = this.lastCard;
+    return !lst || lst == card.up || lst == card.on;
+  }
+};

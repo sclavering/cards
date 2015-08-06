@@ -235,15 +235,6 @@ const Waste = {
   deal3t: 0  // The number of cards on this pile after the last deal.
 };
 
-const PyramidWaste = {
-  __proto__: Waste,
-  canDrop: true,
-  getActionForDrop: function(card) {
-    const c = this.lastCard;
-    return c && card.number + c.number == 13 ? new RemovePair(card, c) : null;
-  }
-};
-
 
 const Cell = {
   __proto__: Pile,
@@ -333,27 +324,6 @@ const AcesUpPile = {
   mayAddCard: mayAddSingleCardToEmpty
 };
 
-const BlackWidowPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeDescendingRun,
-  mayAddCard: mayAddOntoUpNumberOrEmpty,
-  getHintSources: function() {
-    const sources = [];
-    const cs = this.cards;
-    for(var j = cs.length; j;) {
-      var card = cs[--j];
-      if(!card.faceUp) break;
-      var prv = this.getCard(j - 1);
-      if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
-      sources.push(card);
-      if(prv.number != card.upNumber) break;
-    }
-    // longer-run hints are probably better, so show those first
-    return sources.reverse();
-  }
-};
-
 const CanfieldPile = {
   __proto__: Pile,
   isPile: true,
@@ -368,29 +338,6 @@ const FanPile = {
   mayAddCard: mayAddOntoNextUpInSuitOrPutKingInSpace
 };
 
-const FortyThievesPile = {
-  __proto__: Pile,
-  isPile: true,
-
-  mayTakeCard: mayTakeRunningFlush,
-
-  mayAddCard: function(card) {
-    var last = this.lastCard;
-    if(last && (card.suit != last.suit || card.upNumber != last.number)) return false;
-
-    // check there are enough spaces to perform the move
-
-    if(card.isLast) return true;
-
-    var canMove = gCurrentGame.countEmptyPiles(this, card.pile);
-    if(canMove) canMove = canMove * (canMove + 1) / 2;
-    canMove++;
-
-    const toMove = card.pile.cards.length - card.index;
-    return toMove <= canMove ? true : 0;
-  }
-};
-
 const _FreeCellPile = {
   __proto__: Pile,
   // mayAddCard returns 0 to mean "legal, but not enough cells+spaces to do the move"
@@ -399,36 +346,6 @@ const _FreeCellPile = {
     if(may) return new Move(card, this);
     return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;
   }
-};
-
-const FreeCellPile = {
-  __proto__: _FreeCellPile,
-  isPile: true,
-
-  mayTakeCard: mayTakeFromFreeCellPile,
-
-  mayAddCard: function(card) {
-    var last = this.lastCard;
-    if(last && (last.colour == card.colour || last.number != card.upNumber)) return false;
-
-    // check there are enough cells+spaces to perform the move
-
-    if(card.isLast) return true;
-
-    var spaces = gCurrentGame.countEmptyPiles(this, card.pile);
-    if(spaces) spaces = spaces * (spaces + 1) / 2;
-    var canMove = (gCurrentGame.numEmptyCells + 1) * (spaces + 1);
-    const toMove = card.pile.cards.length - card.index;
-    return toMove <= canMove ? true : 0;
-  }
-};
-
-const GolfPile = {
-  __proto__: Pile,
-  isPile: true,
-  // don't allow drag_drop because it's slower than just clicking the cards
-  mayTakeCard: mayTakeSingleCard,
-  mayAddCard: no
 };
 
 const GypsyPile = {
@@ -445,67 +362,6 @@ const KlondikePile = {
   mayAddCard: mayAddToKlondikePile
 };
 
-const MazePile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: yes,
-  mayAddCard: function(card) {
-    if(this.hasCards) return false;
-    var prev = this.prev.lastCard, next = this.next.lastCard;
-    return (card.isQueen && next && next.isAce)
-        || (card.isAce && prev && prev.isQueen)
-        || (prev && prev == card.down)
-        || (next && next == card.up);
-  }
-};
-
-const MontanaPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: yes,
-  mayAddCard: function(card) {
-    const lp = this.leftp;
-    return !this.hasCards && (card.number == 2 ? !lp : card.down.pile == lp);
-  }
-};
-
-const PenguinPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: mayAddOntoDotUpOrPutKingInSpace
-};
-
-const _PileOnPile = {
-  __proto__: Pile,
-  _depth: NaN,
-  isPile: true,
-  // May move any group of cards all of the same rank.
-  mayTakeCard: function(card) {
-    const num = card.number, cs = card.pile.cards, len = cs.length;
-    for(var i = card.index + 1; i != len; ++i) if(cs[i].number != num) return false;
-    return true;
-  },
-  // May put a card/group in a space, or on another card of the same number.
-  // No more than 4 cards may ever be in any single pile.
-  mayAddCard: function(card) {
-    const last = this.lastCard;
-    if(card.pile == this || (last && last.number != card.number)) return false;
-    const numCards = card.pile.cards.length - card.index;
-    return this.cards.length + numCards <= this._depth;
-  }
-};
-
-const PileOnPile4 = {
-  __proto__: _PileOnPile,
-  _depth: 4,
-};
-
-const PileOnPile8 = {
-  __proto__: _PileOnPile,
-  _depth: 8,
-};
-
 const _PyramidPile = { // used by TriPeaks too
   __proto__: Pile,
   isPile: true,
@@ -519,99 +375,6 @@ const _PyramidPile = { // used by TriPeaks too
   mayAddCard: no
 };
 
-const PyramidPile = {
-  __proto__: _PyramidPile,
-  mayTakeCard: function(card) {
-    const lc = this.leftChild, rc = this.rightChild;
-    return !lc || (!lc.hasCards && !rc.hasCards);
-  },
-  getActionForDrop: function(card) {
-    const c = this.firstCard;
-    if(!c || card.number + c.number != 13) return null;
-    const l = this.leftChild, lc = l && l.firstCard;
-    const r = this.rightChild, rc = r && r.firstCard;
-    // can move if the only card covering this is the card being dragged
-    // (which remains part of its source pile during dragging)
-    return !l || ((!lc || lc == card) && (!rc || rc == card)) ? new RemovePair(card, c) : null;
-  }
-};
-
-const RegimentPile = {
-  __proto__: Pile,
-  isPile: true,
-  reserve: null,
-
-  mayTakeCard: mayTakeSingleCard,
-
-  mayAddCard: function(card) {
-    if(card.pile == this) return false;
-    // piles are built up or down (or both) within suit
-    const l = this.lastCard;
-    if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
-
-    // empty piles must be filled from the closest reserve pile
-    const source = card.pile;
-    if(!source.isReserve) return false;
-
-    const reserve = this.reserve;
-    if(reserve == source) return true;
-
-    if(reserve.hasCards) return false;
-
-    var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasCards && prev != source) prev = prev.prev, prevDist++;
-    var next = reserve.next, nextDist = 1;
-    while(next && !next.hasCards && next != source) next = next.next, nextDist++;
-
-    // if trying to move from a reserve to the right
-    if(source.col > this.col) return next == source && (!prev || prevDist >= nextDist);
-    return prev == source && (!next || nextDist >= prevDist);
-  }
-};
-
-const SpiderPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: mayAddOntoUpNumberOrEmpty
-};
-
-const TowersPile = {
-  __proto__: _FreeCellPile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: function(card) {
-    var last = this.lastCard;
-    if(last ? last != card.up : !card.isKing) return false;
-    const toMove = card.pile.cards.length - card.index;
-    return toMove <= 1 + gCurrentGame.numEmptyCells ? true : 0;
-  }
-};
-
-const TriPeaksPile = {
-  __proto__: _PyramidPile,
-  mayTakeCard: no
-};
-
-const UnionSquarePile = {
-  __proto__: Pile,
-
-  isPile: true,
-
-  mayTakeCard: ifLast,
-
-  // Piles built up or down in suit, but not both ways at once.
-  mayAddCard: function(card) {
-    const cs = this.cards, num = cs.length, last = this.lastCard;
-    if(!last) return true;
-    if(last.suit != card.suit) return false;
-    if(num == 1) return last.number == card.upNumber || last.upNumber == card.number;
-    return cs[0].number == cs[1].upNumber // going down?
-        ? last.number == card.upNumber
-        : last.upNumber == card.number;
-  }
-};
-
 const WaspPile = {
   __proto__: Pile,
   isPile: true,
@@ -621,23 +384,6 @@ const WaspPile = {
     return [c for each(c in this.cards) if(c.faceUp)];
   }
 };
-
-const WhiteheadPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: function(card) {
-    const lst = this.lastCard;
-    return !lst || lst == card.up || lst == card.on;
-  }
-};
-
-const YukonPile = {
-  __proto__: CanfieldPile,
-  getHintSources: function() {
-    return [c for each(c in this.cards) if(c.faceUp)];
-  }
-}
 
 
 function mayAddCardToKlondikeFoundation(card) {
@@ -674,108 +420,5 @@ const GolfFoundation = {
   mayAddCard: function(card) {
     const l = this.lastCard;
     return l.number == card.upNumber || card.number == l.upNumber;
-  }
-};
-
-const SpiderFoundation = {
-  __proto__: NoWorryingBackFoundation,
-
-  // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
-  // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
-  mayAddCard: function(card) {
-    const cs = card.pile.cards, len = cs.length, suit = card.suit;
-    if(card.index != len - 13) return false;
-    for(var i = card.index, j = i + 1; j != len; ++i, ++j)
-      if(cs[i].suit != cs[j].suit || cs[i].number != cs[j].upNumber) return false;
-    return true;
-  }
-};
-
-const AcesUpFoundation = {
-  __proto__: NoWorryingBackFoundation,
-  mayAddCard: function(card) {
-    const suit = card.suit, num = card.number, src = card.pile;
-    var c = src.getCard(-2); // the card beneath |card|
-    if(c && suit == c.suit && num < c.number) return true;
-    const ps = src.following;
-    for(var i = 0; i != 3; ++i) {
-      var c = ps[i].lastCard;
-      if(c && suit == c.suit && num < c.number) return true;
-    }
-    return false;
-  }
-};
-
-// built A,A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
-// top *two* cards visible, so you can tell if they have the same number
-const DoubleSolFoundation = {
-  __proto__: WorryingBackFoundation,
-
-  mayAddCard: function(card) {
-    if(!card.isLast) return false;
-    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    const last = this.getCard(-1), prv = this.getCard(-2);
-    return prv == last.twin ? card.down == last || card.down == prv : card.twin == last;
-  }
-};
-
-const _Mod3Foundation = {
-  __proto__: WorryingBackFoundation,
-  _baseNum: -1, // set elsewhere
-  // returns whether the cards in this foundation are appropriate for it
-  get isGood() {
-    const first = this.firstCard;
-    return first ? first.number == this._baseNum : false;
-  },
-  mayAddCard: function(card) {
-    const last = this.lastCard;
-    if(!this.hasCards) return card.number == this._baseNum;
-    return this.isGood && (card.down == last || card.twin.down == last);
-  },
-  getHintSources: function() {
-    const c = this.firstCard;
-    return c && !this.isGood ? [c] : [];
-  }
-};
-
-const PyramidFoundation = {
-  __proto__: NoWorryingBackFoundation,
-  getActionForDrop: function(card) {
-    return card.isKing ? new RemovePair(card, null) : null;
-  },
-  mayAddCard: no
-};
-
-const RegimentAceFoundation = {
-  __proto__: WorryingBackFoundation,
-  mayAddCard: function(card) {
-    const last = this.lastCard, twin = card.twin;
-    // must not start a second ace foundation for a suit
-    if(card.isAce) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && card.number == last.upNumber && card.suit == last.suit;
-  }
-};
-
-const RegimentKingFoundation = {
-  __proto__: WorryingBackFoundation,
-  mayAddCard: function(card) {
-    const last = this.lastCard, twin = card.twin;
-    if(card.isKing) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && last.number == card.upNumber && card.suit == last.suit;
-  }
-};
-
-// built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right
-// from the a->k, so that it's clear what card should be plauyed next
-const UnionSquareFoundation = {
-  __proto__: NoWorryingBackFoundation,
-
-  mayAddCard: function(card) {
-    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    const last = this.lastCard, pos = this.cards.length;
-    if(last.suit != card.suit) return false;
-    if(pos < 13) return last.upNumber == card.number;
-    if(pos > 13) return last.number == card.upNumber;
-    return card.isKing;
   }
 };

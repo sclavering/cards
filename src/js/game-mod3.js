@@ -83,3 +83,23 @@ gGameClasses.mod3 = {
     return true;
   },
 };
+
+
+const _Mod3Foundation = {
+  __proto__: WorryingBackFoundation,
+  _baseNum: -1, // set elsewhere
+  // returns whether the cards in this foundation are appropriate for it
+  get isGood() {
+    const first = this.firstCard;
+    return first ? first.number == this._baseNum : false;
+  },
+  mayAddCard: function(card) {
+    const last = this.lastCard;
+    if(!this.hasCards) return card.number == this._baseNum;
+    return this.isGood && (card.down == last || card.twin.down == last);
+  },
+  getHintSources: function() {
+    const c = this.firstCard;
+    return c && !this.isGood ? [c] : [];
+  }
+};

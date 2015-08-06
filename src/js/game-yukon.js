@@ -33,3 +33,11 @@ gGameClasses.sanibel = {
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   allcards: [2]
 };
+
+
+const YukonPile = {
+  __proto__: CanfieldPile,
+  getHintSources: function() {
+    return [c for each(c in this.cards) if(c.faceUp)];
+  }
+};

@@ -17,3 +17,16 @@ gGameClasses.towers = {
 
   getAutoplayableNumbers: autoplay_any_card,
 };
+
+
+const TowersPile = {
+  __proto__: _FreeCellPile,
+  isPile: true,
+  mayTakeCard: mayTakeRunningFlush,
+  mayAddCard: function(card) {
+    var last = this.lastCard;
+    if(last ? last != card.up : !card.isKing) return false;
+    const toMove = card.pile.cards.length - card.index;
+    return toMove <= 1 + gCurrentGame.numEmptyCells ? true : 0;
+  }
+};

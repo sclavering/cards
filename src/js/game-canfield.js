@@ -1,7 +1,7 @@
 const CanfieldBase = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 4, CanfieldPile, FanDownView, 0, 0,

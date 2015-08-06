@@ -1,7 +1,7 @@
 const GolfBase = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
     "p", 7, GolfPile, FanDownView, 0, 5,
     "f", 1, GolfFoundation, CountedView, 0, 1,

@@ -1,7 +1,7 @@
 gGameClasses.montana = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "p", 52, MontanaPile, View, 0, 1,
   ],
 

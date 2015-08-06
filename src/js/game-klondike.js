@@ -1,7 +1,7 @@
 const KlondikeBase = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 7, KlondikePile, FanDownView, [0,1,2,3,4,5,6], 1,
@@ -59,7 +59,7 @@ gGameClasses.klondike3 = {
 
 gGameClasses.doubleklondike = {
   __proto__: KlondikeBase,
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 10, KlondikePile, FanDownView, range(10), 1,

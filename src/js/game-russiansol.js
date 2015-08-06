@@ -1,7 +1,7 @@
 gGameClasses.russiansol = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "p", 7, WaspPile, FanDownView, range(7), [1, 5, 5, 5, 5, 5, 5],
     "f", 4, FanFoundation, View, 0, 0,
   ],

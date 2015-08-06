@@ -1,7 +1,7 @@
 gGameClasses.whitehead = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToWaste, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 7, WhiteheadPile, FanDownView, 0, [i + 1 for(i in irange(7))],

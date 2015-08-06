@@ -1,7 +1,7 @@
 gGameClasses.acesup = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, StockDealToPiles, StockView, 0, 0,
     "p", 4, AcesUpPile, FanDownView, 0, 1,
     "f", 1, AcesUpFoundation, CountedView, 0, 0,

@@ -29,7 +29,7 @@ const Game = {
   // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
   // to the pile, if .deal() isn't replaced. Either a number (applying to all
   // of the piles) or an array of numbers (one per pile) can be used.
-  pileDetails: function() [
+  pileDetails: () => [
   /* partial example:
     "s", 1, null, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,

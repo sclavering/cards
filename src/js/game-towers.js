@@ -1,7 +1,7 @@
 gGameClasses.towers = {
   __proto__: FreeCellGame,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "p", 10, TowersPile, FanDownView, 0, 5,
     "f", 4, KlondikeFoundation, View, 0, 0,
     "c", 4, Cell, View, 0, [0, 1, 1, 0],

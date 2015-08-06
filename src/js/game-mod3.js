@@ -1,7 +1,7 @@
 gGameClasses.mod3 = {
   __proto__: Game,
 
-  pileDetails: function() [
+  pileDetails: () => [
     "s", 1, { __proto__: StockDealToPiles, isGood: false }, StockView, 0, 0,
     "p", 8, { __proto__: AcesUpPile, isGood: false }, FanDownView, 0, 1,
     "f", 8, { __proto__: _Mod3Foundation, _baseNum: 2 }, Mod3SlideView, 0, 1,

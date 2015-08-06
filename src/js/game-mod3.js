@@ -17,11 +17,11 @@ gGameClasses.mod3 = {
 
   allcards: null,
   init: function() {
-    const css = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
-    const cards = [makeCards(2, null, css[i]) for(i in css)];
-    this.allcards = flatten(cards, 1);
-    const baseIxs =[0, 4, 8, 12, 16, 20, 24, 28]
-    this.bases = [[cards[i][ix] for each(ix in baseIxs)] for(i in cards)];
+    const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
+    const cardss = [for(nums of numss) makeCards(2, null, nums)];
+    this.allcards = flatten(cardss, 1);
+    const baseIxs = [0, 4, 8, 12, 16, 20, 24, 28];
+    this.bases = [for(cards of cardss) [for(ix of baseIxs) cards[ix]]];
     const fs = this.foundations;
     this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
   },

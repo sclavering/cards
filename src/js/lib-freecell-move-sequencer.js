@@ -86,7 +86,7 @@ const FreeCellMover = {
 
   interrupt: function() {
     if(!this._queue.length) return;
-    for each(var el in this._queue) el[1].addCards(el[0]);
+    for(let el of this._queue) el[1].addCards(el[0]);
     this._queue = [];
   },
 

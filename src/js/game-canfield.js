@@ -19,7 +19,7 @@ const CanfieldBase = {
 
   deal: function(cards) {
     const num = cards[0].displayNum;
-    for each(let c in cards) c.renumber(num);
+    for(let c of cards) c.renumber(num);
 
     let ix = 0;
     ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);

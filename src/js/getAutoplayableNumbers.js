@@ -35,7 +35,7 @@ function _getAutoplayableNumbers_klondike(fs, always_allow_twos) {
 function autoplay_any_where_all_lower_of_same_suit_are_on_foundations() {
   const nums = { S: 20, H: 20, D: 20, C: 20 }; // suit -> lowest rank seen on fs
   const counts = { S: 0, H: 0, D: 0, C: 0 }; // suit -> num of such on fs
-  for each(let f in this.foundations) {
+  for(let f of this.foundations) {
     let c = f.lastCard;
     if(!c) continue;
     ++counts[c.suit];

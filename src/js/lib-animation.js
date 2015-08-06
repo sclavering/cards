@@ -10,7 +10,7 @@ const animations = {
 
   setTimeouts: function() {
     var time = 0;
-    for each(var item in this._items) {
+    for(let item of this._items) {
       time = item[1] = item[1] + time;
       this._timeouts.push(setTimeout.apply(window, item));
     }
@@ -23,9 +23,8 @@ const animations = {
   },
 
   interrupt: function() {
-    for each(var t in this._timeouts) clearTimeout(t);
-    for each(var i in this._interrupts)
-      i[0].apply(window, i.slice(1));
+    for(let t of this._timeouts) clearTimeout(t);
+    for(let i of this._interrupts) i[0].apply(window, i.slice(1));
     this._timeouts = [];
     this._interrupts = [];
     FreeCellMover.interrupt();
@@ -76,9 +75,9 @@ function showHints(card, destinations) {
   animations.setTimeouts();
 }
 function showHints_highlightDestinations(destinations) {
-  for each(var d in destinations) d.view.highlightHintTo();
+  for(let d of destinations) d.view.highlightHintTo();
 }
 function showHints_updateAll(destinations, sourceView) {
-  for each(var d in destinations) d.view.update();
+  for(let d of destinations) d.view.update();
   if(sourceView) sourceView.update();
 }

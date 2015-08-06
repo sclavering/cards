@@ -79,7 +79,7 @@ gGameClasses.mod3 = {
 
   is_won: function() {
     if(this.stock.hasCards) return false;
-    for each(let p in this.piles) if(p.cards.length) return false;
+    for(let p of this.piles) if(p.cards.length) return false;
     return true;
   },
 };

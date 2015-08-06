@@ -20,7 +20,7 @@ gGameClasses.doublefan = {
       const unitwidth = (width - kSpaceBetweenPiles) / (5 * 6 + 2 + 2);
       // div.thinspacer in the previous <td>
       views[0]._canvas.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
-      for each(var v in views) v.widthToUse = unitwidth * 5;
+      for(let v of views) v.widthToUse = unitwidth * 5;
     }
   },
 

@@ -5,7 +5,7 @@ const PileOnBase = {
 
   // Won when each pile is either empty or holds four cards of the same rank.
   is_won: function() {
-    for each(let p in this.piles) {
+    for(let p of this.piles) {
       let cs = p.cards;
       if(!cs.length) continue;
       if(cs.length !== this._pileon_depth) return false;

@@ -31,7 +31,7 @@ gGameClasses.acesup = {
 
   is_won: function() {
     if(this.stock.cards.length) return false;
-    for each(let p in this.piles) if(p.cards.length !== 1 || !p.cards[0].isAce) return false;
+    for(let p of this.piles) if(p.cards.length !== 1 || !p.cards[0].isAce) return false;
     return true;
   },
 };

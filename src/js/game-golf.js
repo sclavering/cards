@@ -17,7 +17,7 @@ const GolfBase = {
   },
 
   is_won: function() {
-    for each(let p in this.piles) if(p.cards.length) return false;
+    for(let p of this.piles) if(p.cards.length) return false;
     return true;
   },
 };

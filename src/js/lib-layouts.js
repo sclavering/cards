@@ -77,7 +77,7 @@ const Layout = {
           if(!box.previousSibling) {
             let empties = Array.filter(box.childNodes, function(x) { return !x.hasChildNodes(); });
             let cellWidth = (100 / empties.length) + '%';
-            for each(let td in empties) td.style.width = cellWidth;
+            for(let td of empties) td.style.width = cellWidth;
           }
           // fall through
         case ")":
@@ -182,7 +182,7 @@ const Layout = {
 
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
-    for each(let target in gCurrentGame.dragDropTargets) {
+    for(let target of gCurrentGame.dragDropTargets) {
       if(target === card.pile) continue;
       var view = target.view;
       var tr = view.pixelRect();
@@ -245,12 +245,12 @@ const Layout = {
     const height = rect.bottom - rect.top;
     const vs = self.viewsNeedingUpdateOnResize;
     self.setFlexibleViewSizes(vs, width, height);
-    for each(var v in vs) v.update();
+    for(let v of vs) v.update();
   },
 
   setFlexibleViewSizes: function(views, width, height) {
-    for each(var v in views) {
-      var r = v.pixelRect();
+    for(let v of views) {
+      let r = v.pixelRect();
       v.heightToUse = height - r.top;
       v.widthToUse = width - r.left;
     }

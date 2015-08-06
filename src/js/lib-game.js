@@ -203,7 +203,7 @@ const Game = {
   // This version works for most games.
   is_won: function() {
     const expected_foundation_length = this.allcards.length / this.foundations.length;
-    for each(let f in this.foundations) if(f.cards.length !== expected_foundation_length) return false;
+    for(let f of this.foundations) if(f.cards.length !== expected_foundation_length) return false;
     return true;
   },
 
@@ -307,7 +307,7 @@ const Game = {
   },
 
   getFoundationDestinationFor: function(card) {
-    for each(var f in this.foundations) if(f.mayAddCard(card)) return f;
+    for(let f of this.foundations) if(f.mayAddCard(card)) return f;
     return null;
   },
 
@@ -356,19 +356,17 @@ const Game = {
   // If set null the Hint toolbar button will be disabled.
   getHints: function() {
     const collections = this.hintOriginPileCollections();
-    for each(var ps in collections)
-      for each(var p in ps)
-        for each(var source in p.getHintSources())
+    for(let ps of collections)
+      for(let p of ps)
+        for(let source of p.getHintSources())
           this.addHintsFor(source);
   },
 
   addHintsFor: function(card) {
     const ds = [];
-    for each(var p in this.piles)
-      // suggesting moves to empty piles is ugly/annoying/pointless
-      if(p.hasCards && p.mayAddCard(card)) ds.push(p);
-    for each(var f in this.foundations)
-      if(f.mayAddCard(card)) ds.push(f);
+    // Note: we skip moves to empty piles, because such hints are ugly/annoying/pointless
+    for(let p of this.piles) if(p.hasCards && p.mayAddCard(card)) ds.push(p);
+    for(let f of this.foundations) if(f.mayAddCard(card)) ds.push(f);
     if(ds.length) this.addHints(card, ds);
   },
 
@@ -428,11 +426,11 @@ const Game = {
     const isNum = function(x) { return !isNaN(x); };
     this._unpreferredFoundations = []; // fallback. we'll search all foundations anyway
     if(!pref) return;
-    for each(var blob in pref.split(";")) { // blob: "S:1,3"
+    for(let blob of pref.split(";")) { // blob: "S:1,3"
       let [suit, numsBlob] = blob.split(":");
       if(!numsBlob) continue;
       bySuit[suit] = numsBlob.split(",").map(parseInt,10).filter(isNum).slice(0, max);
-      for each(i in bySuit[suit]) byIx[i] = suit;
+      for(let i of bySuit[suit]) byIx[i] = suit;
     }
     const fs = this.foundations;
     this._unpreferredFoundations = [fs[i] for(i in fs) if(!byIx[i])];

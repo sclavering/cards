@@ -70,8 +70,9 @@ function scheduleAnimatedMove(x0, y0, x1, y1) {
 function showHints(card, destinations) {
   const view = card.pile.view;
   view.highlightHintFrom(card);
+  const hint_cards = card.pile.cards.slice(card.index);
   gAnimations.schedule(300, () => {
-    for(let d of destinations) d.view.highlightHintTo();
+    for(let d of destinations) d.view.draw_hint_destination(hint_cards);
   });
   const end_hint = () => {
     for(let d of destinations) d.view.update();

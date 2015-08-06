@@ -81,8 +81,6 @@ const _View = {
   },
 
   highlightHintFrom: function(card) {
-    // for the destination piles to use
-    this.drawIntoFloatingPile(card);
     // shade the cards to be moved
     const bounds = card && this._getHighlightBounds(card.index, this.pile.numCards);
     const rect = bounds || { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
@@ -91,25 +89,19 @@ const _View = {
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   },
 
-  highlightHintTo: function() {
-    const numCards = this.pile.numCards;
-    const rect = this._getHighlightBounds(numCards, numCards + 1);
-    // Obscure the cards beneath a bit, since black stuff shows through a lot.
-    if(numCards) {
-      // area covered by existing cards
-      const rect0 = this._getHighlightBounds(0, numCards);
-      const overlapwidth = rect0.x + rect0.w - rect.x;
-      const overlapheight = rect0.y + rect0.h - rect.y;
-      // The ?1:2 stuff hides the final card's final (bottom/right) border
-      const dim_h = overlapheight - (rect.y ? 1 : 2);
-      const dim_w = overlapwidth  - (rect.x ? 1 : 2);
-      this._context.globalAlpha = 0.9;
-      this._context.fillStyle = "white";
-      this._context.fillRect(rect.x + 1, rect.y + 1, dim_w, dim_h);
-    }
-    // Draw the cards
+  // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.  This method should draw them in the pile, ghosted out slightly (by relying on ._draw_hint_destination_underlay() and ._set_context_alpha_for_hint_destination()).
+  draw_hint_destination: function(cards) {
+    throw new Error("not implemented");
+  },
+
+  _draw_hint_destination_underlay: function(x, y, w, h) {
+    this._context.globalAlpha = 0.9;
+    this._context.fillStyle = "white";
+    this._context.fillRect(x, y, w, h);
+  },
+
+  _set_context_alpha_for_hint_destination: function() {
     this._context.globalAlpha = 0.4;
-    this._context.drawImage(gFloatingPile.context.canvas, rect.x, rect.y);
   },
 
   // Get bounding-box in canvas-pixels of the card at index, assuming this pile
@@ -154,6 +146,12 @@ const View = {
     if(cs.length) drawCard(this._context, cs[cs.length - 1], 0, 0);
     else this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
+  },
+
+  draw_hint_destination: function(cards) {
+    if(this.pile.hasCards) this._draw_hint_destination_underlay(1, 1, gCardWidth - 2, gCardHeight - 2);
+    this._set_context_alpha_for_hint_destination();
+    drawCard(this._context, cards[cards.length - 1], 0, 0);
   },
 
   drawIntoFloatingPile: function(card) {
@@ -211,6 +209,29 @@ const _FanView = {
     gFloatingPile.sizeCanvas(width, height);
     for(var i = 0, j = first; i < numFloating; ++i, ++j) drawCard(gFloatingPile.context, cs[ixs[j]], h * i, v * i);
     return { x: first * h, y: first * v };
+  },
+
+  draw_hint_destination: function(cards) {
+    const num_existing = this.pile.numCards;
+    const rect = this._getHighlightBounds(num_existing, num_existing + 1);
+    // Obscure the cards beneath a bit, since black stuff shows through a lot.
+    if(num_existing) {
+      // area covered by existing cards
+      const rect0 = this._getHighlightBounds(0, num_existing);
+      const overlapwidth = rect0.x + rect0.w - rect.x;
+      const overlapheight = rect0.y + rect0.h - rect.y;
+      // The ?1:2 stuff hides the final card's final (bottom/right) border
+      const dim_h = overlapheight - (rect.y ? 1 : 2);
+      const dim_w = overlapwidth  - (rect.x ? 1 : 2);
+      this._draw_hint_destination_underlay(rect.x + 1, rect.y + 1, dim_w, dim_h);
+    }
+    // We draw into a temporary context because we want to apply opacity just once, not once per card.
+    const h_off = this._hOffset, v_off = this._vOffset;
+    const num = cards.length;
+    const tmp = gTemporaryCanvasContext.get((num - 1) * h_off + gCardWidth, (num - 1) * v_off + gCardHeight);
+    for(let i = 0; i !== num; ++i) drawCard(tmp, cards[i], i * h_off, i * v_off);
+    this._set_context_alpha_for_hint_destination();
+    this._context.drawImage(tmp.canvas, rect.x, rect.y);
   },
 
   _getHighlightBounds: function(index, numCards) {
@@ -446,4 +467,15 @@ const StockView = {
   getTargetCard: function(event) {
     return this.pile.lastCard || this.pile.magicStockStubCard;
   }
+};
+
+
+const gTemporaryCanvasContext = {
+  _context: null,
+  get: function(width, height) {
+    const cx = this._context || (this._context = document.createElement("canvas").getContext("2d"));
+    cx.canvas.width = width;
+    cx.canvas.height = height;
+    return cx;
+  },
 };

@@ -19,10 +19,10 @@ gGameClasses.montana = {
 
     var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
 
-    // leftp === left pile.  .left already exists (used for positioning in <stack>s)
-    for(let i = 0; i !== ps.length - 1; i++) ps[i].rightp = ps[i + 1], ps[i + 1].leftp = ps[i];
-    ps[0].leftp = ps[13].leftp = ps[26].leftp = ps[39].leftp = null;
-    ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
+    linkList(ps.slice(0, 13), "pileToLeft", "pileToRight", false);
+    linkList(ps.slice(13, 26), "pileToLeft", "pileToRight", false);
+    linkList(ps.slice(26, 39), "pileToLeft", "pileToRight", false);
+    linkList(ps.slice(39, 52), "pileToLeft", "pileToRight", false);
 
     this.rowStarts = [ps[0], ps[13], ps[26], ps[39]];
   },
@@ -33,7 +33,7 @@ gGameClasses.montana = {
 
   best_destination_for: function(card) {
     if(!card.down) return findEmpty(this.rowStarts);
-    var pile = card.down.pile.rightp;
+    const pile = card.down.pile.pileToRight;
     return pile && !pile.hasCards ? pile : null;
   },
 
@@ -42,11 +42,11 @@ gGameClasses.montana = {
   },
 
   is_won: function() {
-    for(var i = 0; i !== 4; i++) {
-      var pile = this.rowStarts[i], card = pile.lastCard, prv;
+    for(let pile of this.rowStarts) {
+      let card = pile.lastCard, prv;
       if(!card || card.down) return false;
-      while(pile.rightp) {
-        pile = pile.rightp; prv = card; card = pile.lastCard;
+      while(pile.pileToRight) {
+        pile = pile.pileToRight; prv = card; card = pile.lastCard;
         if(prv.up !== card) return false; // this works fine even when prv is a King
       }
     }
@@ -111,7 +111,7 @@ const MontanaPile = {
   isPile: true,
   mayTakeCard: yes,
   mayAddCard: function(card) {
-    const lp = this.leftp;
+    const lp = this.pileToLeft;
     return !this.hasCards && (card.number === 2 ? !lp : card.down.pile === lp);
   }
 };

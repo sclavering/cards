@@ -2,8 +2,8 @@ gGameClasses.mod3 = {
   __proto__: Game,
 
   pileDetails: () => [
-    "s", 1, { __proto__: StockDealToPiles, isGood: false }, StockView, 0, 0,
-    "p", 8, { __proto__: AcesUpPile, isGood: false }, FanDownView, 0, 1,
+    "s", 1, { __proto__: StockDealToPiles, contains_appropriate_cards: () => false }, StockView, 0, 0,
+    "p", 8, { __proto__: AcesUpPile, contains_appropriate_cards: () => false }, FanDownView, 0, 1,
     "f", 8, { __proto__: _Mod3Foundation, _baseNum: 2 }, Mod3SlideView, 0, 1,
     "g", 8, { __proto__: _Mod3Foundation, _baseNum: 3 }, Mod3SlideView, 0, 1,
     "h", 8, { __proto__: _Mod3Foundation, _baseNum: 4 }, Mod3SlideView, 0, 1,
@@ -57,18 +57,18 @@ gGameClasses.mod3 = {
         var pile = rs[r][c], last = pile.lastCard;
         // we choose not to autoplay onto a card whose twin isn't in place
         if(last) {
-          if(!last.pile.isGood) { shouldFillEmpty = false; continue; }
-          if(!last.twin.pile.isGood || !last.up) continue;
+          if(!last.pile.contains_appropriate_cards()) { shouldFillEmpty = false; continue; }
+          if(!last.twin.pile.contains_appropriate_cards() || !last.up) continue;
           var up1 = last.up, up2 = last.twin.up;
-          if(!up1.pile.isGood && up1.mayTake) return new Move(up1, pile);
-          if(!up2.pile.isGood && up2.mayTake) return new Move(up2, pile);
+          if(!up1.pile.contains_appropriate_cards() && up1.mayTake) return new Move(up1, pile);
+          if(!up2.pile.contains_appropriate_cards() && up2.mayTake) return new Move(up2, pile);
         } else if(shouldFillEmpty && !empty) {
           empty = pile;
         }
       }
       // we've reached the end of the row, but might have found an empty pile we could fill
       if(!shouldFillEmpty || !empty) continue;
-      for(let card of this.bases[r]) if(!card.pile.isGood && card.mayTake) return new Move(card, empty);
+      for(let card of this.bases[r]) if(!card.pile.contains_appropriate_cards() && card.mayTake) return new Move(card, empty);
     }
     return null;
   },
@@ -84,18 +84,17 @@ gGameClasses.mod3 = {
 const _Mod3Foundation = {
   __proto__: WorryingBackFoundation,
   _baseNum: -1, // set elsewhere
-  // returns whether the cards in this foundation are appropriate for it
-  get isGood() {
+  contains_appropriate_cards: function() {
     const first = this.firstCard;
     return first ? first.number === this._baseNum : false;
   },
   mayAddCard: function(card) {
     const last = this.lastCard;
     if(!this.hasCards) return card.number === this._baseNum;
-    return this.isGood && (card.down === last || card.twin.down === last);
+    return this.contains_appropriate_cards() && (card.down === last || card.twin.down === last);
   },
   getHintSources: function() {
     const c = this.firstCard;
-    return c && !this.isGood ? [c] : [];
+    return c && !this.contains_appropriate_cards() ? [c] : [];
   }
 };

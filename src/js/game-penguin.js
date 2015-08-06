@@ -12,8 +12,8 @@ gGameClasses.penguin = {
   foundationBaseIndexes: [0, 13, 26, 39],
 
   deal: function(cards) {
-    const aces = cards.filter(function(c) c.isAce);
-    const others = cards.filter(function(c) !c.isAce);
+    const aces = cards.filter(c => c.isAce);
+    const others = cards.filter(c => !c.isAce);
     this._deal_cards(aces, 0, this.piles[0], 0, 1);
     for(let i = 0; i < 3; ++i) this._deal_cards(aces, i + 1, this.foundations[i], 0, 1);
     let ix = 0;

@@ -43,11 +43,10 @@ const AcesUpFoundation = {
     const suit = card.suit, num = card.number, src = card.pile;
     var c = src.getCard(-2); // the card beneath |card|
     if(c && suit === c.suit && num < c.number) return true;
-    const ps = src.following();
-    for(var i = 0; i !== 3; ++i) {
-      var c = ps[i].lastCard;
+    for(let p of src.following()) {
+      let c = p.lastCard;
       if(c && suit === c.suit && num < c.number) return true;
     }
     return false;
-  }
+  },
 };

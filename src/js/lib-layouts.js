@@ -238,7 +238,7 @@ const Layout = {
   },
 
   onWindowResize: function(e) {
-    animations.interrupt();
+    gAnimations.cancel();
     const self = gCurrentGame.layout;
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;

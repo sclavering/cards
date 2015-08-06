@@ -1,34 +1,35 @@
-const animations = {
+const gAnimations = {
   _timeouts: [],
-  _interrupts: [],
+  _on_cancel: [],
   _items: [],
 
   // the second arg is the delay *relative* to the previous scheduled timer
-  schedule: function() { // func, delay, func_arg_1, ...
-    this._items.push(Array.slice(arguments, 0));
+  schedule: function(relative_delay, func) {
+    this._items.push([relative_delay, func]);
   },
 
-  setTimeouts: function() {
-    var time = 0;
-    for(let item of this._items) {
-      time = item[1] = item[1] + time;
-      this._timeouts.push(setTimeout.apply(window, item));
+  // pass (function, arg1, arg2, ...)
+  on_cancel: function(func) {
+    this._on_cancel.push(func);
+  },
+
+  run: function() {
+    let time = 0;
+    for(let [relative_delay, func] of this._items) {
+      time += relative_delay;
+      this._timeouts.push(setTimeout(func, time));
     }
     this._items = [];
   },
 
-  // pass (function, arg1, arg2, ...)
-  onInterruptRun: function() {
-    this._interrupts.push(Array.slice(arguments, 0));
-  },
-
-  interrupt: function() {
+  cancel: function() {
     for(let t of this._timeouts) clearTimeout(t);
-    for(let i of this._interrupts) i[0].apply(window, i.slice(1));
+    for(let func of this._on_cancel) func();
     this._timeouts = [];
-    this._interrupts = [];
+    this._on_cancel = [];
+    // xxx kill this
     FreeCellMover.interrupt();
-  }
+  },
 };
 
 
@@ -45,8 +46,8 @@ function moveCards(firstCard, target, doneFunc) {
   const ty = r.top + finalOffset.y;
 
   scheduleAnimatedMove(gFloatingPile._left, gFloatingPile._top, tx, ty);
-  animations.schedule(moveCards_callback, 0, target, doneFunc);
-  animations.onInterruptRun(moveCards_callback, target, null);
+  gAnimations.schedule(0, () => moveCards_callback(target, doneFunc));
+  gAnimations.on_cancel(() => moveCards_callback(target, null));
 };
 
 function moveCards_callback(target, extraFunc) {
@@ -62,22 +63,21 @@ function scheduleAnimatedMove(x0, y0, x1, y1) {
   const steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
   if(!steps) return;
   const stepX = dx / steps, stepY = dy / steps;
-  for(var i = 1; i <= steps; ++i)
-    animations.schedule(gFloatingPile.moveBy, kAnimationDelay, stepX, stepY);
+  const step_func = () => gFloatingPile.moveBy(stepX, stepY);
+  for(let i = 1; i <= steps; ++i) gAnimations.schedule(kAnimationDelay, step_func);
 }
 
 function showHints(card, destinations) {
   const view = card.pile.view;
   view.highlightHintFrom(card);
-  animations.schedule(showHints_highlightDestinations, 300, destinations);
-  animations.schedule(showHints_updateAll, 1700, destinations, view);
-  animations.onInterruptRun(showHints_updateAll, destinations, view);
-  animations.setTimeouts();
-}
-function showHints_highlightDestinations(destinations) {
-  for(let d of destinations) d.view.highlightHintTo();
-}
-function showHints_updateAll(destinations, sourceView) {
-  for(let d of destinations) d.view.update();
-  if(sourceView) sourceView.update();
+  gAnimations.schedule(300, () => {
+    for(let d of destinations) d.view.highlightHintTo();
+  });
+  const end_hint = () => {
+    for(let d of destinations) d.view.update();
+    if(view) view.update();
+  };
+  gAnimations.schedule(1700, end_hint);
+  gAnimations.on_cancel(end_hint);
+  gAnimations.run();
 }

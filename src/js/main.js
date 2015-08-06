@@ -221,10 +221,10 @@ function doo(action) { // "do" is a reserved word
   if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
   gCurrentGame.doo(action);
 
-  // Animated actions schedule done() approptiately themselves
-  if(action.synchronous) animations.schedule(done, kAnimationDelay);
+  // Animated actions schedule done() appropriately themselves
+  if(action.synchronous) gAnimations.schedule(kAnimationDelay, done);
   // For both the above timer and any requested by an animated action
-  animations.setTimeouts();
+  gAnimations.run();
 }
 
 
@@ -243,7 +243,7 @@ function interrupt() {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
 
-  animations.interrupt();
+  gAnimations.cancel();
   if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 

@@ -417,7 +417,7 @@ const Game = {
 
   // Call at startup
   loadPreferredFoundationSuits: function() {
-    const byIx = this._preferredSuitForFoundationIndex = [null for(ix in this.foundations)];
+    const byIx = this._preferredSuitForFoundationIndex = [for(_ of this.foundations) null];
     const bySuit = this._preferredFoundationIndexesBySuit = {
       S: [], H: [], D: [], C: []
     };

@@ -11,7 +11,7 @@ const SpiderBase = {
 
   best_destination_for: function(card) {
     let maybe = null, empty = null;
-    for each(let p in card.pile.surrounding) {
+    for each(let p in card.pile.surrounding()) {
       let last = p.lastCard;
       if(!last) {
         if(!empty) empty = p;

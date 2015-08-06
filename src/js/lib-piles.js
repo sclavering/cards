@@ -60,7 +60,7 @@ const Pile = {
   },
 
   // the sourrounding piles
-  get surrounding() {
+  surrounding: function() {
     if(this._surrounding) return this._surrounding;
     const ps = [];
     var prev = this.prev, next = this.next;
@@ -74,7 +74,7 @@ const Pile = {
   },
   _surrounding: null,
 
-  get following() {
+  following: function() {
     if(this._following) return this._following;
     const ps = [];
     for(var p = this.next; p && p != this; p = p.next) ps.push(p);

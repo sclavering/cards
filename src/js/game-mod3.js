@@ -45,7 +45,7 @@ gGameClasses.mod3 = {
       if(p) return p;
     }
     var parent = card.pile;
-    return findEmpty(parent.isPile ? parent.surrounding : this.piles);
+    return findEmpty(parent.isPile ? parent.surrounding() : this.piles);
   },
 
   autoplay: function() {

@@ -28,7 +28,6 @@ gGameClasses.regiment = {
     for(i = 0; i != 16; i++) {
       var p = ps[i], col = p.col = i % 8;
       p.reserve = rs[col];
-//      p.following = ps.slice(i + 1).concat(ps.slice(0, i));
     }
 
     this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
@@ -37,7 +36,7 @@ gGameClasses.regiment = {
 
   best_destination_for: function(card) {
     const parent = card.pile;
-    const ps = parent.isPile ? parent.following : this.piles, num = ps.length;
+    const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
     for(var i = 0; i != num; i++) {
       var p = ps[i];
       if(p.hasCards && p.mayAddCard(card)) return p;

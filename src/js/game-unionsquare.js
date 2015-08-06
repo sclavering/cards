@@ -15,7 +15,7 @@ gGameClasses.unionsquare = {
   allcards: [2],
 
   best_destination_for: function(card) {
-    const p = card.pile, ps = p.isPile ? p.following : this.piles, num = ps.length;
+    const p = card.pile, ps = p.isPile ? p.following() : this.piles, num = ps.length;
     var empty = null;
     for(var i = 0; i != num; ++i) {
       var q = ps[i];

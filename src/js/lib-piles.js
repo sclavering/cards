@@ -3,10 +3,6 @@ function createPile(impl) {
 }
 
 const Pile = {
-  // For debugging, set elsewhere
-  p_name: "??",
-  toString: function() this.p_name,
-
   // exactly one of these will be set true
   isFoundation: false,
   isCell: false,

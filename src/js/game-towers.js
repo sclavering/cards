@@ -25,7 +25,7 @@ const TowersPile = {
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
     var last = this.lastCard;
-    if(last ? last != card.up : !card.isKing) return false;
+    if(last ? last !== card.up : !card.isKing) return false;
     const toMove = card.pile.cards.length - card.index;
     return toMove <= 1 + gCurrentGame.numEmptyCells ? true : 0;
   }

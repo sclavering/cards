@@ -30,7 +30,7 @@ const FreeCellPile = {
 
   mayAddCard: function(card) {
     var last = this.lastCard;
-    if(last && (last.colour == card.colour || last.number != card.upNumber)) return false;
+    if(last && (last.colour === card.colour || last.number !== card.upNumber)) return false;
 
     // check there are enough cells+spaces to perform the move
 

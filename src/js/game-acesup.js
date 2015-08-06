@@ -12,7 +12,7 @@ gGameClasses.acesup = {
   allcards: [null, null, range2(2, 15)], // aces high
 
   init: function() {
-    for(var i = 0; i != 4; i++) this.piles[i].num = i;
+    for(var i = 0; i !== 4; i++) this.piles[i].num = i;
     const ps = this.piles;
     ps[0].prev = ps[3];
     ps[3].next = ps[0];
@@ -22,7 +22,7 @@ gGameClasses.acesup = {
     const f = this.foundation;
     if(f.mayAddCard(card)) return f;
     // return next empty pile
-    for(var p = card.pile, p2 = p.next; p2 != p; p2 = p2.next)
+    for(var p = card.pile, p2 = p.next; p2 !== p; p2 = p2.next)
       if(!p2.hasCards) return p2;
     return null;
   },
@@ -31,7 +31,7 @@ gGameClasses.acesup = {
 
   is_won: function() {
     if(this.stock.cards.length) return false;
-    for each(let p in this.piles) if(p.cards.length != 1 || !p.cards[0].isAce) return false;
+    for each(let p in this.piles) if(p.cards.length !== 1 || !p.cards[0].isAce) return false;
     return true;
   },
 };
@@ -42,11 +42,11 @@ const AcesUpFoundation = {
   mayAddCard: function(card) {
     const suit = card.suit, num = card.number, src = card.pile;
     var c = src.getCard(-2); // the card beneath |card|
-    if(c && suit == c.suit && num < c.number) return true;
+    if(c && suit === c.suit && num < c.number) return true;
     const ps = src.following();
-    for(var i = 0; i != 3; ++i) {
+    for(var i = 0; i !== 3; ++i) {
       var c = ps[i].lastCard;
-      if(c && suit == c.suit && num < c.number) return true;
+      if(c && suit === c.suit && num < c.number) return true;
     }
     return false;
   }

@@ -15,10 +15,10 @@ gGameClasses.whitehead = {
   init: function() {
     const cs = this.allcards;
     const off = [39, 13, -13, -39]; // offsets to other suit of same colour
-    for(var i = 0, k = 0; i != 4; i++) {
-      for(var j = 0; j != 13; j++, k++) {
+    for(var i = 0, k = 0; i !== 4; i++) {
+      for(var j = 0; j !== 13; j++, k++) {
         var c = cs[k];
-        c.on = j == 12 ? null : cs[k + off[i] + 1];
+        c.on = j === 12 ? null : cs[k + off[i] + 1];
       }
     }
   },
@@ -42,7 +42,7 @@ gGameClasses.whitehead = {
     const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
     const suitmap = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
     const fs = this.foundations;
-    for(var i = 0; i != 4; ++i) {
+    for(var i = 0; i !== 4; ++i) {
       var c = fs[i].lastCard;
       if(c) nums[suitmap[c.suit]] = c.upNumber;
     }
@@ -57,6 +57,6 @@ const WhiteheadPile = {
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
     const lst = this.lastCard;
-    return !lst || lst == card.up || lst == card.on;
+    return !lst || lst === card.up || lst === card.on;
   }
 };

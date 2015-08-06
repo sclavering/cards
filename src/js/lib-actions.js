@@ -63,14 +63,14 @@ Deal3Action.prototype = {
     const cs = s.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
     this.numMoved = w.deal3v = num;
     w.deal3t = w.cards.length + num;
-    for(var i = 0; i != num; ++i) s.dealCardTo(w);
+    for(var i = 0; i !== num; ++i) s.dealCardTo(w);
   },
 
   undo: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste, num = this.numMoved;
     w.deal3v = this.old_deal3v;
     w.deal3t = this.old_deal3t;
-    for(var i = 0; i != num; ++i) s.undealCardFrom(w);
+    for(var i = 0; i !== num; ++i) s.undealCardFrom(w);
   }
 }
 
@@ -83,12 +83,12 @@ DealToPiles.prototype = {
 
   perform: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
-    for(var i = 0; i != len && s.hasCards; ++i) s.dealCardTo(ps[i]);
+    for(var i = 0; i !== len && s.hasCards; ++i) s.dealCardTo(ps[i]);
     this.dealt = i;
   },
   undo: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles;
-    for(var i = this.dealt; i != 0; i--) s.undealCardFrom(ps[i - 1]);
+    for(var i = this.dealt; i !== 0; i--) s.undealCardFrom(ps[i - 1]);
   }
 }
 
@@ -102,7 +102,7 @@ DealToNonEmptyPilesAction.prototype = {
   perform: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
     var num = 0;
-    for(var i = 0; i != len && s.hasCards; ++i) {
+    for(var i = 0; i !== len && s.hasCards; ++i) {
       if(!ps[i].hasCards) continue;
       s.dealCardTo(ps[i]);
       this.last = i;
@@ -112,7 +112,7 @@ DealToNonEmptyPilesAction.prototype = {
   },
   undo: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles;
-    for(var i = this.last; i != -1; i--)
+    for(var i = this.last; i !== -1; i--)
       if(ps[i].hasCards) s.undealCardFrom(ps[i]);
   }
 }

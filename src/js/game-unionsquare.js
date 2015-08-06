@@ -17,7 +17,7 @@ gGameClasses.unionsquare = {
   best_destination_for: function(card) {
     const p = card.pile, ps = p.isPile ? p.following() : this.piles, num = ps.length;
     var empty = null;
-    for(var i = 0; i != num; ++i) {
+    for(var i = 0; i !== num; ++i) {
       var q = ps[i];
       if(q.hasCards) {
         if(q.mayAddCard(card)) return q;
@@ -33,7 +33,7 @@ gGameClasses.unionsquare = {
     if(twinp.isFoundation) {
       if(card.isKing) return twinp;
       // >, not >=, or it'd allow Q,K,Q on foundations
-      return twinp.cards.length > 13 && twinp.lastCard.number == card.upNumber ? twinp : null;
+      return twinp.cards.length > 13 && twinp.lastCard.number === card.upNumber ? twinp : null;
     }
     // can now assume twin is not on foundation
     if(card.isAce) return findEmpty(this.foundations);
@@ -47,10 +47,10 @@ gGameClasses.unionsquare = {
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
   autoplay: function() {
     const fs = this.foundations;
-    for(var i = 0; i != 4; ++i) {
+    for(var i = 0; i !== 4; ++i) {
       var f = fs[i], len = f.cards.length, last = f.lastCard;
-      if(len < 12 || len == 26) continue;
-      var c = len == 12 ? last.up : (len == 13 ? last.twin : last.down), cp = c.pile;
+      if(len < 12 || len === 26) continue;
+      var c = len === 12 ? last.up : (len === 13 ? last.twin : last.down), cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
       c = c.twin, cp = c.pile;
       if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
@@ -71,11 +71,11 @@ const UnionSquarePile = {
   mayAddCard: function(card) {
     const cs = this.cards, num = cs.length, last = this.lastCard;
     if(!last) return true;
-    if(last.suit != card.suit) return false;
-    if(num == 1) return last.number == card.upNumber || last.upNumber == card.number;
-    return cs[0].number == cs[1].upNumber // going down?
-        ? last.number == card.upNumber
-        : last.upNumber == card.number;
+    if(last.suit !== card.suit) return false;
+    if(num === 1) return last.number === card.upNumber || last.upNumber === card.number;
+    return cs[0].number === cs[1].upNumber // going down?
+        ? last.number === card.upNumber
+        : last.upNumber === card.number;
   }
 };
 
@@ -87,9 +87,9 @@ const UnionSquareFoundation = {
   mayAddCard: function(card) {
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     const last = this.lastCard, pos = this.cards.length;
-    if(last.suit != card.suit) return false;
-    if(pos < 13) return last.upNumber == card.number;
-    if(pos > 13) return last.number == card.upNumber;
+    if(last.suit !== card.suit) return false;
+    if(pos < 13) return last.upNumber === card.number;
+    if(pos > 13) return last.number === card.upNumber;
     return card.isKing;
   }
 };

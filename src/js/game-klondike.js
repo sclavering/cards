@@ -25,7 +25,7 @@ const KlondikeBase = {
     // If a card on the waste *could* be moved down to the playing piles (for 5 points)
     // then award those points event when moving it directly to the foundations.
     if(s.isWaste && d.isFoundation) {
-      for(var i = 0; i != ps.length; ++i)
+      for(var i = 0; i !== ps.length; ++i)
         if(ps[i].mayAddCard(c)) 
           return 15;
       return 10;
@@ -69,7 +69,7 @@ gGameClasses.doubleklondike = {
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   allcards: [2],
-  numPreferredFoundationsPerSuit: 2, // == num foundations of a given suit
+  numPreferredFoundationsPerSuit: 2, // === num foundations of a given suit
 
   // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,

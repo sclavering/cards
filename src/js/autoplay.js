@@ -8,14 +8,14 @@ function autoplay_default() {
     // Try to put Aces (or whatever) on empty foundations.
     const empty = findEmpty(fs); // used to check move legality
     if(empty) {
-      for(var j = 0; j != numIxs; ++j) {
+      for(var j = 0; j !== numIxs; ++j) {
         var b = cs[ixs[j]];
         if(!b.pile.isFoundation && b.pile.mayTakeCard(b) && empty.mayAddCard(b))
           return new Move(b, this.getFoundationForAce(b));
       }
     }
     // Now try non-empty foundations
-    for(var i = 0; i != fs.length; i++) {
+    for(var i = 0; i !== fs.length; i++) {
       var f = fs[i];
       if(!f.hasCards) continue;
       var c = f.lastCard.up;

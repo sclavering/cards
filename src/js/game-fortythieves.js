@@ -30,7 +30,7 @@ const FortyThievesPile = {
 
   mayAddCard: function(card) {
     var last = this.lastCard;
-    if(last && (card.suit != last.suit || card.upNumber != last.number)) return false;
+    if(last && (card.suit !== last.suit || card.upNumber !== last.number)) return false;
 
     // check there are enough spaces to perform the move
 

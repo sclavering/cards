@@ -29,7 +29,7 @@ gGameClasses.mod3 = {
   // games that start with no cards in the correct place on the foundations are impossible
   shuffleImpossible: function(cards) {
     for(let i = 0; i < 8; ++i)
-      if(cards[i].number == 2 || cards[i + 8].number == 3 || cards[i + 16].number == 4)
+      if(cards[i].number === 2 || cards[i + 8].number === 3 || cards[i + 16].number === 4)
         return false;
     return true;
   },
@@ -50,10 +50,10 @@ gGameClasses.mod3 = {
 
   autoplay: function() {
     const rs = this.rows;
-    for(var r = 0; r != 3; r++) {
+    for(var r = 0; r !== 3; r++) {
       var shouldFillEmpty = true; // don't do so if any foudations have "junk" in them
       var empty = null; // an empty foundation, if we find one
-      for(var c = 0; c != 8; c++) {
+      for(var c = 0; c !== 8; c++) {
         var pile = rs[r][c], last = pile.lastCard;
         // we choose not to autoplay onto a card whose twin isn't in place
         if(last) {
@@ -69,7 +69,7 @@ gGameClasses.mod3 = {
       // we've reached the end of the row, but might have found an empty pile we could fill
       if(!shouldFillEmpty || !empty) continue;
       var bs = this.bases[r];
-      for(var i = 0; i != 8; i++) {
+      for(var i = 0; i !== 8; i++) {
         var card = bs[i];
         if(!card.pile.isGood && card.mayTake) return new Move(card, empty);
       }
@@ -91,12 +91,12 @@ const _Mod3Foundation = {
   // returns whether the cards in this foundation are appropriate for it
   get isGood() {
     const first = this.firstCard;
-    return first ? first.number == this._baseNum : false;
+    return first ? first.number === this._baseNum : false;
   },
   mayAddCard: function(card) {
     const last = this.lastCard;
-    if(!this.hasCards) return card.number == this._baseNum;
-    return this.isGood && (card.down == last || card.twin.down == last);
+    if(!this.hasCards) return card.number === this._baseNum;
+    return this.isGood && (card.down === last || card.twin.down === last);
   },
   getHintSources: function() {
     const c = this.firstCard;

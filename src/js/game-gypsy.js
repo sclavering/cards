@@ -13,7 +13,7 @@ const GypsyBase = {
 
   init: function() {
     const fs = this.foundations;
-    for(var i = 0; i != 4; i++) fs[i].twin = fs[i + 4], fs[i + 4].twin = fs[i];
+    for(var i = 0; i !== 4; i++) fs[i].twin = fs[i + 4], fs[i + 4].twin = fs[i];
   },
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
@@ -29,14 +29,14 @@ const GypsyBase = {
       var p = c.pile;
       if(p.isFoundation && c.isLast) return p;
       c = c.twin;
-    } while(c != down);
+    } while(c !== down);
     return null;
   },
 
   autoplay: function() {
     const ps = this.piles;
     const nums = this.getAutoplayableNumbers();
-    for(var i = 0; i != 8; i++) {
+    for(var i = 0; i !== 8; i++) {
       var last = ps[i].lastCard;
       if(!last || last.number > nums[last.suit]) continue;
       var act = this.getFoundationMoveFor(last);

@@ -9,7 +9,7 @@ const FreeCellGame = {
     return new Move(card, dest);
     /* FreeCellMoveAction doesn't work correctly at the moment, so don't try using it
     if(card.isLast) return new Move(card, dest);
-    const spaces = [p for each(p in this.piles) if(p != dest && !p.hasCards)];
+    const spaces = [p for each(p in this.piles) if(p !== dest && !p.hasCards)];
     const cells = [c for each(c in this.cells) if(!c.hasCards)];
     return new FreeCellMoveAction(card, dest, cells, spaces);
     */
@@ -18,7 +18,7 @@ const FreeCellGame = {
   get numEmptyCells() {
     var cells = 0;
     const cs = this.cells, num = cs.length;
-    for(var i = 0; i != num; i++) if(!cs[i].hasCards) cells++;
+    for(var i = 0; i !== num; i++) if(!cs[i].hasCards) cells++;
     return cells;
   },
 
@@ -27,9 +27,9 @@ const FreeCellGame = {
   countEmptyPiles: function(ignore1, ignore2) {
     var empty = 0;
     const ps = this.piles, num = ps.length;
-    for(var i = 0; i != num; i++) {
+    for(var i = 0; i !== num; i++) {
       var p = ps[i];
-      if(p != ignore1 && p != ignore2 && !p.hasCards) empty++
+      if(p !== ignore1 && p !== ignore2 && !p.hasCards) empty++
     }
     return empty;
   }
@@ -95,7 +95,7 @@ const FreeCellMover = {
     const sibs = card.pile.cards;
     const group = cells.length + 1;
     const numSpaces = spaces.length;
-    for(var fst = sibs.length; sibs[--fst] != card; ) {} // get index of |card| within |sibs|
+    for(var fst = sibs.length; sibs[--fst] !== card; ) {} // get index of |card| within |sibs|
     const num = sibs.length - fst; // num. of cards to be moved
 
     if(num <= group) {
@@ -121,9 +121,9 @@ const FreeCellMover = {
   // then moves cards[first] to the target, then moves each of the cards put in cells to the target.
   queueSimple: function(cards, first, num, target, cells) {
     const numm = num - 1, last = first + numm;
-    for(let i = 0; i != numm; ++i) this.queueStep(cards[last - i], cells[i]);
+    for(let i = 0; i !== numm; ++i) this.queueStep(cards[last - i], cells[i]);
     this.queueStep(cards[first], target);
-    for(let i = 1; i != num; ++i) this.queueStep(cards[first + i], target);
+    for(let i = 1; i !== num; ++i) this.queueStep(cards[first + i], target);
   },
 
   // This fills each space with #cells+1 cards (by using cells) until there are few enough cards that
@@ -138,7 +138,7 @@ const FreeCellMover = {
       this.queueSimple(cards, i, group, spaces[s], cells);
     }
     this.queueSimple(cards, first, i - first, target, cells);
-    while(i != last) {
+    while(i !== last) {
       this.queueSimple(cards, i, group, target, cells);
       i += group;
     }
@@ -168,7 +168,7 @@ const FreeCellMover = {
     }
     this.queueMedium(cards, first, num, target, cells, sp);
 
-    while(c != last) {
+    while(c !== last) {
       --s;
       this.queueMedium(cards, c, batch, target, cells, ss[s]);
       c += batch;

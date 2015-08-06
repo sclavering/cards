@@ -17,7 +17,7 @@ function repeat(item, number) {
 
 // Make a linked-list of the array items, using the given link field names
 function linkList(items, prevPropName, nextPropName, loop) {
-  for(var i = 0; i != items.length; ++i) {
+  for(var i = 0; i !== items.length; ++i) {
     items[i][prevPropName] = items[i - 1] || null;
     items[i][nextPropName] = items[i + 1] || null;
   }
@@ -35,7 +35,7 @@ function flatten(items, times) {
 
 function findEmpty(piles) {
   const num = piles.length;
-  for(var i = 0; i != num; i++) {
+  for(var i = 0; i !== num; i++) {
     var p = piles[i];
     if(!p.hasCards) return p;
   }

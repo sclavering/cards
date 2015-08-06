@@ -19,13 +19,13 @@ gGameClasses.regiment = {
     this.aceFoundations = fs.slice(0,4);
     this.kingFoundations = fs.slice(4,8);
 
-    for(var i = 0; i != 8; i++) {
+    for(var i = 0; i !== 8; i++) {
       rs[i].up = ps[i];
       rs[i].down = ps[i + 8];
       rs[i].col = i;
     }
 
-    for(i = 0; i != 16; i++) {
+    for(i = 0; i !== 16; i++) {
       var p = ps[i], col = p.col = i % 8;
       p.reserve = rs[col];
     }
@@ -37,7 +37,7 @@ gGameClasses.regiment = {
   best_destination_for: function(card) {
     const parent = card.pile;
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
-    for(var i = 0; i != num; i++) {
+    for(var i = 0; i !== num; i++) {
       var p = ps[i];
       if(p.hasCards && p.mayAddCard(card)) return p;
     }
@@ -80,14 +80,14 @@ gGameClasses.regiment = {
     }
 
     const afs = this.aceFoundations, kfs = this.kingFoundations;
-    for(i = 0; i != 4; i++) {
+    for(i = 0; i !== 4; i++) {
       pile = afs[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
         card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
-    for(i = 0; i != 4; i++) {
+    for(i = 0; i !== 4; i++) {
       pile = kfs[i], last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
         card = last.down.pile.isFoundation ? last.twin.down : last.down;
@@ -107,28 +107,28 @@ const RegimentPile = {
   mayTakeCard: mayTakeSingleCard,
 
   mayAddCard: function(card) {
-    if(card.pile == this) return false;
+    if(card.pile === this) return false;
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
-    if(l) return card.suit == l.suit && (l.number == card.upNumber || card.number == l.upNumber);
+    if(l) return card.suit === l.suit && (l.number === card.upNumber || card.number === l.upNumber);
 
     // empty piles must be filled from the closest reserve pile
     const source = card.pile;
     if(!source.isReserve) return false;
 
     const reserve = this.reserve;
-    if(reserve == source) return true;
+    if(reserve === source) return true;
 
     if(reserve.hasCards) return false;
 
     var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasCards && prev != source) prev = prev.prev, prevDist++;
+    while(prev && !prev.hasCards && prev !== source) prev = prev.prev, prevDist++;
     var next = reserve.next, nextDist = 1;
-    while(next && !next.hasCards && next != source) next = next.next, nextDist++;
+    while(next && !next.hasCards && next !== source) next = next.next, nextDist++;
 
     // if trying to move from a reserve to the right
-    if(source.col > this.col) return next == source && (!prev || prevDist >= nextDist);
-    return prev == source && (!next || nextDist >= prevDist);
+    if(source.col > this.col) return next === source && (!prev || prevDist >= nextDist);
+    return prev === source && (!next || nextDist >= prevDist);
   }
 };
 
@@ -138,7 +138,7 @@ const RegimentAceFoundation = {
     const last = this.lastCard, twin = card.twin;
     // must not start a second ace foundation for a suit
     if(card.isAce) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && card.number == last.upNumber && card.suit == last.suit;
+    return last && card.number === last.upNumber && card.suit === last.suit;
   }
 };
 
@@ -147,6 +147,6 @@ const RegimentKingFoundation = {
   mayAddCard: function(card) {
     const last = this.lastCard, twin = card.twin;
     if(card.isKing) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && last.number == card.upNumber && card.suit == last.suit;
+    return last && last.number === card.upNumber && card.suit === last.suit;
   }
 };

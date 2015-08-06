@@ -15,12 +15,12 @@ gGameClasses.montana = {
     this.twos = [cs[0], cs[12], cs[24], cs[36]];
 
     var ps = this.piles;
-    for(let i = 0; i != 52; i++) ps[i].col = i % 13;
+    for(let i = 0; i !== 52; i++) ps[i].col = i % 13;
 
     var rs = this.rows = [ps.slice(0,13), ps.slice(13,26), ps.slice(26,39), ps.slice(39,52)];
 
-    // leftp == left pile.  .left already exists (used for positioning in <stack>s)
-    for(let i = 0; i != ps.length - 1; i++) ps[i].rightp = ps[i + 1], ps[i + 1].leftp = ps[i];
+    // leftp === left pile.  .left already exists (used for positioning in <stack>s)
+    for(let i = 0; i !== ps.length - 1; i++) ps[i].rightp = ps[i + 1], ps[i + 1].leftp = ps[i];
     ps[0].leftp = ps[13].leftp = ps[26].leftp = ps[39].leftp = null;
     ps[12].rightp = ps[25].rightp = ps[38].rightp = ps[51].rightp = null;
 
@@ -40,12 +40,12 @@ gGameClasses.montana = {
   },
 
   is_won: function() {
-    for(var i = 0; i != 4; i++) {
+    for(var i = 0; i !== 4; i++) {
       var pile = this.rowStarts[i], card = pile.lastCard, prv;
       if(!card || card.down) return false;
       while(pile.rightp) {
         pile = pile.rightp; prv = card; card = pile.lastCard;
-        if(prv.up != card) return false; // this works fine even when prv is a King
+        if(prv.up !== card) return false; // this works fine even when prv is a King
       }
     }
     return true;
@@ -90,8 +90,8 @@ MontanaRedealAction.prototype = {
 
   _change: function(map) {
     const ps = gCurrentGame.piles;
-    for(var i = 0; i != 52; ++i) ps[i].removeCardsAfter(0);
-    for(i = 0; i != 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
+    for(var i = 0; i !== 52; ++i) ps[i].removeCardsAfter(0);
+    for(i = 0; i !== 52; ++i) if(map[i]) ps[i].addCardsFromArray([map[i]]);
   },
 
   undo: function() {
@@ -110,6 +110,6 @@ const MontanaPile = {
   mayTakeCard: yes,
   mayAddCard: function(card) {
     const lp = this.leftp;
-    return !this.hasCards && (card.number == 2 ? !lp : card.down.pile == lp);
+    return !this.hasCards && (card.number === 2 ? !lp : card.down.pile === lp);
   }
 };

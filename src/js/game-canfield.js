@@ -24,7 +24,7 @@ const CanfieldBase = {
     let ix = 0;
     ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);
     ix = this._deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
-    for(let i = 0; i != 4; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
+    for(let i = 0; i !== 4; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
     this._deal_cards(cards, ix, this.stock, 52, 0);
 
     this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];

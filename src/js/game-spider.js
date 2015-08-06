@@ -26,7 +26,7 @@ const SpiderBase = {
 
   autoplay: function() {
     const cs = this.allcards, ixs = this.kings, num = ixs.length, f = this.foundation;
-    for(var i = 0; i != num; i++) {
+    for(var i = 0; i !== num; i++) {
       var k = cs[ixs[i]], p = k.pile;
       if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
     }
@@ -88,7 +88,7 @@ gGameClasses.divorce = {
 
   autoplay: function() {
     const ps = this.piles, num = ps.length, f = this.foundation;
-    for(var i = 0; i != num; i++) {
+    for(var i = 0; i !== num; i++) {
       var p = ps[i], n = p.cards.length - 13;
       if(n < 0) continue;
       var c = p.cards[n];
@@ -180,9 +180,9 @@ const BlackWidowPile = {
       var card = cs[--j];
       if(!card.faceUp) break;
       var prv = this.getCard(j - 1);
-      if(prv && prv.faceUp && prv.number == card.upNumber && prv.suit == card.suit) continue;
+      if(prv && prv.faceUp && prv.number === card.upNumber && prv.suit === card.suit) continue;
       sources.push(card);
-      if(prv.number != card.upNumber) break;
+      if(prv.number !== card.upNumber) break;
     }
     // longer-run hints are probably better, so show those first
     return sources.reverse();
@@ -196,9 +196,9 @@ const SpiderFoundation = {
   // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
   mayAddCard: function(card) {
     const cs = card.pile.cards, len = cs.length, suit = card.suit;
-    if(card.index != len - 13) return false;
-    for(var i = card.index, j = i + 1; j != len; ++i, ++j)
-      if(cs[i].suit != cs[j].suit || cs[i].number != cs[j].upNumber) return false;
+    if(card.index !== len - 13) return false;
+    for(var i = card.index, j = i + 1; j !== len; ++i, ++j)
+      if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].upNumber) return false;
     return true;
   }
 };

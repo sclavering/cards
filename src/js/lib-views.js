@@ -25,7 +25,7 @@ function drawCard(canvascx, card, x, y) {
 function initCardImageOffsets() {
   var off = gCardImageOffsets = {};
   for(let [l, n] in Iterator({ 'S': 0, 'H': 1, 'D': 2, 'C': 3 }))
-    for(var i = 1; i != 14; ++i)
+    for(var i = 1; i !== 14; ++i)
       off[l + i] = n * 13 + i - 1;
   off[''] = 4 * 13; // facedown image is last
 }
@@ -192,7 +192,7 @@ const _FanView = {
     const ixs = this.getVisibleCardIndexes(cs.length), num = ixs.length;
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
-    for(var i = 0; i != num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
+    for(var i = 0; i !== num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
     if(!num) this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
@@ -236,7 +236,7 @@ const _FanView = {
     const cs = this.pile.cards;
     const ixs = this.getVisibleCardIndexes(cs.length);
     const visualIx = this._getTargetCardVisualIndex(event, ixs.length);
-    return visualIx != -1 ? cs[ixs[visualIx]] : null;
+    return visualIx !== -1 ? cs[ixs[visualIx]] : null;
   },
 
   // handles only purely-horizontal or purely-vertical fans

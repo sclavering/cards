@@ -37,7 +37,7 @@ const kAnimationDelay = 30;
 
 function moveCards(firstCard, target, doneFunc) {
   const card = firstCard, origin = card.pile;
-  if(gFloatingPile.lastCard != card) origin.view.updateForAnimationOrDrag(card);
+  if(gFloatingPile.lastCard !== card) origin.view.updateForAnimationOrDrag(card);
   const finalOffset = target.view.getAnimationDestination();
 
   // final coords (relative to ui.gameStack)

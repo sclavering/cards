@@ -24,13 +24,13 @@ gGameClasses.maze = {
   best_destination_for: function(card) {
     if(card.isAce) {
       var start = card.pile, pile = start.next;
-      while(pile != start && (pile.hasCards || !(pile.next.lastCard == card.up
+      while(pile !== start && (pile.hasCards || !(pile.next.lastCard === card.up
           || (pile.prev.hasCards && pile.prev.lastCard.isQueen)))) pile = pile.next;
       return !pile.hasCards ? pile : null;
     }
     if(card.isQueen) {
       start = card.pile, pile = start.next;
-      while(pile != start && (pile.hasCards || !(pile.prev.lastCard == card.down
+      while(pile !== start && (pile.hasCards || !(pile.prev.lastCard === card.down
           || (pile.next.hasCards && pile.next.lastCard.isAce)))) pile = pile.next;
       return !pile.hasCards ? pile : null;
     }
@@ -49,10 +49,10 @@ gGameClasses.maze = {
       } else if(!c2) {
         if(!c1.isQueen) return false;
       } else {
-        if(!(c1.up == c2 || (c1.isQueen && c2.isAce))) return false;
+        if(!(c1.up === c2 || (c1.isQueen && c2.isAce))) return false;
       }
       pile = next;
-    } while(pile != first);
+    } while(pile !== first);
     return true;
   }
 };
@@ -67,7 +67,7 @@ const MazePile = {
     var prev = this.prev.lastCard, next = this.next.lastCard;
     return (card.isQueen && next && next.isAce)
         || (card.isAce && prev && prev.isQueen)
-        || (prev && prev == card.down)
-        || (next && next == card.up);
+        || (prev && prev === card.down)
+        || (next && next === card.up);
   }
 };

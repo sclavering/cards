@@ -52,7 +52,7 @@ const Game = {
   show: function() {
     // some other game may have been using the layout, so need to reassociate piles+views
     const all = this.allpiles, num = all.length;
-    for(var i = 0; i != num; ++i) all[i].view.displayPile(all[i]);
+    for(var i = 0; i !== num; ++i) all[i].view.displayPile(all[i]);
     this.layout.show();
     if(this.getHints) ui.btnHint.removeAttribute("disabled");
     else ui.btnHint.setAttribute("disabled","true");
@@ -86,9 +86,9 @@ const Game = {
       downs[l] = details[i * eLen + 4];
       ups[l]   = details[i * eLen + 5];
       // turn single numbers for face up/down cards into sequences per-pile
-      if(typeof downs[l] == "number") downs[l] = repeat(downs[l], nums[l]);
+      if(typeof downs[l] === "number") downs[l] = repeat(downs[l], nums[l]);
       else downs[l] = downs[l].slice(); //copy because we later modify it
-      if(typeof ups[l] == "number") ups[l] = repeat(ups[l], nums[l]);
+      if(typeof ups[l] === "number") ups[l] = repeat(ups[l], nums[l]);
       else ups[l] = ups[l].slice();
     }
 
@@ -117,7 +117,7 @@ const Game = {
       bytype[l].push(all[i]);
     }
     for(let [l, set] in Iterator(bytype)) {
-      for(let i = 0; i != set.length; ++i) set[i].p_name = l + i;
+      for(let i = 0; i !== set.length; ++i) set[i].p_name = l + i;
       linkList(set, "prev", "next");
     }
   },
@@ -136,7 +136,6 @@ const Game = {
     this.reserve = this.reserves[0] || null;
     this.stock = [p for each(p in all) if(p.isStock)][0] || null;
   },
-
 
 
   // === Start Game =======================================
@@ -204,7 +203,7 @@ const Game = {
   // This version works for most games.
   is_won: function() {
     const expected_foundation_length = this.allcards.length / this.foundations.length;
-    for each(let f in this.foundations) if(f.cards.length != expected_foundation_length) return false;
+    for each(let f in this.foundations) if(f.cards.length !== expected_foundation_length) return false;
     return true;
   },
 
@@ -249,7 +248,7 @@ const Game = {
     const pile = action.pileWhichMayNeedCardsRevealing || null;
     this._lastActionSourcePile = pile;
     const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
+    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(true);
     act.score += cs.length * this.scoreForRevealing;
     ui.scoreDisplay.textContent = this.score += act.score;
     ui.movesDisplay.textContent = this.actionPtr;
@@ -265,7 +264,7 @@ const Game = {
     const ptr = --this.actionPtr;
     const action = this.actionList[ptr];
     this.canRedo = true;
-    this.canUndo = ptr != 0;
+    this.canUndo = ptr !== 0;
 
     ui.scoreDisplay.textContent = (this.score -= action.score);
     ui.movesDisplay.textContent = this.actionPtr;
@@ -273,7 +272,7 @@ const Game = {
 
     action.undo();
     const cs = action.revealedCards || [];
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(false);
+    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(false);
   },
 
   redo: function() {
@@ -290,7 +289,7 @@ const Game = {
     if(action.redo) action.redo();
     else action.perform();
     const cs = action.revealedCards;
-    for(var i = 0; i != cs.length; ++i) cs[i].setFaceUp(true);
+    for(var i = 0; i !== cs.length; ++i) cs[i].setFaceUp(true);
   },
 
   // called after each move (unless interrupted by user).
@@ -343,9 +342,9 @@ const Game = {
       this.hintsReady = true;
     }
 
-    if(this.hintSources.length == 0) return;
+    if(this.hintSources.length === 0) return;
     const num = this.hintNum++; // must *post*-increment
-    if(this.hintNum == this.hintSources.length) this.hintNum = 0;
+    if(this.hintNum === this.hintSources.length) this.hintNum = 0;
     showHints(this.hintSources[num], this.hintDestinations[num]);
   },
 
@@ -380,7 +379,7 @@ const Game = {
 
 
 
-  // == Preferred foundations for different suits =========
+  // === Preferred foundations for different suits ========
   // Different people like to order the suits in different ways.  We support
   // this by remembering any explicit choice of foundation on a per-suit basis,
   // using a pref of the form: "S:3,4;H:5" (meaning Spades should go first to
@@ -445,14 +444,14 @@ const Game = {
     const bySuit = this._preferredFoundationIndexesBySuit;
     const byIx = this._preferredSuitForFoundationIndex;
     const oldsuit = byIx[foundation.index];
-    if(oldsuit == suit) return;
+    if(oldsuit === suit) return;
     // Clear old mapping for the new pile
     const fIndex = foundation.index;
-    if(oldsuit) bySuit[oldsuit] = bySuit[oldsuit].filter(function(x) { return x != fIndex });
+    if(oldsuit) bySuit[oldsuit] = bySuit[oldsuit].filter(function(x) { return x !== fIndex });
     // If explicitly removed from a foundation, clear that mapping
     if(card.pile.isFoundation) {
       const oldIndex = card.pile.index;
-      bySuit[suit] = bySuit[suit].filter(function(x) { return x != oldIndex });
+      bySuit[suit] = bySuit[suit].filter(function(x) { return x !== oldIndex });
       byIx[oldIndex] = null;
     }
     // Evict oldest mapping(s) for this suit if necessary
@@ -507,7 +506,7 @@ GameType.prototype = {
 
   newGame: function(cardsOrder) {
     if(this.currentGame) {
-      if(this.pastGames.length == 2) this.pastGames.shift();
+      if(this.pastGames.length === 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
       this.havePastGames = true;
     }
@@ -525,7 +524,7 @@ GameType.prototype = {
 
   restorePastGame: function() {
     if(!this.havePastGames) return;
-    if(this.futureGames.length == 2) this.futureGames.shift();
+    if(this.futureGames.length === 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
     this.haveFutureGames = true;
     gCurrentGame = this.currentGame = this.pastGames.pop();
@@ -535,7 +534,7 @@ GameType.prototype = {
 
   restoreFutureGame: function() {
     if(!this.haveFutureGames) return;
-    if(this.pastGames.length == 2) this.pastGames.shift();
+    if(this.pastGames.length === 2) this.pastGames.shift();
     this.pastGames.push(this.currentGame);
     this.havePastGames = true;
     gCurrentGame = this.currentGame = this.futureGames.pop();

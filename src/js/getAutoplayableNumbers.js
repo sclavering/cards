@@ -18,7 +18,7 @@ function autoplay_any_where_all_lower_of_other_colour_are_on_foundations() {
 function _getAutoplayableNumbers_klondike(fs, always_allow_twos) {
   const colour_nums = { R: 1000, B: 1000 }; // colour -> smallest num of that colour on the top of an f
   const colour_counts = { R: 0, B: 0 }; // num of fs of a given colour
-  for(var i = 0; i != fs.length; ++i) {
+  for(var i = 0; i !== fs.length; ++i) {
     var c = fs[i].lastCard;
     if(!c) continue;
     colour_counts[c.colour]++;

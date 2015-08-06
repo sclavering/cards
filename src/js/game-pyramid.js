@@ -14,7 +14,7 @@ gGameClasses.pyramid = {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;
     const ps = this.piles;
 
-    for(var i = 0; i != lknum; ++i) {
+    for(var i = 0; i !== lknum; ++i) {
       var lk = leftkid[i];
       let p = ps[i], l = ps[lk], r = ps[lk + 1];
       p.leftChild = l; l.rightParent = p;
@@ -52,7 +52,7 @@ gGameClasses.tripeaks = {
     const ps = this.piles;
     // indices of the leftChild's of piles 0-17 (piles 18+ have no children)
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
-    for(var i = 0; i != 18; i++) {
+    for(var i = 0; i !== 18; i++) {
       var p = ps[i], n = lefts[i], l = ps[n], r = ps[n + 1];
       p.leftChild = l;
       l.rightParent = p;
@@ -60,20 +60,20 @@ gGameClasses.tripeaks = {
       r.leftParent = p;
     }
 
-    for(i = 0; i != 28; ++i) ps[i].isPeak = i < 3;
+    for(i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
   },
 
   deal: function(cards) {
     let ix = 0;
-    for(let i = 0; i != 18; i++) ix = this._deal_cards(cards, ix, this.piles[i], 1, 0);
-    for(let i = 18; i != 28; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
+    for(let i = 0; i !== 18; i++) ix = this._deal_cards(cards, ix, this.piles[i], 1, 0);
+    for(let i = 18; i !== 28; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
     ix = this._deal_cards(cards, ix, this.foundation, 0, 1);
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   },
 
   getBestActionFor: function(card) {
     const f = gCurrentGame.foundation, c = f.lastCard;
-    return card.faceUp && (c.number == card.upNumber || c.upNumber == card.number) && new Move(card, f);
+    return card.faceUp && (c.number === card.upNumber || c.upNumber === card.number) && new Move(card, f);
   },
 
   getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
@@ -86,7 +86,7 @@ gGameClasses.tripeaks = {
 
   is_won: function() {
     // won when the the peaks are empty
-    for(var i = 0; i != 3; i++) if(this.piles[i].hasCards) return false;
+    for(var i = 0; i !== 3; i++) if(this.piles[i].hasCards) return false;
     return true;
   },
 
@@ -107,7 +107,7 @@ gGameClasses.tripeaks = {
     // bonuses for removing a peak card
     var pile = action.source, ps = this.piles;
     if(pile.isPeak)
-      score += (ps[0].hasCards + ps[1].hasCards + ps[2].hasCards == 1) ? 30 : 15;
+      score += (ps[0].hasCards + ps[1].hasCards + ps[2].hasCards === 1) ? 30 : 15;
 
     return score;
   },
@@ -135,12 +135,12 @@ const PyramidPile = {
   },
   getActionForDrop: function(card) {
     const c = this.firstCard;
-    if(!c || card.number + c.number != 13) return null;
+    if(!c || card.number + c.number !== 13) return null;
     const l = this.leftChild, lc = l && l.firstCard;
     const r = this.rightChild, rc = r && r.firstCard;
     // can move if the only card covering this is the card being dragged
     // (which remains part of its source pile during dragging)
-    return !l || ((!lc || lc == card) && (!rc || rc == card)) ? new RemovePair(card, c) : null;
+    return !l || ((!lc || lc === card) && (!rc || rc === card)) ? new RemovePair(card, c) : null;
   }
 };
 
@@ -162,6 +162,6 @@ const PyramidWaste = {
   canDrop: true,
   getActionForDrop: function(card) {
     const c = this.lastCard;
-    return c && card.number + c.number == 13 ? new RemovePair(card, c) : null;
+    return c && card.number + c.number === 13 ? new RemovePair(card, c) : null;
   }
 };

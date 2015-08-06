@@ -24,19 +24,19 @@ gGameClasses.doublesol = {
     const ixs = this.foundationBaseIndexes;
     const nums = this.getAutoplayableNumbers();
 
-    for(var i = 0; i != 4; i++) {
+    for(var i = 0; i !== 4; i++) {
       var f = fs[i];
       if(f.hasCards) {
         var last = f.getCard(-1), prv = f.getCard(-2);
         var c1 = null, c2 = null;
-        if(prv == last.twin) c1 = last.up, c2 = prv.up;
+        if(prv === last.twin) c1 = last.up, c2 = prv.up;
         else c1 = last.twin;
         if(!c1 || c1.number > nums[c1.suit]) continue;
         if(c1.faceUp && c1.isLast) return new Move(c1, f);
         if(c2 && c2.faceUp && c2.isLast) return new Move(c2, f);
       } else if(!triedToFillEmpty) {
         triedToFillEmpty = true;
-        for(var j = 0; j != 8; j++) {
+        for(var j = 0; j !== 8; j++) {
           var a = cs[ixs[j]];
           if(a.faceUp && !a.pile.isFoundation && !a.twin.pile.isFoundation && a.isLast)
             return new Move(a, f);
@@ -59,6 +59,6 @@ const DoubleSolFoundation = {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
     const last = this.getCard(-1), prv = this.getCard(-2);
-    return prv == last.twin ? card.down == last || card.down == prv : card.twin == last;
+    return prv === last.twin ? card.down === last || card.down === prv : card.twin === last;
   }
 };

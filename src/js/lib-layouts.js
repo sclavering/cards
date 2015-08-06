@@ -51,7 +51,7 @@ const Layout = {
     }
 
     const template = this.template, len = template.length;
-    for(var i = 0; i != len; ++i) {
+    for(var i = 0; i !== len; ++i) {
       var ch = template[i];
       switch(ch) {
       // boxes
@@ -98,7 +98,7 @@ const Layout = {
       // "{attr=val}", applies to most-recent pile or box
         case "{":
           var i0 = i;
-          while(template[i] != "}") ++i;
+          while(template[i] !== "}") ++i;
           var blob = template.substring(i0 + 1, i);
           let ix = blob.indexOf('='), k = blob.slice(0, ix), v = blob.slice(ix + 1);
           (box.lastChild || box).setAttribute(k, v);
@@ -123,7 +123,7 @@ const Layout = {
       }
     }
     // sanity check
-    if(box != container) throw "Layout.init(): layout had unclosed box";
+    if(box !== container) throw "Layout.init(): layout had unclosed box";
     this.viewsNeedingUpdateOnResize = [v for each(v in this.views) if(v.needsUpdateOnResize)];
     return letters;
   },
@@ -154,7 +154,7 @@ const Layout = {
   },
 
   beginDrag: function(e) {
-    const self = gCurrentGame.layout; // this == window
+    const self = gCurrentGame.layout; // this === window
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
@@ -183,7 +183,7 @@ const Layout = {
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
     for each(let target in gCurrentGame.dragDropTargets) {
-      if(target == card.pile) continue;
+      if(target === card.pile) continue;
       var view = target.view;
       var tr = view.pixelRect();
       // skip if we don't overlap the target at all

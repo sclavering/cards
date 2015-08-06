@@ -119,7 +119,6 @@ DealToNonEmptyPilesAction.prototype = {
 
 
 function Move(card, destination) {
-//  dump("created a Move: "+card+" to "+destination.localName+"("+destination.lastCard+")\n");
   this.card = card;
   this.source = card.pile;
   this.destination = destination;

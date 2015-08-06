@@ -19,9 +19,8 @@ gGameClasses.doublesol = {
   best_destination_for: find_destination__nearest_legal_pile,
 
   autoplay: function() {
-    var triedToFillEmpty = false;
+    let triedToFillEmpty = false;
     const cs = this.allcards;
-    const ixs = this.foundationBaseIndexes;
     const nums = this.getAutoplayableNumbers();
 
     for(let f of this.foundations) {
@@ -35,10 +34,9 @@ gGameClasses.doublesol = {
         if(c2 && c2.faceUp && c2.isLast) return new Move(c2, f);
       } else if(!triedToFillEmpty) {
         triedToFillEmpty = true;
-        for(var j = 0; j !== 8; j++) {
-          var a = cs[ixs[j]];
-          if(a.faceUp && !a.pile.isFoundation && !a.twin.pile.isFoundation && a.isLast)
-            return new Move(a, f);
+        for(let ix of this.foundationBaseIndexes) {
+          let a = cs[ix];
+          if(a.faceUp && !a.pile.isFoundation && !a.twin.pile.isFoundation && a.isLast) return new Move(a, f);
         }
       }
     }

@@ -362,19 +362,6 @@ const KlondikePile = {
   mayAddCard: mayAddToKlondikePile
 };
 
-const _PyramidPile = { // used by TriPeaks too
-  __proto__: Pile,
-  isPile: true,
-
-  // set in games' init()s
-  leftParent: null,
-  rightParent: null,
-  leftChild: null,
-  rightChild: null,
-
-  mayAddCard: no
-};
-
 const WaspPile = {
   __proto__: Pile,
   isPile: true,

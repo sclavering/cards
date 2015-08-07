@@ -252,7 +252,7 @@ const _SelectiveFanView = {
   __proto__: _FanView,
 
   _visible_cards_of: function(cs) {
-    return [for(ix of this.getVisibleCardIndexes(cs.length)) cs[ix]];
+    throw "not implemented";
   },
 
   _update: function(cards) {
@@ -343,13 +343,12 @@ const _SlideView = {
 const _Deal3WasteView = {
   __proto__: _SelectiveFanView,
   _counter: true,
-
-  getVisibleCardIndexes: function(lastIx) {
+  _visible_cards_of: function(cards) {
+    if(!cards.length) return [];
     const first = this.pile.deal3t - this.pile.deal3v;
-    if(!lastIx) return [];
-    if(lastIx <= first) return [lastIx - 1]; // gone below the latest 3
-    return range2(first, lastIx);
-  }
+    if(cards.length <= first) return cards.slice(-1);
+    return cards.slice(first);
+  },
 };
 
 const Deal3HWasteView = {
@@ -364,15 +363,14 @@ const Deal3VWasteView = {
   _vOffset: gVFanOffset
 };
 
-// top *two* cards visible, so you can tell if they have the same number
+// Shows the top *two* cards, so you can tell if they have the same number.
 const DoubleSolFoundationView = {
   __proto__: _TwoCardSelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
-  getVisibleCardIndexes: function(num) {
-    if(num >= 2) return [num - 2, num - 1];
-    return num ? [num - 1] : [];
-  }
+  _visible_cards_of: function(cards) {
+    return cards.slice(-2);
+  },
 };
 
 const FoundationSlideView = {
@@ -416,13 +414,12 @@ const PyramidView = {
   }
 };
 
+// Just displays Kings from the start of each King->Ace run.
 const _SpiderFoundationView = {
   __proto__: _SelectiveFanView,
   _vOffset: gVFanOffset,
-  getVisibleCardIndexes: function(lastIx) {
-    const ixs = [], cs = this.pile.cards;
-    for(var i = 0; i < lastIx; i += 13) ixs.push(i);
-    return ixs;
+  _visible_cards_of: function(cards) {
+    return cards.filter((el, ix) => ix % 13 === 0);
   },
   _get_animation_offset: function() {
     return this.pile.cards.length / 13;
@@ -439,15 +436,15 @@ const Spider8FoundationView = {
   fixedHeight: gCardHeight + 7 * gVFanOffset
 };
 
-// bottom + top cards visible, so you can tell whether pile is being built up or down
+// Shows the bottom cards and the top one, so you can tell whether pile is being built up or down.
 const UnionSquarePileView = {
   __proto__: _TwoCardSelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
-  getVisibleCardIndexes: function(num) {
-    if(num > 1) return [0, num - 1];
-    return num ? [0] : [];
-  }
+  _visible_cards_of: function(cards) {
+    if(cards.length > 1) return [cards[0], cards[cards.length - 1]];
+    return cards.slice(0, 1);
+  },
 };
 
 // Built A->K, and then K->A on top of those. We show the top card of each 13.
@@ -455,9 +452,9 @@ const UnionSquareFoundationView = {
   __proto__: _SelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
-  getVisibleCardIndexes: function(num) {
-    if(num > 13) return [12, num - 1];
-    return num ? [num - 1] : [];
+  _visible_cards_of: function(cards) {
+    if(cards.length > 13) return [cards[12], cards[cards.length - 1]];
+    return cards.slice(-1);
   },
   _get_animation_offset: function() {
     return this.pile.cards.length >= 13 ? 1 : 0;

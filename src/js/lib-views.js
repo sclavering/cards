@@ -461,9 +461,6 @@ const UnionSquareFoundationView = {
 const StockView = {
   __proto__: View,
   _counter: true,
-  getVisibleCardIndexes: function(max) {
-    return max ? [0] : [];
-  },
   getTargetCard: function(event) {
     return this.pile.lastCard || this.pile.magicStockStubCard;
   }

@@ -80,13 +80,16 @@ const _View = {
     this.update();
   },
 
+  // Shades the cards to be moved.
   highlightHintFrom: function(card) {
-    // shade the cards to be moved
-    const bounds = card && this._getHighlightBounds(card.index, this.pile.numCards);
-    const rect = bounds || { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
+    const rect = this._get_hint_source_rect(card);
     this._context.fillStyle = "darkgrey";
     this._context.globalAlpha = 0.3;
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
+  },
+
+  _get_hint_source_rect: function(card) {
+    return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.  This method should draw them in the pile, ghosted out slightly (by relying on ._draw_hint_destination_underlay() and ._set_context_alpha_for_hint_destination()).
@@ -228,6 +231,12 @@ const _FanView = {
     this._context.drawImage(tmp.canvas, rect.x, rect.y);
   },
 
+  _get_hint_source_rect: function(card) {
+    const offset = card.index, size = this.pile.cards.length - 1 - card.index;
+    const h = this._hOffset, v = this._vOffset;
+    return { x: offset * h, y: offset * v, w: size * h + gCardWidth, h: size * v + gCardHeight };
+  },
+
   _getHighlightBounds: function(index, numCards) {
     const ixs = this.getVisibleCardIndexes(numCards);
     const vIx = ixs.indexOf(index);
@@ -292,6 +301,12 @@ const _SelectiveFanView = {
 
   _get_target_card_at_relative_coords: function(x, y) {
     return this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards));
+  },
+
+  _get_hint_source_rect: function(card) {
+    // Only the top card will ever be the source of a hint.
+    const num = this._visible_cards_of(this.pile.cards).indexOf(card);
+    return { x: num * this._hOffset, y: num * this._vOffset, w: gCardWidth, h: gCardHeight };
   },
 
   // Subclasses will need to override ._get_animation_offset(), except for waste-pile views, where it's irrelevant.

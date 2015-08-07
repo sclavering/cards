@@ -92,19 +92,19 @@ const _View = {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   },
 
-  // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.  This method should draw them in the pile, ghosted out slightly (by relying on ._draw_hint_destination_underlay() and ._set_context_alpha_for_hint_destination()).
+  // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
+  // This method should render them into gTemporaryCanvasContext, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
   draw_hint_destination: function(cards) {
     throw new Error("not implemented");
   },
 
-  _draw_hint_destination_underlay: function(x, y, w, h) {
+  _draw_hint_destination: function(canvas_context, x, y) {
+    const canvas = canvas_context.canvas;
     this._context.globalAlpha = 0.9;
     this._context.fillStyle = "white";
-    this._context.fillRect(x, y, w, h);
-  },
-
-  _set_context_alpha_for_hint_destination: function() {
+    this._context.fillRect(x + 1, y + 1, canvas.width - 2, canvas.height - 2);
     this._context.globalAlpha = 0.4;
+    this._context.drawImage(canvas, x, y);
   },
 
   // Get bounding-box in canvas-pixels of the card at index, assuming this pile
@@ -152,9 +152,9 @@ const View = {
   },
 
   draw_hint_destination: function(cards) {
-    if(this.pile.hasCards) this._draw_hint_destination_underlay(1, 1, gCardWidth - 2, gCardHeight - 2);
-    this._set_context_alpha_for_hint_destination();
-    drawCard(this._context, cards[cards.length - 1], 0, 0);
+    const tmp = gTemporaryCanvasContext.get(gCardWidth, gCardHeight);
+    drawCard(tmp, cards[cards.length - 1], 0, 0);
+    this._draw_hint_destination(tmp, 0, 0);
   },
 
   drawIntoFloatingPile: function(card) {
@@ -213,12 +213,9 @@ const _FanView = {
     const rect = this._getHighlightBounds(num_existing, num_existing + 1);
     const num = cards.length, h_off = this._hOffset, v_off = this._vOffset;
     const w = (num - 1) * h_off + gCardWidth, h = (num - 1) * v_off + gCardHeight
-    this._draw_hint_destination_underlay(rect.x + 1, rect.y + 1, w - 2, h - 2);
-    // We draw into a temporary context because we want to apply opacity just once, not once per card.
     const tmp = gTemporaryCanvasContext.get(w, h);
     for(let i = 0; i !== num; ++i) drawCard(tmp, cards[i], i * h_off, i * v_off);
-    this._set_context_alpha_for_hint_destination();
-    this._context.drawImage(tmp.canvas, rect.x, rect.y);
+    this._draw_hint_destination(tmp, rect.x, rect.y);
   },
 
   _get_hint_source_rect: function(card) {

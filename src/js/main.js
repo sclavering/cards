@@ -84,7 +84,7 @@ function savePref(name, val) {
 }
 
 
-// A <div><canvas/></div> used to show cards being dragged or animated.
+// A <canvas/> used to show cards being dragged or animated.
 const gFloatingPile = {
   init: function() {
     this._canvas = document.createElement("canvas");
@@ -134,10 +134,8 @@ const gFloatingPile = {
     self._left = x;
     self._top = y;
     self._canvas.style.left = self._left + 'px';
-    // xxx this seems to sometimes cause warnings to show on the error console (seen in Fx 3.0):
-    // "Warning: Error in parsing value for property 'top'.  Declaration dropped."
     self._canvas.style.top = self._top + 'px';
-  }
+  },
 };
 
 

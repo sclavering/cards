@@ -109,9 +109,7 @@ const gFloatingPile = {
   },
 
   sizeCanvas: function(width, height) {
-    this.context.canvas.height = 0;
-    this.context.canvas.width = width;
-    this.context.canvas.height = height;
+    clear_and_resize_canvas(this.context, width, height);
   },
 
   // Show at (x, y).  Must be preceded by a call to sizeCanvas().

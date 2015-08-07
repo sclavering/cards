@@ -93,7 +93,7 @@ const _View = {
   },
 
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
-  // This method should render them into gTemporaryCanvasContext, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
+  // This method should render them into a temporary canvas, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
   draw_hint_destination: function(cards) {
     throw new Error("not implemented");
   },
@@ -137,16 +137,14 @@ const View = {
   __proto__: _View,
 
   _update: function(cs) {
-    this._canvas.width = gCardWidth;
-    this._canvas.height = 0; // changed values clears the canvas
-    this._canvas.height = gCardHeight;
+    clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
     if(cs.length) drawCard(this._context, cs[cs.length - 1], 0, 0);
     else this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   draw_hint_destination: function(cards) {
-    const tmp = gTemporaryCanvasContext.get(gCardWidth, gCardHeight);
+    const tmp = clear_and_resize_canvas(gTemporaryCanvasContext.get(), gCardWidth, gCardHeight);
     drawCard(tmp, cards[cards.length - 1], 0, 0);
     this._draw_hint_destination(tmp, 0, 0);
   },
@@ -180,9 +178,7 @@ const _FanView = {
   _vOffset: 0,
 
   _update: function(cs) {
-    this._canvas.width = this.fixedWidth || this.widthToUse;
-    this._canvas.height = 0; // changed value clears the canvas
-    this._canvas.height = this.fixedHeight || this.heightToUse;
+    clear_and_resize_canvas(this._context, this.fixedWidth || this.widthToUse, this.fixedHeight || this.heightToUse);
     const num = cs.length;
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
@@ -206,7 +202,7 @@ const _FanView = {
     const rect = this.get_next_card_xy();
     const num = cards.length, h_off = this._hOffset, v_off = this._vOffset;
     const w = (num - 1) * h_off + gCardWidth, h = (num - 1) * v_off + gCardHeight
-    const tmp = gTemporaryCanvasContext.get(w, h);
+    const tmp = clear_and_resize_canvas(gTemporaryCanvasContext.get(), w, h);
     for(let i = 0; i !== num; ++i) drawCard(tmp, cards[i], i * h_off, i * v_off);
     this._draw_hint_destination(tmp, rect.x, rect.y);
   },
@@ -473,10 +469,14 @@ const StockView = {
 
 const gTemporaryCanvasContext = {
   _context: null,
-  get: function(width, height) {
-    const cx = this._context || (this._context = document.createElement("canvas").getContext("2d"));
-    cx.canvas.width = width;
-    cx.canvas.height = height;
-    return cx;
+  get: function() {
+    return this._context || (this._context = document.createElement("canvas").getContext("2d"));
   },
+};
+
+function clear_and_resize_canvas(context, width, height) {
+  context.canvas.width = width;
+  context.canvas.height = height;
+  context.clearRect(0, 0, width, height);
+  return context;
 };

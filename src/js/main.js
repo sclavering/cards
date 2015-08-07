@@ -108,11 +108,7 @@ const gFloatingPile = {
     gFloatingPileNeedsHiding = false;
   },
 
-  sizeCanvas: function(width, height) {
-    clear_and_resize_canvas(this.context, width, height);
-  },
-
-  // Show at (x, y).  Must be preceded by a call to sizeCanvas().
+  // Show at (x, y).  Caller must set the size and paint into the context first.
   // 'card' has to be stored so that animations starting after a drag look right
   showFor: function(card, x, y) {
     this.lastCard = card;

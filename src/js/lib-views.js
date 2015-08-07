@@ -56,10 +56,10 @@ const _View = {
     throw "_View._update not overridden!";
   },
 
-  _draw_background_for_empty: function(width, height) {
+  _draw_background_into: function(ctx, width, height) {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
-    round_rect_path(this._context, 1.5, 1.5, (width || this._canvas.width) - 3, (height || this._canvas.height) - 3, 5);
+    round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width) - 3, (height || ctx.canvas.height) - 3, 5);
     this._context.stroke();
   },
 
@@ -137,21 +137,25 @@ const View = {
   __proto__: _View,
 
   _update: function(cs) {
-    clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
-    if(cs.length) drawCard(this._context, cs[cs.length - 1], 0, 0);
-    else this._draw_background_for_empty();
+    this.draw_into(this._context, cs, !cs.length);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
+  draw_into: function(ctx, cards, draw_background) {
+    clear_and_resize_canvas(ctx, gCardWidth, gCardHeight);
+    if(draw_background) this._draw_background_into(ctx);
+    if(cards.length) drawCard(ctx, cards[cards.length - 1], 0, 0);
+  },
+
   draw_hint_destination: function(cards) {
-    const tmp = clear_and_resize_canvas(gTemporaryCanvasContext.get(), gCardWidth, gCardHeight);
-    drawCard(tmp, cards[cards.length - 1], 0, 0);
+    const tmp = gTemporaryCanvasContext.get();
+    this.draw_into(tmp, cards, false);
     this._draw_hint_destination(tmp, 0, 0);
   },
 
   drawIntoFloatingPile: function(card) {
-    gFloatingPile.sizeCanvas(gCardWidth, gCardHeight);
-    drawCard(gFloatingPile.context, card, 0, 0);
+    const cards = this.pile.cards.slice(card.index);
+    this.draw_into(gFloatingPile.context, cards, false);
     return { x: 0, y: 0 };
   },
 
@@ -178,32 +182,37 @@ const _FanView = {
   _vOffset: 0,
 
   _update: function(cs) {
+    // xxx eliminate this call.  ._updateOffsets() is depending on it, but likely doesn't need to
     clear_and_resize_canvas(this._context, this.fixedWidth || this.widthToUse, this.fixedHeight || this.heightToUse);
-    const num = cs.length;
-    this._updateOffsets(num);
-    const h = this._hOffset, v = this._vOffset;
-    if(!num || this._always_draw_background) this._draw_background_for_empty();
-    for(let i = 0; i !== num; ++i) drawCard(this._context, cs[i], h * i, v * i);
+    this._updateOffsets(cs.length);
+    this.draw_into(this._context, cs, !cs.length || this._always_draw_background, this.fixedWidth || this.widthToUse, this.fixedHeight || this.heightToUse);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   // Change offsets to allow num cards to fit in the space
   _updateOffsets: function(num) {},
 
+  draw_into: function(ctx, cards, draw_background, width, height) {
+    const num = cards.length, h = this._hOffset, v = this._vOffset;
+    // xxx not sure these are necessary
+    if(!width) width = (num - 1) * h + gCardWidth;
+    if(!height) height = (num - 1) * v + gCardHeight;
+    clear_and_resize_canvas(ctx, width, height);
+    if(draw_background) this._draw_background_into(ctx);
+    for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
+  },
+
   drawIntoFloatingPile: function(card) {
-    const to_draw = this.pile.cards.slice(card.index);
+    const cards = this.pile.cards.slice(card.index);
+    this.draw_into(gFloatingPile.context, cards, false);
     const h = this._hOffset, v = this._vOffset;
-    gFloatingPile.sizeCanvas((to_draw.length - 1) * h + gCardWidth, (to_draw.length - 1) * v + gCardHeight);
-    for(let i = 0; i < to_draw.length; ++i) drawCard(gFloatingPile.context, to_draw[i], h * i, v * i);
     return { x: card.index * h, y: card.index * v };
   },
 
   draw_hint_destination: function(cards) {
     const rect = this.get_next_card_xy();
-    const num = cards.length, h_off = this._hOffset, v_off = this._vOffset;
-    const w = (num - 1) * h_off + gCardWidth, h = (num - 1) * v_off + gCardHeight
-    const tmp = clear_and_resize_canvas(gTemporaryCanvasContext.get(), w, h);
-    for(let i = 0; i !== num; ++i) drawCard(tmp, cards[i], i * h_off, i * v_off);
+    const tmp = gTemporaryCanvasContext.get();
+    this.draw_into(tmp, cards, false);
     this._draw_hint_destination(tmp, rect.x, rect.y);
   },
 
@@ -296,8 +305,8 @@ const _FlexFanView = {
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
     const r = this.pixelRect(), h = this._basicHOffset, v = this._basicVOffset;
-    if(h) this._hOffset = this._calculate_new_offset(h, r.right - r.left - gCardWidth, num);
-    if(v) this._vOffset = this._calculate_new_offset(v, r.bottom - r.top - gCardHeight, num);
+    if(h) this._hOffset = this._calculate_new_offset(h, r.width - gCardWidth, num);
+    if(v) this._vOffset = this._calculate_new_offset(v, r.height - gCardHeight, num);
   },
 
   _calculate_new_offset: function(preferred_offset, available_space, num_cards) {
@@ -306,8 +315,8 @@ const _FlexFanView = {
     return offset;
   },
 
-  _draw_background_for_empty: function() {
-    _View._draw_background_for_empty.call(this, gCardWidth, gCardHeight);
+  _draw_background_into: function(ctx) {
+    _View._draw_background_into.call(this, ctx, gCardWidth, gCardHeight);
   },
 
   needsUpdateOnResize: true,

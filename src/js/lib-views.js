@@ -173,9 +173,13 @@ const CountedView = {
 const _FanView = {
   __proto__: _View,
 
-  // Controls the size of the <canvas>.  Set null to use all available space
+  // These control the size of the <canvas>.
   fixedWidth: gCardWidth,
   fixedHeight: gCardHeight,
+
+  // If true, the Layout will over-write .fixedWidth or .fixedHeight when the window is resized.
+  flexWidth: false,
+  flexHeight: false,
 
   // Horizontal and vertical canvas-pixel offsets between cards
   _hOffset: 0,
@@ -183,9 +187,9 @@ const _FanView = {
 
   _update: function(cs) {
     // xxx eliminate this call.  ._updateOffsets() is depending on it, but likely doesn't need to
-    clear_and_resize_canvas(this._context, this.fixedWidth || this.widthToUse, this.fixedHeight || this.heightToUse);
+    clear_and_resize_canvas(this._context, this.fixedWidth, this.fixedHeight);
     this._updateOffsets(cs.length);
-    this.draw_into(this._context, cs, !cs.length || this._always_draw_background, this.fixedWidth || this.widthToUse, this.fixedHeight || this.heightToUse);
+    this.draw_into(this._context, cs, !cs.length || this._always_draw_background, this.fixedWidth, this.fixedHeight);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
@@ -324,13 +328,13 @@ const _FlexFanView = {
 
 const FanDownView = {
   __proto__: _FlexFanView,
-  fixedHeight: null,
+  flexHeight: true,
   _basicVOffset: gVFanOffset
 };
 
 const FanRightView = {
   __proto__: _FlexFanView,
-  fixedWidth: null,
+  flexWidth: true,
   _basicHOffset: gHFanOffset
 };
 

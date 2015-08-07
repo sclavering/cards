@@ -4,15 +4,15 @@ function irange(N) {
 }
 
 function range(end) {
-  return [i for(i in irange(end))];
+  return [for(i of irange(end)) i];
 }
 
 function range2(start, end) {
-  return [start + i for(i in irange(end - start))];
+  return [for(i of irange(end - start)) start + i];
 }
 
 function repeat(item, number) {
-  return [item for(i in irange(number))];
+  return [for(_ of irange(number)) item];
 }
 
 // Make a linked-list of the array items, using the given link field names

@@ -186,23 +186,19 @@ const _FanView = {
   _vOffset: 0,
 
   _update: function(cs) {
-    // xxx eliminate this call.  ._updateOffsets() is depending on it, but likely doesn't need to
-    clear_and_resize_canvas(this._context, this.fixedWidth, this.fixedHeight);
     this._updateOffsets(cs.length);
-    this.draw_into(this._context, cs, !cs.length || this._always_draw_background, this.fixedWidth, this.fixedHeight);
+    this.draw_into(this._context, cs, !cs.length || this._always_draw_background);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   // Change offsets to allow num cards to fit in the space
   _updateOffsets: function(num) {},
 
-  draw_into: function(ctx, cards, draw_background, width, height) {
-    const num = cards.length, h = this._hOffset, v = this._vOffset;
-    // xxx not sure these are necessary
-    if(!width) width = (num - 1) * h + gCardWidth;
-    if(!height) height = (num - 1) * v + gCardHeight;
-    clear_and_resize_canvas(ctx, width, height);
+  draw_into: function(ctx, cards, draw_background) {
+    // This makes the canvas bigger than necessary, but that's harmless.
+    clear_and_resize_canvas(ctx, this.fixedWidth, this.fixedHeight);
     if(draw_background) this._draw_background_into(ctx);
+    const num = cards.length, h = this._hOffset, v = this._vOffset;
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
   },
 
@@ -308,9 +304,9 @@ const _FlexFanView = {
 
   // change offsets to allow num+1 cards to fit in the space
   _updateOffsets: function(num) {
-    const r = this.pixelRect(), h = this._basicHOffset, v = this._basicVOffset;
-    if(h) this._hOffset = this._calculate_new_offset(h, r.width - gCardWidth, num);
-    if(v) this._vOffset = this._calculate_new_offset(v, r.height - gCardHeight, num);
+    const h = this._basicHOffset, v = this._basicVOffset;
+    if(h) this._hOffset = this._calculate_new_offset(h, this.fixedWidth - gCardWidth, num);
+    if(v) this._vOffset = this._calculate_new_offset(v, this.fixedHeight - gCardHeight, num);
   },
 
   _calculate_new_offset: function(preferred_offset, available_space, num_cards) {

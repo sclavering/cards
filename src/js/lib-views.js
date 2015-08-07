@@ -56,11 +56,11 @@ const _View = {
     throw "_View._update not overridden!";
   },
 
-  _drawBackgroundForEmpty: function() {
+  _draw_background_for_empty: function(width, height) {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
-    // note: strokeRect seems incapable of rounded corners
-    this._context.strokeRect(2, 2, this._canvas.width - 4, this._canvas.height - 4);
+    round_rect_path(this._context, 2.5, 2.5, (width || this._canvas.width) - 5, (height || this._canvas.height) - 5, 5);
+    this._context.stroke();
   },
 
   // Called when the user starts dragging 'card', or it's about to be moved
@@ -139,7 +139,7 @@ const View = {
   _update: function(cs) {
     clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
     if(cs.length) drawCard(this._context, cs[cs.length - 1], 0, 0);
-    else this._drawBackgroundForEmpty();
+    else this._draw_background_for_empty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
@@ -183,7 +183,7 @@ const _FanView = {
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
     for(let i = 0; i !== num; ++i) drawCard(this._context, cs[i], h * i, v * i);
-    if(!num) this._drawBackgroundForEmpty();
+    if(!num) this._draw_background_for_empty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
@@ -305,10 +305,8 @@ const _FlexFanView = {
     return offset;
   },
 
-  _drawBackgroundForEmpty: function() {
-    this._context.strokeStyle = "white";
-    this._context.lineWidth = 2;
-    this._context.strokeRect(2, 2, gCardWidth - 4, gCardHeight - 4);
+  _draw_background_for_empty: function() {
+    _View._draw_background_for_empty.call(this, gCardWidth, gCardHeight);
   },
 
   needsUpdateOnResize: true,
@@ -479,4 +477,20 @@ function clear_and_resize_canvas(context, width, height) {
   context.canvas.height = height;
   context.clearRect(0, 0, width, height);
   return context;
+};
+
+function round_rect_path(ctx, x, y, w, h, r) {
+  const deg_to_rad = Math.PI / 180;
+  const x2 = x + w, y2 = y + h;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x2 - r, y);
+  ctx.arc(x2 - r, y + r, r, 270 * deg_to_rad, 360 * deg_to_rad, false);
+  ctx.lineTo(x2, y2 - r);
+  ctx.arc(x2 - r, y2 - r, r, 0 * deg_to_rad, 90 * deg_to_rad, false);
+  ctx.lineTo(x + r, y2);
+  ctx.arc(x + r, y2 - r, r, 90 * deg_to_rad, 180 * deg_to_rad, false);
+  ctx.lineTo(x, y + r);
+  ctx.arc(x + r, y + r, r, 180 * deg_to_rad, 270 * deg_to_rad, false);
+  ctx.closePath();
 };

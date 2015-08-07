@@ -59,7 +59,7 @@ const _View = {
   _draw_background_for_empty: function(width, height) {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
-    round_rect_path(this._context, 2.5, 2.5, (width || this._canvas.width) - 5, (height || this._canvas.height) - 5, 5);
+    round_rect_path(this._context, 1.5, 1.5, (width || this._canvas.width) - 3, (height || this._canvas.height) - 3, 5);
     this._context.stroke();
   },
 
@@ -182,8 +182,8 @@ const _FanView = {
     const num = cs.length;
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
+    if(!num || this._always_draw_background) this._draw_background_for_empty();
     for(let i = 0; i !== num; ++i) drawCard(this._context, cs[i], h * i, v * i);
-    if(!num) this._draw_background_for_empty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
@@ -279,6 +279,7 @@ const _SelectiveFanView = {
 // Shows the top two cards
 const _TwoCardSelectiveFanView = {
   __proto__: _SelectiveFanView,
+  _always_draw_background: true,
   _get_animation_offset: function() {
     return this.pile.cards.length ? 1 : 0;
   },
@@ -337,6 +338,7 @@ const _SlideView = {
 const _Deal3WasteView = {
   __proto__: _SelectiveFanView,
   _counter: true,
+  _always_draw_background: true,
   _visible_cards_of: function(cards) {
     if(!cards.length) return [];
     const first = this.pile.deal3t - this.pile.deal3v;
@@ -382,12 +384,14 @@ const Mod3SlideView = {
 const PileOnView4 = {
   __proto__: _FanView,
   _hOffset: gHFanOffset,
+  _always_draw_background: true,
   fixedWidth: gCardWidth + 3 * gHFanOffset
 };
 
 const PileOnView8 = {
   __proto__: _FanView,
   _hOffset: gHFanOffset,
+  _always_draw_background: true,
   fixedWidth: gCardWidth + 7 * gHFanOffset
 };
 
@@ -412,6 +416,7 @@ const PyramidView = {
 const _SpiderFoundationView = {
   __proto__: _SelectiveFanView,
   _vOffset: gVFanOffset,
+  _always_draw_background: true,
   _visible_cards_of: function(cards) {
     return cards.filter((el, ix) => ix % 13 === 0);
   },
@@ -446,6 +451,7 @@ const UnionSquareFoundationView = {
   __proto__: _SelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
+  _always_draw_background: true,
   _visible_cards_of: function(cards) {
     if(cards.length > 13) return [cards[12], cards[cards.length - 1]];
     return cards.slice(-1);

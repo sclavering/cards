@@ -133,7 +133,7 @@ const _View = {
       this._counter.className = "counter";
     }
   }
-}
+};
 
 // A view where only the top card is ever visible (used for foundations).
 const View = {
@@ -169,8 +169,7 @@ const View = {
 const CountedView = {
   __proto__: View,
   _counter: true
-}
-
+};
 
 const _FanView = {
   __proto__: _View,
@@ -360,7 +359,6 @@ const Deal3VWasteView = {
   fixedHeight: gCardHeight + 2 * gVFanOffset,
   _vOffset: gVFanOffset
 };
-
 
 // top *two* cards visible, so you can tell if they have the same number
 const DoubleSolFoundationView = {

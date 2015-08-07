@@ -116,9 +116,6 @@ const gFloatingPile = {
   // 'card' has to be stored so that animations starting after a drag look right
   showFor: function(card, x, y) {
     this.lastCard = card;
-    // context widths already set appropriately in sizeCanvas
-    this._canvas.style.width = this.context.canvas.width + 'px';
-    this._canvas.style.height = this.context.canvas.height + 'px';
     this.moveTo(x, y);
   },
 

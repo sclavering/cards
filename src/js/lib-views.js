@@ -254,29 +254,28 @@ const _FanView = {
   },
 
   getTargetCard: function(event) {
+    const bounds = this._canvas.getBoundingClientRect();
+    return this._get_target_card_at_relative_coords(event.pageX - bounds.left, event.pageY - bounds.top);
+  },
+
+  _get_target_card_at_relative_coords: function(x, y) {
     const cs = this.pile.cards;
     const ixs = this.getVisibleCardIndexes(cs.length);
-    const visualIx = this._getTargetCardVisualIndex(event, ixs.length);
-    return visualIx !== -1 ? cs[ixs[visualIx]] : null;
+    const visible_cards = [for(ix of ixs) cs[ix]];
+    return this._get_target_card_at_relative_coords_from_list(x, y, visible_cards);
   },
 
   // handles only purely-horizontal or purely-vertical fans
-  _getTargetCardVisualIndex: function(event, numVisible) {
-    var pos, offset, cardsize;
-    if(this._hOffset) {
-      pos = event.pageX - this._canvas.getBoundingClientRect().left;
-      offset = this._hOffset;
-      cardsize = gCardHeight;
-    } else {
-      pos = event.pageY - this._canvas.getBoundingClientRect().top;
-      offset = this._vOffset;
-      cardsize = gCardWidth;
-    }
+  _get_target_card_at_relative_coords_from_list: function(x, y, cards) {
+    if(this._hOffset) return this._get_target_card_at_relative_coords_from_list2(x, this._hOffset, gCardWidth, cards);
+    return this._get_target_card_at_relative_coords_from_list2(y, this._vOffset, gCardHeight, cards);
+  },
+
+  _get_target_card_at_relative_coords_from_list2: function(pos, offset, cardsize, cards) {
     const ix = Math.floor(pos / offset);
-    const last = numVisible - 1;
-    if(ix <= last) return ix;
-    return pos < numVisible * offset + cardsize ? last : -1;
-  }
+    if(cards[ix]) return cards[ix];
+    return pos < (cards.length - 1) * offset + cardsize ? cards[cards.length - 1] : null;
+  },
 };
 
 // A fan that stretches in one dimension, and varies the card offset to make

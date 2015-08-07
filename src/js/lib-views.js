@@ -316,13 +316,6 @@ const _FlexFanView = {
   },
 
   needsUpdateOnResize: true,
-
-  initView: function() {
-    const el = document.createElement("canvas");
-    this._rootNode = this._canvas = el;
-    el.pileViewObj = this;
-    this._context = this._canvas.getContext("2d");
-  }
 };
 
 const FanDownView = {

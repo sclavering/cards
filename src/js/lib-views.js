@@ -186,10 +186,10 @@ const _FanView = {
     this._canvas.width = this.fixedWidth || this.widthToUse;
     this._canvas.height = 0; // changed value clears the canvas
     this._canvas.height = this.fixedHeight || this.heightToUse;
-    const ixs = this.getVisibleCardIndexes(cs.length), num = ixs.length;
+    const num = cs.length;
     this._updateOffsets(num);
     const h = this._hOffset, v = this._vOffset;
-    for(var i = 0; i !== num; ++i) drawCard(this._context, cs[ixs[i]], h * i, v * i);
+    for(let i = 0; i !== num; ++i) drawCard(this._context, cs[i], h * i, v * i);
     if(!num) this._drawBackgroundForEmpty();
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
@@ -198,16 +198,11 @@ const _FanView = {
   _updateOffsets: function(num) {},
 
   drawIntoFloatingPile: function(card) {
-    const cs = this.pile.cards;
-    const ixs = this.getVisibleCardIndexes(cs.length), inum = ixs.length;
-    const first = ixs.indexOf(card.index);
+    const to_draw = this.pile.cards.slice(card.index);
     const h = this._hOffset, v = this._vOffset;
-    const numFloating = inum - first;
-    const extras = numFloating - 1;
-    const width = extras * h + gCardWidth, height = extras * v + gCardHeight;
-    gFloatingPile.sizeCanvas(width, height);
-    for(var i = 0, j = first; i < numFloating; ++i, ++j) drawCard(gFloatingPile.context, cs[ixs[j]], h * i, v * i);
-    return { x: first * h, y: first * v };
+    gFloatingPile.sizeCanvas((to_draw.length - 1) * h + gCardWidth, (to_draw.length - 1) * v + gCardHeight);
+    for(let i = 0; i < to_draw.length; ++i) drawCard(gFloatingPile.context, to_draw[i], h * i, v * i);
+    return { x: card.index * h, y: card.index * v };
   },
 
   draw_hint_destination: function(cards) {
@@ -246,10 +241,12 @@ const _FanView = {
   getVisibleCardIndexes: range,
 
   getAnimationDestination: function() {
-    const ix = this.pile.cards.length;
-    const ixs = this.getVisibleCardIndexes(ix + 1);
-    const visualIx = ixs.indexOf(ix);
-    return { x: visualIx * this._hOffset, y: visualIx * this._vOffset };
+    const offset = this._get_animation_offset();
+    return { x: offset * this._hOffset, y: offset * this._vOffset };
+  },
+
+  _get_animation_offset: function() {
+    return this.pile.cards.length;
   },
 
   getTargetCard: function(event) {
@@ -258,10 +255,7 @@ const _FanView = {
   },
 
   _get_target_card_at_relative_coords: function(x, y) {
-    const cs = this.pile.cards;
-    const ixs = this.getVisibleCardIndexes(cs.length);
-    const visible_cards = [for(ix of ixs) cs[ix]];
-    return this._get_target_card_at_relative_coords_from_list(x, y, visible_cards);
+    return this._get_target_card_at_relative_coords_from_list(x, y, this.pile.cards);
   },
 
   // handles only purely-horizontal or purely-vertical fans
@@ -274,6 +268,40 @@ const _FanView = {
     const ix = Math.floor(pos / offset);
     if(cards[ix]) return cards[ix];
     return pos < (cards.length - 1) * offset + cardsize ? cards[cards.length - 1] : null;
+  },
+};
+
+const _SelectiveFanView = {
+  __proto__: _FanView,
+
+  _visible_cards_of: function(cs) {
+    return [for(ix of this.getVisibleCardIndexes(cs.length)) cs[ix]];
+  },
+
+  _update: function(cards) {
+    return _FanView._update.call(this, this._visible_cards_of(cards));
+  },
+
+  drawIntoFloatingPile: function(card) {
+    // In practice this will only be drawing the top card (because of the pile types that use _SelectiveFanView).  Maybe we should just do that directly instead.
+    _FanView.drawIntoFloatingPile.call(this, card);
+
+    const offset = this._visible_cards_of(this.pile.cards).indexOf(card);
+    return { x: offset * this._hOffset, y: offset * this._vOffset };
+  },
+
+  _get_target_card_at_relative_coords: function(x, y) {
+    return this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards));
+  },
+
+  // Subclasses will need to override ._get_animation_offset(), except for waste-pile views, where it's irrelevant.
+};
+
+// Shows the top two cards
+const _TwoCardSelectiveFanView = {
+  __proto__: _SelectiveFanView,
+  _get_animation_offset: function() {
+    return this.pile.cards.length ? 1 : 0;
   },
 };
 
@@ -337,7 +365,7 @@ const _SlideView = {
 };
 
 const _Deal3WasteView = {
-  __proto__: _FanView,
+  __proto__: _SelectiveFanView,
   _counter: true,
 
   getVisibleCardIndexes: function(lastIx) {
@@ -362,7 +390,7 @@ const Deal3VWasteView = {
 
 // top *two* cards visible, so you can tell if they have the same number
 const DoubleSolFoundationView = {
-  __proto__: _FanView,
+  __proto__: _TwoCardSelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
@@ -413,13 +441,16 @@ const PyramidView = {
 };
 
 const _SpiderFoundationView = {
-  __proto__: _FanView,
+  __proto__: _SelectiveFanView,
   _vOffset: gVFanOffset,
   getVisibleCardIndexes: function(lastIx) {
     const ixs = [], cs = this.pile.cards;
     for(var i = 0; i < lastIx; i += 13) ixs.push(i);
     return ixs;
-  }
+  },
+  _get_animation_offset: function() {
+    return this.pile.cards.length / 13;
+  },
 };
 
 const Spider4FoundationView = {
@@ -434,7 +465,7 @@ const Spider8FoundationView = {
 
 // bottom + top cards visible, so you can tell whether pile is being built up or down
 const UnionSquarePileView = {
-  __proto__: _FanView,
+  __proto__: _TwoCardSelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
@@ -445,13 +476,16 @@ const UnionSquarePileView = {
 
 // Built A->K, and then K->A on top of those. We show the top card of each 13.
 const UnionSquareFoundationView = {
-  __proto__: _FanView,
+  __proto__: _SelectiveFanView,
   _hOffset: gHFanOffset,
   fixedWidth: gCardWidth + gHFanOffset,
   getVisibleCardIndexes: function(num) {
     if(num > 13) return [12, num - 1];
     return num ? [num - 1] : [];
-  }
+  },
+  _get_animation_offset: function() {
+    return this.pile.cards.length >= 13 ? 1 : 0;
+  },
 };
 
 // a layout for Stocks, including a counter

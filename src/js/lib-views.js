@@ -107,14 +107,8 @@ const _View = {
     this._context.drawImage(canvas, x, y);
   },
 
-  // Get bounding-box in canvas-pixels of the card at index, assuming this pile
-  // contains numCards cards.
-  _getHighlightBounds: function(index, numCards) {
-    return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
-  },
-
-  // Return relative CSS-pixel coords for where an animated move should finish.
-  getAnimationDestination: function() {
+  // Return relative CSS-pixel coords for where a card being added should be displayed, both for animated moves and for hints.
+  get_next_card_xy: function() {
     return { x: 0, y: 0 };
   },
 
@@ -209,8 +203,7 @@ const _FanView = {
   },
 
   draw_hint_destination: function(cards) {
-    const num_existing = this.pile.numCards;
-    const rect = this._getHighlightBounds(num_existing, num_existing + 1);
+    const rect = this.get_next_card_xy();
     const num = cards.length, h_off = this._hOffset, v_off = this._vOffset;
     const w = (num - 1) * h_off + gCardWidth, h = (num - 1) * v_off + gCardHeight
     const tmp = gTemporaryCanvasContext.get(w, h);
@@ -224,19 +217,7 @@ const _FanView = {
     return { x: offset * h, y: offset * v, w: size * h + gCardWidth, h: size * v + gCardHeight };
   },
 
-  _getHighlightBounds: function(index, numCards) {
-    const ixs = this.getVisibleCardIndexes(numCards);
-    const vIx = ixs.indexOf(index);
-    const num = ixs.pop() - vIx; // num cards to be highlighted
-    const h = this._hOffset, v = this._vOffset;
-    return { x: h * vIx, y: v * vIx, w: h * num + gCardWidth, h: v * num + gCardHeight };
-  },
-
-  // This exists to allow games to show a subset of the cards in a pile.
-  // 'ix' is like the 'max' of View.update
-  getVisibleCardIndexes: range,
-
-  getAnimationDestination: function() {
+  get_next_card_xy: function() {
     const offset = this._get_animation_offset();
     return { x: offset * this._hOffset, y: offset * this._vOffset };
   },

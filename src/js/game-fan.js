@@ -24,7 +24,7 @@ gGameClasses.fan = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  shuffleImpossible: function(cards) {
+  is_shuffle_impossible: function(cards) {
     for(let i = 0; i < 51; i += 3) {
       // these will form a pile c,d,e with c at the bottom
       let c = cards[i], d = cards[i + 1], e = cards[i + 2];

@@ -135,11 +135,9 @@ const Game = {
 
 
   // === Start Game =======================================
-  // Games should override deal(), and shuffleImpossible() if they need to
+  // Games should override deal(), and is_shuffle_impossible() if they need to
 
-  // 'order' is used to "restart" games - by starting a new one with the same
-  // shuffled cards.  If not null, it's a permutation of indices
-  begin: function(order) {
+  begin: function(optional_order_to_deal) {
     this.actionList = [];
     ui.scoreDisplay.textContent = this.score = 0;
     ui.movesDisplay.textContent = this.actionPtr;
@@ -148,18 +146,18 @@ const Game = {
     this.loadPreferredFoundationSuits();
     if(this.allcards) this.allcards = makeCards.apply(null, this.allcards);
     this.init();
-    this.orderCardsDealt = order || this._getDealOrder();
-    this.deal([for(ix of this.orderCardsDealt) this.allcards[ix]]);
-  },
-
-  _getDealOrder: function() {
-    const ixs = range(this.allcards.length);
-    var order, cards;
-    do {
-      order = shuffle(ixs);
-      cards = [for(ix of order) this.allcards[ix]];
-    } while(this.shuffleImpossible(cards));
-    return order;
+    this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
+    let cs;
+    // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for redeals to work properly.  Redeals actually just start a new game with the same deal-order, and the new game instance has its own separate card objects.
+    if(optional_order_to_deal) {
+      cs = [for(ix of optional_order_to_deal) this.allcards[ix] || null];
+      this.order_cards_dealt = optional_order_to_deal;
+    } else {
+      cs = this.allcards.slice();
+      do { shuffle_in_place(cs) } while(this.is_shuffle_impossible(cs));
+      this.order_cards_dealt = [for(c of cs) c ? c.__allcards_index : null];
+    }
+    this.deal(cs);
   },
 
   // overriding versions should deal out the provided shuffled cards for a new game.
@@ -188,7 +186,7 @@ const Game = {
 
   // Cards will be shuffled repeatedly until this returns false.
   // Override to eliminate (some) impossible deals.
-  shuffleImpossible: function(shuffledCards) {
+  is_shuffle_impossible: function(shuffledCards) {
     return false;
   },
 
@@ -513,7 +511,7 @@ GameType.prototype = {
   },
 
   restart: function() {
-    this.newGame(this.currentGame.orderCardsDealt);
+    this.newGame(this.currentGame.order_cards_dealt);
   },
 
   restorePastGame: function() {

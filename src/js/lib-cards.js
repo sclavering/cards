@@ -1,7 +1,9 @@
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards) {
-  cards = cards.slice(0); // copy
+  return shuffle_in_place(cards.slice());
+}
 
+function shuffle_in_place(cards) {
   // shuffle several times, because Math.random() appears to be rather bad.
   for(var i = 0; i !== 5; i++) {
     // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
@@ -18,7 +20,6 @@ function shuffle(cards) {
       cards[num] = temp;
     }
   }
-
   return cards;
 }
 

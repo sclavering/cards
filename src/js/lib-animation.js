@@ -64,7 +64,8 @@ function scheduleAnimatedMove(x0, y0, x1, y1) {
   if(!steps) return;
   const stepX = dx / steps, stepY = dy / steps;
   const step_func = () => gFloatingPile.moveBy(stepX, stepY);
-  for(let i = 1; i <= steps; ++i) gAnimations.schedule(kAnimationDelay, step_func);
+  // The +1 step shows the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
+  for(let i = 1; i <= steps + 1; ++i) gAnimations.schedule(kAnimationDelay, step_func);
 }
 
 function showHints(card, destinations) {

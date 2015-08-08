@@ -156,11 +156,6 @@ body {
   padding-top: 0.2em;
 }
 
-canvas {
-  min-width: 79px;
-  min-height: 123px;
-}
-
 .horizontal-pilespacer {
   min-width: 79px;
 }

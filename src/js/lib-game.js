@@ -45,15 +45,6 @@ const Game = {
   */
   ],
 
-
-  // ======================================================
-  // The following is a mix of initialisation for the "class" (not that JS
-  // really has classes) and the instance games.  It's a legacy from when
-  // the two object were the same (don't ask).
-
-  // For games to override.  Called for each new instance
-  init: function() {},
-
   show: function() {
     // Some other game may have been using the layout, so need to reassociate piles+views
     for(let p of this.allpiles) p.view.displayPile(p);
@@ -67,7 +58,7 @@ const Game = {
     this.layout.hide();
   },
 
-
+  // This gets called just once per game class, rather than once per game instance.
   classInit: function() {
     this.classInit = null; // to avoid re-calling
 
@@ -104,6 +95,8 @@ const Game = {
     this._cardsToDealUp = [for(l of layoutletters) ups[l].shift()];
   },
 
+
+
   createPiles: function() {
     const views = this.layout.views;
     const impls = this._pilesToCreate;
@@ -135,10 +128,7 @@ const Game = {
     this.stock = [for(p of all) if(p.isStock) p][0] || null;
   },
 
-
-  // === Start Game =======================================
-  // Games should override deal(), and is_shuffle_impossible() if they need to
-
+  // The actual entry-point to starting a game instance.
   begin: function(optional_order_to_deal) {
     this.actionList = [];
     ui.scoreDisplay.textContent = this.score = 0;
@@ -162,7 +152,10 @@ const Game = {
     this.deal(cs);
   },
 
-  // overriding versions should deal out the provided shuffled cards for a new game.
+  // For subclasses to optionally implement.  Called for each new game instance.  Typically used to set up .allcards (if it's something .required_cards can't handle), or to add extra properties to piles.
+  init: function() {},
+
+  // Deal the provided pre-shuffled cards for a new game.  Many subclasses will find this version sufficient.
   deal: function(cards) {
     const ps = this.allpiles, down = this._cardsToDealDown, up = this._cardsToDealUp;
     let ix = 0;

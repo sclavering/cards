@@ -105,7 +105,7 @@ const _View = {
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
   // This method should render them into a temporary canvas, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
   draw_hint_destination: function(cards) {
-    throw new Error("not implemented");
+    throw "not implemented";
   },
 
   _draw_hint_destination: function(canvas_context, x, y) {

@@ -97,7 +97,7 @@ const Game = {
 
 
 
-  createPiles: function() {
+  _create_piles: function() {
     const views = this.layout.views;
     const impls = this._pilesToCreate;
     const letters = this._pilesToCreateLetters;
@@ -113,7 +113,7 @@ const Game = {
     for(let [l, set] in Iterator(bytype)) linkList(set, "prev", "next");
   },
 
-  createPileArrays: function() {
+  _create_pile_arrays: function() {
     const all = this.allpiles;
     this.dragDropTargets = [for(f of all) if(f.canDrop) f];
     this.piles = [for(p of all) if(p.isPile) p];
@@ -133,8 +133,8 @@ const Game = {
     this.actionList = [];
     ui.scoreDisplay.textContent = this.score = 0;
     ui.movesDisplay.textContent = this.actionPtr;
-    this.createPiles();
-    this.createPileArrays();
+    this._create_piles();
+    this._create_pile_arrays();
     this.loadPreferredFoundationSuits();
     if(this.required_cards) this.allcards = makeCards.apply(null, this.required_cards);
     this.init();

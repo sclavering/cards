@@ -58,8 +58,6 @@ const Game = {
     // Some other game may have been using the layout, so need to reassociate piles+views
     for(let p of this.allpiles) p.view.displayPile(p);
     this.layout.show();
-    if(this.getHints) ui.btnHint.removeAttribute("disabled");
-    else ui.btnHint.setAttribute("disabled","true");
     setVisibility(ui.scorePanel, this.hasScoring);
     ui.scoreDisplay.textContent = this.score;
     ui.movesDisplay.textContent = this.actionPtr;
@@ -325,7 +323,8 @@ const Game = {
 
 
   // === Hints ============================================
-  // Games should override getHints(); the implementation should call addHint[s]() repeatedly.
+  // Generally nothing here needs overriding by subclasses, except perhaps .hintOriginPileCollections()
+
   hintSources: [],
   hintDestinations: [], // destination *array* (of Piles) per hintSources element
   hintsReady: false, // means hints have been calculated, though there may not be any.
@@ -346,12 +345,11 @@ const Game = {
     showHints(this.hintSources[num], this.hintDestinations[num]);
   },
 
-  // can be overridden e.g. to show hints from foundations
+  // Can be overridden e.g. to show hints from foundations
   hintOriginPileCollections: function() {
     return [this.reserves, this.cells, this.wastes, this.piles];
   },
 
-  // If set null the Hint toolbar button will be disabled.
   getHints: function() {
     const collections = this.hintOriginPileCollections();
     for(let ps of collections)

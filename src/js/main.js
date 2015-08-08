@@ -8,7 +8,6 @@ const gGameTypes = {}; // game-id -> GameType object
 var ui = {
   btnUndo: "btn-undo",
   btnRedo: "btn-redo",
-  btnHint: "btn-hint",
   btnRedeal: "btn-redeal",
   messageBox: "message",
   messageLine1: "message1",

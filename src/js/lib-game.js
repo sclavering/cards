@@ -23,7 +23,7 @@ const Game = {
   // A class like Layout (for subclasses to specify), to be used as __proto__ of ._layout
   layoutProto: Layout,
 
-  // Instructions to the code in lib-layout.js on how to create the needed HTML
+  // Instructions to the code the Layout class on how to create the needed HTML, in a compact string-based DSL.
   layoutTemplate: null,
 
   // Returns an array giving details of all the piles to be created.
@@ -186,8 +186,7 @@ const Game = {
     }
   },
 
-  // Cards will be shuffled repeatedly until this returns false.
-  // Override to eliminate (some) impossible deals.
+  // Subclasses may override this to prevent (some) impossible games from being dealt. Cards will be shuffled repeatedly until this returns false.
   is_shuffle_impossible: function(shuffledCards) {
     return false;
   },
@@ -196,7 +195,7 @@ const Game = {
 
   // === Winning ==========================================
 
-  // This version works for most games.
+  // Most subclasses will find this sufficient.
   is_won: function() {
     const expected_foundation_length = this.allcards.length / this.foundations.length;
     for(let f of this.foundations) if(f.cards.length !== expected_foundation_length) return false;
@@ -206,14 +205,13 @@ const Game = {
 
 
   // === Scoring ==========================================
-  // games may override getScoreFor (and hasScoring)
 
-  hasScoring: false,
-
-  // when adjusting this you should also adjust ui.scoreDisplay.textContent
+  // Should not be directly set in subclasses.  Code that does set it should also adjust ui.scoreDisplay.textContent
   score: 0,
 
-  // action is an Action object
+  // Subclasses should set this true if desired.
+  hasScoring: false,
+
   getScoreFor: function(action) {
     return 0;
   },
@@ -288,34 +286,37 @@ const Game = {
     for(let c of cs) c.setFaceUp(true);
   },
 
-  // called after each move (unless interrupted by user).
-  // Should return an Action, or null.  Generally shouldn't handle revealing of cards
+  // Subclasses may override this.
+  // Called after each move (unless interrupted by user), it should return an Action or null.  Revealing face-down cards is generally handled elsewhere.
   autoplay: function() {
     return null;
   },
 
-  // Attempts to move a card to somewhere on the foundations, returning |true| if successful.
-  // This default version is for Klondike-like games, Spider-like games may need to override it.
+  // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
+  // Subclasses may override this, but typically it's easier to implement .getFoundationDestinationFor() instead.
   getFoundationMoveFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
     const f = this.getFoundationDestinationFor(card);
     return f ? new Move(card, f) : null;
   },
 
+  // Given a card (that has already been determined to be movable), return a foundation pile it can be legally moved to, or null.
+  // Subclasses may override this.
   getFoundationDestinationFor: function(card) {
     for(let f of this.foundations) if(f.mayAddCard(card)) return f;
     return null;
   },
 
-  // Called when a user left-clicks on a card.  Should return an Action (or null).
-  // Generally it's easier to override .best_destination_for() instead.
+  // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
+  // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
   getBestActionFor: function(card) {
     if(!card.pile.mayTakeCard(card)) return null;
     const target = this.best_destination_for(card);
     return target ? new Move(card, target) : null;
   },
 
-  // Should return a pile, or null.
+  // Given a card, return the preferred legal destination pile to move it to, or null.
+  // Subclasses should override this.
   best_destination_for: function(card) {
     return null;
   },

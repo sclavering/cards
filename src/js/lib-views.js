@@ -67,11 +67,21 @@ const _View = {
   // elsewhere with animation. Should update the view to hide it and the cards
   // after it, and draw them in gFloatingPile instead.
   updateForAnimationOrDrag: function(card) {
-    const coords = this.drawIntoFloatingPile(card);
+    const cards = this.pile.cards.slice(card.index);
+    this.draw_into(gFloatingPile.context, cards, false);
+    const coords = this._get_coords_of_card(card);
     const r = this.pixelRect();
     gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
     this._update(cs);
+  },
+
+  draw_into: function(ctx, cards, draw_background) {
+    throw "not implemented";
+  },
+
+  _get_coords_of_card: function(card) {
+    return { x: 0, y: 0 };
   },
 
   // Attach this view to a Pile
@@ -153,12 +163,6 @@ const View = {
     this._draw_hint_destination(tmp, 0, 0);
   },
 
-  drawIntoFloatingPile: function(card) {
-    const cards = this.pile.cards.slice(card.index);
-    this.draw_into(gFloatingPile.context, cards, false);
-    return { x: 0, y: 0 };
-  },
-
   getTargetCard: function(event) {
     return this.pile.lastCard;
   }
@@ -202,11 +206,8 @@ const _FanView = {
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
   },
 
-  drawIntoFloatingPile: function(card) {
-    const cards = this.pile.cards.slice(card.index);
-    this.draw_into(gFloatingPile.context, cards, false);
-    const h = this._hOffset, v = this._vOffset;
-    return { x: card.index * h, y: card.index * v };
+  _get_coords_of_card: function(card) {
+    return { x: card.index * this._hOffset, y: card.index * this._vOffset };
   },
 
   draw_hint_destination: function(cards) {
@@ -264,10 +265,7 @@ const _SelectiveFanView = {
     return _FanView._update.call(this, this._visible_cards_of(cards));
   },
 
-  drawIntoFloatingPile: function(card) {
-    // In practice this will only be drawing the top card (because of the pile types that use _SelectiveFanView).  Maybe we should just do that directly instead.
-    _FanView.drawIntoFloatingPile.call(this, card);
-
+  _get_coords_of_card: function(card) {
     const offset = this._visible_cards_of(this.pile.cards).indexOf(card);
     return { x: offset * this._hOffset, y: offset * this._vOffset };
   },

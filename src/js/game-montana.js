@@ -7,7 +7,7 @@ gGameClasses.montana = {
 
   layoutTemplate: '#<  p p p p p p p p p p p p p  ><  p p p p p p p p p p p p p  ><  p p p p p p p p p p p p p  ><  p p p p p p p p p p p p p  >.',
 
-  allcards: null,
+  required_cards: null,
   init: function() {
     const cs = this.allcards = makeCards(1, null, range2(2, 14)); // no Aces
     cs[51] = cs[50] = cs[49] = cs[48] = null; // spaces instead

@@ -53,7 +53,7 @@ gGameClasses.fan = {
 gGameClasses.doublefan = {
   __proto__: Game,
 
-  allcards: [2],
+  required_cards: [2],
 
   pileDetails: () => [
     "p", 24, FanPile, FanRightView, 0, 5,

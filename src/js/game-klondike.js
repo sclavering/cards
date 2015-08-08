@@ -68,7 +68,7 @@ gGameClasses.doubleklondike = {
   layoutTemplate: '#<   s w   f f f f f f f f   >.#<   p p p p p p p p p p   >.',
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  allcards: [2],
+  required_cards: [2],
   numPreferredFoundationsPerSuit: 2, // === num foundations of a given suit
 
   // With eight foundations it can make sense to keep a 2 down and put its twin up instead.

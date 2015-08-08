@@ -29,7 +29,7 @@ gGameClasses.pileon = {
 
 gGameClasses.doublepileon = {
   __proto__: PileOnBase,
-  allcards: [2],
+  required_cards: [2],
   _pileon_depth: 8,
   pileDetails: () => [
     "p", 15, PileOnPile8, PileOnView8, 0, 8, // last three actually empty

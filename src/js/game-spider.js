@@ -48,17 +48,17 @@ const Spider = {
 
 gGameClasses.spider1 = {
   __proto__: Spider,
-  allcards: [8, "S"]
+  required_cards: [8, "S"]
 };
 
 gGameClasses.spider2 = {
   __proto__: Spider,
-  allcards: [4, "SH"]
+  required_cards: [4, "SH"]
 };
 
 gGameClasses.spider4 = {
   __proto__: Spider,
-  allcards: [2]
+  required_cards: [2]
 };
 
 
@@ -71,7 +71,7 @@ gGameClasses.blackwidow = {
     "p", 10, BlackWidowPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],
-  allcards: [2]
+  required_cards: [2]
 };
 
 
@@ -84,7 +84,7 @@ gGameClasses.divorce = {
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],
 
-  allcards: [2, , , true],
+  required_cards: [2, , , true],
 
   autoplay: function() {
     const f = this.foundation;
@@ -135,12 +135,12 @@ gGameClasses.simplersimon = {
 
 gGameClasses.simon1 = {
   __proto__: SimonBase,
-  allcards: [4, "S"]
+  required_cards: [4, "S"]
 };
 
 gGameClasses.simon2 = {
   __proto__: SimonBase,
-  allcards: [2, "SH"]
+  required_cards: [2, "SH"]
 };
 
 gGameClasses.simon4 = {
@@ -149,7 +149,7 @@ gGameClasses.simon4 = {
 
 gGameClasses.doublesimon = {
   __proto__: SimonBase,
-  allcards: [2],
+  required_cards: [2],
   pileDetails: () => [
     "p", 12, SpiderPile, FanDownView, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1],
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,

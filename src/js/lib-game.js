@@ -1,8 +1,10 @@
 // The base-type for all games
 const Game = {
-  // An Card objects used in this game.
-  // Passed as arguments to makeCards() if non-null.
-  allcards: [1],
+  // May be set by subclasses to a description of the card objects they want creating in .classInit()
+  required_cards: [1],
+
+  // Once a game is running, this is an array of the all the card objects used by the game.
+  allcards: null,
 
   // Piles in arrays by type, and the first piles of some types
   piles: [],
@@ -146,7 +148,7 @@ const Game = {
     this.createPiles();
     this.createPileArrays();
     this.loadPreferredFoundationSuits();
-    if(this.allcards) this.allcards = makeCards.apply(null, this.allcards);
+    if(this.required_cards) this.allcards = makeCards.apply(null, this.required_cards);
     this.init();
     this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
     let cs;

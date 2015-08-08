@@ -51,10 +51,10 @@ const GypsyBase = {
 
 gGameClasses.gypsy2 = {
   __proto__: GypsyBase,
-  allcards: [4, "SH"]
+  required_cards: [4, "SH"]
 };
 
 gGameClasses.gypsy4 = {
   __proto__: GypsyBase,
-  allcards: [2]
+  required_cards: [2]
 };

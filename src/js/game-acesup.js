@@ -9,7 +9,7 @@ gGameClasses.acesup = {
 
   layoutTemplate: '#<   s  p p p p  f   >.',
 
-  allcards: [null, null, range2(2, 15)], // aces high
+  required_cards: [null, null, range2(2, 15)], // aces high
 
   init: function() {
     for(var i = 0; i !== 4; i++) this.piles[i].num = i;

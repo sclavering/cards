@@ -15,7 +15,7 @@ gGameClasses.mod3 = {
     return [this.foundations, this.piles];
   },
 
-  allcards: null,
+  required_cards: null,
   init: function() {
     const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
     const cardss = [for(nums of numss) makeCards(2, null, nums)];

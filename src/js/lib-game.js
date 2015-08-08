@@ -15,8 +15,11 @@ const Game = {
   reserve: null,
   dragDropTargets: null, // a list of piles on which cards can be dropped
 
-  // a Layout object, based on those in lib-layouts.js
+  // A Layout (or subclass) instance.  One instance per game-type (not per game-instance).
   layout: null,
+
+  // A class like Layout (for subclasses to specify), to be used as __proto__ of ._layout
+  layoutProto: Layout,
 
   // Instructions to the code in lib-layout.js on how to create the needed HTML
   layoutTemplate: null,
@@ -68,8 +71,7 @@ const Game = {
   classInit: function() {
     this.classInit = null; // to avoid re-calling
 
-    if(!this.layout) this.layout = { __proto__: Layout };
-    const layout = this.layout
+    const layout = this.layout = { __proto__: this.layoutProto };
     layout.template = this.layoutTemplate;
 
     const details = this.pileDetails();

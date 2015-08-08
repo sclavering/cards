@@ -19,7 +19,6 @@ JS_FILES = [
 
     'game-acesup.js',
     'game-canfield.js',
-    'game-doublefan.js',
     'game-doublesol.js',
     'game-fan.js',
     'game-fortythieves.js',

@@ -310,7 +310,7 @@ const _FlexFanView = {
   },
 
   _calculate_new_offset: function(preferred_offset, available_space, num_cards) {
-    let offset = Math.min(num_cards ? available_space / num_cards - 1 : available_space, preferred_offset);
+    let offset = Math.min(num_cards ? available_space / (num_cards - 1) : available_space, preferred_offset);
     if(offset > 2) offset = Math.floor(offset); // use integer offsets if possible, to avoid fuzzyness
     return offset;
   },

@@ -198,11 +198,13 @@ const _FanView = {
   // Change offsets to allow num cards to fit in the space
   _updateOffsets: function(num) {},
 
-  draw_into: function(ctx, cards, draw_background) {
-    // This makes the canvas bigger than necessary, but that's harmless.
-    clear_and_resize_canvas(ctx, this.fixedWidth, this.fixedHeight);
-    if(draw_background) this._draw_background_into(ctx);
+  draw_into: function(ctx, cards, draw_background, use_minimum_size) {
+    // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
     const num = cards.length, h = this._hOffset, v = this._vOffset;
+    const width = use_minimum_size ? (num - 1) * h + gCardWidth : this.fixedWidth;
+    const height = use_minimum_size ? (num - 1) * v + gCardHeight : this.fixedHeight;
+    clear_and_resize_canvas(ctx, width, height);
+    if(draw_background) this._draw_background_into(ctx);
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
   },
 
@@ -213,7 +215,7 @@ const _FanView = {
   draw_hint_destination: function(cards) {
     const rect = this.get_next_card_xy();
     const tmp = gTemporaryCanvasContext.get();
-    this.draw_into(tmp, cards, false);
+    this.draw_into(tmp, cards, false, true);
     this._draw_hint_destination(tmp, rect.x, rect.y);
   },
 

@@ -206,6 +206,7 @@ body {
 }
 
 .shortcolumn canvas {
+  /* to center gypsy's stock */
   margin: 0 auto;
 }
 
@@ -217,6 +218,7 @@ body {
   padding-bottom: 10px;
 }
 
+/* the positioning allows Demon's reserve pile to not push the normal piles offscreen */
 .longcolumn-outer {
   min-width: 79px;
   position: relative;

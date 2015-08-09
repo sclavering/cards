@@ -27,8 +27,6 @@ const gAnimations = {
     for(let func of this._on_cancel) func();
     this._timeouts = [];
     this._on_cancel = [];
-    // xxx kill this
-    FreeCellMover.interrupt();
   },
 };
 

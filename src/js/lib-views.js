@@ -226,11 +226,11 @@ const _FanView = {
   },
 
   get_next_card_xy: function() {
-    const offset = this._get_animation_offset();
+    const offset = this._get_next_card_offset();
     return { x: offset * this._hOffset, y: offset * this._vOffset };
   },
 
-  _get_animation_offset: function() {
+  _get_next_card_offset: function() {
     return this.pile.cards.length;
   },
 
@@ -282,14 +282,14 @@ const _SelectiveFanView = {
     return { x: num * this._hOffset, y: num * this._vOffset, w: gCardWidth, h: gCardHeight };
   },
 
-  // Subclasses will need to override ._get_animation_offset(), except for waste-pile views, where it's irrelevant.
+  // Subclasses will need to override ._get_next_card_offset(), except for waste-pile views, where it's irrelevant.
 };
 
 // Shows the top two cards
 const _TwoCardSelectiveFanView = {
   __proto__: _SelectiveFanView,
   _always_draw_background: true,
-  _get_animation_offset: function() {
+  _get_next_card_offset: function() {
     return this.pile.cards.length ? 1 : 0;
   },
 };
@@ -429,7 +429,7 @@ const _SpiderFoundationView = {
   _visible_cards_of: function(cards) {
     return cards.filter((el, ix) => ix % 13 === 0);
   },
-  _get_animation_offset: function() {
+  _get_next_card_offset: function() {
     return this.pile.cards.length / 13;
   },
 };
@@ -465,7 +465,7 @@ const UnionSquareFoundationView = {
     if(cards.length > 13) return [cards[12], cards[cards.length - 1]];
     return cards.slice(-1);
   },
-  _get_animation_offset: function() {
+  _get_next_card_offset: function() {
     return this.pile.cards.length >= 13 ? 1 : 0;
   },
 };

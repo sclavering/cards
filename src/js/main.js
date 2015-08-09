@@ -115,16 +115,14 @@ const gFloatingPile = {
   },
 
   moveBy: function(dx, dy) {
-    const self = gFloatingPile;
-    self.moveTo(self._left + dx, self._top + dy);
+    this.moveTo(this._left + dx, this._top + dy);
   },
 
   moveTo: function(x, y) {
-    const self = gFloatingPile;
-    self._left = x;
-    self._top = y;
-    self._canvas.style.left = self._left + 'px';
-    self._canvas.style.top = self._top + 'px';
+    this._left = x;
+    this._top = y;
+    this._canvas.style.left = this._left + 'px';
+    this._canvas.style.top = this._top + 'px';
   },
 };
 

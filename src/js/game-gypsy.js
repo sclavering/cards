@@ -20,10 +20,8 @@ const GypsyBase = {
 
   getFoundationDestinationFor: function(card) {
     if(!card.isLast) return null;
-    if(card.isAce) {
-      var twinp = card.twin.pile;
-      return twinp.isFoundation && !twinp.twin.hasCards ? twinp.twin : findEmpty(this.foundations);
-    }
+    if(card.isAce) return this.getFoundationForAce(card);
+    // xxx why not just pick the first valid foundation?
     var down = card.down, c = down;
     do {
       var p = c.pile;
@@ -51,10 +49,12 @@ const GypsyBase = {
 
 gGameClasses.gypsy2 = {
   __proto__: GypsyBase,
-  required_cards: [4, "SH"]
+  required_cards: [4, "SH"],
+  foundation_cluster_count: 2,
 };
 
 gGameClasses.gypsy4 = {
   __proto__: GypsyBase,
-  required_cards: [2]
+  required_cards: [2],
+  foundation_cluster_count: 4,
 };

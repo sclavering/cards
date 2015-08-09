@@ -69,7 +69,7 @@ gGameClasses.doubleklondike = {
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   required_cards: [2],
-  numPreferredFoundationsPerSuit: 2, // === num foundations of a given suit
+  foundation_cluster_count: 4,
 
   // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
   getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,

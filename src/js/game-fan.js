@@ -54,6 +54,7 @@ gGameClasses.doublefan = {
   __proto__: Game,
 
   required_cards: [2],
+  foundation_cluster_count: 4,
 
   pileDetails: () => [
     "p", 24, FanPile, FanRightView, 0, 5,

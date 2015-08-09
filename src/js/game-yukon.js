@@ -31,7 +31,8 @@ gGameClasses.sanibel = {
   ],
   layoutTemplate: '#<  s w    f f f f f f f f  >.#<   p p p p p p p p p p   >.',
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-  required_cards: [2]
+  required_cards: [2],
+  foundation_cluster_count: 4,
 };
 
 

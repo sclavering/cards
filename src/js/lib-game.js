@@ -137,6 +137,7 @@ const Game = {
     this._create_pile_arrays();
     if(this.required_cards) this.allcards = makeCards.apply(null, this.required_cards);
     this.init();
+    this._foundation_clusters = this._get_foundation_clusters(this.allcards, this.foundations);
     this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
     let cs;
     // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for redeals to work properly.  Redeals actually just start a new game with the same deal-order, and the new game instance has its own separate card objects.
@@ -366,10 +367,25 @@ const Game = {
 
 
 
-  // === Preferred foundations for different suits ========
+  // === Preferred foundations ============================
+  // When a game has multiple foundations of the same suit (e.g. Gypsy), it looks nicer if they are grouped together.  Games can opt in to automoves doing such grouping, which works by dividing the foundations into "clusters", and then using the first cluster that is empty or has matching suits.  (This only works so long as the user doesn't move aces to other foundations for themself, but handling that would complicate it significantly.)
 
+  // To use this feature, subclasses should set this to the number of suits in use.  (It's opt-in because of edge-cases like Mod3 that don't want it.)
+  foundation_cluster_count: null,
+
+  // xxx integrate this with .getFoundationMoveFor()
   getFoundationForAce: function(card) {
+    if(!this._foundation_clusters) return findEmpty(this.foundations);
+    for(let fs of this._foundation_clusters) if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit)) return findEmpty(fs);
     return findEmpty(this.foundations);
+  },
+
+  _get_foundation_clusters: function(cards, foundations) {
+    if(!this.foundation_cluster_count) return null;
+    const cluster_size = this.foundations.length / this.foundation_cluster_count;
+    const rv = [];
+    for(let i = 0; i < foundations.length; i += cluster_size) rv.push(foundations.slice(i, i + cluster_size));
+    return rv;
   },
 };
 

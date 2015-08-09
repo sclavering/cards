@@ -27,22 +27,6 @@ gGameClasses.unionsquare = {
     return empty;
   },
 
-  getFoundationDestinationFor: function(card) {
-    const twin = card.twin, twinp = twin.pile;
-    if(twinp.isFoundation) {
-      if(card.isKing) return twinp;
-      // >, not >=, or it'd allow Q,K,Q on foundations
-      return twinp.cards.length > 13 && twinp.lastCard.number === card.upNumber ? twinp : null;
-    }
-    // can now assume twin is not on foundation
-    if(card.isAce) return findEmpty(this.foundations);
-    var down = card.down, downp = down.pile;
-    if(downp.isFoundation && down.isLast) return downp;
-    down = down.twin, downp = down.pile;
-    if(downp.isFoundation && down.isLast) return downp;
-    return null;
-  },
-
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
   autoplay: function() {
     for(let f of this.foundations) {

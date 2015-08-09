@@ -135,7 +135,6 @@ const Game = {
     ui.movesDisplay.textContent = this.actionPtr;
     this._create_piles();
     this._create_pile_arrays();
-    this.loadPreferredFoundationSuits();
     if(this.required_cards) this.allcards = makeCards.apply(null, this.required_cards);
     this.init();
     this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
@@ -368,100 +367,9 @@ const Game = {
 
 
   // === Preferred foundations for different suits ========
-  // Different people like to order the suits in different ways.  We support
-  // this by remembering any explicit choice of foundation on a per-suit basis,
-  // using a pref of the form: "S:3,4;H:5" (meaning Spades should go first to
-  // foundation 3, then to foundation 4, and Hearts should go to foundation 5).
-  // If the user explicitly drags an Ace to a foundation, that will become the
-  // new front-most element of the preference list, and the last element may be
-  // discarded.  If no preference is recorded, we try to find a foundation that
-  // isn't preferred for some other suit, and optionally also based on aethetic
-  // choice (e.g. placing identical suits side-by-side in Gypsy).
 
-  // xxx maybe this should be merged in part with the autoplay stuff above, and
-  // getFoundationMoveFor/getFoundationDestinationFor in particular.
-
-  // xxx in a sane world, we'd just set this based on the cards in use
-  // Controls how many piles are tracked as being the preferred destination for
-  // Aces (or other base card) for a given suit
-  numPreferredFoundationsPerSuit: 1,
-
-  // Suit -> foundation *index* list
-  _preferredFoundationIndexesBySuit: {},
-  // foundation index -> suit map, with null for "don't care"
-  _preferredSuitForFoundationIndex: {},
-  // An array of foundations for which there is no preferred suit
-  _unpreferredFoundations: null,
-
-  // Should return the best possible foundation to put the Ace (or other
-  // foundation base card) on.  This version tries for the preffered foundation
-  // for the suit, then for a foundation not preferred by any suit, and then
-  // for any empty foundation.  (The latter part shouldn't be reached unless
-  // the code managing the preferences goes wrong, but meh.)
   getFoundationForAce: function(card) {
-    const suit = card.suit, fs = this.foundations;
-    const prefs = [for(i of this._preferredFoundationIndexesBySuit[suit]) fs[i]];
-    const unpref = this._unpreferredFoundations;
-    return findEmpty(prefs) || findEmpty(unpref) || findEmpty(fs);
-  },
-
-  // Call at startup
-  loadPreferredFoundationSuits: function() {
-    const byIx = this._preferredSuitForFoundationIndex = [for(_ of this.foundations) null];
-    const bySuit = this._preferredFoundationIndexesBySuit = {
-      S: [], H: [], D: [], C: []
-    };
-    const pref = this.loadPref("suits_preferred_foundations");
-    const max = this.numPreferredFoundationsPerSuit;
-    const isNum = function(x) { return !isNaN(x); };
-    this._unpreferredFoundations = []; // fallback. we'll search all foundations anyway
-    if(!pref) return;
-    for(let blob of pref.split(";")) { // blob: "S:1,3"
-      let [suit, numsBlob] = blob.split(":");
-      if(!numsBlob) continue;
-      bySuit[suit] = numsBlob.split(",").map(parseInt,10).filter(isNum).slice(0, max);
-      for(let i of bySuit[suit]) byIx[i] = suit;
-    }
-    const fs = this.foundations;
-    this._unpreferredFoundations = [fs[i] for(i in fs) if(!byIx[i])];
-  },
-
-  setPreferredFoundationSuit: function(card, foundation) {
-    const suit = card.suit;
-    const fs = this.foundations;
-    const bySuit = this._preferredFoundationIndexesBySuit;
-    const byIx = this._preferredSuitForFoundationIndex;
-    const oldsuit = byIx[foundation.index];
-    if(oldsuit === suit) return;
-    // Clear old mapping for the new pile
-    const fIndex = foundation.index;
-    if(oldsuit) bySuit[oldsuit] = bySuit[oldsuit].filter(function(x) { return x !== fIndex });
-    // If explicitly removed from a foundation, clear that mapping
-    if(card.pile.isFoundation) {
-      const oldIndex = card.pile.index;
-      bySuit[suit] = bySuit[suit].filter(function(x) { return x !== oldIndex });
-      byIx[oldIndex] = null;
-    }
-    // Evict oldest mapping(s) for this suit if necessary
-    const max = this.numPreferredFoundationsPerSuit;
-    for(var i = max; i < bySuit[suit].length; ++i) byIx[bySuit[suit][i]] = null;
-    bySuit[suit] = bySuit[suit].slice(0, max);
-    // Set new mapping
-    bySuit[suit].unshift(fIndex);
-    byIx[fIndex] = suit;
-    this._unpreferredFoundations = [fs[i] for(i in fs) if(!byIx[i])];
-    // Record in prefs
-    const bits = [s + ":" + bySuit[s].join(",") for(s in bySuit)];
-    const val = bits.join(";");
-    this.savePref("suits_preferred_foundations", val);
-  },
-
-  loadPref: function(name) {
-    return loadPref(this.id + "." + name);
-  },
-
-  savePref: function(name, val) {
-    savePref(this.id + "." + name, val);
+    return findEmpty(this.foundations);
   },
 };
 

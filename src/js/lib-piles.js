@@ -50,9 +50,7 @@ const Pile = {
 
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
   getActionForDrop: function(card) {
-    const act = this.mayAddCard(card) ? new Move(card, this) : null;
-    if(this.isFoundation && act) gCurrentGame.setPreferredFoundationSuit(card, this); // xxx ick!!
-    return act;
+    return this.mayAddCard(card) ? new Move(card, this) : null;
   },
 
   // the sourrounding piles

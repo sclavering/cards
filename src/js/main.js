@@ -1,5 +1,3 @@
-var gPrefs = {};
-
 var gCurrentGame = null;
 var gCurrentGameType = null;
 const gGameClasses = {}; // game-id -> Game subclass, filled by game-*.js
@@ -35,9 +33,7 @@ function init() {
 
   for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
 
-  // work out which game was played last
-  var game = loadPref("current-game");
-  if(!(game in gGameTypes)) game = "klondike1"; // if pref corrupted or missing
+  var game = "klondike1";
 
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -71,15 +67,6 @@ function keyPressHandler(e) {
       return; // avoid the code below
   }
   e.preventDefault();
-}
-
-
-function loadPref(name) {
-  return name in gPrefs ? gPrefs[name] : null;
-}
-
-function savePref(name, val) {
-  gPrefs[name] = val;
 }
 
 
@@ -129,8 +116,6 @@ const gFloatingPile = {
 
 function playGame(game) {
   if(gCurrentGameType) gCurrentGameType.switchFrom();
-
-  savePref("current-game", game);
 
   var full_name = document.getElementById('choosegame-' + game).textContent;
   var parts = full_name.match(/^([^)]+)\(([^)]+)\)/);

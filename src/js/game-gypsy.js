@@ -18,26 +18,13 @@ const GypsyBase = {
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
-  getFoundationDestinationFor: function(card) {
-    if(!card.isLast) return null;
-    if(card.isAce) return this.getFoundationForAce(card);
-    // xxx why not just pick the first valid foundation?
-    var down = card.down, c = down;
-    do {
-      var p = c.pile;
-      if(p.isFoundation && c.isLast) return p;
-      c = c.twin;
-    } while(c !== down);
-    return null;
-  },
-
   autoplay: function() {
-    const ps = this.piles;
     const nums = this.getAutoplayableNumbers();
-    for(var i = 0; i !== 8; i++) {
-      var last = ps[i].lastCard;
-      if(!last || last.number > nums[last.suit]) continue;
-      var act = this.getFoundationMoveFor(last);
+    for(let p of this.piles) {
+      let c = p.lastCard;
+      if(!c || c.number > nums[c.suit]) continue;
+      if(c.isAce) return new Move(c, this.getFoundationForAce(c));
+      let act = this.getFoundationMoveFor(c);
       if(act) return act;
     }
     return null;

@@ -84,8 +84,7 @@ const gFloatingPile = {
 
   boundingRect: function() { return this._canvas.getBoundingClientRect(); },
 
-  // Used to suppress repositioning/redrawing between mouseup and animation
-  // starting when dropping a card on a new valid pile.
+  // When dropping cards, moveCards() needs to if a drag was in progress so that it can animate from the drop, rather than from the original pile.  And in the current set-up, we need to track the source card/pile, or else all subsequent automoves would animate from the dragged card's source-pile, though that's probably just because we don't clear this field until .hide(), which gets deferred until after sequences of autoplay moves.
   lastCard: null,
 
   hide: function() {

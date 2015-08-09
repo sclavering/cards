@@ -27,8 +27,8 @@ const SpiderBase = {
   autoplay: function() {
     const cs = this.allcards, ixs = this.kings, f = this.foundation;
     for(let ix of ixs) {
-      let k = cs[ix], p = k.pile;
-      if(p.isPile && p.mayTakeCard(k) && f.mayAddCard(k)) return new Move(k, f);
+      let k = cs[ix];
+      if(k.pile.isPile && k.mayTake && f.mayAddCard(k)) return new Move(k, f);
     }
     return null;
   }
@@ -91,8 +91,8 @@ gGameClasses.divorce = {
     for(let p of this.piles) {
       let n = p.cards.length - 13;
       if(n < 0) continue;
-      var c = p.cards[n];
-      if(p.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
+      let c = p.cards[n];
+      if(c.mayTake && f.mayAddCard(c)) return new Move(c, f);
     }
     return null;
   },
@@ -193,7 +193,7 @@ const SpiderFoundation = {
   __proto__: NoWorryingBackFoundation,
 
   // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
-  // (For classic Spider it duplicates much of the work of pile.mayTakeCard(..).)
+  // (For classic Spider it duplicates much of the work of card.mayTake.)
   mayAddCard: function(card) {
     const cs = card.pile.cards, len = cs.length, suit = card.suit;
     if(card.index !== len - 13) return false;

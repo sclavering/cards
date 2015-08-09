@@ -146,7 +146,7 @@ const Layout = {
     if(e.button) return;
     const self = gCurrentGame.layout;
     const card = self._eventTargetCard = self._getTargetCard(e);
-    if(!card || !card.pile.mayTakeCard(card)) return;
+    if(!card || !card.mayTake) return;
     interrupt();
     self._ex0 = e.pageX;
     self._ey0 = e.pageY;

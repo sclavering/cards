@@ -288,7 +288,7 @@ const Game = {
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .getFoundationDestinationFor() instead.
   getFoundationMoveFor: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
+    if(!card.mayTake) return null;
     const f = this.getFoundationDestinationFor(card);
     return f ? new Move(card, f) : null;
   },
@@ -303,7 +303,7 @@ const Game = {
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
   getBestActionFor: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
+    if(!card.mayTake) return null;
     const target = this.best_destination_for(card);
     return target ? new Move(card, target) : null;
   },

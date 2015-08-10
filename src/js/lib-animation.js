@@ -81,3 +81,48 @@ function showHints(card, destinations) {
   gAnimations.on_cancel(end_hint);
   gAnimations.run();
 }
+
+
+var gFloatingPileNeedsHiding = false; // see done()
+
+// A <canvas/> used to show cards being dragged or animated.
+const gFloatingPile = {
+  init: function() {
+    this._canvas = document.createElement("canvas");
+    this._canvas.style.position = "absolute";
+    document.body.appendChild(this._canvas);
+    this.hide();
+    this.context = this._canvas.getContext("2d");
+    this._left = 0;
+    this._top = 0;
+  },
+
+  boundingRect: function() { return this._canvas.getBoundingClientRect(); },
+
+  // When dropping cards, moveCards() needs to if a drag was in progress so that it can animate from the drop, rather than from the original pile.  And in the current set-up, we need to track the source card/pile, or else all subsequent automoves would animate from the dragged card's source-pile, though that's probably just because we don't clear this field until .hide(), which gets deferred until after sequences of autoplay moves.
+  lastCard: null,
+
+  hide: function() {
+    this.moveTo(-1000, -1000);
+    this.lastCard = null;
+    gFloatingPileNeedsHiding = false;
+  },
+
+  // Show at (x, y).  Caller must set the size and paint into the context first.
+  // 'card' has to be stored so that animations starting after a drag look right
+  showFor: function(card, x, y) {
+    this.lastCard = card;
+    this.moveTo(x, y);
+  },
+
+  moveBy: function(dx, dy) {
+    this.moveTo(this._left + dx, this._top + dy);
+  },
+
+  moveTo: function(x, y) {
+    this._left = x;
+    this._top = y;
+    this._canvas.style.left = this._left + 'px';
+    this._canvas.style.top = this._top + 'px';
+  },
+};

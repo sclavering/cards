@@ -229,7 +229,7 @@ const Game = {
     action.score = this.getScoreFor(action);
     this.hintsReady = false;
 
-    action.perform();
+    const animation_details = action.perform() || null;
 
     const act = action;
     const pile = action.pileWhichMayNeedCardsRevealing || null;
@@ -239,6 +239,8 @@ const Game = {
     act.score += cs.length * this.scoreForRevealing;
     ui.scoreDisplay.textContent = this.score += act.score;
     ui.movesDisplay.textContent = this.actionPtr;
+
+    return animation_details;
   },
 
   // overridden by TriPeaks

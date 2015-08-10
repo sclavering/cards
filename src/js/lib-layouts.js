@@ -195,7 +195,6 @@ const Layout = {
         act.show();
         break;
       } else {
-        gFloatingPileNeedsHiding = true;
         doo(act);
         return;
       }

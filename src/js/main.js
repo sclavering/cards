@@ -145,12 +145,9 @@ function doo(action) { // "do" is a reserved word
   if(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 
   if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
-  gCurrentGame.doo(action);
-
-  // Animated actions schedule done() appropriately themselves
-  if(action.synchronous) gAnimations.schedule(kAnimationDelay, done);
-  // For both the above timer and any requested by an animated action
-  gAnimations.run();
+  const animation_details = gCurrentGame.doo(action);
+  if(animation_details) gAnimations.run(animation_details, done);
+  else done();
 }
 
 
@@ -159,7 +156,6 @@ function done() {
   if(act) {
     doo(act);
   } else {
-    if(gFloatingPileNeedsHiding) gFloatingPile.hide();
     if(gCurrentGame.is_won()) showGameWon();
   }
 }
@@ -170,7 +166,6 @@ function interrupt() {
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
 
   gAnimations.cancel();
-  if(gFloatingPileNeedsHiding) gFloatingPile.hide();
 }
 
 

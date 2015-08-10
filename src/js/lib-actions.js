@@ -6,8 +6,8 @@ Turning cards face up is handled implicitly in gCurrentGame.doo, rather than bei
 The required interface is:
 
 perform()
-  Carry out the action.  May start an animation, in which case the Action must
-  have a .synchronous field set to true.
+  Carry out the action.
+  If animation is desired, this should return appropriate details to pass to gAnimations.run().  It should not start the animation itself.  And it almost certainly needs to implement .redo() as well.
 undo()
 redo()
   Undo/redo the effects of the action.  Must *not* use animation.
@@ -24,7 +24,6 @@ function DealToPile(pile) {
   this.to = pile;
 }
 DealToPile.prototype = {
-  synchronous: true,
 
   perform: function() {
     const s = gCurrentGame.stock;
@@ -39,7 +38,6 @@ DealToPile.prototype = {
 
 function RefillStock() {}
 RefillStock.prototype = {
-  synchronous: true,
 
   perform: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
@@ -54,7 +52,6 @@ RefillStock.prototype = {
 
 function Deal3Action() {}
 Deal3Action.prototype = {
-  synchronous: true,
 
   perform: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
@@ -78,7 +75,6 @@ Deal3Action.prototype = {
 // has to work for Wasp, where just 3 cards are dealt, but there are seven piles
 function DealToPiles() {}
 DealToPiles.prototype = {
-  synchronous: true,
   dealt: 0,
 
   perform: function() {
@@ -95,7 +91,6 @@ DealToPiles.prototype = {
 
 function DealToNonEmptyPilesAction() {}
 DealToNonEmptyPilesAction.prototype = {
-  synchronous: true,
   last: 0, // the pile index we reached on the final deal before running out of cards
   num: 0, // num piles dealt to
 
@@ -124,12 +119,12 @@ function Move(card, destination) {
   this.destination = destination;
 }
 Move.prototype = {
-  synchronous: false,
   get pileWhichMayNeedCardsRevealing() { return this.source; },
 
   perform: function() {
-    moveCards(this.card, this.destination, done);
+    const rv = prepare_move_animation(this.card, this.destination);
     this.destination.addCards(this.card, true); // doesn't update view
+    return rv;
   },
   undo: function() {
     this.source.addCards(this.card);
@@ -145,7 +140,6 @@ function RemovePair(card1, card2) {
   this.c2 = card2; this.p2 = card2 && card2.pile;
 }
 RemovePair.prototype = {
-  synchronous: true,
 
   perform: function() {
     gCurrentGame.foundation.addCards(this.c1);

@@ -33,9 +33,8 @@ const gAnimations = {
 
 const kAnimationDelay = 30;
 
-function moveCards(firstCard, target, doneFunc) {
-  const card = firstCard, origin = card.pile;
-  if(gFloatingPile.lastCard !== card) origin.view.updateForAnimationOrDrag(card);
+function moveCards(card, target, doneFunc) {
+  gFloatingPile.start_animation_or_drag(card);
   const finalOffset = target.view.get_next_card_xy();
 
   // final coords (relative to ui.gameStack)
@@ -100,19 +99,26 @@ const gFloatingPile = {
   boundingRect: function() { return this._canvas.getBoundingClientRect(); },
 
   // When dropping cards, moveCards() needs to if a drag was in progress so that it can animate from the drop, rather than from the original pile.  And in the current set-up, we need to track the source card/pile, or else all subsequent automoves would animate from the dragged card's source-pile, though that's probably just because we don't clear this field until .hide(), which gets deferred until after sequences of autoplay moves.
-  lastCard: null,
+  _prev_card: null,
 
   hide: function() {
     this.moveTo(-1000, -1000);
-    this.lastCard = null;
+    this._prev_card = null;
     gFloatingPileNeedsHiding = false;
   },
 
-  // Show at (x, y).  Caller must set the size and paint into the context first.
-  // 'card' has to be stored so that animations starting after a drag look right
-  showFor: function(card, x, y) {
-    this.lastCard = card;
-    this.moveTo(x, y);
+  start_animation_or_drag: function(card) {
+    if(this._prev_card === card) return;
+    this._prev_card = card;
+
+    const pile = card.pile, view = pile.view;
+    const cards_taken = pile.cards.slice(card.index);
+    view.draw_into(this.context, cards_taken, false);
+    const coords = view.coords_of_card(card);
+    const r = view.pixelRect();
+    this.moveTo(r.left + coords.x, r.top + coords.y);
+    const cards_remaining = pile.cards.slice(0, card.index);
+    view.update_with(cards_remaining);
   },
 
   moveBy: function(dx, dy) {

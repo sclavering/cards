@@ -48,12 +48,12 @@ const _View = {
   // Redraw the pile.
   update: function() {
     const cs = this.pile.cards;
-    this._update(cs);
+    this.update_with(cs);
   },
 
   // Show the supplied array of cards (which may be a prefix of pile's cards, during animation or dragging).
-  _update: function(cards) {
-    throw "_View._update not overridden!";
+  update_with: function(cards) {
+    throw "not implemented";
   },
 
   _draw_background_into: function(ctx, width, height) {
@@ -69,18 +69,18 @@ const _View = {
   updateForAnimationOrDrag: function(card) {
     const cards = this.pile.cards.slice(card.index);
     this.draw_into(gFloatingPile.context, cards, false);
-    const coords = this._get_coords_of_card(card);
+    const coords = this.coords_of_card(card);
     const r = this.pixelRect();
     gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
-    this._update(cs);
+    this.update_with(cs);
   },
 
   draw_into: function(ctx, cards, draw_background) {
     throw "not implemented";
   },
 
-  _get_coords_of_card: function(card) {
+  coords_of_card: function(card) {
     return { x: 0, y: 0 };
   },
 
@@ -124,7 +124,7 @@ const _View = {
 
   // Takes an event (mousedown or contextmenu, at present) and returns a Card
   getTargetCard: function(event) {
-    throw "getTargetCard not implemented";
+    throw "not implemented";
   },
 
   needsUpdateOnResize: false,
@@ -146,7 +146,7 @@ const _View = {
 const View = {
   __proto__: _View,
 
-  _update: function(cs) {
+  update_with: function(cs) {
     this.draw_into(this._context, cs, !cs.length);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
@@ -189,14 +189,14 @@ const _FanView = {
   _hOffset: 0,
   _vOffset: 0,
 
-  _update: function(cs) {
-    this._updateOffsets(cs.length);
+  update_with: function(cs) {
+    this._recalculate_offsets(cs.length);
     this.draw_into(this._context, cs, !cs.length || this._always_draw_background);
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
   // Change offsets to allow num cards to fit in the space
-  _updateOffsets: function(num) {},
+  _recalculate_offsets: function(num) {},
 
   draw_into: function(ctx, cards, draw_background, use_minimum_size) {
     // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
@@ -208,7 +208,7 @@ const _FanView = {
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
   },
 
-  _get_coords_of_card: function(card) {
+  coords_of_card: function(card) {
     return { x: card.index * this._hOffset, y: card.index * this._vOffset };
   },
 
@@ -263,11 +263,11 @@ const _SelectiveFanView = {
     throw "not implemented";
   },
 
-  _update: function(cards) {
-    return _FanView._update.call(this, this._visible_cards_of(cards));
+  update_with: function(cards) {
+    return _FanView.update_with.call(this, this._visible_cards_of(cards));
   },
 
-  _get_coords_of_card: function(card) {
+  coords_of_card: function(card) {
     const offset = this._visible_cards_of(this.pile.cards).indexOf(card);
     return { x: offset * this._hOffset, y: offset * this._vOffset };
   },
@@ -303,7 +303,7 @@ const _FlexFanView = {
   _basicHOffset: 0,
 
   // change offsets to allow num+1 cards to fit in the space
-  _updateOffsets: function(num) {
+  _recalculate_offsets: function(num) {
     const h = this._basicHOffset, v = this._basicVOffset;
     if(h) this._hOffset = this._calculate_new_offset(h, this.fixedWidth - gCardWidth, num);
     if(v) this._vOffset = this._calculate_new_offset(v, this.fixedHeight - gCardHeight, num);
@@ -414,8 +414,8 @@ const PyramidView = {
     wrapper.className = "pyramid-pile-wrapper";
     wrapper.appendChild(this._canvas);
   },
-  _update: function(cs) {
-    View._update.call(this, cs);
+  update_with: function(cs) {
+    View.update_with.call(this, cs);
     // We want empty piles to be hidden, so mouse clicks go to any pile that was overlapped instead.  But not for piles at the root of a pyramid (where we draw the empty-pile graphic instead).
     if(this.pile.leftParent || this.pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
   }

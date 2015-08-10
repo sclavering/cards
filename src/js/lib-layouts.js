@@ -160,7 +160,7 @@ const Layout = {
     const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
     const card = self._eventTargetCard;
-    card.pile.view.updateForAnimationOrDrag(card);
+    gFloatingPile.start_animation_or_drag(card);
     self._tx = ex0 - gFloatingPile._left;
     self._ty = ey0 - gFloatingPile._top;
     window.onmousemove = self.mouseMoveInDrag;

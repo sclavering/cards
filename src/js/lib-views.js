@@ -1,6 +1,6 @@
 function createPileView(viewType) {
   const view =  { __proto__: viewType };
-  view.initView();
+  view.init();
   return view;
 }
 
@@ -34,16 +34,36 @@ function initCardImageOffsets() {
 
 // Base class for pile views.
 const _View = {
-  insertInto: function(parentNode) {
-    parentNode.appendChild(this._rootNode);
-  },
-
-  pixelRect: function() { return this._canvas.getBoundingClientRect(); },
-
   _rootNode: null,
   _canvas: null, // the <canvas>; all views use one
   _context: null,
   _counter: null, // if set true, a <label> will be created and replace it
+
+  init: function() {
+    this._rootNode = this._canvas = document.createElement("canvas");
+    this._canvas.pileViewObj = this;
+    this._context = this._canvas.getContext("2d");
+    if(this._counter) {
+      this._rootNode = document.createDocumentFragment();
+      this._rootNode.appendChild(this._canvas);
+      this._counter = this._rootNode.appendChild(document.createElement("div"));
+      this._counter.className = "counter";
+    }
+  },
+
+  // Attach this view to a Pile
+  attach: function(pile) {
+    this.pile = pile;
+    this.update();
+  },
+
+  insert_into: function(parentNode) {
+    parentNode.appendChild(this._rootNode);
+  },
+
+  pixel_rect: function() {
+    return this._canvas.getBoundingClientRect();
+  },
 
   // Redraw the pile.
   update: function() {
@@ -70,7 +90,7 @@ const _View = {
     const cards = this.pile.cards.slice(card.index);
     this.draw_into(gFloatingPile.context, cards, false);
     const coords = this.coords_of_card(card);
-    const r = this.pixelRect();
+    const r = this.pixel_rect();
     gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
     const cs = this.pile.cards.slice(0, card.index);
     this.update_with(cs);
@@ -84,14 +104,7 @@ const _View = {
     return { x: 0, y: 0 };
   },
 
-  // Attach this view to a Pile
-  displayPile: function(pile) {
-    this.pile = pile;
-    this.update();
-  },
-
-  // Shades the cards to be moved.
-  highlightHintFrom: function(card) {
+  show_hint_source: function(card) {
     const rect = this._get_hint_source_rect(card);
     this._context.fillStyle = "darkgrey";
     this._context.globalAlpha = 0.3;
@@ -128,18 +141,6 @@ const _View = {
   },
 
   needsUpdateOnResize: false,
-
-  initView: function() {
-    this._rootNode = this._canvas = document.createElement("canvas");
-    this._canvas.pileViewObj = this;
-    this._context = this._canvas.getContext("2d");
-    if(this._counter) {
-      this._rootNode = document.createDocumentFragment();
-      this._rootNode.appendChild(this._canvas);
-      this._counter = this._rootNode.appendChild(document.createElement("div"));
-      this._counter.className = "counter";
-    }
-  }
 };
 
 // A view where only the top card is ever visible (used for foundations).
@@ -406,8 +407,8 @@ const PileOnView8 = {
 
 const PyramidView = {
   __proto__: View,
-  initView: function() {
-    View.initView.call(this);
+  init: function() {
+    View.init.call(this);
     // We need this <div> to set a minimum-width on and thus space the piles out properly (the <canvas> is position:absolute).
     // Note: you might expect the <div> to need position:relative too to get the <canvas> in the right place, but actually setting that makes the <canvas> invisible (I don't know why).  It works fine without it, because we're leaving top/left unspecified (rather than setting them to 0), so the <canvas> retains the position it would've got from position:static, rather than being positioned relative to the nearest position:relative/absolute ancestor.
     const wrapper = this._rootNode = document.createElement("div");

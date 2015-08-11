@@ -118,7 +118,7 @@ const Layout = {
           letters.push(ch);
           var viewObj = createPileView(viewType);
           views.push(viewObj);
-          viewObj.insertInto(boxOrTd());
+          viewObj.insert_into(boxOrTd());
           break;
       }
     }
@@ -185,7 +185,7 @@ const Layout = {
     for(let target of gCurrentGame.dragDropTargets) {
       if(target === card.pile) continue;
       var view = target.view;
-      var tr = view.pixelRect();
+      let tr = view.pixel_rect();
       // skip if we don't overlap the target at all
       if(fr.right < tr.left || fr.left > tr.right) continue;
       if(fr.bottom < tr.top || fr.top > tr.bottom) continue;
@@ -249,7 +249,7 @@ const Layout = {
 
   setFlexibleViewSizes: function(views, width, height) {
     for(let v of views) {
-      let r = v.pixelRect();
+      let r = v.pixel_rect();
       if(v.flexHeight) v.fixedHeight = height - r.top;
       if(v.flexWidth) v.fixedWidth = width - r.left;
     }

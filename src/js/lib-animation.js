@@ -45,7 +45,7 @@ function prepare_move_animation(card, target) {
   const finalOffset = target.view.get_next_card_xy();
 
   // final coords (relative to ui.gameStack)
-  const r = target.view.pixelRect();
+  const r = target.view.pixel_rect();
   const x1 = r.left + finalOffset.x, y1 = r.top + finalOffset.y;
   const x0 = gFloatingPile._left, y0 = gFloatingPile._top;
 
@@ -65,7 +65,7 @@ function prepare_move_animation(card, target) {
 
 function showHints(card, destinations) {
   const view = card.pile.view;
-  view.highlightHintFrom(card);
+  view.show_hint_source(card);
   const hint_cards = card.pile.cards.slice(card.index);
   gAnimations.run({
     piles_to_update: destinations.concat(card.pile),
@@ -107,7 +107,7 @@ const gFloatingPile = {
     const cards_taken = pile.cards.slice(card.index);
     view.draw_into(this.context, cards_taken, false);
     const coords = view.coords_of_card(card);
-    const r = view.pixelRect();
+    const r = view.pixel_rect();
     this.moveTo(r.left + coords.x, r.top + coords.y);
     const cards_remaining = pile.cards.slice(0, card.index);
     view.update_with(cards_remaining);

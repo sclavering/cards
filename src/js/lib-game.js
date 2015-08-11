@@ -47,7 +47,7 @@ const Game = {
 
   show: function() {
     // Some other game may have been using the layout, so need to reassociate piles+views
-    for(let p of this.allpiles) p.view.displayPile(p);
+    for(let p of this.allpiles) p.view.attach(p);
     this.layout.show();
     setVisibility(ui.scorePanel, this.hasScoring);
     ui.scoreDisplay.textContent = this.score;
@@ -105,7 +105,7 @@ const Game = {
     const bytype = {};
     for(var i in all) {
       all[i].view = views[i];
-      all[i].view.displayPile(all[i]);
+      all[i].view.attach(all[i]);
       var l = letters[i];
       if(!bytype[l]) bytype[l] = [];
       bytype[l].push(all[i]);

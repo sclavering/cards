@@ -14,8 +14,8 @@ gGameClasses.pyramid = {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;
     const ps = this.piles;
 
-    for(var i = 0; i !== lknum; ++i) {
-      var lk = leftkid[i];
+    for(let i = 0; i !== lknum; ++i) {
+      let lk = leftkid[i];
       let p = ps[i], l = ps[lk], r = ps[lk + 1];
       p.leftChild = l; l.rightParent = p;
       p.rightChild = r; r.leftParent = p;
@@ -52,15 +52,15 @@ gGameClasses.tripeaks = {
     const ps = this.piles;
     // indices of the leftChild's of piles 0-17 (piles 18+ have no children)
     const lefts = [3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26];
-    for(var i = 0; i !== 18; i++) {
-      var p = ps[i], n = lefts[i], l = ps[n], r = ps[n + 1];
+    for(let i = 0; i !== 18; i++) {
+      let p = ps[i], n = lefts[i], l = ps[n], r = ps[n + 1];
       p.leftChild = l;
       l.rightParent = p;
       p.rightChild = r;
       r.leftParent = p;
     }
 
-    for(i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
+    for(let i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
   },
 
   deal: function(cards) {

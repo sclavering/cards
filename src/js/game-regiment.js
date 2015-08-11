@@ -19,13 +19,13 @@ gGameClasses.regiment = {
     this.aceFoundations = fs.slice(0,4);
     this.kingFoundations = fs.slice(4,8);
 
-    for(var i = 0; i !== 8; i++) {
+    for(let i = 0; i !== 8; i++) {
       rs[i].up = ps[i];
       rs[i].down = ps[i + 8];
       rs[i].col = i;
     }
 
-    for(i = 0; i !== 16; i++) {
+    for(let i = 0; i !== 16; i++) {
       var p = ps[i], col = p.col = i % 8;
       p.reserve = rs[col];
     }
@@ -37,7 +37,7 @@ gGameClasses.regiment = {
   best_destination_for: function(card) {
     const parent = card.pile;
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
-    for(var i = 0; i !== num; i++) {
+    for(let i = 0; i !== num; i++) {
       var p = ps[i];
       if(p.hasCards && p.mayAddCard(card)) return p;
     }
@@ -72,25 +72,23 @@ gGameClasses.regiment = {
 
   autoplay: function() {
     var pileWhichHasHadCardsRemoved = this._lastActionSourcePile;
-    var i, pile, last, card;
     if(pileWhichHasHadCardsRemoved) {
       pile = pileWhichHasHadCardsRemoved;
       if(pile.isPile && !pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
-
     const afs = this.aceFoundations, kfs = this.kingFoundations;
-    for(i = 0; i !== 4; i++) {
-      pile = afs[i], last = pile.lastCard;
+    for(let i = 0; i !== 4; i++) {
+      let pile = afs[i], last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
-        card = last.up.pile.isFoundation ? last.twin.up : last.up;
+        let card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
-    for(i = 0; i !== 4; i++) {
-      pile = kfs[i], last = pile.lastCard;
+    for(let i = 0; i !== 4; i++) {
+      let pile = kfs[i], last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
-        card = last.down.pile.isFoundation ? last.twin.down : last.down;
+        let card = last.down.pile.isFoundation ? last.twin.down : last.down;
         if(card.isLast) return new Move(card, pile);
       }
     }

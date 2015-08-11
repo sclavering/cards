@@ -71,9 +71,11 @@ const Pile = {
   following: function() {
     if(this._following) return this._following;
     const ps = [];
-    for(var p = this.next; p && p !== this; p = p.next) ps.push(p);
+    let p;
+    for(p = this.next; p && p !== this; p = p.next) ps.push(p);
     if(!p) { // next/prev links have *not* been formed into a loop
-      for(var fst = this; fst.prev; fst = fst.prev);
+      let fst = this;
+      while(fst.prev) fst = fst.prev;
       for(p = fst; p !== this; p = p.next) ps.push(p);
     }
     return this._following = ps;

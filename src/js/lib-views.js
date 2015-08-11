@@ -135,8 +135,7 @@ const _View = {
     return { x: 0, y: 0 };
   },
 
-  // Takes an event (mousedown or contextmenu, at present) and returns a Card
-  getTargetCard: function(event) {
+  card_at_coords: function(x, y) {
     throw "not implemented";
   },
 
@@ -164,7 +163,7 @@ const View = {
     this._draw_hint_destination(tmp, 0, 0);
   },
 
-  getTargetCard: function(event) {
+  card_at_coords: function(x, y) {
     return this.pile.lastCard;
   }
 };
@@ -235,12 +234,7 @@ const _FanView = {
     return this.pile.cards.length;
   },
 
-  getTargetCard: function(event) {
-    const bounds = this._canvas.getBoundingClientRect();
-    return this._get_target_card_at_relative_coords(event.pageX - bounds.left, event.pageY - bounds.top);
-  },
-
-  _get_target_card_at_relative_coords: function(x, y) {
+  card_at_coords: function(x, y) {
     return this._get_target_card_at_relative_coords_from_list(x, y, this.pile.cards);
   },
 
@@ -273,7 +267,7 @@ const _SelectiveFanView = {
     return { x: offset * this._hOffset, y: offset * this._vOffset };
   },
 
-  _get_target_card_at_relative_coords: function(x, y) {
+  card_at_coords: function(x, y) {
     return this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards));
   },
 
@@ -340,9 +334,9 @@ const _SlideView = {
   _basicHOffset: gHSlideOffset,
   _basicVOffset: gVSlideOffset,
   // Adequate in all the games it's used in
-  getTargetCard: function(event) {
+  card_at_coords: function(x, y) {
     return this.pile.lastCard;
-  }
+  },
 };
 
 const _Deal3WasteView = {
@@ -475,9 +469,9 @@ const UnionSquareFoundationView = {
 const StockView = {
   __proto__: View,
   _counter: true,
-  getTargetCard: function(event) {
+  card_at_coords: function(x, y) {
     return this.pile.lastCard || this.pile.magicStockStubCard;
-  }
+  },
 };
 
 

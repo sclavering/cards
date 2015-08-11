@@ -235,9 +235,11 @@ const Layout = {
   },
 
   _getTargetCard: function(e) {
-    for(var t = e.target; t && !t.pileViewObj; t = t.parentNode);
+    let t = e.target;
+    while(t && !t.pileViewObj) t = t.parentNode;
     if(!t || !t.pileViewObj) return null;
-    return t.pileViewObj.getTargetCard(e);
+    const view = t.pileViewObj, rect = view.pixel_rect();
+    return view.card_at_coords(e.pageX - rect.left, e.pageY - rect.top);
   },
 
   onWindowResize: function(e) {

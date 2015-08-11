@@ -13,7 +13,7 @@ const Layout = {
     setVisibility(this._node, true);
     this._resetHandlers();
     this.onWindowResize();
-    window.onresize = this.onWindowResize;
+    window.onresize = this.bound_onWindowResize;
   },
 
   hide: function() {
@@ -23,6 +23,14 @@ const Layout = {
 
   init: function() {
     if(this._node) throw "reinitialising layout";
+
+    this.bound_beginDrag = (ev) => this.beginDrag(ev);
+    this.bound_endDrag = (ev) => this.endDrag(ev);
+    this.bound_mouseMoveInDrag = (ev) => this.mouseMoveInDrag(ev);
+    this.bound_onWindowResize = (ev) => this.onWindowResize(ev);
+    this.bound_onmousedown = (ev) => this.onmousedown(ev);
+    this.bound_onmouseup = (ev) => this.onmouseup(ev);
+    this.bound_rightClick = (ev) => this.rightClick(ev);
 
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
@@ -144,27 +152,25 @@ const Layout = {
 
   onmousedown: function(e) {
     if(e.button) return;
-    const self = gCurrentGame.layout;
-    const card = self._eventTargetCard = self._getTargetCard(e);
+    const card = this._eventTargetCard = this._getTargetCard(e);
     if(!card || !card.mayTake) return;
     interrupt();
-    self._ex0 = e.pageX;
-    self._ey0 = e.pageY;
-    window.onmousemove = self.beginDrag;
+    this._ex0 = e.pageX;
+    this._ey0 = e.pageY;
+    window.onmousemove = this.bound_beginDrag;
   },
 
   beginDrag: function(e) {
-    const self = gCurrentGame.layout; // this === window
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
-    const ex = e.pageX, ey = e.pageY, ex0 = self._ex0, ey0 = self._ey0;
+    const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    const card = self._eventTargetCard;
+    const card = this._eventTargetCard;
     gFloatingPile.start_animation_or_drag(card);
-    self._tx = ex0 - gFloatingPile._left;
-    self._ty = ey0 - gFloatingPile._top;
-    window.onmousemove = self.mouseMoveInDrag;
-    window.onmouseup = self.endDrag;
+    this._tx = ex0 - gFloatingPile._left;
+    this._ty = ey0 - gFloatingPile._top;
+    window.onmousemove = this.bound_mouseMoveInDrag;
+    window.onmouseup = this.bound_endDrag;
     window.oncontextmenu = null;
   },
 
@@ -172,13 +178,12 @@ const Layout = {
   _tx: 0,
   _ty: 0,
   mouseMoveInDrag: function(e) {
-    const self = gCurrentGame.layout;
-    gFloatingPile.moveTo(e.pageX - self._tx, e.pageY - self._ty);
+    gFloatingPile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
   },
 
   endDrag: function(e) {
-    const self = gCurrentGame.layout, card = self._eventTargetCard;
-    self._resetHandlers();
+    const card = this._eventTargetCard;
+    this._resetHandlers();
 
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
@@ -206,27 +211,26 @@ const Layout = {
   },
 
   onmouseup: function(e) {
-    const self = gCurrentGame.layout, card = self._eventTargetCard;
+    const card = this._eventTargetCard;
     if(!card) return;
     doo(card.pile.getClickAction(card));
-    self._resetHandlers();
+    this._resetHandlers();
   },
 
   rightClick: function(e) {
-    const self = gCurrentGame.layout;
-    const card = self._getTargetCard(e);
+    const card = this._getTargetCard(e);
     interrupt();
     if(card) doo(gCurrentGame.getFoundationMoveFor(card));
-    self._resetHandlers();
+    this._resetHandlers();
     e.preventDefault();
     return false;
   },
 
   _resetHandlers: function(e) {
     this._eventTargetCard = null;
-    window.oncontextmenu = this.rightClick;
-    window.onmousedown = this.onmousedown;
-    window.onmouseup = this.onmouseup;
+    window.oncontextmenu = this.bound_rightClick;
+    window.onmousedown = this.bound_onmousedown;
+    window.onmouseup = this.bound_onmouseup;
     window.onmousemove = null;
   },
 
@@ -238,12 +242,11 @@ const Layout = {
 
   onWindowResize: function(e) {
     gAnimations.cancel();
-    const self = gCurrentGame.layout;
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;
-    const vs = self.viewsNeedingUpdateOnResize;
-    self.setFlexibleViewSizes(vs, width, height);
+    const vs = this.viewsNeedingUpdateOnResize;
+    this.setFlexibleViewSizes(vs, width, height);
     for(let v of vs) v.update();
   },
 

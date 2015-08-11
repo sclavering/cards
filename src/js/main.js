@@ -164,7 +164,7 @@ function done() {
 function interrupt() {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
-
+  if(gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
   gAnimations.cancel();
 }
 

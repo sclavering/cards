@@ -150,6 +150,8 @@ const Layout = {
   _ey0: 0,
   _eventTargetCard: null, // or a Card
 
+  _is_dragging: false,
+
   onmousedown: function(e) {
     if(e.button) return;
     const card = this._eventTargetCard = this._getTargetCard(e);
@@ -169,6 +171,7 @@ const Layout = {
     gFloatingPile.start_animation_or_drag(card);
     this._tx = ex0 - gFloatingPile._left;
     this._ty = ey0 - gFloatingPile._top;
+    this._is_dragging = true;
     window.onmousemove = this.bound_mouseMoveInDrag;
     window.onmouseup = this.bound_endDrag;
     window.oncontextmenu = null;
@@ -181,10 +184,17 @@ const Layout = {
     gFloatingPile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
   },
 
+  cancel_drag: function() {
+    if(!this._is_dragging) return;
+    const card = this._eventTargetCard;
+    this._resetHandlers();
+    gFloatingPile.hide();
+    card.pile.view.update();
+  },
+
   endDrag: function(e) {
     const card = this._eventTargetCard;
     this._resetHandlers();
-
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
@@ -204,10 +214,8 @@ const Layout = {
         return;
       }
     }
-
-    // ordering here may be important (not-repainting fun)
     gFloatingPile.hide();
-    card.pile.view.update(); // make the cards visible again
+    card.pile.view.update();
   },
 
   onmouseup: function(e) {
@@ -227,6 +235,7 @@ const Layout = {
   },
 
   _resetHandlers: function(e) {
+    this._is_dragging = false;
     this._eventTargetCard = null;
     window.oncontextmenu = this.bound_rightClick;
     window.onmousedown = this.bound_onmousedown;

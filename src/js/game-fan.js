@@ -20,8 +20,7 @@ gGameClasses.fan = {
     "f", 4, FanFoundation, View, 0, 0,
   ],
 
-  // We disable width:100% on the main grid because we're manually sizing everything, and don't want the browser to distribute any extra width proportionately.
-  layoutTemplate: "#<  f f f f  >.#{style=width:auto}<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
+  layoutTemplate: "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
 
   layoutProto: {
     __proto__: FanLayoutProto,
@@ -61,8 +60,7 @@ gGameClasses.doublefan = {
     "f", 8, FanFoundation, View, 0, 0,
   ],
 
-  // We disable width:100% on the main grid because we're manually sizing everything, and don't want the browser to distribute any extra width proportionately.
-  layoutTemplate: "#<  f f f f f f f f  >.#{style=width:auto}<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.",
+  layoutTemplate: "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.",
 
   layoutProto: {
     __proto__: FanLayoutProto,

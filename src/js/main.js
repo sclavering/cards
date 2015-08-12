@@ -140,6 +140,7 @@ function restartGame() {
 
 function doo(action) { // "do" is a reserved word
   if(!action) return;
+  interrupt();
   // enable undo + disable redo (but avoid doing so unnecessarily)
   if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.removeAttribute("disabled");
   if(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");

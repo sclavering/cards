@@ -4,7 +4,7 @@ gGameClasses.whitehead = {
   pileDetails: () => [
     "s", 1, StockDealToWaste, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
-    "p", 7, WhiteheadPile, FanDownView, 0, [i + 1 for(i in irange(7))],
+    "p", 7, WhiteheadPile, FanDownView, 0, [1, 2, 3, 4, 5, 6, 7],
     "f", 4, KlondikeFoundation, View, 0, 0,
   ],
 

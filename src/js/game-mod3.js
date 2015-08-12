@@ -19,7 +19,7 @@ gGameClasses.mod3 = {
   init: function() {
     const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
     const cardss = [for(nums of numss) makeCards(2, null, nums)];
-    this.allcards = flatten(cardss, 1);
+    this.allcards = flatten_array(cardss);
     const baseIxs = [0, 4, 8, 12, 16, 20, 24, 28];
     this.bases = [for(cards of cardss) [for(ix of baseIxs) cards[ix]]];
     const fs = this.foundations;

@@ -29,20 +29,20 @@ function makeCards(repeat, suits, numbers, mod13) {
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = range2(1, 14);
   if(!mod13) mod13 = false;
-  const cardsss = [for(suit of suits) _makeCardSeqs(repeat, suit, numbers, mod13)];
-  return flatten(cardsss, 3);
+  return flatten_array([for(suit of suits) _new_card_runs(repeat, suit, numbers, mod13)]);
 }
 
-function _makeCardSeqs(repeat, suit, numbers, mod13) {
-  const css = [_makeCardSeq(numbers, suit, mod13) for(i in irange(repeat))];
-  // set twin fields
-  if(repeat > 1)
-    for(var r in irange(css.length)) // irange make r a number, rather than a string
-      for(var i in css[r]) css[r][i].twin = css[(r + 1) % repeat][i];
-  return css;
+function _new_card_runs(repeat, suit, numbers, mod13) {
+  const runs = [for(_ of irange(repeat)) _new_card_run(numbers, suit, mod13)];
+  // Set .twin fields
+  if(repeat > 1) runs.forEach((cs, run_ix) => {
+    const twin_run = runs[(run_ix + 1) % repeat];
+    cs.forEach((c, cs_ix) => c.twin = twin_run[cs_ix]);
+  });
+  return flatten_array(runs);
 }
 
-function _makeCardSeq(numbers, suit, mod13) {
+function _new_card_run(numbers, suit, mod13) {
   const cs = [for(num of numbers) new Card(num, suit)];
   if(mod13) cs[cs.length - 1].upNumber = 1; // copied from old code, may be unnecessary
   return linkList(cs, "down", "up", mod13);

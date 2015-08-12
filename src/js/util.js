@@ -28,9 +28,8 @@ function linkList(items, prevPropName, nextPropName, loop) {
   return items;
 }
 
-function flatten(items, times) {
-  for(var i in irange(times)) items = Array.concat.apply(null, items);
-  return items;
+function flatten_array(xss) {
+  return [].concat.apply([], xss);
 }
 
 function findEmpty(piles) {

@@ -1,6 +1,4 @@
 const Layout = {
-  // a string, starting with "v" or "h" (depending on wether outer element should be a <vbox>
-  // or an <hbox>) and continuing with chars from "pfcrwsl 12345#", with meanings defined below
   template: null,
 
   views: [],

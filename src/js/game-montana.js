@@ -64,28 +64,29 @@ MontanaRedealAction.prototype = {
   _post_map: null,
 
   perform: function() {
-    var c, i, p, r, row;
     const rows = gCurrentGame.rows;
 
     // store old card locations
     const map = [for(row of rows) [for(p of row) p.firstCard]];
-    this._pre_map = [].concat.apply([], map);
+    this._pre_map = flatten_array(map);
 
     // decide which cards need to move
     function get_last_good_col(row) {
       const first_in_row = row[0].firstCard;
       const suit = first_in_row ? first_in_row.suit : null;
-      for(var c = 0; row[c].hasCards && row[c].firstCard.isA(suit, c + 2);) ++c;
-      return c;
+      let ix = 0;
+      while(row[ix].hasCards && row[ix].firstCard.isA(suit, ix + 2)) ++ix;
+      return ix;
     }
     const col_indexes = [for(row of rows) get_last_good_col(row)];
 
     // decide post-redeal layout
-    var to_shuffle = [].concat.apply([], [map[i].slice(col_indexes[i]) for(i in map)]);
+    const row_ixs = [0, 1, 2, 3];
+    const to_shuffle = flatten_array([for(i of row_ixs) map[i].slice(col_indexes[i])]);
     const shuffled = shuffle(to_shuffle);
-    const newmaptails = [shuffled.splice(0, 13 - col_indexes[i]) for(i in map)];
-    const postmap = [map[i].slice(0, col_indexes[i]).concat(newmaptails[i]) for(i in map)];
-    this._post_map = [].concat.apply([], postmap);
+    const newmaptails = [for(i of row_ixs) shuffled.splice(0, 13 - col_indexes[i])];
+    const postmap = [for(i of row_ixs) map[i].slice(0, col_indexes[i]).concat(newmaptails[i])];
+    this._post_map = flatten_array(postmap);
 
     this.redo();
   },

@@ -1,5 +1,4 @@
-// useful because you can for..in it, whereas on an array that gives string indexes
-function irange(N) {
+function* irange(N) {
   for(var i = 0; i < N; ++i) yield i;
 }
 

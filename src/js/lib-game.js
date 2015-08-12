@@ -70,8 +70,8 @@ const Game = {
     const numletters = details.length / eLen;
     const letters = [], nums = {}, impls = {}, downs = {}, ups = {};
     // get mappings of stuff, grouped by letter used in layout template
-    for(var i in irange(numletters)) {
-      var l = letters[i] = details[i * eLen];
+    for(let i of irange(numletters)) {
+      let l = letters[i] = details[i * eLen];
       nums[l]  = details[i * eLen + 1];
       impls[l] = details[i * eLen + 2];
       layout[l] = details[i * eLen + 3]; // for use in layout.init()

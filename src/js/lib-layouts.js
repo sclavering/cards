@@ -44,15 +44,14 @@ const Layout = {
 
     function pushBox(tagName, className) {
       stack.push(box);
-      var el = document.createElement(tagName);
-      if(tagName === 'tr') el.isTR = true; // avoid the string case mess in .tagName and .localName
+      const el = document.createElement(tagName);
       el.className = className;
       boxOrTd().appendChild(el);
       box = el;
     }
 
     function boxOrTd() {
-      if(!box.isTR) return box;
+      if(box.localName !== "tr") return box;
       var td = document.createElement('td');
       box.appendChild(td);
       return td;

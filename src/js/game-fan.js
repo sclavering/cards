@@ -1,7 +1,7 @@
 const FanLayoutProto = {
   __proto__: Layout,
   // No other layout has a grid of flexible views
-  setFlexibleViewSizes: function(views, width, height) {
+  update_flexible_views_sizes: function(views, width, height) {
     const kSpaceBetweenPiles = 4 * gSpacerSize;
     // 5 units per each of the columns, plus 2 to the left of everything, and 3 to the right.
     const unitwidth = (width - kSpaceBetweenPiles) / (5 * this._num_grid_columns + 2 + 2);

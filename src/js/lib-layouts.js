@@ -11,9 +11,9 @@ const Layout = {
   show: function() {
     if(!this._node) throw "layout not init()'d";
     setVisibility(this._node, true);
-    this._resetHandlers();
-    this.onWindowResize();
-    window.onresize = this.bound_onWindowResize;
+    this._reset_handlers();
+    this._on_window_resize();
+    window.onresize = this._bound_on_window_resize;
   },
 
   hide: function() {
@@ -24,13 +24,13 @@ const Layout = {
   init: function() {
     if(this._node) throw "reinitialising layout";
 
-    this.bound_beginDrag = (ev) => this.beginDrag(ev);
-    this.bound_endDrag = (ev) => this.endDrag(ev);
-    this.bound_mouseMoveInDrag = (ev) => this.mouseMoveInDrag(ev);
-    this.bound_onWindowResize = (ev) => this.onWindowResize(ev);
-    this.bound_onmousedown = (ev) => this.onmousedown(ev);
-    this.bound_onmouseup = (ev) => this.onmouseup(ev);
-    this.bound_rightClick = (ev) => this.rightClick(ev);
+    this._bound_on_begin_drag = (ev) => this._on_begin_drag(ev);
+    this._bound_on_end_drag = (ev) => this._on_end_drag(ev);
+    this._bound_on_mouse_move_during_drag = (ev) => this._on_mouse_move_during_drag(ev);
+    this._bound_on_window_resize = (ev) => this._on_window_resize(ev);
+    this._bound_on_mouse_down = (ev) => this._on_mouse_down(ev);
+    this._bound_on_mouse_up = (ev) => this._on_mouse_up(ev);
+    this._bound_on_right_click = (ev) => this._on_right_click(ev);
 
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
@@ -151,17 +151,17 @@ const Layout = {
 
   _is_dragging: false,
 
-  onmousedown: function(e) {
+  _on_mouse_down: function(e) {
     if(e.button) return;
-    const card = this._eventTargetCard = this._getTargetCard(e);
+    const card = this._eventTargetCard = this._target_card(e);
     if(!card || !card.mayTake) return;
     interrupt();
     this._ex0 = e.pageX;
     this._ey0 = e.pageY;
-    window.onmousemove = this.bound_beginDrag;
+    window.onmousemove = this._bound_on_begin_drag;
   },
 
-  beginDrag: function(e) {
+  _on_begin_drag: function(e) {
     // ignore very tiny movements of the mouse during a click
     // (otherwise clicking without dragging is rather difficult)
     const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
@@ -171,29 +171,29 @@ const Layout = {
     this._tx = ex0 - gFloatingPile._left;
     this._ty = ey0 - gFloatingPile._top;
     this._is_dragging = true;
-    window.onmousemove = this.bound_mouseMoveInDrag;
-    window.onmouseup = this.bound_endDrag;
+    window.onmousemove = this._bound_on_mouse_move_during_drag;
+    window.onmouseup = this._bound_on_end_drag;
     window.oncontextmenu = null;
   },
 
   // (_tx, _ty) is the pixel coords of the mouse relative to gFloatingPile
   _tx: 0,
   _ty: 0,
-  mouseMoveInDrag: function(e) {
+  _on_mouse_move_during_drag: function(e) {
     gFloatingPile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
   },
 
   cancel_drag: function() {
     if(!this._is_dragging) return;
     const card = this._eventTargetCard;
-    this._resetHandlers();
+    this._reset_handlers();
     gFloatingPile.hide();
     card.pile.view.update();
   },
 
-  endDrag: function(e) {
+  _on_end_drag: function(e) {
     const card = this._eventTargetCard;
-    this._resetHandlers();
+    this._reset_handlers();
     const fr = gFloatingPile.boundingRect();
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
@@ -217,32 +217,32 @@ const Layout = {
     card.pile.view.update();
   },
 
-  onmouseup: function(e) {
+  _on_mouse_up: function(e) {
     const card = this._eventTargetCard;
     if(!card) return;
     doo(card.pile.getClickAction(card));
-    this._resetHandlers();
+    this._reset_handlers();
   },
 
-  rightClick: function(e) {
-    const card = this._getTargetCard(e);
+  _on_right_click: function(e) {
+    const card = this._target_card(e);
     interrupt();
     if(card) doo(gCurrentGame.getFoundationMoveFor(card));
-    this._resetHandlers();
+    this._reset_handlers();
     e.preventDefault();
     return false;
   },
 
-  _resetHandlers: function(e) {
+  _reset_handlers: function(e) {
     this._is_dragging = false;
     this._eventTargetCard = null;
-    window.oncontextmenu = this.bound_rightClick;
-    window.onmousedown = this.bound_onmousedown;
-    window.onmouseup = this.bound_onmouseup;
+    window.oncontextmenu = this._bound_on_right_click;
+    window.onmousedown = this._bound_on_mouse_down;
+    window.onmouseup = this._bound_on_mouse_up;
     window.onmousemove = null;
   },
 
-  _getTargetCard: function(e) {
+  _target_card: function(e) {
     let t = e.target;
     while(t && !t.pileViewObj) t = t.parentNode;
     if(!t || !t.pileViewObj) return null;
@@ -250,17 +250,17 @@ const Layout = {
     return view.card_at_coords(e.pageX - rect.left, e.pageY - rect.top);
   },
 
-  onWindowResize: function(e) {
+  _on_window_resize: function(e) {
     gAnimations.cancel();
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;
     const vs = this.viewsNeedingUpdateOnResize;
-    this.setFlexibleViewSizes(vs, width, height);
+    this.update_flexible_views_sizes(vs, width, height);
     for(let v of vs) v.update();
   },
 
-  setFlexibleViewSizes: function(views, width, height) {
+  update_flexible_views_sizes: function(views, width, height) {
     for(let v of views) {
       let r = v.pixel_rect();
       if(v.flexHeight) v.fixedHeight = height - r.top;

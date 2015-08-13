@@ -38,14 +38,14 @@ const gAnimations = {
 
 const kAnimationDelay = 30;
 
-function prepare_move_animation(card, target) {
+function prepare_move_animation(card, destination) {
   const steps = [];
 
   gFloatingPile.start_animation_or_drag(card);
-  const finalOffset = target.view.get_next_card_xy();
+  const finalOffset = destination.view.get_next_card_xy(destination.cards);
 
   // final coords (relative to ui.gameStack)
-  const r = target.view.pixel_rect();
+  const r = destination.view.pixel_rect();
   const x1 = r.left + finalOffset.x, y1 = r.top + finalOffset.y;
   const x0 = gFloatingPile._left, y0 = gFloatingPile._top;
 
@@ -59,7 +59,7 @@ function prepare_move_animation(card, target) {
   // The +1 step shows the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
   for(let i = 1; i <= num_steps + 1; ++i) steps.push([kAnimationDelay, step_func]);
 
-  return { steps: steps, piles_to_update: [card.pile, target] };
+  return { steps: steps, piles_to_update: [card.pile, destination] };
 }
 
 

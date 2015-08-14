@@ -56,8 +56,9 @@ function prepare_move_animation(card, destination) {
   if(!num_steps) num_steps = 1;
   const stepX = dx / num_steps, stepY = dy / num_steps;
   const step_func = () => gFloatingPile.moveBy(stepX, stepY);
-  // The +1 step shows the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
-  for(let i = 1; i <= num_steps + 1; ++i) steps.push([kAnimationDelay, step_func]);
+  for(let i = 1; i <= num_steps; ++i) steps.push([kAnimationDelay, step_func]);
+  // Briefly show the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
+  steps.push([100, () => null]);
 
   return { steps: steps, piles_to_update: [card.pile, destination] };
 }

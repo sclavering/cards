@@ -10,6 +10,7 @@ JS_FILES = [
     'lib-layouts.js',
     'lib-piles.js',
     'lib-animation.js',
+    'lib-freecellanimation.js',
     'autoplay.js',
     'getAutoplayableNumbers.js',
     'best_destination_for.js',

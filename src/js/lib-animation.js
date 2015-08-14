@@ -36,11 +36,13 @@ const gAnimations = {
 };
 
 
-const kAnimationDelay = 30;
+const kAnimationDelay = 20;
+const kAnimationRepackDelay = 100;
 
 function prepare_move_animation(card, destination) {
   const steps = [];
 
+  // xxx It's slightly icky that this line has immediate effect, rather than just preparing stuff to run later.
   gFloatingPile.start_animation_or_drag(card);
   const finalOffset = destination.view.get_next_card_xy(destination.cards);
 
@@ -58,7 +60,7 @@ function prepare_move_animation(card, destination) {
   const step_func = () => gFloatingPile.moveBy(stepX, stepY);
   for(let i = 1; i <= num_steps; ++i) steps.push([kAnimationDelay, step_func]);
   // Briefly show the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
-  steps.push([100, () => null]);
+  steps.push([kAnimationRepackDelay, () => null]);
 
   return { steps: steps, piles_to_update: [card.pile, destination] };
 }
@@ -111,6 +113,14 @@ const gFloatingPile = {
     const r = view.pixel_rect();
     this.moveTo(r.left + coords.x, r.top + coords.y);
     const cards_remaining = pile.cards.slice(0, card.index);
+    view.update_with(cards_remaining);
+  },
+
+  // It's always of just the top card
+  start_freecell_animation: function(src, cards_remaining, moving_card, x, y) {
+    const view = src.view;
+    view.draw_into(this.context, [moving_card], false);
+    this.moveTo(x, y);
     view.update_with(cards_remaining);
   },
 

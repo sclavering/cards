@@ -23,8 +23,8 @@ function drawCard(canvascx, card, x, y) {
 }
 
 function initCardImageOffsets() {
-  var off = gCardImageOffsets = {};
-  for(let [l, n] in Iterator({ 'S': 0, 'H': 1, 'D': 2, 'C': 3 }))
+  const off = gCardImageOffsets = {};
+  for(let [l, n] of [["S", 0], ["H", 1], ["D", 2], ["C", 3]])
     for(var i = 1; i !== 14; ++i)
       off[l + i] = n * 13 + i - 1;
   off[''] = 4 * 13; // facedown image is last

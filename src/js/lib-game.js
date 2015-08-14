@@ -103,14 +103,14 @@ const Game = {
     const letters = this._pilesToCreateLetters;
     const all = this.allpiles = [for(impl of impls) createPile(impl)];
     const bytype = {};
-    for(var i in all) {
-      all[i].view = views[i];
-      all[i].view.attach(all[i]);
+    for(let [i, p] of all.entries()) {
+      p.view = views[i];
+      p.view.attach(p);
       var l = letters[i];
       if(!bytype[l]) bytype[l] = [];
-      bytype[l].push(all[i]);
+      bytype[l].push(p);
     }
-    for(let [l, set] in Iterator(bytype)) linkList(set, "prev", "next");
+    for(let k in bytype) linkList(bytype[k], "prev", "next");
   },
 
   _create_pile_arrays: function() {
@@ -159,7 +159,7 @@ const Game = {
   deal: function(cards) {
     const ps = this.allpiles, down = this._cardsToDealDown, up = this._cardsToDealUp;
     let ix = 0;
-    for(let [i, p] in Iterator(ps)) ix = this._deal_cards(cards, ix, p, down[i], up[i]);
+    for(let [i, p] of ps.entries()) ix = this._deal_cards(cards, ix, p, down[i], up[i]);
     if(ix < cards.length) ix = this._deal_cards(cards, ix, this.stock, cards.length, 0);
   },
 
@@ -173,7 +173,7 @@ const Game = {
 
   // For Montana and Maze
   _deal_cards_with_nulls_for_spaces: function(cards) {
-    for(let [i, c] in Iterator(cards)) if(c) {
+    for(let [i, c] of cards.entries()) if(c) {
       c.faceUp = true;
       this.piles[i].addCardsFromArray([c]);
     }

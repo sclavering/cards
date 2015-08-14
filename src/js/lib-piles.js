@@ -98,13 +98,13 @@ const Pile = {
   addCards: function(card, doNotUpdateView) {
     const p = card.pile, pcs = p.cards, ix = card.index;
     this.addCardsFromArray(pcs.slice(ix), doNotUpdateView);
-    p.removeCardsAfter(ix);
+    p.removeCardsAfter(ix, doNotUpdateView);
   },
 
   // Should generally not be called except by pile impls.
-  removeCardsAfter: function(index) {
+  removeCardsAfter: function(index, doNotUpdateView) {
     this.cards = this.cards.slice(0, index);
-    this.view.update();
+    if(!doNotUpdateView) this.view.update();
   },
 
   // card may be null if the pile is empty

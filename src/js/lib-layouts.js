@@ -1,6 +1,4 @@
 const Layout = {
-  template: null,
-
   views: [],
 
   // The root DOM element for this layout.
@@ -19,7 +17,7 @@ const Layout = {
     window.onresize = null;
   },
 
-  init: function() {
+  init: function(template, view_types) {
     if(this._node) throw "reinitialising layout";
 
     this._bound_on_begin_drag = (ev) => this._on_begin_drag(ev);
@@ -55,7 +53,7 @@ const Layout = {
       return td;
     }
 
-    const template = this.template, len = template.length;
+    const len = template.length;
     for(var i = 0; i !== len; ++i) {
       var ch = template[i];
       switch(ch) {
@@ -117,14 +115,15 @@ const Layout = {
         case "r":
         case "w":
         case "s":
-        default:
-          var viewType = this[ch] || null;
-          if(!viewType) throw "Layout.init(): unrecognised char '" + ch + "' found in template";
+        default: {
+          let viewType = view_types[ch] || null;
+          if(!viewType) throw "Layout.init(): unrecognised view char found in template: " + ch;
           letters.push(ch);
           var viewObj = createPileView(viewType);
           views.push(viewObj);
           viewObj.insert_into(boxOrTd());
           break;
+        }
       }
     }
     // sanity check

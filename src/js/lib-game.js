@@ -62,9 +62,7 @@ const Game = {
   classInit: function() {
     this.classInit = null; // to avoid re-calling
 
-    const layout = this.layout = { __proto__: this.layoutProto };
-    layout.template = this.layoutTemplate;
-
+    const view_types = {};
     const details = this.pileDetails();
     const eLen = 6; // length of an entry/row in .pileDetails()
     const numletters = details.length / eLen;
@@ -74,7 +72,7 @@ const Game = {
       let l = letters[i] = details[i * eLen];
       nums[l]  = details[i * eLen + 1];
       impls[l] = details[i * eLen + 2];
-      layout[l] = details[i * eLen + 3]; // for use in layout.init()
+      view_types[l] = details[i * eLen + 3];
       downs[l] = details[i * eLen + 4];
       ups[l]   = details[i * eLen + 5];
       // turn single numbers for face up/down cards into sequences per-pile
@@ -84,9 +82,9 @@ const Game = {
       else ups[l] = ups[l].slice();
     }
 
-    // Returns a sequence of the letters from layoutTemplate that referred to
-    // views/piles, excluding, e.g., annotations.
-    const layoutletters = this.layout.init();
+    this.layout = { __proto__: this.layoutProto };
+    // Returns a sequence of the letters from layoutTemplate that referred to views/piles excluding, e.g. annotations.
+    const layoutletters = this.layout.init(this.layoutTemplate, view_types);
 
     // Convert to flattened lists, ordered the way the layout was created.
     this._pilesToCreateLetters = layoutletters;

@@ -3,7 +3,7 @@ var gCurrentGameType = null;
 const gGameClasses = {}; // game-id -> Game subclass, filled by game-*.js
 const gGameTypes = {}; // game-id -> GameType object
 
-var ui = {
+const ui = {
   btnUndo: "btn-undo",
   btnRedo: "btn-redo",
   btnRedeal: "btn-redeal",
@@ -20,26 +20,16 @@ var ui = {
   cardImages: "cardsimg",
 };
 
-var gMessageBoxIsShowing = false;
 
-
-function init() {
-  for(var k in ui) ui[k] = document.getElementById(ui[k]);
-
+window.onload = function() {
+  for(let k in ui) ui[k] = document.getElementById(ui[k]);
   document.addEventListener('keypress', keyPressHandler, false);
-
   gFloatingPile.init();
-
   for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
-
-  var game = "klondike1";
-
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
-  setTimeout(playGame, 0, game);
-}
-
-window.addEventListener("load", init, false);
+  setTimeout(playGame, 0, "klondike1");
+};
 
 
 function keyPressHandler(e) {
@@ -214,6 +204,7 @@ function showGameWon() {
 }
 
 
+var gMessageBoxIsShowing = false;
 var gMessageCallback = null;
 
 function showMessage(msgText1, msgText2, fun) {

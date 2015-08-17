@@ -128,7 +128,7 @@ const Layout = {
     }
     // sanity check
     if(box !== container) throw "Layout.init(): layout had unclosed box";
-    this.viewsNeedingUpdateOnResize = [for(v of this.views) if(v.needsUpdateOnResize) v];
+    this.viewsNeedingUpdateOnResize = [for(v of this.views) if(v.needs_update_on_resize) v];
     return letters;
   },
 
@@ -260,8 +260,8 @@ const Layout = {
   update_flexible_views_sizes: function(views, width, height) {
     for(let v of views) {
       let r = v.pixel_rect();
-      if(v.flexHeight) v.fixedHeight = height - r.top;
-      if(v.flexWidth) v.fixedWidth = width - r.left;
+      if(v.update_canvas_height_on_resize) v.canvas_height = height - r.top;
+      if(v.update_canvas_width_on_resize) v.canvas_width = width - r.left;
     }
   }
 };

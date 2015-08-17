@@ -7,7 +7,7 @@ const FanLayoutProto = {
     const unitwidth = (width - kSpaceBetweenPiles) / (5 * this._num_grid_columns + 2 + 2);
     // div.thinspacer in the previous <td>
     views[0]._canvas.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
-    for(let v of views) v.fixedWidth = unitwidth * 5;
+    for(let v of views) v.canvas_width = unitwidth * 5;
   },
 };
 

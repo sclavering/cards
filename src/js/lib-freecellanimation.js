@@ -23,9 +23,9 @@ function prepare_freecell_move_animation(card, dest, cells, spaces) {
 function _freecell_evil_get_card_absolute_coords(pile, num_in_pile, card_index) {
   // xxx We're cheating here, assuming that views are all vertical _FlexFanView, or just plain View (for cells).  But doing otherwise would require a lot of changes to how views work.
   const view = pile.view;
-  const v_offset = view._calculate_new_offset ? view._calculate_new_offset(gVFanOffset, view.fixedHeight - gCardHeight, num_in_pile) : 0;
+  const y_offset = view._calculate_new_offset ? view._calculate_new_offset(gVFanOffset, view.canvas_height - gCardHeight, num_in_pile) : 0;
   const r = view.pixel_rect();
-  return [r.left, r.top + v_offset * card_index];
+  return [r.left, r.top + y_offset * card_index];
 }
 
 function _freecell_animate_step(steps, src, dest, src_cards, moving_card, dest_cards) {

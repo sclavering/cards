@@ -34,19 +34,19 @@ function initCardImageOffsets() {
 
 // Base class for pile views.
 const _View = {
-  _rootNode: null,
+  _root_node: null,
   _canvas: null, // the <canvas>; all views use one
   _context: null,
   _counter: null, // if set true, a <label> will be created and replace it
 
   init: function() {
-    this._rootNode = this._canvas = document.createElement("canvas");
+    this._root_node = this._canvas = document.createElement("canvas");
     this._canvas.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
     if(this._counter) {
-      this._rootNode = document.createDocumentFragment();
-      this._rootNode.appendChild(this._canvas);
-      this._counter = this._rootNode.appendChild(document.createElement("div"));
+      this._root_node = document.createDocumentFragment();
+      this._root_node.appendChild(this._canvas);
+      this._counter = this._root_node.appendChild(document.createElement("div"));
       this._counter.className = "counter";
     }
   },
@@ -57,8 +57,8 @@ const _View = {
     this.update();
   },
 
-  insert_into: function(parentNode) {
-    parentNode.appendChild(this._rootNode);
+  insert_into: function(parent_node) {
+    parent_node.appendChild(this._root_node);
   },
 
   pixel_rect: function() {
@@ -126,7 +126,7 @@ const _View = {
     throw "not implemented";
   },
 
-  needsUpdateOnResize: false,
+  needs_update_on_resize: false,
 };
 
 // A view where only the top card is ever visible (used for foundations).
@@ -164,17 +164,16 @@ const CountedView = {
 const _FanView = {
   __proto__: _View,
 
-  // These control the size of the <canvas>.
-  fixedWidth: gCardWidth,
-  fixedHeight: gCardHeight,
+  canvas_width: gCardWidth,
+  canvas_height: gCardHeight,
 
-  // If true, the Layout will over-write .fixedWidth or .fixedHeight when the window is resized.
-  flexWidth: false,
-  flexHeight: false,
+  // Should the Layout update .canvas_width and/or .canvas_height when the window is resized?
+  update_canvas_width_on_resize: false,
+  update_canvas_height_on_resize: false,
 
-  // Horizontal and vertical canvas-pixel offsets between cards
-  _hOffset: 0,
-  _vOffset: 0,
+  // Canvas-pixel offsets between each card.
+  _fan_x_offset: 0,
+  _fan_y_offset: 0,
 
   update_with: function(cs) {
     this._recalculate_offsets(cs.length);
@@ -182,21 +181,21 @@ const _FanView = {
     if(this._counter) this._counter.textContent = this.pile.counter;
   },
 
-  // Change offsets to allow num cards to fit in the space
+  // Update the view's offsets to allow the specified number of cards to fit in the space.  Only implemented in _FlexFanView.
   _recalculate_offsets: function(num) {},
 
   draw_into: function(ctx, cards, draw_background, use_minimum_size) {
     // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
-    const num = cards.length, h = this._hOffset, v = this._vOffset;
-    const width = use_minimum_size ? (num - 1) * h + gCardWidth : this.fixedWidth;
-    const height = use_minimum_size ? (num - 1) * v + gCardHeight : this.fixedHeight;
+    const num = cards.length, xo = this._fan_x_offset, yo = this._fan_y_offset;
+    const width = use_minimum_size ? (num - 1) * xo + gCardWidth : this.canvas_width;
+    const height = use_minimum_size ? (num - 1) * yo + gCardHeight : this.canvas_height;
     clear_and_resize_canvas(ctx, width, height);
     if(draw_background) this._draw_background_into(ctx);
-    for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], h * i, v * i);
+    for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], xo * i, yo * i);
   },
 
   coords_of_card: function(card) {
-    return { x: card.index * this._hOffset, y: card.index * this._vOffset };
+    return { x: card.index * this._fan_x_offset, y: card.index * this._fan_y_offset };
   },
 
   draw_hint_destination: function(cards) {
@@ -208,13 +207,13 @@ const _FanView = {
 
   _get_hint_source_rect: function(card) {
     const offset = card.index, size = this.pile.cards.length - 1 - card.index;
-    const h = this._hOffset, v = this._vOffset;
-    return { x: offset * h, y: offset * v, w: size * h + gCardWidth, h: size * v + gCardHeight };
+    const xo = this._fan_x_offset, yo = this._fan_y_offset;
+    return { x: offset * xo, y: offset * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
   },
 
   get_next_card_xy: function() {
     const offset = this._get_next_card_offset();
-    return { x: offset * this._hOffset, y: offset * this._vOffset };
+    return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   },
 
   _get_next_card_offset: function() {
@@ -227,8 +226,8 @@ const _FanView = {
 
   // handles only purely-horizontal or purely-vertical fans
   _get_target_card_at_relative_coords_from_list: function(x, y, cards) {
-    if(this._hOffset) return this._get_target_card_at_relative_coords_from_list2(x, this._hOffset, gCardWidth, cards);
-    return this._get_target_card_at_relative_coords_from_list2(y, this._vOffset, gCardHeight, cards);
+    if(this._fan_x_offset) return this._get_target_card_at_relative_coords_from_list2(x, this._fan_x_offset, gCardWidth, cards);
+    return this._get_target_card_at_relative_coords_from_list2(y, this._fan_y_offset, gCardHeight, cards);
   },
 
   _get_target_card_at_relative_coords_from_list2: function(pos, offset, cardsize, cards) {
@@ -251,7 +250,7 @@ const _SelectiveFanView = {
 
   coords_of_card: function(card) {
     const offset = this._visible_cards_of(this.pile.cards).indexOf(card);
-    return { x: offset * this._hOffset, y: offset * this._vOffset };
+    return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   },
 
   card_at_coords: function(x, y) {
@@ -261,7 +260,7 @@ const _SelectiveFanView = {
   _get_hint_source_rect: function(card) {
     // Only the top card will ever be the source of a hint.
     const num = this._visible_cards_of(this.pile.cards).indexOf(card);
-    return { x: num * this._hOffset, y: num * this._vOffset, w: gCardWidth, h: gCardHeight };
+    return { x: num * this._fan_x_offset, y: num * this._fan_y_offset, w: gCardWidth, h: gCardHeight };
   },
 
   // Subclasses will need to override ._get_next_card_offset(), except for waste-pile views, where it's irrelevant.
@@ -281,14 +280,13 @@ const _TwoCardSelectiveFanView = {
 const _FlexFanView = {
   __proto__: _FanView,
 
-  _basicVOffset: 0,
-  _basicHOffset: 0,
+  _fan_x_default_offset: 0,
+  _fan_y_default_offset: 0,
 
-  // change offsets to allow num+1 cards to fit in the space
   _recalculate_offsets: function(num) {
-    const h = this._basicHOffset, v = this._basicVOffset;
-    if(h) this._hOffset = this._calculate_new_offset(h, this.fixedWidth - gCardWidth, num);
-    if(v) this._vOffset = this._calculate_new_offset(v, this.fixedHeight - gCardHeight, num);
+    const xo = this._fan_x_default_offset, yo = this._fan_y_default_offset;
+    if(xo) this._fan_x_offset = this._calculate_new_offset(xo, this.canvas_width - gCardWidth, num);
+    if(yo) this._fan_y_offset = this._calculate_new_offset(yo, this.canvas_height - gCardHeight, num);
   },
 
   _calculate_new_offset: function(preferred_offset, available_space, num_cards) {
@@ -301,25 +299,25 @@ const _FlexFanView = {
     _View._draw_background_into.call(this, ctx, gCardWidth, gCardHeight);
   },
 
-  needsUpdateOnResize: true,
+  needs_update_on_resize: true,
 };
 
 const FanDownView = {
   __proto__: _FlexFanView,
-  flexHeight: true,
-  _basicVOffset: gVFanOffset
+  update_canvas_height_on_resize: true,
+  _fan_y_default_offset: gVFanOffset,
 };
 
 const FanRightView = {
   __proto__: _FlexFanView,
-  flexWidth: true,
-  _basicHOffset: gHFanOffset
+  update_canvas_width_on_resize: true,
+  _fan_x_default_offset: gHFanOffset,
 };
 
 const _SlideView = {
   __proto__: _FlexFanView,
-  _basicHOffset: gHSlideOffset,
-  _basicVOffset: gVSlideOffset,
+  _fan_x_default_offset: gHSlideOffset,
+  _fan_y_default_offset: gVSlideOffset,
   // Adequate in all the games it's used in
   card_at_coords: function(x, y) {
     return this.pile.lastCard;
@@ -340,21 +338,21 @@ const _Deal3WasteView = {
 
 const Deal3HWasteView = {
   __proto__: _Deal3WasteView,
-  fixedWidth: gCardWidth + 2 * gHFanOffset,
-  _hOffset: gHFanOffset
+  canvas_width: gCardWidth + 2 * gHFanOffset,
+  _fan_x_offset: gHFanOffset
 };
 
 const Deal3VWasteView = {
   __proto__: _Deal3WasteView,
-  fixedHeight: gCardHeight + 2 * gVFanOffset,
-  _vOffset: gVFanOffset
+  canvas_height: gCardHeight + 2 * gVFanOffset,
+  _fan_y_offset: gVFanOffset
 };
 
 // Shows the top *two* cards, so you can tell if they have the same number.
 const DoubleSolFoundationView = {
   __proto__: _TwoCardSelectiveFanView,
-  _hOffset: gHFanOffset,
-  fixedWidth: gCardWidth + gHFanOffset,
+  _fan_x_offset: gHFanOffset,
+  canvas_width: gCardWidth + gHFanOffset,
   _visible_cards_of: function(cards) {
     return cards.slice(-2);
   },
@@ -362,28 +360,28 @@ const DoubleSolFoundationView = {
 
 const FoundationSlideView = {
   __proto__: _SlideView,
-  fixedWidth: gCardWidth + 12 * gHSlideOffset,
-  fixedHeight: gCardHeight + 12 * gVSlideOffset
+  canvas_width: gCardWidth + 12 * gHSlideOffset,
+  canvas_height: gCardHeight + 12 * gVSlideOffset
 };
 
 const Mod3SlideView = {
   __proto__: _SlideView,
-  fixedWidth: gCardWidth + 3 * gHSlideOffset,
-  fixedHeight: gCardHeight + 3 * gVSlideOffset
+  canvas_width: gCardWidth + 3 * gHSlideOffset,
+  canvas_height: gCardHeight + 3 * gVSlideOffset
 };
 
 const PileOnView4 = {
   __proto__: _FanView,
-  _hOffset: gHFanOffset,
+  _fan_x_offset: gHFanOffset,
   _always_draw_background: true,
-  fixedWidth: gCardWidth + 3 * gHFanOffset
+  canvas_width: gCardWidth + 3 * gHFanOffset
 };
 
 const PileOnView8 = {
   __proto__: _FanView,
-  _hOffset: gHFanOffset,
+  _fan_x_offset: gHFanOffset,
   _always_draw_background: true,
-  fixedWidth: gCardWidth + 7 * gHFanOffset
+  canvas_width: gCardWidth + 7 * gHFanOffset
 };
 
 const PyramidView = {
@@ -392,7 +390,7 @@ const PyramidView = {
     View.init.call(this);
     // We need this <div> to set a minimum-width on and thus space the piles out properly (the <canvas> is position:absolute).
     // Note: you might expect the <div> to need position:relative too to get the <canvas> in the right place, but actually setting that makes the <canvas> invisible (I don't know why).  It works fine without it, because we're leaving top/left unspecified (rather than setting them to 0), so the <canvas> retains the position it would've got from position:static, rather than being positioned relative to the nearest position:relative/absolute ancestor.
-    const wrapper = this._rootNode = document.createElement("div");
+    const wrapper = this._root_node = document.createElement("div");
     wrapper.className = "pyramid-pile-wrapper";
     wrapper.appendChild(this._canvas);
   },
@@ -406,7 +404,7 @@ const PyramidView = {
 // Just displays Kings from the start of each King->Ace run.
 const _SpiderFoundationView = {
   __proto__: _SelectiveFanView,
-  _vOffset: gVFanOffset,
+  _fan_y_offset: gVFanOffset,
   _always_draw_background: true,
   _visible_cards_of: function(cards) {
     return cards.filter((el, ix) => ix % 13 === 0);
@@ -418,19 +416,19 @@ const _SpiderFoundationView = {
 
 const Spider4FoundationView = {
   __proto__: _SpiderFoundationView,
-  fixedHeight: gCardHeight + 3 * gVFanOffset
+  canvas_height: gCardHeight + 3 * gVFanOffset
 };
 
 const Spider8FoundationView = {
   __proto__: _SpiderFoundationView,
-  fixedHeight: gCardHeight + 7 * gVFanOffset
+  canvas_height: gCardHeight + 7 * gVFanOffset
 };
 
 // Shows the bottom cards and the top one, so you can tell whether pile is being built up or down.
 const UnionSquarePileView = {
   __proto__: _TwoCardSelectiveFanView,
-  _hOffset: gHFanOffset,
-  fixedWidth: gCardWidth + gHFanOffset,
+  _fan_x_offset: gHFanOffset,
+  canvas_width: gCardWidth + gHFanOffset,
   _visible_cards_of: function(cards) {
     if(cards.length > 1) return [cards[0], cards[cards.length - 1]];
     return cards.slice(0, 1);
@@ -440,8 +438,8 @@ const UnionSquarePileView = {
 // Built A->K, and then K->A on top of those. We show the top card of each 13.
 const UnionSquareFoundationView = {
   __proto__: _SelectiveFanView,
-  _hOffset: gHFanOffset,
-  fixedWidth: gCardWidth + gHFanOffset,
+  _fan_x_offset: gHFanOffset,
+  canvas_width: gCardWidth + gHFanOffset,
   _always_draw_background: true,
   _visible_cards_of: function(cards) {
     if(cards.length > 13) return [cards[12], cards[cards.length - 1]];

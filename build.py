@@ -16,7 +16,7 @@ JS_FILES = [
     'best_destination_for.js',
     'lib-actions.js',
     'lib-game.js',
-    'lib-freecell-move-sequencer.js',
+    'lib-freecell.js',
 
     'game-acesup.js',
     'game-canfield.js',

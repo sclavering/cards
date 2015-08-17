@@ -83,19 +83,6 @@ const _View = {
     this._context.stroke();
   },
 
-  // Called when the user starts dragging 'card', or it's about to be moved
-  // elsewhere with animation. Should update the view to hide it and the cards
-  // after it, and draw them in gFloatingPile instead.
-  updateForAnimationOrDrag: function(card) {
-    const cards = this.pile.cards.slice(card.index);
-    this.draw_into(gFloatingPile.context, cards, false);
-    const coords = this.coords_of_card(card);
-    const r = this.pixel_rect();
-    gFloatingPile.showFor(card, r.left + coords.x, r.top + coords.y);
-    const cs = this.pile.cards.slice(0, card.index);
-    this.update_with(cs);
-  },
-
   draw_into: function(ctx, cards, draw_background) {
     throw "not implemented";
   },

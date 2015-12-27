@@ -34,16 +34,15 @@ function initCardImageOffsets() {
 
 // Base class for pile views.
 const _View = {
-  _root_node: null,
-  _canvas: null, // the <canvas>; all views use one
-  _context: null,
-  _counter: null, // if set true, a <label> will be created and replace it
+  _has_counter: false,
 
   init: function() {
-    this._root_node = this._canvas = document.createElement("canvas");
+    this._canvas = document.createElement("canvas");
+    this._root_node = this._canvas;
     this._canvas.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
-    if(this._counter) {
+    this._counter = null;
+    if(this._has_counter) {
       this._root_node = document.createDocumentFragment();
       this._root_node.appendChild(this._canvas);
       this._counter = this._root_node.appendChild(document.createElement("div"));
@@ -158,7 +157,7 @@ const View = {
 // Used for Waste piles and single foundations
 const CountedView = {
   __proto__: View,
-  _counter: true
+  _has_counter: true,
 };
 
 const _FanView = {
@@ -326,7 +325,7 @@ const _SlideView = {
 
 const _Deal3WasteView = {
   __proto__: _SelectiveFanView,
-  _counter: true,
+  _has_counter: true,
   _always_draw_background: true,
   _visible_cards_of: function(cards) {
     if(!cards.length) return [];
@@ -453,7 +452,7 @@ const UnionSquareFoundationView = {
 // a layout for Stocks, including a counter
 const StockView = {
   __proto__: View,
-  _counter: true,
+  _has_counter: true,
   card_at_coords: function(x, y) {
     return this.pile.lastCard || this.pile.magicStockStubCard;
   },

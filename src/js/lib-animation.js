@@ -84,12 +84,10 @@ const gFloatingPile = {
     document.body.appendChild(this._canvas);
     this.hide();
     this.context = this._canvas.getContext("2d");
+    this._prev_card = null;
   },
 
   boundingRect: function() { return this._canvas.getBoundingClientRect(); },
-
-  // When dropping cards, moveCards() needs to if a drag was in progress so that it can animate from the drop, rather than from the original pile.  And in the current set-up, we need to track the source card/pile, or else all subsequent automoves would animate from the dragged card's source-pile, though that's probably just because we don't clear this field until .hide(), which gets deferred until after sequences of autoplay moves.
-  _prev_card: null,
 
   hide: function() {
     gFloatingPile._canvas.style.transition = "";
@@ -98,6 +96,7 @@ const gFloatingPile = {
   },
 
   start_animation_or_drag: function(card) {
+    // If we're already dragging a card and are about to animate its drop onto a pile, we want the animation to run from the current location, not from the original pile.
     if(this._prev_card === card) return;
     this._prev_card = card;
 

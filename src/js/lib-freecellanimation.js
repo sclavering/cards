@@ -33,14 +33,9 @@ function _freecell_animate_step(steps, src, dest, src_cards, moving_card, dest_c
   steps.push([kAnimationDelay, () => gFloatingPile.start_freecell_animation(src, src_cards, moving_card, x0, y0)]);
 
   const [x1, y1] = _freecell_evil_get_card_absolute_coords(dest, dest_cards.length, dest_cards.length);
-  const dx = x1 - x0, dy = y1 - y0;
-  // Move 55px diagonally per step, adjusted to make all steps equal-sized.
-  let num_steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
-  // xxx not sure how best to handle the case where we're already really close.
-  if(!num_steps) num_steps = 1;
-  const stepX = dx / num_steps, stepY = dy / num_steps;
-  const step_func = () => gFloatingPile.moveBy(stepX, stepY);
-  for(let i = 1; i <= num_steps; ++i) steps.push([kAnimationDelay, step_func]);
+
+  const transition_duration_ms = gFloatingPile.get_transition_duration_ms(x0, y0, x1, y1);
+  steps.push([0, function() { gFloatingPile.transition_from_to(x0, y0, x1, y1, transition_duration_ms); }]);
 
   // In normal animation we just let gAnimations update the target pile, but here we're probably dealing with a temporary move anyway, so must do it ourselves.
   steps.push([kAnimationRepackDelay, () => {

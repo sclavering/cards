@@ -165,8 +165,9 @@ const Layout = {
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
     const card = this._eventTargetCard;
     gFloatingPile.start_animation_or_drag(card);
-    this._tx = ex0 - gFloatingPile._left;
-    this._ty = ey0 - gFloatingPile._top;
+    const rect = gFloatingPile.boundingRect();
+    this._tx = ex0 - rect.x;
+    this._ty = ey0 - rect.y;
     this._is_dragging = true;
     window.onmousemove = this._bound_on_mouse_move_during_drag;
     window.onmouseup = this._bound_on_end_drag;

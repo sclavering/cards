@@ -40,8 +40,6 @@ const kAnimationDelay = 20;
 const kAnimationRepackDelay = 100;
 
 function prepare_move_animation(card, destination) {
-  const steps = [];
-
   // xxx It's slightly icky that this line has immediate effect, rather than just preparing stuff to run later.
   gFloatingPile.start_animation_or_drag(card);
   const finalOffset = destination.view.get_next_card_xy(destination.cards);
@@ -49,19 +47,17 @@ function prepare_move_animation(card, destination) {
   // final coords (relative to ui.gameStack)
   const r = destination.view.pixel_rect();
   const x1 = r.left + finalOffset.x, y1 = r.top + finalOffset.y;
-  const x0 = gFloatingPile._left, y0 = gFloatingPile._top;
+  const r0 = gFloatingPile.boundingRect();
+  const x0 = r0.x, y0 = r0.y;
 
-  const dx = x1 - x0, dy = y1 - y0;
-  // Move 55px diagonally per step, adjusted to make all steps equal-sized.
-  let num_steps = Math.round(Math.sqrt(dx * dx + dy * dy) / 55);
-  // xxx not sure how best to handle the case where we're already really close.
-  if(!num_steps) num_steps = 1;
-  const stepX = dx / num_steps, stepY = dy / num_steps;
-  const step_func = () => gFloatingPile.moveBy(stepX, stepY);
-  for(let i = 1; i <= num_steps; ++i) steps.push([kAnimationDelay, step_func]);
-  // Briefly show the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
-  steps.push([kAnimationRepackDelay, () => null]);
-
+  const transition_duration_ms = gFloatingPile.get_transition_duration_ms(x0, y0, x1, y1);
+  const steps = [
+    [0, function() { gFloatingPile.transition_from_to(x0, y0, x1, y1, transition_duration_ms); }],
+    // The small extra delay also serves to briefly show the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
+    [transition_duration_ms + kAnimationDelay, function() {
+      gFloatingPile._canvas.style.transition = "";
+    }]
+  ];
   return { steps: steps, piles_to_update: [card.pile, destination] };
 }
 
@@ -88,8 +84,6 @@ const gFloatingPile = {
     document.body.appendChild(this._canvas);
     this.hide();
     this.context = this._canvas.getContext("2d");
-    this._left = 0;
-    this._top = 0;
   },
 
   boundingRect: function() { return this._canvas.getBoundingClientRect(); },
@@ -98,6 +92,7 @@ const gFloatingPile = {
   _prev_card: null,
 
   hide: function() {
+    gFloatingPile._canvas.style.transition = "";
     this.moveTo(-1000, -1000);
     this._prev_card = null;
   },
@@ -124,14 +119,20 @@ const gFloatingPile = {
     view.update_with(cards_remaining);
   },
 
-  moveBy: function(dx, dy) {
-    this.moveTo(this._left + dx, this._top + dy);
+  moveTo: function(x, y) {
+    this._canvas.style.left = x + "px";
+    this._canvas.style.top = y + "px";
   },
 
-  moveTo: function(x, y) {
-    this._left = x;
-    this._top = y;
-    this._canvas.style.left = this._left + 'px';
-    this._canvas.style.top = this._top + 'px';
+  transition_from_to: function(x0, y0, x1, y1, duration_ms) {
+    this.moveTo(x0, y0);
+    this._canvas.style.transition = "left " + duration_ms + "ms, top " + duration_ms + "ms";
+    this.moveTo(x1, y1);
+  },
+
+  get_transition_duration_ms: function(x0, y0, x1, y1) {
+    const dx = x1 - x0, dy = y1 - y0;
+    // We move 55px diagonally per kAnimationDelay.  (This is left over from when animation was done without CSS transitions).
+    return Math.round(Math.sqrt(dx * dx + dy * dy) / 55 * kAnimationDelay);
   },
 };

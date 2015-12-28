@@ -164,8 +164,8 @@ const Layout = {
     const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
     const card = this._eventTargetCard;
-    gFloatingPile.start_animation_or_drag(card);
-    const rect = gFloatingPile.boundingRect();
+    g_floating_pile.start_animation_or_drag(card);
+    const rect = g_floating_pile.bounding_rect();
     this._tx = ex0 - rect.x;
     this._ty = ey0 - rect.y;
     this._is_dragging = true;
@@ -174,25 +174,25 @@ const Layout = {
     window.oncontextmenu = null;
   },
 
-  // (_tx, _ty) is the pixel coords of the mouse relative to gFloatingPile
+  // (_tx, _ty) is the pixel coords of the mouse relative to g_floating_pile
   _tx: 0,
   _ty: 0,
   _on_mouse_move_during_drag: function(e) {
-    gFloatingPile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
+    g_floating_pile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
   },
 
   cancel_drag: function() {
     if(!this._is_dragging) return;
     const card = this._eventTargetCard;
     this._reset_handlers();
-    gFloatingPile.hide();
+    g_floating_pile.hide();
     card.pile.view.update();
   },
 
   _on_end_drag: function(e) {
     const card = this._eventTargetCard;
     this._reset_handlers();
-    const fr = gFloatingPile.boundingRect();
+    const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
       if(target === card.pile) continue;
@@ -211,7 +211,7 @@ const Layout = {
         return;
       }
     }
-    gFloatingPile.hide();
+    g_floating_pile.hide();
     card.pile.view.update();
   },
 
@@ -249,7 +249,7 @@ const Layout = {
   },
 
   _on_window_resize: function(e) {
-    gAnimations.cancel();
+    g_animations.cancel();
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;

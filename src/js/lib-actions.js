@@ -7,7 +7,7 @@ The required interface is:
 
 perform()
   Carry out the action.
-  If animation is desired, this should return appropriate details to pass to gAnimations.run().  It should not start the animation itself.  And it almost certainly needs to implement .redo() as well.
+  If animation is desired, this should return appropriate details to pass to g_animations.run().  It should not start the animation itself.  And it almost certainly needs to implement .redo() as well.
 undo()
 redo()
   Undo/redo the effects of the action.  Must *not* use animation.

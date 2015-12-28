@@ -30,16 +30,16 @@ function _freecell_evil_get_card_absolute_coords(pile, num_in_pile, card_index) 
 
 function _freecell_animate_step(steps, src, dest, src_cards, moving_card, dest_cards) {
   const [x0, y0] = _freecell_evil_get_card_absolute_coords(src, src_cards.length + 1, src_cards.length);
-  steps.push([kAnimationDelay, () => gFloatingPile.start_freecell_animation(src, src_cards, moving_card, x0, y0)]);
+  steps.push([k_animation_delay, () => g_floating_pile.start_freecell_animation(src, src_cards, moving_card, x0, y0)]);
 
   const [x1, y1] = _freecell_evil_get_card_absolute_coords(dest, dest_cards.length, dest_cards.length);
 
-  const transition_duration_ms = gFloatingPile.get_transition_duration_ms(x0, y0, x1, y1);
-  steps.push([0, function() { gFloatingPile.transition_from_to(x0, y0, x1, y1, transition_duration_ms); }]);
+  const transition_duration_ms = g_floating_pile.get_transition_duration_ms(x0, y0, x1, y1);
+  steps.push([0, function() { g_floating_pile.transition_from_to(x0, y0, x1, y1, transition_duration_ms); }]);
 
-  // In normal animation we just let gAnimations update the target pile, but here we're probably dealing with a temporary move anyway, so must do it ourselves.
-  steps.push([kAnimationRepackDelay, () => {
-    gFloatingPile.hide();
+  // In normal animation we just let g_animations update the target pile, but here we're probably dealing with a temporary move anyway, so must do it ourselves.
+  steps.push([k_animation_repack_delay, () => {
+    g_floating_pile.hide();
     dest.view.update_with(dest_cards.concat(moving_card));
   }]);
 }

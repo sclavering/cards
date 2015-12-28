@@ -24,7 +24,7 @@ const ui = {
 window.onload = function() {
   for(let k in ui) ui[k] = document.getElementById(ui[k]);
   document.addEventListener('keypress', keyPressHandler, false);
-  gFloatingPile.init();
+  g_floating_pile.init();
   for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
@@ -73,7 +73,7 @@ function playGame(game) {
   updateUI();
   ui.btnRedeal.setAttribute("disabled", !gCurrentGame.redeal);
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
-  gFloatingPile.hide();
+  g_floating_pile.hide();
 }
 
 
@@ -137,7 +137,7 @@ function doo(action) { // "do" is a reserved word
 
   if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
   const animation_details = gCurrentGame.doo(action);
-  if(animation_details) gAnimations.run(animation_details, done);
+  if(animation_details) g_animations.run(animation_details, done);
   else done();
 }
 
@@ -156,7 +156,7 @@ function interrupt() {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
   if(gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
-  gAnimations.cancel();
+  g_animations.cancel();
 }
 
 

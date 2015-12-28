@@ -336,7 +336,7 @@ const Game = {
     if(this.hintSources.length === 0) return;
     const num = this.hintNum++; // must *post*-increment
     if(this.hintNum === this.hintSources.length) this.hintNum = 0;
-    showHints(this.hintSources[num], this.hintDestinations[num]);
+    show_hints(this.hintSources[num], this.hintDestinations[num]);
   },
 
   // Can be overridden e.g. to show hints from foundations

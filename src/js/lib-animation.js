@@ -91,7 +91,7 @@ const g_floating_pile = {
 
   hide: function() {
     g_floating_pile._canvas.style.transition = "";
-    this.moveTo(-1000, -1000);
+    this.set_position(-1000, -1000);
     this._prev_card = null;
   },
 
@@ -105,7 +105,7 @@ const g_floating_pile = {
     view.draw_into(this.context, cards_taken, false);
     const coords = view.coords_of_card(card);
     const r = view.pixel_rect();
-    this.moveTo(r.left + coords.x, r.top + coords.y);
+    this.set_position(r.left + coords.x, r.top + coords.y);
     const cards_remaining = pile.cards.slice(0, card.index);
     view.update_with(cards_remaining);
   },
@@ -114,19 +114,19 @@ const g_floating_pile = {
   start_freecell_animation: function(src, cards_remaining, moving_card, x, y) {
     const view = src.view;
     view.draw_into(this.context, [moving_card], false);
-    this.moveTo(x, y);
+    this.set_position(x, y);
     view.update_with(cards_remaining);
   },
 
-  moveTo: function(x, y) {
+  set_position: function(x, y) {
     this._canvas.style.left = x + "px";
     this._canvas.style.top = y + "px";
   },
 
   transition_from_to: function(x0, y0, x1, y1, duration_ms) {
-    this.moveTo(x0, y0);
+    this.set_position(x0, y0);
     this._canvas.style.transition = "left " + duration_ms + "ms, top " + duration_ms + "ms";
-    this.moveTo(x1, y1);
+    this.set_position(x1, y1);
   },
 
   get_transition_duration_ms: function(x0, y0, x1, y1) {

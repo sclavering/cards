@@ -178,7 +178,7 @@ const Layout = {
   _tx: 0,
   _ty: 0,
   _on_mouse_move_during_drag: function(e) {
-    g_floating_pile.moveTo(e.pageX - this._tx, e.pageY - this._ty);
+    g_floating_pile.set_position(e.pageX - this._tx, e.pageY - this._ty);
   },
 
   cancel_drag: function() {

@@ -222,22 +222,15 @@ const Game = {
   doo: function(action) {
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
     this.actionList[this.actionPtr++] = action;
-    this.canUndo = true;
-    this.canRedo = false;
     action.score = this.getScoreFor(action);
-    this._hints = null;
-
     const animation_details = action.perform() || null;
-
-    const act = action;
     const pile = action.pileWhichMayNeedCardsRevealing || null;
     this._lastActionSourcePile = pile;
-    const cs = act.revealedCards = pile ? this.getCardsToReveal(pile) : [];
-    for(let c of cs) c.setFaceUp(true);
-    act.score += cs.length * this.scoreForRevealing;
-    ui.scoreDisplay.textContent = this.score += act.score;
-    ui.movesDisplay.textContent = this.actionPtr;
-
+    action.revealed_cards = pile ? this.getCardsToReveal(pile) : [];
+    for(let c of action.revealed_cards) c.setFaceUp(true);
+    action.score += action.revealed_cards.length * this.scoreForRevealing;
+    this.score += action.score;
+    this._on_do_or_undo();
     return animation_details;
   },
 
@@ -248,35 +241,30 @@ const Game = {
   },
 
   undo: function() {
-    const ptr = --this.actionPtr;
-    const action = this.actionList[ptr];
-    this.canRedo = true;
-    this.canUndo = ptr !== 0;
-
-    ui.scoreDisplay.textContent = (this.score -= action.score);
-    ui.movesDisplay.textContent = this.actionPtr;
-    this._hints = null;
-
+    --this.actionPtr;
+    const action = this.actionList[this.actionPtr];
+    this.score -= action.score;
     action.undo();
-    const cs = action.revealedCards || [];
-    for(let c of cs) c.setFaceUp(false);
+    for(let c of action.revealed_cards) c.setFaceUp(false);
+    this._on_do_or_undo();
   },
 
   redo: function() {
-    const acts = this.actionList;
-    const action = acts[this.actionPtr];
-    const ptr = ++this.actionPtr;
-    this.canUndo = true;
-    this.canRedo = acts.length > ptr;
-
-    ui.scoreDisplay.textContent = (this.score += action.score);
-    ui.movesDisplay.textContent = this.actionPtr;
-    this._hints = null;
-
+    const action = this.actionList[this.actionPtr];
+    ++this.actionPtr;
+    this.score += action.score;
     if(action.redo) action.redo();
     else action.perform();
-    const cs = action.revealedCards;
-    for(let c of cs) c.setFaceUp(true);
+    for(let c of action.revealed_cards) c.setFaceUp(true);
+    this._on_do_or_undo();
+  },
+
+  _on_do_or_undo: function() {
+    ui.scoreDisplay.textContent = this.score;
+    ui.movesDisplay.textContent = this.actionPtr;
+    this._hints = null;
+    this.canUndo = this.actionPtr !== 0;
+    this.canRedo = this.actionPtr !== this.actionList.length;
   },
 
   // Subclasses may override this.

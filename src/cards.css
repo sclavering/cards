@@ -62,7 +62,7 @@ body {
 }
 
 #sidebarmenu a[disabled=true] {
-  color: grey;
+  color: #808080;
 }
 
 #sidebarmenu a:focus {

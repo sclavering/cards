@@ -128,7 +128,7 @@ function restartGame() {
 }
 
 
-function doo(action) { // "do" is a reserved word
+function doo(action, was_dragging) { // "do" is a reserved word
   if(!action) return;
   interrupt();
   // enable undo + disable redo (but avoid doing so unnecessarily)
@@ -139,6 +139,8 @@ function doo(action) { // "do" is a reserved word
   const animation_details = gCurrentGame.doo(action);
   if(animation_details) g_animations.run(animation_details, done);
   else done();
+  // Typically g_floating_pile would get hidden after an animation completes.  But for e.g. Pyramid's drag-to-form-pairs ui, that doesn't happen (because there's no animation), so we must clean it up here instead.
+  if(was_dragging && !animation_details) g_floating_pile.hide();
 }
 
 

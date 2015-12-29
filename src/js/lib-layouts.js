@@ -196,18 +196,18 @@ const Layout = {
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
       if(target === card.pile) continue;
-      var view = target.view;
-      let tr = view.pixel_rect();
+      let tr = target.view.pixel_rect();
       // skip if we don't overlap the target at all
       if(fr.right < tr.left || fr.left > tr.right) continue;
       if(fr.bottom < tr.top || fr.top > tr.bottom) continue;
-      var act = target.getActionForDrop(card);
+      let act = target.getActionForDrop(card);
       if(!act) continue;
       if(act instanceof ErrorMsg) {
         act.show();
         break;
       } else {
-        doo(act);
+        doo(act, true);
+        // We must avoid the code after the loop, because if the drop triggers and animation, it would ruin that.
         return;
       }
     }

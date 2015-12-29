@@ -1,8 +1,6 @@
 /*
 "Action" objects are card-moves that can be done, undone, and redone.
 
-Turning cards face up is handled implicitly in gCurrentGame.doo, rather than being a stand-alone Action.
-
 The required interface is:
 
 perform()
@@ -12,12 +10,8 @@ undo()
 redo()
   Undo/redo the effects of the action.  Must *not* use animation.
   If redo() is omitted, perform() is used instead, and must not use animation.
-pileWhichMayNeedCardsRevealing
-  An optional field holding a Pile.  Used to automatically turn up face-down
-  cards at the top of the Pile, in gCurrentGame.doo()
 
-Pile.getActionForDrop() normally returns an Action, but in FreeCell and similar
-it may return an ErrorMsg instead.
+Pile.getActionForDrop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
 function DealToPile(pile) {
@@ -117,21 +111,24 @@ function Move(card, destination) {
   this.card = card;
   this.source = card.pile;
   this.destination = destination;
+  const new_source_top_card = this.source.cards[card.index - 1] || null;
+  this.revealed_card = new_source_top_card && !new_source_top_card.faceUp ? new_source_top_card : null;
 }
 Move.prototype = {
-  get pileWhichMayNeedCardsRevealing() { return this.source; },
-
   perform: function() {
     const rv = prepare_move_animation(this.card, this.destination);
     this.destination.addCards(this.card, true); // doesn't update view
+    if(this.revealed_card) this.revealed_card.setFaceUp(true);
     return rv;
   },
   undo: function() {
+    if(this.revealed_card) this.revealed_card.setFaceUp(false);
     this.source.addCards(this.card);
   },
   redo: function() {
     this.destination.addCards(this.card);
-  }
+    if(this.revealed_card) this.revealed_card.setFaceUp(true);
+  },
 }
 
 

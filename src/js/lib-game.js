@@ -207,9 +207,6 @@ const Game = {
     return 0;
   },
 
-  // score for each card revealed.  doo() handles the revealing of cards
-  scoreForRevealing: 0,
-
 
 
   // === Move tracking and Undoing ========================
@@ -224,19 +221,9 @@ const Game = {
     this.actionList[this.actionPtr++] = action;
     action.score = this.getScoreFor(action);
     const animation_details = action.perform() || null;
-    const pile = action.pileWhichMayNeedCardsRevealing || null;
-    action.revealed_cards = pile ? this.getCardsToReveal(pile) : [];
-    for(let c of action.revealed_cards) c.setFaceUp(true);
-    action.score += action.revealed_cards.length * this.scoreForRevealing;
     this.score += action.score;
     this._on_do_or_undo();
     return animation_details;
-  },
-
-  // overridden by TriPeaks
-  getCardsToReveal: function(pile) {
-    const card = pile ? pile.lastCard : null;
-    return card && !card.faceUp ? [card] : [];
   },
 
   undo: function() {
@@ -244,7 +231,6 @@ const Game = {
     const action = this.actionList[this.actionPtr];
     this.score -= action.score;
     action.undo();
-    for(let c of action.revealed_cards) c.setFaceUp(false);
     this._on_do_or_undo();
   },
 
@@ -254,7 +240,6 @@ const Game = {
     this.score += action.score;
     if(action.redo) action.redo();
     else action.perform();
-    for(let c of action.revealed_cards) c.setFaceUp(true);
     this._on_do_or_undo();
   },
 

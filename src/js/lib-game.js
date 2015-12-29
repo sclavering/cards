@@ -225,7 +225,7 @@ const Game = {
     this.canUndo = true;
     this.canRedo = false;
     action.score = this.getScoreFor(action);
-    this.hintsReady = false;
+    this._hints = null;
 
     const animation_details = action.perform() || null;
 
@@ -255,7 +255,7 @@ const Game = {
 
     ui.scoreDisplay.textContent = (this.score -= action.score);
     ui.movesDisplay.textContent = this.actionPtr;
-    this.hintsReady = false;
+    this._hints = null;
 
     action.undo();
     const cs = action.revealedCards || [];
@@ -271,7 +271,7 @@ const Game = {
 
     ui.scoreDisplay.textContent = (this.score += action.score);
     ui.movesDisplay.textContent = this.actionPtr;
-    this.hintsReady = false;
+    this._hints = null;
 
     if(action.redo) action.redo();
     else action.perform();
@@ -317,52 +317,42 @@ const Game = {
 
 
   // === Hints ============================================
-  // Generally nothing here needs overriding by subclasses, except perhaps .hintOriginPileCollections()
+  // Generally nothing here needs overriding by subclasses, except perhaps .hint_source_pile_collections()
 
-  hintSources: [],
-  hintDestinations: [], // destination *array* (of Piles) per hintSources element
-  hintsReady: false, // means hints have been calculated, though there may not be any.
-  hintNum: 0,
+  _hints: null, // Array of { hint_source_card: Card, hint_destinations: [Pile] } structs, or null.
+  _next_hint_index: 0,
 
   hint: function() {
-    if(!this.hintsReady) {
-      this.hintSources = [];
-      this.hintDestinations = [];
-      this.hintNum = 0;
-      this.getHints();
-      this.hintsReady = true;
+    if(!this._hints) {
+      this._hints = this.get_hints();
+      this._next_hint_index = 0;
     }
-
-    if(this.hintSources.length === 0) return;
-    const num = this.hintNum++; // must *post*-increment
-    if(this.hintNum === this.hintSources.length) this.hintNum = 0;
-    show_hints(this.hintSources[num], this.hintDestinations[num]);
+    if(this._hints.length === 0) return;
+    const hint = this._hints[this._next_hint_index];
+    this._next_hint_index = (this._next_hint_index + 1) % this._hints.length;
+    show_hints(hint.hint_source_card, hint.hint_destinations);
   },
 
   // Can be overridden e.g. to show hints from foundations
-  hintOriginPileCollections: function() {
+  hint_source_pile_collections: function() {
     return [this.reserves, this.cells, this.wastes, this.piles];
   },
 
-  getHints: function() {
-    const collections = this.hintOriginPileCollections();
-    for(let ps of collections)
+  get_hints: function() {
+    const rv = [];
+    for(let ps of this.hint_source_pile_collections())
       for(let p of ps)
         for(let source of p.getHintSources())
-          this.addHintsFor(source);
+          this._add_hints_for(source, rv);
+    return rv;
   },
 
-  addHintsFor: function(card) {
+  _add_hints_for: function(card, hints) {
     const ds = [];
     // Note: we skip moves to empty piles, because such hints are ugly/annoying/pointless
     for(let p of this.piles) if(p.hasCards && p.mayAddCard(card)) ds.push(p);
     for(let f of this.foundations) if(f.mayAddCard(card)) ds.push(f);
-    if(ds.length) this.addHints(card, ds);
-  },
-
-  addHints: function(card, destinations) {
-    this.hintSources.push(card);
-    this.hintDestinations.push(destinations);
+    if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
   },
 
 

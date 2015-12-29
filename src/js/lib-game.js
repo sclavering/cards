@@ -286,23 +286,23 @@ const Game = {
   },
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
-  // Subclasses may override this, but typically it's easier to implement .getFoundationDestinationFor() instead.
-  getFoundationMoveFor: function(card) {
+  // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
+  foundation_action_for: function(card) {
     if(!card.mayTake) return null;
-    const f = this.getFoundationDestinationFor(card);
+    const f = this.foundation_destination_for(card);
     return f ? new Move(card, f) : null;
   },
 
   // Given a card (that has already been determined to be movable), return a foundation pile it can be legally moved to, or null.
   // Subclasses may override this.
-  getFoundationDestinationFor: function(card) {
+  foundation_destination_for: function(card) {
     for(let f of this.foundations) if(f.mayAddCard(card)) return f;
     return null;
   },
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
-  getBestActionFor: function(card) {
+  best_action_for: function(card) {
     if(!card.mayTake) return null;
     const target = this.best_destination_for(card);
     return target ? new Move(card, target) : null;
@@ -363,8 +363,8 @@ const Game = {
   // To use this feature, subclasses should set this to the number of suits in use.  (It's opt-in because of edge-cases like Mod3 that don't want it.)
   foundation_cluster_count: null,
 
-  // xxx integrate this with .getFoundationMoveFor()
-  getFoundationForAce: function(card) {
+  // xxx integrate this with .foundation_action_for()
+  foundation_for_ace: function(card) {
     if(!this._foundation_clusters) return findEmpty(this.foundations);
     for(let fs of this._foundation_clusters) if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit)) return findEmpty(fs);
     return findEmpty(this.foundations);

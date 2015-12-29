@@ -109,7 +109,7 @@ const Pile = {
 
   // card may be null if the pile is empty
   getClickAction: function(card) {
-    return card ? gCurrentGame.getBestActionFor(card) : null;
+    return card ? gCurrentGame.best_action_for(card) : null;
   },
 
   // Return an array of cards to consider moving when computing hints

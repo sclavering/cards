@@ -5,7 +5,7 @@ function autoplay_default() {
     if(empty) {
       for(let ix of this.foundationBaseIndexes) {
         let c = cs[ix];
-        if(!c.pile.isFoundation && c.mayTake && empty.mayAddCard(c)) return new Move(c, this.getFoundationForAce(c));
+        if(!c.pile.isFoundation && c.mayTake && empty.mayAddCard(c)) return new Move(c, this.foundation_for_ace(c));
       }
     }
     const maxNums = this.getAutoplayableNumbers();

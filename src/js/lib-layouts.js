@@ -225,7 +225,7 @@ const Layout = {
   _on_right_click: function(e) {
     const card = this._target_card(e);
     interrupt();
-    if(card) doo(gCurrentGame.getFoundationMoveFor(card));
+    if(card) doo(gCurrentGame.foundation_action_for(card));
     this._reset_handlers();
     e.preventDefault();
     return false;

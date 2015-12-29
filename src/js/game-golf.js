@@ -11,7 +11,7 @@ const GolfBase = {
 
   helpId: "golf",
 
-  getBestActionFor: function(card) {
+  best_action_for: function(card) {
     const f = this.foundation;
     return card.mayTake && f.mayAddCard(card) ? new Move(card, f) : null;
   },

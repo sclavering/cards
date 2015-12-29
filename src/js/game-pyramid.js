@@ -22,7 +22,7 @@ gGameClasses.pyramid = {
     }
   },
 
-  getBestActionFor: function(card) {
+  best_action_for: function(card) {
     return card.isKing && card.mayTake ? new RemovePair(card, null) : null;
   },
 
@@ -71,7 +71,7 @@ gGameClasses.tripeaks = {
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   },
 
-  getBestActionFor: function(card) {
+  best_action_for: function(card) {
     const f = gCurrentGame.foundation, c = f.lastCard;
     return card.faceUp && (c.number === card.upNumber || c.upNumber === card.number) && new Move(card, f);
   },

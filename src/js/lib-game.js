@@ -225,7 +225,6 @@ const Game = {
     action.score = this.getScoreFor(action);
     const animation_details = action.perform() || null;
     const pile = action.pileWhichMayNeedCardsRevealing || null;
-    this._lastActionSourcePile = pile;
     action.revealed_cards = pile ? this.getCardsToReveal(pile) : [];
     for(let c of action.revealed_cards) c.setFaceUp(true);
     action.score += action.revealed_cards.length * this.scoreForRevealing;

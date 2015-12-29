@@ -71,10 +71,8 @@ gGameClasses.regiment = {
   },
 
   autoplay: function() {
-    var pileWhichHasHadCardsRemoved = this._lastActionSourcePile;
-    if(pileWhichHasHadCardsRemoved) {
-      pile = pileWhichHasHadCardsRemoved;
-      if(pile.isPile && !pile.hasCards && this.reserves[pile.col].hasCards)
+    for(let pile of this.piles) {
+      if(!pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
     const afs = this.aceFoundations, kfs = this.kingFoundations;

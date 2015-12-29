@@ -16,10 +16,14 @@ var gSpacerSize = 10;
 var gCardImageOffsets = null;
 
 function drawCard(canvascx, card, x, y) {
+  return draw_card_by_name(canvascx, x, y, card.faceUp ? card.displayStr : "");
+}
+
+function draw_card_by_name(canvascx, x, y, name) {
   if(!gCardImageOffsets) initCardImageOffsets();
-  var srcY = gCardImageOffsets[card.faceUp ? card.displayStr : ''] * gCardHeight;
+  const src_y = gCardImageOffsets[name] * gCardHeight;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  canvascx.drawImage(ui.cardImages, 0, srcY, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
+  canvascx.drawImage(ui.cardImages, 0, src_y, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
 }
 
 function initCardImageOffsets() {
@@ -385,6 +389,8 @@ const PileOnView8 = {
 
 const PyramidView = {
   __proto__: View,
+  // In TriPeaks, cards in the peaks should only be face-up when there are no cards on top of them.  It's simpler to handle this at the View level rather than the Pile level.
+  _draw_covered_cards_face_down: false,
   init: function() {
     View.init.call(this);
     // We need this <div> to set a minimum-width on and thus space the piles out properly (the <canvas> is position:absolute).
@@ -394,10 +400,26 @@ const PyramidView = {
     wrapper.appendChild(this._canvas);
   },
   update_with: function(cs) {
-    View.update_with.call(this, cs);
+    if(this._draw_covered_cards_face_down &&
+        ((this.pile.leftChild && this.pile.leftChild.hasCards) || (this.pile.rightChild && this.pile.rightChild.hasCards))
+    ) {
+      clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
+      draw_card_by_name(this._context, 0, 0, "");
+    } else {
+      View.update_with.call(this, cs);
+    }
     // We want empty piles to be hidden, so mouse clicks go to any pile that was overlapped instead.  But not for piles at the root of a pyramid (where we draw the empty-pile graphic instead).
     if(this.pile.leftParent || this.pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
+    if(this._draw_covered_cards_face_down) {
+      if(this.pile.leftParent) this.pile.leftParent.view.update();
+      if(this.pile.rightParent) this.pile.rightParent.view.update();
+    }
   }
+};
+
+const TriPeaksView = {
+  __proto__: PyramidView,
+  _draw_covered_cards_face_down: true,
 };
 
 // Just displays Kings from the start of each King->Ace run.

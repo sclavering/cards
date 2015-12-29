@@ -40,7 +40,7 @@ gGameClasses.tripeaks = {
 
   pileDetails: () => [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "p", 28, TriPeaksPile, PyramidView, 0, 0,
+    "p", 28, TriPeaksPile, TriPeaksView, 0, 0,
     "f", 1, GolfFoundation, View, 0, 0,
   ],
 
@@ -65,8 +65,7 @@ gGameClasses.tripeaks = {
 
   deal: function(cards) {
     let ix = 0;
-    for(let i = 0; i !== 18; i++) ix = this._deal_cards(cards, ix, this.piles[i], 1, 0);
-    for(let i = 18; i !== 28; i++) ix = this._deal_cards(cards, ix, this.piles[i], 0, 1);
+    for(let p of this.piles) ix = this._deal_cards(cards, ix, p, 0, 1);
     ix = this._deal_cards(cards, ix, this.foundation, 0, 1);
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   },
@@ -74,14 +73,6 @@ gGameClasses.tripeaks = {
   best_action_for: function(card) {
     const f = gCurrentGame.foundation, c = f.lastCard;
     return card.faceUp && (c.number === card.upNumber || c.upNumber === card.number) && new Move(card, f);
-  },
-
-  getCardsToReveal: function(pileWhichHasHadCardsRemoved) {
-    const res = [];
-    const lp = pileWhichHasHadCardsRemoved.leftParent, rp = pileWhichHasHadCardsRemoved.rightParent;
-    if(lp && !lp.leftChild.hasCards) res.push(lp.firstCard);
-    if(rp && !rp.rightChild.hasCards) res.push(rp.firstCard);
-    return res;
   },
 
   is_won: function() {

@@ -158,7 +158,6 @@ const View = {
   }
 };
 
-// Used for Waste piles and single foundations
 const CountedView = {
   __proto__: View,
   _has_counter: true,
@@ -269,7 +268,6 @@ const _SelectiveFanView = {
   // Subclasses will need to override ._get_next_card_offset(), except for waste-pile views, where it's irrelevant.
 };
 
-// Shows the top two cards
 const _TwoCardSelectiveFanView = {
   __proto__: _SelectiveFanView,
   _always_draw_background: true,
@@ -278,8 +276,7 @@ const _TwoCardSelectiveFanView = {
   },
 };
 
-// A fan that stretches in one dimension, and varies the card offset to make
-// all its cards always visible
+// A fan that stretches in one dimension, and varies the card offset so all its cards always visible
 const _FlexFanView = {
   __proto__: _FanView,
 
@@ -471,7 +468,6 @@ const UnionSquareFoundationView = {
   },
 };
 
-// a layout for Stocks, including a counter
 const StockView = {
   __proto__: View,
   _has_counter: true,

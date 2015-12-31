@@ -20,13 +20,12 @@ const Layout = {
   init: function(template, view_types) {
     if(this._node) throw "reinitialising layout";
 
-    this._bound_on_begin_drag = (ev) => this._on_begin_drag(ev);
-    this._bound_on_end_drag = (ev) => this._on_end_drag(ev);
-    this._bound_on_mouse_move_during_drag = (ev) => this._on_mouse_move_during_drag(ev);
-    this._bound_on_window_resize = (ev) => this._on_window_resize(ev);
-    this._bound_on_mouse_down = (ev) => this._on_mouse_down(ev);
-    this._bound_on_mouse_up = (ev) => this._on_mouse_up(ev);
-    this._bound_on_right_click = (ev) => this._on_right_click(ev);
+    this._bound_on_window_resize = ev => this._on_window_resize(ev);
+    this._bound_oncontextmenu = ev => this._oncontextmenu(ev);
+    this._bound_onclick = ev => this._onclick(ev);
+    this._bound_onmousedown = ev => this._onmousedown(ev);
+    this._bound_onmouseup = ev => this._onmouseup(ev);
+    this._bound_onmousemove = ev => this._onmousemove(ev);
 
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
@@ -133,65 +132,65 @@ const Layout = {
   },
 
 
-  // === Mouse Handling ====================================
-  // Notes:
-  // Use onmouseup rather than onclick because in Fx1.5mac (at least) there is no click event if you
-  // hold the mouse in one place for a few seconds between moving it and releasing the btn.
-  //
-  // Fx 20050623 on Mac only produces an Up event with .ctrlKey true for right-clicks (no down or
-  // click events), so it's easiest to do all right-click detection this way.
-  // Fx "20051107 (1.5)" (actually auto-updated, I think, to 1.5.0.3) does do Down events!
+  // Mouse Handling
+
+  // For right-click handling we just use .oncontextmenu, since e.g. on Mac we want ctrl+click to work too (and Fx 1.5 mac used to do weird things like convert a physical right-click into a left-click with .ctrlKey set, though I've no idea if that behaviour still exists).
 
   _ex0: 0, // coords of mousedown event
   _ey0: 0,
-  _eventTargetCard: null, // or a Card
+  _tx: 0, // coords of the mouse relative to g_floating_pile
+  _ty: 0,
+  _card_for_dragging: null, // a Card, from when mousedown occurs on one, until mouseup occurs thereafter
+  _is_drag_threshold_exceeded: false, // have we exceeded the small movement threshold before we show a drag as in progress?
 
-  _is_dragging: false,
-
-  _on_mouse_down: function(e) {
+  _onmousedown: function(e) {
     if(e.button) return;
-    const card = this._eventTargetCard = this._target_card(e);
+    const card = this._target_card(e);
     if(!card || !card.mayTake) return;
     interrupt();
+    this._card_for_dragging = card;
     this._ex0 = e.pageX;
     this._ey0 = e.pageY;
-    window.onmousemove = this._bound_on_begin_drag;
+    window.onmousemove = this._bound_onmousemove;
   },
 
-  _on_begin_drag: function(e) {
-    // ignore very tiny movements of the mouse during a click
-    // (otherwise clicking without dragging is rather difficult)
+  _onmousemove: function(e) {
+    if(this._is_drag_threshold_exceeded) {
+      g_floating_pile.set_position(e.pageX - this._tx, e.pageY - this._ty);
+      return;
+    }
+    // Ignore very tiny movements of the mouse during a click (otherwise clicking without dragging is rather difficult).
     const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    const card = this._eventTargetCard;
+    const card = this._card_for_dragging;
     g_floating_pile.start_animation_or_drag(card);
     const rect = g_floating_pile.bounding_rect();
     this._tx = ex0 - rect.x;
     this._ty = ey0 - rect.y;
-    this._is_dragging = true;
-    window.onmousemove = this._bound_on_mouse_move_during_drag;
-    window.onmouseup = this._bound_on_end_drag;
-    window.oncontextmenu = null;
-  },
-
-  // (_tx, _ty) is the pixel coords of the mouse relative to g_floating_pile
-  _tx: 0,
-  _ty: 0,
-  _on_mouse_move_during_drag: function(e) {
-    g_floating_pile.set_position(e.pageX - this._tx, e.pageY - this._ty);
+    this._is_drag_threshold_exceeded = true;
   },
 
   cancel_drag: function() {
-    if(!this._is_dragging) return;
-    const card = this._eventTargetCard;
+    if(!this._is_drag_threshold_exceeded) return;
+    const card = this._card_for_dragging;
     this._reset_handlers();
     g_floating_pile.hide();
     card.pile.view.update();
   },
 
-  _on_end_drag: function(e) {
-    const card = this._eventTargetCard;
+  _onmouseup: function(e) {
+    if(this._is_drag_threshold_exceeded) {
+      const card = this._card_for_dragging;
+      if(!this._attempt_drop(card)) {
+        g_floating_pile.hide();
+        card.pile.view.update();
+      }
+    }
     this._reset_handlers();
+  },
+
+  _attempt_drop: function(card) {
+    if(!card) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
@@ -204,25 +203,25 @@ const Layout = {
       if(!act) continue;
       if(act instanceof ErrorMsg) {
         act.show();
-        break;
-      } else {
-        doo(act, true);
-        // We must avoid the code after the loop, because if the drop triggers and animation, it would ruin that.
-        return;
+        return false;
       }
+      doo(act, true);
+      return true;
     }
-    g_floating_pile.hide();
-    card.pile.view.update();
+    return false;
   },
 
-  _on_mouse_up: function(e) {
-    const card = this._eventTargetCard;
-    if(!card) return;
-    doo(card.pile.getClickAction(card));
+  _onclick: function(ev) {
+    // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
+    if(ev.button || ev.ctrlKey) return true;
+    const card = this._target_card(ev);
+    interrupt();
+    if(card) doo(card.pile.getClickAction(card));
     this._reset_handlers();
+    return false;
   },
 
-  _on_right_click: function(e) {
+  _oncontextmenu: function(e) {
     const card = this._target_card(e);
     interrupt();
     if(card) doo(gCurrentGame.foundation_action_for(card));
@@ -232,11 +231,14 @@ const Layout = {
   },
 
   _reset_handlers: function(e) {
-    this._is_dragging = false;
-    this._eventTargetCard = null;
-    window.oncontextmenu = this._bound_on_right_click;
-    window.onmousedown = this._bound_on_mouse_down;
-    window.onmouseup = this._bound_on_mouse_up;
+    this._is_drag_threshold_exceeded = false;
+    this._card_for_dragging = null;
+    // The onclick/oncontextmenu handlers are bound on this._node since we don't want to interfere with clicking in the sidebar ui etc.
+    this._node.oncontextmenu = this._bound_oncontextmenu;
+    this._node.onclick = this._bound_onclick;
+    this._node.onmousedown = this._bound_onmousedown;
+    // It is *essential* that the onmousemove/onmouseup handlers are bound to the window, rather than this._node, because the mouse pointer will be over g_floating_pile when those events occur.
+    window.onmouseup = this._bound_onmouseup;
     window.onmousemove = null;
   },
 
@@ -247,6 +249,9 @@ const Layout = {
     const view = t.pileViewObj, rect = view.pixel_rect();
     return view.card_at_coords(e.pageX - rect.left, e.pageY - rect.top);
   },
+
+
+  // Window resizing
 
   _on_window_resize: function(e) {
     g_animations.cancel();
@@ -264,7 +269,7 @@ const Layout = {
       if(v.update_canvas_height_on_resize) v.canvas_height = height - r.top;
       if(v.update_canvas_width_on_resize) v.canvas_width = width - r.left;
     }
-  }
+  },
 };
 
 

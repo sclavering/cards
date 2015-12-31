@@ -130,7 +130,7 @@ function restartGame() {
 
 function doo(action, was_dragging) { // "do" is a reserved word
   if(!action) return;
-  interrupt();
+  interrupt(was_dragging);
   // enable undo + disable redo (but avoid doing so unnecessarily)
   if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.removeAttribute("disabled");
   if(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
@@ -154,10 +154,10 @@ function done() {
 }
 
 
-function interrupt() {
+function interrupt(was_dragging) {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
-  if(gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
+  if(!was_dragging && gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
   g_animations.cancel();
 }
 

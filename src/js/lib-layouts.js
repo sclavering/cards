@@ -26,6 +26,10 @@ const Layout = {
     this._bound_onmousedown = ev => this._onmousedown(ev);
     this._bound_onmouseup = ev => this._onmouseup(ev);
     this._bound_onmousemove = ev => this._onmousemove(ev);
+    this._bound_ontouchstart = ev => this._ontouchstart(ev);
+    this._bound_ontouchend = ev => this._ontouchend(ev);
+    this._bound_ontouchcancel = ev => this._ontouchcancel(ev);
+    this._bound_ontouchmove = ev => this._ontouchmove(ev);
 
     const views = this.views = [];
     const letters = []; // seq of view letters, to return to caller
@@ -132,26 +136,40 @@ const Layout = {
   },
 
 
-  // Mouse Handling
+  // Mouse/Touch Handling
 
   // For right-click handling we just use .oncontextmenu, since e.g. on Mac we want ctrl+click to work too (and Fx 1.5 mac used to do weird things like convert a physical right-click into a left-click with .ctrlKey set, though I've no idea if that behaviour still exists).
 
-  _ex0: 0, // coords of mousedown event
+  _ex0: 0, // coords of mousedown/touchstart event
   _ey0: 0,
   _tx: 0, // coords of the mouse relative to g_floating_pile
   _ty: 0,
   _card_for_dragging: null, // a Card, from when mousedown occurs on one, until mouseup occurs thereafter
   _is_drag_threshold_exceeded: false, // have we exceeded the small movement threshold before we show a drag as in progress?
+  _current_touch_id: null, // a Touch.identifier value, when a touch-based drag is in progress
 
   _onmousedown: function(e) {
     if(e.button) return;
-    const card = this._target_card(e);
-    if(!card || !card.mayTake) return;
+    if(!this._start_drag(e)) return;
+    window.onmousemove = this._bound_onmousemove;
+  },
+
+  _ontouchstart: function(ev) {
+    if(this._current_touch_id) return;
+    const t = ev.changedTouches[0];
+    if(!this._start_drag(t)) return;
+    window.ontouchmove = this._bound_ontouchmove;
+    this._current_touch_id = t.identifier;
+  },
+
+  _start_drag: function(event_or_touch) {
+    const card = this._target_card(event_or_touch);
+    if(!card || !card.mayTake) return false;
     interrupt();
     this._card_for_dragging = card;
-    this._ex0 = e.pageX;
-    this._ey0 = e.pageY;
-    window.onmousemove = this._bound_onmousemove;
+    this._ex0 = event_or_touch.pageX;
+    this._ey0 = event_or_touch.pageY;
+    return true;
   },
 
   _onmousemove: function(e) {
@@ -162,12 +180,17 @@ const Layout = {
     // Ignore very tiny movements of the mouse during a click (otherwise clicking without dragging is rather difficult).
     const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    const card = this._card_for_dragging;
-    g_floating_pile.start_animation_or_drag(card);
+    g_floating_pile.start_animation_or_drag(this._card_for_dragging);
     const rect = g_floating_pile.bounding_rect();
     this._tx = ex0 - rect.x;
     this._ty = ey0 - rect.y;
     this._is_drag_threshold_exceeded = true;
+  },
+
+  _ontouchmove: function(ev) {
+    const t = this._current_touch_of(ev);
+    if(!t) return;
+    g_floating_pile.set_position(t.pageX - this._tx, t.pageY - this._ty);
   },
 
   cancel_drag: function() {
@@ -187,6 +210,12 @@ const Layout = {
       }
     }
     this._reset_handlers();
+  },
+
+  _ontouchend: function(ev) {
+    const t = this._current_touch_of(ev);
+    if(!t) return;
+    this._onmouseup(ev);
   },
 
   _attempt_drop: function(card) {
@@ -211,6 +240,12 @@ const Layout = {
     return false;
   },
 
+  _ontouchcancel: function(ev) {
+    const t = this._current_touch_of(ev);
+    if(!t) return;
+    this._reset_handlers();
+  },
+
   _onclick: function(ev) {
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
     if(ev.button || ev.ctrlKey) return true;
@@ -233,21 +268,32 @@ const Layout = {
   _reset_handlers: function(e) {
     this._is_drag_threshold_exceeded = false;
     this._card_for_dragging = null;
+    this._current_touch_id = null;
     // The onclick/oncontextmenu handlers are bound on this._node since we don't want to interfere with clicking in the sidebar ui etc.
     this._node.oncontextmenu = this._bound_oncontextmenu;
     this._node.onclick = this._bound_onclick;
     this._node.onmousedown = this._bound_onmousedown;
+    this._node.ontouchstart = this._bound_ontouchstart;
     // It is *essential* that the onmousemove/onmouseup handlers are bound to the window, rather than this._node, because the mouse pointer will be over g_floating_pile when those events occur.
     window.onmouseup = this._bound_onmouseup;
     window.onmousemove = null;
+    // I'm binding these on window for consistency with onmousemove/onmouseup.  I haven't thought about whether it matters.
+    window.ontouchmove = null;
+    window.ontouchend = this._bound_ontouchend;
+    window.ontouchcancel = this._bound_ontouchcancel;
   },
 
-  _target_card: function(e) {
-    let t = e.target;
+  _current_touch_of: function(ev) {
+    for(let t of ev.changedTouches) if(t.identifier === this._current_touch_id) return t;
+    return null;
+  },
+
+  _target_card: function(event_or_touch) {
+    let t = event_or_touch.target;
     while(t && !t.pileViewObj) t = t.parentNode;
     if(!t || !t.pileViewObj) return null;
     const view = t.pileViewObj, rect = view.pixel_rect();
-    return view.card_at_coords(e.pageX - rect.left, e.pageY - rect.top);
+    return view.card_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
   },
 
 

@@ -12,7 +12,6 @@ JS_FILES = [
     'lib-animation.js',
     'lib-freecellanimation.js',
     'autoplay.js',
-    'getAutoplayableNumbers.js',
     'best_destination_for.js',
     'lib-actions.js',
     'lib-game.js',

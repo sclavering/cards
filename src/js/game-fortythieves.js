@@ -18,7 +18,7 @@ gGameClasses.fortythieves = {
 
   autoplay: autoplay_default,
 
-  getAutoplayableNumbers: autoplay_any_where_all_lower_of_same_suit_are_on_foundations,
+  autoplayable_numbers: autoplay_any_where_all_lower_of_same_suit_are_on_foundations,
 };
 
 

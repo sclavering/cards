@@ -43,7 +43,7 @@ gGameClasses.freecell = {
 
   autoplay: autoplay_default,
 
-  getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
+  autoplayable_numbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 };
 
 

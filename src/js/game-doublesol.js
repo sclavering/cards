@@ -21,7 +21,7 @@ gGameClasses.doublesol = {
   autoplay: function() {
     let triedToFillEmpty = false;
     const cs = this.allcards;
-    const nums = this.getAutoplayableNumbers();
+    const nums = this.autoplayable_numbers();
 
     for(let f of this.foundations) {
       if(f.hasCards) {
@@ -43,7 +43,7 @@ gGameClasses.doublesol = {
     return null;
   },
 
-  getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
+  autoplayable_numbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
 };
 
 

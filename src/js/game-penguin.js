@@ -24,7 +24,7 @@ gGameClasses.penguin = {
 
   autoplay: autoplay_default,
 
-  getAutoplayableNumbers: autoplay_any_card,
+  autoplayable_numbers: autoplay_any_card,
 };
 
 

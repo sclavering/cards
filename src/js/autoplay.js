@@ -9,7 +9,7 @@ function autoplay_default() {
         if(!c.pile.isFoundation && c.mayTake && empty.mayAddCard(c)) return new Move(c, this.foundation_for_ace(c));
       }
     }
-    const maxNums = this.getAutoplayableNumbers();
+    const maxNums = this.autoplayable_numbers();
     // Now try non-empty foundations
     for(let f of this.foundations) {
       if(!f.hasCards) continue;
@@ -24,7 +24,7 @@ function autoplay_default() {
 };
 
 
-// Various commonly-used implementations of games' .getAutoplayableNumbers().
+// Various commonly-used implementations of games' .autoplayable_numbers().
 // They return a suit -> number map, where e.g. if .S = 7 then any spade of number 7 or lower is eligible for autoplay.
 
 function autoplay_any_card() {
@@ -34,14 +34,14 @@ function autoplay_any_card() {
 // Can put 5H up if 4C and 4S are up (since there's then no reason to keep 5H down).
 // Can always put A* up, and also 2* (because they're never needed to put an Ace on).
 function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two() {
-  return _getAutoplayableNumbers_klondike(this.foundations, true);
+  return _autoplayable_numbers_for_klondike(this.foundations, true);
 }
 
 function autoplay_any_where_all_lower_of_other_colour_are_on_foundations() {
-  return _getAutoplayableNumbers_klondike(this.foundations, false);
+  return _autoplayable_numbers_for_klondike(this.foundations, false);
 }
 
-function _getAutoplayableNumbers_klondike(fs, always_allow_twos) {
+function _autoplayable_numbers_for_klondike(fs, always_allow_twos) {
   const colour_nums = { R: 1000, B: 1000 }; // colour -> smallest num of that colour on the top of an f
   const colour_counts = { R: 0, B: 0 }; // num of fs of a given colour
   for(let f of fs) {

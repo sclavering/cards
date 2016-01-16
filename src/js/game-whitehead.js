@@ -38,7 +38,7 @@ gGameClasses.whitehead = {
 
   autoplay: autoplay_default,
 
-  getAutoplayableNumbers: function() {
+  autoplayable_numbers: function() {
     const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
     const suitmap = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
     for(let f of this.foundations) {

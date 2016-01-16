@@ -19,7 +19,7 @@ const GypsyBase = {
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: function() {
-    const nums = this.getAutoplayableNumbers();
+    const nums = this.autoplayable_numbers();
     for(let p of this.piles) {
       let c = p.lastCard;
       if(!c || c.number > nums[c.suit]) continue;
@@ -31,7 +31,7 @@ const GypsyBase = {
   },
 
   // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
-  getAutoplayableNumbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
+  autoplayable_numbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
 };
 
 gGameClasses.gypsy2 = {

@@ -11,11 +11,6 @@ const GypsyBase = {
 
   helpId: "gypsy",
 
-  init: function() {
-    const fs = this.foundations;
-    for(var i = 0; i !== 4; i++) fs[i].twin = fs[i + 4], fs[i + 4].twin = fs[i];
-  },
-
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: function() {

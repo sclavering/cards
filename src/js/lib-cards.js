@@ -105,3 +105,12 @@ Card.prototype = {
 
   get mayTake() { return this.pile.mayTakeCard(this); }
 };
+
+
+function is_next_in_suit(a, b) {
+  return a.number + 1 === b.number && a.suit === b.suit;
+};
+
+function is_next_and_same_colour(a, b) {
+  return a.number + 1 === b.number && a.colour === b.colour;
+};

@@ -35,3 +35,8 @@ function findEmpty(piles) {
   for(let p of piles) if(!p.hasCards) return p;
   return null;
 }
+
+function find_pile_by_top_card(piles, predicate) {
+  for(let p of piles) if(p.hasCards && predicate(p.lastCard)) return p;
+  return null;
+}

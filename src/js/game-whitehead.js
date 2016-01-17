@@ -12,28 +12,10 @@ gGameClasses.whitehead = {
 
   foundationBaseIndexes: [0, 13, 26, 39],
 
-  init: function() {
-    const cs = this.allcards;
-    const off = [39, 13, -13, -39]; // offsets to other suit of same colour
-    for(var i = 0, k = 0; i !== 4; i++) {
-      for(var j = 0; j !== 13; j++, k++) {
-        var c = cs[k];
-        c.on = j === 12 ? null : cs[k + off[i] + 1];
-      }
-    }
-  },
-
   best_destination_for: function(card) {
-    var up = card.up, on = card.on;
-    if(up) {
-      var p = up.pile;
-      if(p.isPile && up.isLast) return p;
-    }
-    if(on) {
-      p = on.pile;
-      if(p.isPile && on.isLast) return p;
-    }
-    return findEmpty(this.piles);
+    return find_pile_by_top_card(this.piles, top => is_next_in_suit(card, top))
+        || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(card, top))
+        || findEmpty(this.piles);
   },
 
   autoplay: autoplay_default,
@@ -55,7 +37,7 @@ const WhiteheadPile = {
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
-    const lst = this.lastCard;
-    return !lst || lst === card.up || lst === card.on;
-  }
+    const last = this.lastCard;
+    return last ? is_next_and_same_colour(card, last) : true;
+  },
 };

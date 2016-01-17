@@ -27,17 +27,13 @@ gGameClasses.unionsquare = {
     return empty;
   },
 
-  // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A
-  autoplay: function() {
-    for(let f of this.foundations) {
-      let len = f.cards.length, last = f.lastCard;
-      if(len < 12 || len === 26) continue;
-      var c = len === 12 ? last.up : (len === 13 ? last.twin : last.down), cp = c.pile;
-      if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
-      c = c.twin, cp = c.pile;
-      if((cp.isPile || cp.isWaste) && c.isLast) return new Move(c, f);
-    }
-    return null;
+  autoplay: autoplay_default,
+
+  // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A.
+  autoplayable_numbers: function() {
+    const rv = { S: 0, H: 0, D: 0, C: 0 }; // By default, nothing can be autoplayed.
+    for(let f of this.foundations) if(f.cards.length >= 12) rv[f.cards[0].suit] = 13;
+    return rv;
   },
 };
 

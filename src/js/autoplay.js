@@ -4,7 +4,11 @@ function autoplay_default() {
   for(let p of this.hint_and_autoplay_source_piles) {
     let c = p.lastCard;
     if(!c || c.number > nums[c.suit]) continue;
-    if(c.isAce) return new Move(c, this.foundation_for_ace(c));
+    if(c.isAce) {
+      // f can be null in e.g. Union Square
+      let f = this.foundation_for_ace(c);
+      if(f) return new Move(c, f);
+    }
     let act = this.foundation_action_for(c);
     if(act) return act;
   }

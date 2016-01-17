@@ -330,7 +330,7 @@ const Game = {
 
   // xxx integrate this with .foundation_action_for()
   foundation_for_ace: function(card) {
-    if(!this._foundation_clusters) return findEmpty(this.foundations);
+    if(!this._foundation_clusters) return this.foundation_destination_for(card);
     for(let fs of this._foundation_clusters) if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit)) return findEmpty(fs);
     return findEmpty(this.foundations);
   },

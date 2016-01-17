@@ -12,11 +12,10 @@ gGameClasses.maze = {
     const cs = this.allcards = makeCards(1, null, range2(1, 13)); // no kings
     cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null; // 6 spaces instead
 
-    var ps = this.piles;
-    ps[53].next = ps[0]; ps[0].prev = ps[53]; // prev/next are not usually circular
-
-    this.aces = [cs[0], cs[12], cs[24], cs[36]];
-    this.queens = [cs[11], cs[23], cs[35], cs[47]];
+    // prev/next are not usually circular
+    const ps = this.piles;
+    ps[53].next = ps[0];
+    ps[0].prev = ps[53];
   },
 
   deal: function(cards) {

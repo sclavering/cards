@@ -6,9 +6,6 @@ const SpiderBase = {
 
   layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
 
-  // Indices of kings within this.allcards.  Used by .autoplay()
-  kings: [12, 25, 38, 51, 64, 77, 90, 103],
-
   best_destination_for: function(card) {
     let maybe = null, empty = null;
     for(let p of card.pile.surrounding()) {
@@ -25,13 +22,15 @@ const SpiderBase = {
   },
 
   autoplay: function() {
-    const cs = this.allcards, ixs = this.kings, f = this.foundation;
-    for(let ix of ixs) {
-      let k = cs[ix];
-      if(k.pile.isPile && k.mayTake && f.mayAddCard(k)) return new Move(k, f);
+    const f = this.foundation;
+    for(let p of this.piles) {
+      let n = p.cards.length - 13;
+      if(n < 0) continue;
+      let c = p.cards[n];
+      if(c.mayTake && f.mayAddCard(c)) return new Move(c, f);
     }
     return null;
-  }
+  },
 };
 
 
@@ -85,17 +84,6 @@ gGameClasses.divorce = {
   ],
 
   required_cards: [2, , , true],
-
-  autoplay: function() {
-    const f = this.foundation;
-    for(let p of this.piles) {
-      let n = p.cards.length - 13;
-      if(n < 0) continue;
-      let c = p.cards[n];
-      if(c.mayTake && f.mayAddCard(c)) return new Move(c, f);
-    }
-    return null;
-  },
 };
 
 
@@ -108,7 +96,6 @@ gGameClasses.wasp = {
     "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
   ],
   layoutTemplate: '#<   p p p p p p p  [fs]   >.',
-  kings: [12, 25, 38, 51],
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 };
 
@@ -122,7 +109,6 @@ const SimonBase = {
   ],
   layoutTemplate: '#<   p p p p p p p p p p  f   >.',
   helpId: "simon",
-  kings: [12, 25, 38, 51]
 };
 
 gGameClasses.simplersimon = {
@@ -156,7 +142,6 @@ gGameClasses.doublesimon = {
   ],
   layoutTemplate: '#<   p p p p p p p p p p p p  f   >.',
   helpId: "simon",
-  kings: [12, 25, 38, 51, 64, 77, 90, 103]
 };
 
 

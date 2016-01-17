@@ -11,11 +11,8 @@ gGameClasses.mod3 = {
 
   layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
 
-  hint_source_pile_collections: function() {
-    return [this.foundations, this.piles];
-  },
-
   required_cards: null,
+
   init: function() {
     const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
     const cardss = [for(nums of numss) makeCards(2, null, nums)];
@@ -24,6 +21,8 @@ gGameClasses.mod3 = {
     this.bases = [for(cards of cardss) [for(ix of baseIxs) cards[ix]]];
     const fs = this.foundations;
     this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
+    // Ordinarily this excludes .foundations
+    this.hint_source_piles = [].concat(this.foundations, this.piles);
   },
 
   // games that start with no cards in the correct place on the foundations are impossible

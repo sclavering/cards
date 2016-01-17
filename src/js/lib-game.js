@@ -124,6 +124,7 @@ const Game = {
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
     this.stock = [for(p of all) if(p.isStock) p][0] || null;
+    this.hint_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
   },
 
   // The actual entry-point to starting a game instance.
@@ -289,7 +290,7 @@ const Game = {
 
 
   // === Hints ============================================
-  // Generally nothing here needs overriding by subclasses, except perhaps .hint_source_pile_collections()
+  // Generally nothing here needs overriding by subclasses.
 
   _hints: null, // Array of { hint_source_card: Card, hint_destinations: [Pile] } structs, or null.
   _next_hint_index: 0,
@@ -305,17 +306,9 @@ const Game = {
     show_hints(hint.hint_source_card, hint.hint_destinations);
   },
 
-  // Can be overridden e.g. to show hints from foundations
-  hint_source_pile_collections: function() {
-    return [this.reserves, this.cells, this.wastes, this.piles];
-  },
-
   get_hints: function() {
     const rv = [];
-    for(let ps of this.hint_source_pile_collections())
-      for(let p of ps)
-        for(let source of p.getHintSources())
-          this._add_hints_for(source, rv);
+    for(let p of this.hint_source_piles) for(let source of p.getHintSources()) this._add_hints_for(source, rv);
     return rv;
   },
 

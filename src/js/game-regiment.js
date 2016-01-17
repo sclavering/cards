@@ -26,12 +26,10 @@ gGameClasses.regiment = {
     }
 
     for(let i = 0; i !== 16; i++) {
-      var p = ps[i], col = p.col = i % 8;
-      p.reserve = rs[col];
+      let p = ps[i];
+      p.col = i % 8;
+      p.reserve = rs[p.col];
     }
-
-    this.aces = [cs[0], cs[13], cs[26], cs[39], cs[52], cs[65], cs[78], cs[91]];
-    this.kings = [cs[12], cs[25], cs[38], cs[51], cs[64], cs[77], cs[90], cs[103]];
   },
 
   best_destination_for: function(card) {

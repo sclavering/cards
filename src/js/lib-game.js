@@ -124,7 +124,7 @@ const Game = {
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
     this.stock = [for(p of all) if(p.isStock) p][0] || null;
-    this.hint_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
+    this.hint_and_autoplay_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
   },
 
   // The actual entry-point to starting a game instance.
@@ -308,7 +308,7 @@ const Game = {
 
   get_hints: function() {
     const rv = [];
-    for(let p of this.hint_source_piles) for(let source of p.getHintSources()) this._add_hints_for(source, rv);
+    for(let p of this.hint_and_autoplay_source_piles) for(let source of p.getHintSources()) this._add_hints_for(source, rv);
     return rv;
   },
 

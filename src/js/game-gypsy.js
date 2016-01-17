@@ -13,17 +13,7 @@ const GypsyBase = {
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: function() {
-    const nums = this.autoplayable_numbers();
-    for(let p of this.piles) {
-      let c = p.lastCard;
-      if(!c || c.number > nums[c.suit]) continue;
-      if(c.isAce) return new Move(c, this.foundation_for_ace(c));
-      let act = this.foundation_action_for(c);
-      if(act) return act;
-    }
-    return null;
-  },
+  autoplay: autoplay_default,
 
   // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
   autoplayable_numbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,

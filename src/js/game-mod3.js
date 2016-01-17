@@ -22,7 +22,7 @@ gGameClasses.mod3 = {
     const fs = this.foundations;
     this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
     // Ordinarily this excludes .foundations
-    this.hint_source_piles = [].concat(this.foundations, this.piles);
+    this.hint_and_autoplay_source_piles = [].concat(this.foundations, this.piles);
   },
 
   // games that start with no cards in the correct place on the foundations are impossible

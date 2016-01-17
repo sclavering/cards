@@ -1,26 +1,14 @@
 // A very common implementation for games' .autoplay()
 function autoplay_default() {
-    const cs = this.allcards;
-    // Try to put Aces (or whatever) on empty foundations.
-    const empty = findEmpty(this.foundations); // used to check move legality
-    if(empty) {
-      for(let ix of this.foundationBaseIndexes) {
-        let c = cs[ix];
-        if(!c.pile.isFoundation && c.mayTake && empty.mayAddCard(c)) return new Move(c, this.foundation_for_ace(c));
-      }
-    }
-    const maxNums = this.autoplayable_numbers();
-    // Now try non-empty foundations
-    for(let f of this.foundations) {
-      if(!f.hasCards) continue;
-      let c = f.lastCard.up;
-      if(!c || c.number > maxNums[c.suit]) continue;
-      if(!c.pile.isFoundation && c.mayTake && f.mayAddCard(c)) return new Move(c, f);
-      // for two-deck games
-      c = c.twin;
-      if(c && !c.pile.isFoundation && c.mayTake && f.mayAddCard(c)) return new Move(c, f);
-    }
-    return null;
+  const nums = this.autoplayable_numbers();
+  for(let p of this.hint_and_autoplay_source_piles) {
+    let c = p.lastCard;
+    if(!c || c.number > nums[c.suit]) continue;
+    if(c.isAce) return new Move(c, this.foundation_for_ace(c));
+    let act = this.foundation_action_for(c);
+    if(act) return act;
+  }
+  return null;
 };
 
 

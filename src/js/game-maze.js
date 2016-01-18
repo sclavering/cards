@@ -23,20 +23,8 @@ gGameClasses.maze = {
   },
 
   best_destination_for: function(card) {
-    if(card.isAce) {
-      var start = card.pile, pile = start.next;
-      while(pile !== start && (pile.hasCards || !(pile.next.lastCard === card.up
-          || (pile.prev.hasCards && pile.prev.lastCard.isQueen)))) pile = pile.next;
-      return !pile.hasCards ? pile : null;
-    }
-    if(card.isQueen) {
-      start = card.pile, pile = start.next;
-      while(pile !== start && (pile.hasCards || !(pile.prev.lastCard === card.down
-          || (pile.next.hasCards && pile.next.lastCard.isAce)))) pile = pile.next;
-      return !pile.hasCards ? pile : null;
-    }
-    var down = card.down.pile.next, up = card.up.pile.prev;
-    return (!down.hasCards && down) || (!up.hasCards && up);
+    for(let p of card.pile.following()) if(p.mayAddCard(card)) return p;
+    return null;
   },
 
   // Autoplay not used

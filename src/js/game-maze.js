@@ -38,6 +38,8 @@ gGameClasses.maze = {
     } while(p !== first);
     return true;
   },
+
+  show_hints_to_empty_piles: true,
 };
 
 

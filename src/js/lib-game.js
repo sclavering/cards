@@ -319,11 +319,13 @@ const Game = {
 
   _add_hints_for: function(card, hints) {
     const ds = [];
-    // Note: we skip moves to empty piles, because such hints are ugly/annoying/pointless
-    for(let p of this.piles) if(p.hasCards && p.mayAddCard(card)) ds.push(p);
+    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.mayAddCard(card)) ds.push(p);
     for(let f of this.foundations) if(f.mayAddCard(card)) ds.push(f);
     if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
   },
+
+  // In most games, a hint where the destination is an empty pile is not worth showing (because it's obvious that the move is possible, and it gets in the way of showing more interesting hints).
+  show_hints_to_empty_piles: false,
 
 
 

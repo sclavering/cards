@@ -35,33 +35,37 @@ gGameClasses.regiment = {
   best_destination_for: function(card) {
     const parent = card.pile;
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
-    for(let i = 0; i !== num; i++) {
-      var p = ps[i];
-      if(p.hasCards && p.mayAddCard(card)) return p;
-    }
+    for(let p of ps) if(p.hasCards && p.mayAddCard(card)) return p;
+
     // look for an empty pile to move the card to
     if(!parent.isReserve) return null;
     var prev = parent.prev, next = parent.next;
 
     while(prev || next) {
       if(next) {
-        if(next.hasCards) next = null;
-        else {
+        if(next.hasCards) {
+          next = null;
+        } else {
           p = !next.up.hasCards ? next.up : (!next.down.hasCards ? next.down : null);
           if(p) {
             if(p.mayAddCard(card)) return p;
-            else next = null; // another reserve is closer to p; it will be closer to any pile right of p too
-          } else next = next.next;
+            next = null; // another reserve is closer to p; it will be closer to any pile right of p too
+          } else {
+            next = next.next;
+          }
         }
       }
       if(prev) {
-        if(prev.hasCards) prev = null;
-        else {
+        if(prev.hasCards) {
+          prev = null;
+        } else {
           p = !prev.up.hasCards ? prev.up : (!prev.down.hasCards ? prev.down : null);
           if(p) {
             if(p.mayAddCard(card)) return p;
-            else prev = null;
-          } else prev = prev.prev;
+            prev = null;
+          } else {
+            prev = prev.prev;
+          }
         }
       }
     }
@@ -73,16 +77,15 @@ gGameClasses.regiment = {
       if(!pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
     }
-    const afs = this.aceFoundations, kfs = this.kingFoundations;
-    for(let i = 0; i !== 4; i++) {
-      let pile = afs[i], last = pile.lastCard;
+    for(let pile of this.aceFoundations) {
+      let last = pile.lastCard;
       if(last && last.up && last.twin.pile.isFoundation) {
         let card = last.up.pile.isFoundation ? last.twin.up : last.up;
         if(card.isLast) return new Move(card, pile);
       }
     }
-    for(let i = 0; i !== 4; i++) {
-      let pile = kfs[i], last = pile.lastCard;
+    for(let pile of this.kingFoundations) {
+      let last = pile.lastCard;
       if(last && last.down && last.twin.pile.isFoundation) {
         let card = last.down.pile.isFoundation ? last.twin.down : last.down;
         if(card.isLast) return new Move(card, pile);

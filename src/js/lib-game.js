@@ -269,6 +269,11 @@ const Game = {
   // Given a card (that has already been determined to be movable), return a foundation pile it can be legally moved to, or null.
   // Subclasses may override this.
   foundation_destination_for: function(card) {
+    // This branch is about putting aces of the same suit together, in games where that's relevant.
+    if(card.isAce && this._foundation_clusters)
+      for(let fs of this._foundation_clusters)
+        if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit))
+          return findEmpty(fs);
     for(let f of this.foundations) if(f.mayAddCard(card)) return f;
     return null;
   },
@@ -327,13 +332,6 @@ const Game = {
 
   // To use this feature, subclasses should set this to the number of suits in use.  (It's opt-in because of edge-cases like Mod3 that don't want it.)
   foundation_cluster_count: null,
-
-  // xxx integrate this with .foundation_action_for()
-  foundation_for_ace: function(card) {
-    if(!this._foundation_clusters) return this.foundation_destination_for(card);
-    for(let fs of this._foundation_clusters) if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit)) return findEmpty(fs);
-    return findEmpty(this.foundations);
-  },
 
   _get_foundation_clusters: function(cards, foundations) {
     if(!this.foundation_cluster_count) return null;

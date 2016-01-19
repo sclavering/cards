@@ -24,8 +24,7 @@ gGameClasses.doublesol = {
 };
 
 
-// built A,A,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,J,J,Q,Q,K,K
-// top *two* cards visible, so you can tell if they have the same number
+// Built A,A,2,2,3,3,...,Q,Q,K,K
 const DoubleSolFoundation = {
   __proto__: WorryingBackFoundation,
 

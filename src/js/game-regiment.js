@@ -37,38 +37,7 @@ gGameClasses.regiment = {
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
     for(let p of ps) if(p.hasCards && p.mayAddCard(card)) return p;
 
-    // look for an empty pile to move the card to
-    if(!parent.isReserve) return null;
-    var prev = parent.prev, next = parent.next;
-
-    while(prev || next) {
-      if(next) {
-        if(next.hasCards) {
-          next = null;
-        } else {
-          p = !next.up.hasCards ? next.up : (!next.down.hasCards ? next.down : null);
-          if(p) {
-            if(p.mayAddCard(card)) return p;
-            next = null; // another reserve is closer to p; it will be closer to any pile right of p too
-          } else {
-            next = next.next;
-          }
-        }
-      }
-      if(prev) {
-        if(prev.hasCards) {
-          prev = null;
-        } else {
-          p = !prev.up.hasCards ? prev.up : (!prev.down.hasCards ? prev.down : null);
-          if(p) {
-            if(p.mayAddCard(card)) return p;
-            prev = null;
-          } else {
-            prev = prev.prev;
-          }
-        }
-      }
-    }
+    if(parent.isReserve) for(let p of this.piles) if(!p.hasCard && p.mayAddCard(card)) return p;
     return null;
   },
 

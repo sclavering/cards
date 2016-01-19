@@ -42,25 +42,22 @@ gGameClasses.regiment = {
   },
 
   autoplay: function() {
-    for(let pile of this.piles) {
+    for(let pile of this.piles)
       if(!pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
-    }
-    for(let pile of this.aceFoundations) {
-      let last = pile.lastCard;
-      if(last && last.up && last.twin.pile.isFoundation) {
-        let card = last.up.pile.isFoundation ? last.twin.up : last.up;
-        if(card.isLast) return new Move(card, pile);
-      }
-    }
-    for(let pile of this.kingFoundations) {
-      let last = pile.lastCard;
-      if(last && last.down && last.twin.pile.isFoundation) {
-        let card = last.down.pile.isFoundation ? last.twin.down : last.down;
-        if(card.isLast) return new Move(card, pile);
-      }
-    }
-    return null;
+    return this._autoplay();
+  },
+
+  _autoplay: autoplay_default,
+
+  // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
+  autoplayable_numbers: function() {
+    const ace_nums = {}, king_nums = {};
+    for_each_top_card(this.aceFoundations, c => ace_nums[c.suit] = c.number);
+    for_each_top_card(this.kingFoundations, c => king_nums[c.suit] = c.number);
+    const rv = { "S": 0, "H": 0, "D": 0, "C": 0 };
+    for(let k in rv) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) rv[k] = 13;
+    return rv;
   },
 };
 

@@ -31,8 +31,8 @@ const DoubleSolFoundation = {
 
   mayAddCard: function(card) {
     if(!card.isLast) return false;
-    if(!this.hasCards) return card.isAce && !card.twin.pile.isFoundation;
-    const last = this.getCard(-1), prv = this.getCard(-2);
-    return prv === last.twin ? card.down === last || card.down === prv : card.twin === last;
-  }
+    if(!this.hasCards) return card.isAce && !this.following().some(f => f.hasCards && f.cards[0].suit === card.suit);
+    const expected_number = Math.floor(this.cards.length / 2) + 1;
+    return card.number === expected_number && card.suit === this.cards[0].suit;
+  },
 };

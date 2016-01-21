@@ -19,11 +19,7 @@ gGameClasses.regiment = {
     this.aceFoundations = fs.slice(0,4);
     this.kingFoundations = fs.slice(4,8);
 
-    for(let i = 0; i !== 8; i++) {
-      rs[i].up = ps[i];
-      rs[i].down = ps[i + 8];
-      rs[i].col = i;
-    }
+    for(let i = 0; i !== 8; i++) rs[i].col = i;
 
     for(let i = 0; i !== 16; i++) {
       let p = ps[i];

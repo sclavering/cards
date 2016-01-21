@@ -177,8 +177,6 @@ const BlackWidowPile = {
 const SpiderFoundation = {
   __proto__: NoWorryingBackFoundation,
 
-  // This is typically only used for drag+drop (not autoplay), so needn't be optimal.
-  // (For classic Spider it duplicates much of the work of card.mayTake.)
   mayAddCard: function(card) {
     const cs = card.pile.cards, len = cs.length, suit = card.suit;
     if(card.index !== len - 13) return false;

@@ -6,7 +6,6 @@ const gGameTypes = {}; // game-id -> GameType object
 const ui = {
   btnUndo: "btn-undo",
   btnRedo: "btn-redo",
-  btnRedeal: "btn-redeal",
   messageBox: "message",
   messageLine1: "message1",
   messageLine2: "message2",
@@ -71,7 +70,6 @@ function playGame(game) {
   gCurrentGameType.switchTo();
 
   updateUI();
-  ui.btnRedeal.setAttribute("disabled", !gCurrentGame.redeal);
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
   g_floating_pile.hide();
 }
@@ -185,13 +183,6 @@ function redo() {
 function hint() {
   interrupt();
   gCurrentGame.hint();
-}
-
-
-function redeal() {
-  interrupt();
-  gCurrentGame.redeal();
-  updateUI();
 }
 
 

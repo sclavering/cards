@@ -28,7 +28,6 @@ JS_FILES = [
     'game-klondike.js',
     'game-maze.js',
     'game-mod3.js',
-    'game-montana.js',
     'game-penguin.js',
     'game-pileon.js',
     'game-pyramid.js',

@@ -139,7 +139,7 @@ const Game = {
     this._foundation_clusters = this._get_foundation_clusters(this.allcards, this.foundations);
     this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
     let cs;
-    // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for redeals to work properly.  Redeals actually just start a new game with the same deal-order, and the new game instance has its own separate card objects.
+    // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for "Restart" to work properly (since it works by starting a new game with the same deal-order, and the new game instance has its own separate card objects).
     if(optional_order_to_deal) {
       cs = [for(ix of optional_order_to_deal) this.allcards[ix] || null];
       this.order_cards_dealt = optional_order_to_deal;
@@ -170,7 +170,6 @@ const Game = {
     return ix + cs.length;
   },
 
-  // For Montana and Maze
   _deal_cards_with_nulls_for_spaces: function(cards) {
     for(let [i, c] of cards.entries()) if(c) {
       c.faceUp = true;

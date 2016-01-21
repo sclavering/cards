@@ -26,11 +26,10 @@ const Pile = {
   // cards: [], // actually happens in createPile, so that each pile has a different array
   get hasCards() { return this.cards.length !== 0; },
 
-  // lots of code used firstChild/lastChild -- these are for compatibility.
-  // may be removed, long term
   get firstCard() { const cs = this.cards; return cs.length ? cs[0] : null; },
   get lastCard() { const cs = this.cards, l = cs.length; return l ? cs[l - 1] : null; },
-  
+  get secondToLastCard() { const cs = this.cards; return cs.length > 1 ? cs[cs.length - 2] : null; },
+
   getCard: function(ix) {
     const cs = this.cards, len = cs.length;
     if(ix >= 0) return ix < len ? cs[ix] : null;

@@ -21,10 +21,7 @@ gGameClasses.acesup = {
   best_destination_for: function(card) {
     const f = this.foundation;
     if(f.mayAddCard(card)) return f;
-    // return next empty pile
-    for(var p = card.pile, p2 = p.next; p2 !== p; p2 = p2.next)
-      if(!p2.hasCards) return p2;
-    return null;
+    return findEmpty(card.pile.following());
   },
 
   // no autoplay for this game
@@ -40,12 +37,11 @@ gGameClasses.acesup = {
 const AcesUpFoundation = {
   __proto__: NoWorryingBackFoundation,
   mayAddCard: function(card) {
-    const suit = card.suit, num = card.number, src = card.pile;
-    var c = src.getCard(-2); // the card beneath |card|
-    if(c && suit === c.suit && num < c.number) return true;
-    for(let p of src.following()) {
+    const c = card.pile.secondToLastCard;
+    if(c && card.suit === c.suit && card.number < c.number) return true;
+    for(let p of card.pile.following()) {
       let c = p.lastCard;
-      if(c && suit === c.suit && num < c.number) return true;
+      if(c && card.suit === c.suit && card.number < c.number) return true;
     }
     return false;
   },

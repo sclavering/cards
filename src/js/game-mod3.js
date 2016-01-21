@@ -2,8 +2,8 @@ gGameClasses.mod3 = {
   __proto__: Game,
 
   pileDetails: () => [
-    "s", 1, { __proto__: StockDealToPiles, contains_appropriate_cards: () => false }, StockView, 0, 0,
-    "p", 8, { __proto__: AcesUpPile, contains_appropriate_cards: () => false }, FanDownView, 0, 1,
+    "s", 1, StockDealToPiles, StockView, 0, 0,
+    "p", 8, AcesUpPile, FanDownView, 0, 1,
     "f", 8, { __proto__: _Mod3Foundation, _baseNum: 2 }, Mod3SlideView, 0, 1,
     "g", 8, { __proto__: _Mod3Foundation, _baseNum: 3 }, Mod3SlideView, 0, 1,
     "h", 8, { __proto__: _Mod3Foundation, _baseNum: 4 }, Mod3SlideView, 0, 1,
@@ -38,28 +38,33 @@ gGameClasses.mod3 = {
   },
 
   autoplay: function() {
-    const rs = this.rows;
-    for(var r = 0; r !== 3; r++) {
-      var shouldFillEmpty = true; // don't do so if any foudations have "junk" in them
-      var empty = null; // an empty foundation, if we find one
-      for(var c = 0; c !== 8; c++) {
-        var pile = rs[r][c], last = pile.lastCard;
-        // we choose not to autoplay onto a card whose twin isn't in place
-        if(last) {
-          if(!last.pile.contains_appropriate_cards()) { shouldFillEmpty = false; continue; }
-          if(!last.twin.pile.contains_appropriate_cards() || !last.up) continue;
-          var up1 = last.up, up2 = last.twin.up;
-          if(!up1.pile.contains_appropriate_cards() && up1.mayTake) return new Move(up1, pile);
-          if(!up2.pile.contains_appropriate_cards() && up2.mayTake) return new Move(up2, pile);
-        } else if(shouldFillEmpty && !empty) {
-          empty = pile;
-        }
-      }
-      // we've reached the end of the row, but might have found an empty pile we could fill
-      if(!shouldFillEmpty || !empty) continue;
-      for(let card of this.bases[r]) if(!card.pile.contains_appropriate_cards() && card.mayTake) return new Move(card, empty);
+    const t0 = Date.now();
+    const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
+    for(let p of this.hint_and_autoplay_source_piles) {
+      if(p.isFoundation && p.contains_appropriate_cards()) continue;
+      let c = p.lastCard;
+      if(!c || c.number > autoplayable_numbers_by_row[(c.number - 2) % 3][c.suit]) continue;
+      let act = this.foundation_action_for(c);
+      if(act) return act;
     }
     return null;
+  },
+
+  // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).
+  _autoplayable_numbers_for_row: function(row) {
+    const rv = { S: 0, H: 0, D: 0, C: 0 };
+    const seen = {};
+    let seen_invalid_cards = false;
+    for(let f of row) {
+      let c = f.lastCard;
+      if(!c) continue;
+      if(!f.contains_appropriate_cards()) seen_invalid_cards = true;
+      else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], c.number) + 3;
+      else seen[c.suit] = c.number;
+    }
+    const base_num = row[0]._baseNum;
+    if(!seen_invalid_cards) for(let k in rv) if(rv[k] < base_num) rv[k] = base_num;
+    return rv;
   },
 
   is_won: function() {

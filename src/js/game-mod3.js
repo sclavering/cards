@@ -34,17 +34,7 @@ gGameClasses.mod3 = {
   },
 
   best_destination_for: function(card) {
-    if(card.down) {
-      var d1p = card.down.pile, d2p = card.twin.down.pile;
-      // won't return non-foundations, because you can only add there if empty
-      if(d1p.mayAddCard(card)) return d1p;
-      if(d2p.mayAddCard(card)) return d2p;
-    } else {
-      var p = findEmpty(this.rows[card.number - 2]);
-      if(p) return p;
-    }
-    var parent = card.pile;
-    return findEmpty(parent.isPile ? parent.surrounding() : this.piles);
+    return this.foundation_destination_for(card) || findEmpty(card.pile.isPile ? card.pile.surrounding() : this.piles);
   },
 
   autoplay: function() {

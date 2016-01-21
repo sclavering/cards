@@ -283,10 +283,6 @@ function mayAddSingleCardToEmpty(card) {
   return card.isLast && !this.hasCards;
 }
 
-function mayAddOntoDotUpOrEmpty(card) {
-  return !this.hasCards || (card.pile !== this && this.lastCard === card.up);
-}
-
 function mayAddOntoUpNumberOrEmpty(card) {
   return !this.hasCards || (card.pile !== this && this.lastCard.number === card.upNumber);
 }
@@ -351,7 +347,9 @@ const WaspPile = {
   __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: mayAddOntoDotUpOrEmpty,
+  mayAddCard: function(card) {
+    return !this.hasCards || is_next_in_suit(card, this.lastCard);
+  },
   getHintSources: function() {
     return [for(c of this.cards) if(c.faceUp) c];
   }

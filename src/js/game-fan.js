@@ -31,12 +31,12 @@ gGameClasses.fan = {
 
   is_shuffle_impossible: function(cards) {
     for(let i = 0; i < 51; i += 3) {
-      // these will form a pile c,d,e with c at the bottom
+      // These will form a pile c,d,e with c at the bottom.
       let c = cards[i], d = cards[i + 1], e = cards[i + 2];
-      // games with piles such as 7,2,6H or 4,9,8C are impossible
-      if(c.suit === d.suit && ((is_next_in_suit(e, c) && d.number < e.number) || (is_next_in_suit(e, d) && c.number < e.number))) return true;
-      // games with a pile such as J,9,10 are impossible
-      if(c.suit === d.suit && c.down === e && d.number < e.number) return true;
+      // A pile such as 4C,9C,8C is impossible.
+      if(c.suit === d.suit && is_next_in_suit(e, d) && c.number < e.number) return true;
+      // A pile such as JH,5H,10H is impossible.
+      if(c.suit === d.suit && is_next_in_suit(e, c) && d.number < e.number) return true;
     }
     return false;
   },

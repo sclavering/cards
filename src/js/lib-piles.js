@@ -30,13 +30,6 @@ const Pile = {
   get lastCard() { const cs = this.cards, l = cs.length; return l ? cs[l - 1] : null; },
   get secondToLastCard() { const cs = this.cards; return cs.length > 1 ? cs[cs.length - 2] : null; },
 
-  getCard: function(ix) {
-    const cs = this.cards, len = cs.length;
-    if(ix >= 0) return ix < len ? cs[ix] : null;
-    ix = len + ix;
-    return ix >= 0 ? cs[ix] : null;
-  },
-
   // previous and next pile of the same type
   // Game.buildLayout() forms these into doubly-linked non-circular lists
   prev: null,

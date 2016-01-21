@@ -164,7 +164,7 @@ const BlackWidowPile = {
     for(var j = cs.length; j;) {
       var card = cs[--j];
       if(!card.faceUp) break;
-      var prv = this.getCard(j - 1);
+      let prv = j >= 1 ? this.cards[j - 1] : null;
       if(prv && prv.faceUp && prv.number === card.upNumber && prv.suit === card.suit) continue;
       sources.push(card);
       if(prv.number !== card.upNumber) break;

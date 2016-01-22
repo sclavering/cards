@@ -45,7 +45,7 @@ function _new_card_runs(repeat, suit, numbers, mod13) {
 function _new_card_run(numbers, suit, mod13) {
   const cs = [for(num of numbers) new Card(num, suit)];
   if(mod13) cs[cs.length - 1].upNumber = 1; // copied from old code, may be unnecessary
-  return linkList(cs, "down", "up", mod13);
+  return cs;
 }
 
 
@@ -58,9 +58,6 @@ function Card(number, suit) {
   this.setNumber(number);
 }
 Card.prototype = {
-  // Pointers to next card up and down in the same suit. For Mod3 3C.up === 6C etc.
-  up: null,
-  down: null,
   // null, or a link to the next member of a ring of cards with the same suit+number
   twin: null,
 

@@ -44,3 +44,8 @@ function find_pile_by_top_card(piles, predicate) {
 function for_each_top_card(piles, func) {
   for(let p of piles) if(p.hasCards) func(p.lastCard);
 }
+
+function includes_pile_starting_with_suit(ps, suit) {
+  for(let p of ps) if(p.hasCards && p.cards[0].suit === suit) return true;
+  return false;
+}

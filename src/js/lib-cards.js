@@ -34,11 +34,6 @@ function makeCards(repeat, suits, numbers, mod13) {
 
 function _new_card_runs(repeat, suit, numbers, mod13) {
   const runs = [for(_ of irange(repeat)) _new_card_run(numbers, suit, mod13)];
-  // Set .twin fields
-  if(repeat > 1) runs.forEach((cs, run_ix) => {
-    const twin_run = runs[(run_ix + 1) % repeat];
-    cs.forEach((c, cs_ix) => c.twin = twin_run[cs_ix]);
-  });
   return flatten_array(runs);
 }
 
@@ -58,9 +53,6 @@ function Card(number, suit) {
   this.setNumber(number);
 }
 Card.prototype = {
-  // null, or a link to the next member of a ring of cards with the same suit+number
-  twin: null,
-
   faceUp: false,
 
   pile: null, // the pile the card is in

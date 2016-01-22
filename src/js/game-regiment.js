@@ -94,18 +94,15 @@ const RegimentPile = {
 const RegimentAceFoundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
-    const last = this.lastCard, twin = card.twin;
-    // must not start a second ace foundation for a suit
-    if(card.isAce) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && card.number === last.upNumber && card.suit === last.suit;
-  }
+    if(!this.hasCards) return card.isAce && !includes_pile_starting_with_suit(this.following(), card.suit);
+    return is_next_in_suit(this.lastCard, card);
+  },
 };
 
 const RegimentKingFoundation = {
   __proto__: WorryingBackFoundation,
   mayAddCard: function(card) {
-    const last = this.lastCard, twin = card.twin;
-    if(card.isKing) return !last && !(twin.pile.isFoundation && twin.isFirst);
-    return last && last.number === card.upNumber && card.suit === last.suit;
-  }
+    if(!this.hasCards) return card.isKing && !includes_pile_starting_with_suit(this.following(), card.suit);
+    return is_next_in_suit(card, this.lastCard);
+  },
 };

@@ -85,7 +85,7 @@ const _Mod3Foundation = {
   mayAddCard: function(card) {
     const last = this.lastCard;
     if(!this.hasCards) return card.number === this._baseNum;
-    return this.contains_appropriate_cards() && (card.down === last || card.twin.down === last);
+    return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
   },
   getHintSources: function() {
     const c = this.firstCard;

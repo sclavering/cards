@@ -14,7 +14,7 @@ const SpiderBase = {
         if(!empty) empty = p;
         continue;
       }
-      if(card.upNumber !== last.number) continue;
+      if(card.number !== last.number - 1) continue;
       if(card.suit === last.suit) return p;
       if(!maybe) maybe = p;
     }
@@ -165,9 +165,9 @@ const BlackWidowPile = {
       var card = cs[--j];
       if(!card.faceUp) break;
       let prv = j >= 1 ? this.cards[j - 1] : null;
-      if(prv && prv.faceUp && prv.number === card.upNumber && prv.suit === card.suit) continue;
+      if(prv && prv.faceUp && prv.number === card.number + 1 && prv.suit === card.suit) continue;
       sources.push(card);
-      if(prv.number !== card.upNumber) break;
+      if(prv.number !== card.number + 1) break;
     }
     // longer-run hints are probably better, so show those first
     return sources.reverse();
@@ -178,10 +178,9 @@ const SpiderFoundation = {
   __proto__: NoWorryingBackFoundation,
 
   mayAddCard: function(card) {
-    const cs = card.pile.cards, len = cs.length, suit = card.suit;
+    const cs = card.pile.cards, len = cs.length;
     if(card.index !== len - 13) return false;
-    for(var i = card.index, j = i + 1; j !== len; ++i, ++j)
-      if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].upNumber) return false;
+    for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit(cs[i + 1], cs[i])) return false;
     return true;
-  }
+  },
 };

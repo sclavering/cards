@@ -99,3 +99,7 @@ function is_next_in_suit(a, b) {
 function is_next_and_same_colour(a, b) {
   return a.number + 1 === b.number && a.colour === b.colour;
 };
+
+function is_next_and_alt_colour(a, b) {
+  return a.number + 1 === b.number && a.colour !== b.colour;
+};

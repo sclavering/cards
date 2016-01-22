@@ -69,7 +69,7 @@ const RegimentPile = {
     if(card.pile === this) return false;
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
-    if(l) return card.suit === l.suit && (l.number === card.upNumber || card.number === l.upNumber);
+    if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
     const source = card.pile;

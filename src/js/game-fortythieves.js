@@ -29,18 +29,13 @@ const FortyThievesPile = {
   mayTakeCard: mayTakeRunningFlush,
 
   mayAddCard: function(card) {
-    var last = this.lastCard;
-    if(last && (card.suit !== last.suit || card.upNumber !== last.number)) return false;
-
-    // check there are enough spaces to perform the move
-
+    if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
+    // Check there are enough spaces to perform the move
     if(card.isLast) return true;
-
-    var canMove = gCurrentGame.countEmptyPiles(this, card.pile);
-    if(canMove) canMove = canMove * (canMove + 1) / 2;
-    canMove++;
-
-    const toMove = card.pile.cards.length - card.index;
-    return toMove <= canMove ? true : 0;
+    let num_can_move = gCurrentGame.countEmptyPiles(this, card.pile);
+    if(num_can_move) num_can_move = num_can_move * (num_can_move + 1) / 2;
+    ++num_can_move;
+    const num_to_move = card.pile.cards.length - card.index;
+    return num_to_move <= num_can_move ? true : 0;
   }
 };

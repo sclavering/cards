@@ -25,7 +25,7 @@ const TowersPile = {
   mayTakeCard: mayTakeRunningFlush,
   mayAddCard: function(card) {
     if(!(this.hasCards ? is_next_in_suit(card, this.lastCard) : card.isKing)) return false;
-    const toMove = card.pile.cards.length - card.index;
-    return toMove <= 1 + gCurrentGame.numEmptyCells ? true : 0;
+    const num_to_move = card.pile.cards.length - card.index;
+    return num_to_move <= 1 + gCurrentGame.numEmptyCells ? true : 0;
   }
 };

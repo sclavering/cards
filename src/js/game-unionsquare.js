@@ -50,10 +50,10 @@ const UnionSquarePile = {
     const cs = this.cards, num = cs.length, last = this.lastCard;
     if(!last) return true;
     if(last.suit !== card.suit) return false;
-    if(num === 1) return last.number === card.upNumber || last.upNumber === card.number;
-    return cs[0].number === cs[1].upNumber // going down?
-        ? last.number === card.upNumber
-        : last.upNumber === card.number;
+    if(num === 1) return card.number === last.number + 1 || card.number === last.number - 1;
+    return cs[0].number === cs[1].number + 1 // going down?
+        ? card.number === last.number - 1
+        : card.number === last.number + 1;
   }
 };
 
@@ -66,8 +66,8 @@ const UnionSquareFoundation = {
     if(!this.hasCards) return card.isAce && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit !== card.suit) return false;
-    if(pos < 13) return last.upNumber === card.number;
-    if(pos > 13) return last.number === card.upNumber;
+    if(pos < 13) return card.number === last.number + 1;
+    if(pos > 13) return card.number === last.number - 1;
     return card.isKing;
   }
 };

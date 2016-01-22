@@ -40,7 +40,7 @@ gGameClasses.tripeaks = {
 
   pileDetails: () => [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "p", 28, TriPeaksPile, TriPeaksView, 0, 0,
+    "p", 28, BasePyramidPile, TriPeaksView, 0, 0,
     "f", 1, GolfFoundation, View, 0, 0,
   ],
 
@@ -70,9 +70,8 @@ gGameClasses.tripeaks = {
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   },
 
-  best_action_for: function(card) {
-    const f = gCurrentGame.foundation, c = f.lastCard;
-    return card.faceUp && (c.number === card.upNumber || c.upNumber === card.number) && new Move(card, f);
+  best_destination_for: function(card) {
+    return this.foundation.mayAddCard(card) ? this.foundation : null;
   },
 
   is_won: function() {
@@ -105,7 +104,7 @@ gGameClasses.tripeaks = {
 };
 
 
-const _PyramidPile = {
+const BasePyramidPile = {
   __proto__: Pile,
   isPile: true,
 
@@ -115,15 +114,16 @@ const _PyramidPile = {
   leftChild: null,
   rightChild: null,
 
-  mayAddCard: no
-};
-
-const PyramidPile = {
-  __proto__: _PyramidPile,
   mayTakeCard: function(card) {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
   },
+
+  mayAddCard: no
+};
+
+const PyramidPile = {
+  __proto__: BasePyramidPile,
   getActionForDrop: function(card) {
     const c = this.firstCard;
     if(!c || card.number + c.number !== 13) return null;
@@ -133,11 +133,6 @@ const PyramidPile = {
     // (which remains part of its source pile during dragging)
     return !l || ((!lc || lc === card) && (!rc || rc === card)) ? new RemovePair(card, c) : null;
   }
-};
-
-const TriPeaksPile = {
-  __proto__: _PyramidPile,
-  mayTakeCard: no
 };
 
 const PyramidFoundation = {

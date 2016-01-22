@@ -292,11 +292,6 @@ function mayAddOntoNextUpInSuitOrPutKingInSpace(card) {
   return last ? (card.pile !== this && card.suit === last.suit && card.number + 1 === last.number) : card.isKing;
 }
 
-function mayAddOntoDotUpOrPutKingInSpace(card) {
-  return this.hasCards ? (card.pile !== this && card.up === this.lastCard) : card.isKing;
-}
-
-
 
 const AcesUpPile = {
   __proto__: Pile,

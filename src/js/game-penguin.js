@@ -32,5 +32,5 @@ const PenguinPile = {
   __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: mayAddOntoDotUpOrPutKingInSpace
+  mayAddCard: mayAddOntoNextUpInSuitOrPutKingInSpace,
 };

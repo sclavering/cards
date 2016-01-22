@@ -92,6 +92,10 @@ Card.prototype = {
 };
 
 
+function is_next(a, b) {
+  return a.number + 1 === b.number;
+};
+
 function is_next_in_suit(a, b) {
   return a.number + 1 === b.number && a.suit === b.suit;
 };

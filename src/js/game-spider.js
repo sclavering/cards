@@ -7,18 +7,8 @@ const SpiderBase = {
   layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
 
   best_destination_for: function(card) {
-    let maybe = null, empty = null;
-    for(let p of card.pile.surrounding()) {
-      let last = p.lastCard;
-      if(!last) {
-        if(!empty) empty = p;
-        continue;
-      }
-      if(card.number !== last.number - 1) continue;
-      if(card.suit === last.suit) return p;
-      if(!maybe) maybe = p;
-    }
-    return maybe || empty;
+    const ps = card.pile.surrounding();
+    return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || findEmpty(ps);
   },
 
   autoplay: function() {

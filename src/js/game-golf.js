@@ -4,7 +4,7 @@ const GolfBase = {
   pileDetails: () => [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
     "p", 7, GolfPile, FanDownView, 0, 5,
-    "f", 1, GolfFoundation, CountedView, 0, 1,
+    "f", 1, UpDownMod13Foundation, CountedView, 0, 1,
   ],
 
   layoutTemplate: '#<   s  f   >.#<   p p p p p p p   >.',
@@ -25,13 +25,12 @@ const GolfBase = {
 
 gGameClasses.golf1 = {
   __proto__: GolfBase,
-  init_cards: () => make_cards(1, null, null, true),
 };
 
 
 gGameClasses.golf2 = {
   __proto__: GolfBase,
-  init_cards: () => make_cards(2, null, null, true),
+  init_cards: () => make_cards(2),
   pileDetails: function() {
     const rv = GolfBase.pileDetails();
     rv[11] = 8; // 8 cards per pile

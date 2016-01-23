@@ -87,3 +87,7 @@ function is_next_and_same_colour(a, b) {
 function is_next_and_alt_colour(a, b) {
   return a.number + 1 === b.number && a.colour !== b.colour;
 };
+
+function is_up_or_down_mod13(a, b) {
+  return a.number === b.number + 1 || a.number + 1 === b.number || (a.number === 1 && b.number === 13) || (a.number === 13 && b.number === 1);
+};

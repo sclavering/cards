@@ -41,12 +41,10 @@ gGameClasses.tripeaks = {
   pileDetails: () => [
     "s", 1, StockDealToFoundation, StockView, 0, 0,
     "p", 28, BasePyramidPile, TriPeaksView, 0, 0,
-    "f", 1, GolfFoundation, View, 0, 0,
+    "f", 1, UpDownMod13Foundation, View, 0, 0,
   ],
 
   layoutTemplate: '[{class=pyramidlayout}#<     -  =  p  =  =  p  =  =  p  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.',
-
-  init_cards: () => make_cards(1, null, null, true),
 
   init: function() {
     const ps = this.piles;

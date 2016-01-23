@@ -356,12 +356,11 @@ const KlondikeFoundation = {
   mayAddCard: may_add_to_ascending_in_suit,
 };
 
-const GolfFoundation = {
+const UpDownMod13Foundation = {
   __proto__: Pile,
   isFoundation: true,
   mayTakeCard: () => false,
   mayAddCard: function(card) {
-    const l = this.lastCard;
-    return l.number === card.upNumber || card.number === l.upNumber;
-  }
+    return is_up_or_down_mod13(card, this.lastCard);
+  },
 };

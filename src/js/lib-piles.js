@@ -111,7 +111,7 @@ const Pile = {
 
   // Return an array of cards to consider moving when computing hints
   getHintSources: function() {
-    for(let c of this.cards) if(c.mayTake) return [c];
+    for(let c of this.cards) if(c.pile.mayTakeCard(c)) return [c];
     return [];
   },
 };

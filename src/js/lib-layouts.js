@@ -164,7 +164,7 @@ const Layout = {
 
   _start_drag: function(event_or_touch) {
     const card = this._target_card(event_or_touch);
-    if(!card || !card.mayTake) return false;
+    if(!card || !card.pile.mayTakeCard(card)) return false;
     interrupt();
     this._card_for_dragging = card;
     this._ex0 = event_or_touch.pageX;

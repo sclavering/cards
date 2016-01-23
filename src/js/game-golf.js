@@ -13,7 +13,7 @@ const GolfBase = {
 
   best_action_for: function(card) {
     const f = this.foundation;
-    return card.mayTake && f.mayAddCard(card) ? new Move(card, f) : null;
+    return card.pile.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;
   },
 
   is_won: function() {

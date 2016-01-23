@@ -67,8 +67,6 @@ Card.prototype = {
     const p = this.pile;
     if(p) p.view.update();
   },
-
-  get mayTake() { return this.pile.mayTakeCard(this); }
 };
 
 

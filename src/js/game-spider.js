@@ -17,7 +17,7 @@ const SpiderBase = {
       let n = p.cards.length - 13;
       if(n < 0) continue;
       let c = p.cards[n];
-      if(c.mayTake && f.mayAddCard(c)) return new Move(c, f);
+      if(c.pile.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
     }
     return null;
   },

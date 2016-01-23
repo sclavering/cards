@@ -3,7 +3,7 @@ const FreeCellGame = {
   __proto__: Game,
 
   best_action_for: function(card) {
-    if(!card.mayTake) return null;
+    if(!card.pile.mayTakeCard(card)) return null;
     const dest = this.best_destination_for(card);
     if(!dest) return null;
     if(card.isLast) return new Move(card, dest);

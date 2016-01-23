@@ -284,12 +284,12 @@ function mayAddSingleCardToEmpty(card) {
 }
 
 function mayAddOntoUpNumberOrEmpty(card) {
-  return !this.hasCards || (card.pile !== this && this.lastCard.number === card.upNumber);
+  return !this.hasCards || this.lastCard.number === card.upNumber;
 }
 
 function mayAddOntoNextUpInSuitOrPutKingInSpace(card) {
   const last = this.lastCard;
-  return last ? (card.pile !== this && card.suit === last.suit && card.number + 1 === last.number) : card.number === 13;
+  return last ? card.suit === last.suit && card.number + 1 === last.number : card.number === 13;
 }
 
 

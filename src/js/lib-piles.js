@@ -242,11 +242,10 @@ const Reserve = {
 };
 
 
-function mayTakeFromFreeCellPile(card) {
+function may_take_descending_alt_colour(card) {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
-  for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
-    if(cs[i].colour === cs[j].colour || cs[i].number !== cs[j].upNumber) return false;
+  for(let i = card.index; i !== num - 1; ++i) if(!is_next_and_alt_colour(cs[i + 1], cs[i])) return false;
   return true;
 }
 
@@ -321,7 +320,7 @@ const _FreeCellPile = {
 const GypsyPile = {
   __proto__: Pile,
   isPile: true,
-  mayTakeCard: mayTakeFromFreeCellPile,
+  mayTakeCard: may_take_descending_alt_colour,
   mayAddCard: mayAddToGypsyPile
 };
 
@@ -345,7 +344,7 @@ const WaspPile = {
 };
 
 
-function mayAddCardToKlondikeFoundation(card) {
+function may_add_to_ascending_in_suit(card) {
   const last = this.lastCard;
   return card.isLast && (last ? last.suit === card.suit && last.upNumber === card.number : card.isAce);
 }
@@ -354,14 +353,14 @@ const KlondikeFoundation = {
   __proto__: Pile,
   isFoundation: true,
   mayTakeCard: ifLast,
-  mayAddCard: mayAddCardToKlondikeFoundation
+  mayAddCard: may_add_to_ascending_in_suit,
 };
 
 const FanFoundation = {
   __proto__: Pile,
   isFoundation: true,
   mayTakeCard: () => false,
-  mayAddCard: mayAddCardToKlondikeFoundation
+  mayAddCard: may_add_to_ascending_in_suit,
 };
 
 const GolfFoundation = {

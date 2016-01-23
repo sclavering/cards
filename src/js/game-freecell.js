@@ -49,7 +49,7 @@ const FreeCellPile = {
   __proto__: _FreeCellPile,
   isPile: true,
 
-  mayTakeCard: mayTakeFromFreeCellPile,
+  mayTakeCard: may_take_descending_alt_colour,
 
   mayAddCard: function(card) {
     if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;

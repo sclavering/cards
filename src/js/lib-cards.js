@@ -52,7 +52,6 @@ function Card(number, suit) {
   this.number = number;
   this.upNumber = number + 1; // this.number === other.number+1 used to be very common
   this.isAce = number === 1 || number === 14;
-  this.str = this.suit + number;
 }
 Card.prototype = {
   faceUp: false,
@@ -62,9 +61,6 @@ Card.prototype = {
 
   get isLast() { return this.index === this.pile.cards.length - 1; },
   get isFirst() { return this.index === 0; },
-
-  // this is necessary so that somePile.build[card] works correctly
-  toString: function() { return this.str; },
 
   // pass a boolean
   setFaceUp: function(val) {

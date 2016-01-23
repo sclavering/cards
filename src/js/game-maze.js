@@ -47,7 +47,7 @@ gGameClasses.maze = {
 const MazePile = {
   __proto__: Pile,
   isPile: true,
-  mayTakeCard: yes,
+  mayTakeCard: () => true,
   mayAddCard: function(card) {
     if(this.hasCards) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;

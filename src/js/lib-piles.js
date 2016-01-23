@@ -117,10 +117,6 @@ const Pile = {
 };
 
 
-function yes() { return true; }
-
-function no() { return false; }
-
 function mayTakeSingleCard(card) { return card.isLast && card.faceUp; }
 
 function ifLast(card) { return card.isLast; }
@@ -130,8 +126,8 @@ const _Stock = {
   __proto__: Pile,
   isStock: true,
   canDrop: false,
-  mayTakeCard: no,
-  mayAddCard: no,
+  mayTakeCard: () => false,
+  mayAddCard: () => false,
 
   dealCardTo: function(destination) {
     const card = this.lastCard;
@@ -219,7 +215,7 @@ const Waste = {
   isWaste: true,
   canDrop: false,
   mayTakeCard: ifLast,
-  mayAddCard: no,
+  mayAddCard: () => false,
 
   // Things to make draw3 waste piles work
   deal3v: 0, // The number of cards that should have been visible after the last deal.
@@ -230,7 +226,7 @@ const Waste = {
 const Cell = {
   __proto__: Pile,
   isCell: true,
-  mayTakeCard: yes,
+  mayTakeCard: () => true,
   mayAddCard: function(card) {
     return !this.hasCards && card.isLast;
   }
@@ -242,7 +238,7 @@ const Reserve = {
   isReserve: true,
   canDrop: false,
   mayTakeCard: mayTakeSingleCard,
-  mayAddCard: no
+  mayAddCard: () => false,
 };
 
 
@@ -364,7 +360,7 @@ function mayAddCardToKlondikeFoundation(card) {
 const NoWorryingBackFoundation = {
   __proto__: Pile,
   isFoundation: true,
-  mayTakeCard: no
+  mayTakeCard: () => false,
 };
 
 // "worrying back" is what removing cards from the foundation is called

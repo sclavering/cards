@@ -119,7 +119,7 @@ const BasePyramidPile = {
     return !lc || (!lc.hasCards && !rc.hasCards);
   },
 
-  mayAddCard: no
+  mayAddCard: () => false,
 };
 
 const PyramidPile = {
@@ -140,7 +140,7 @@ const PyramidFoundation = {
   getActionForDrop: function(card) {
     return card.isKing ? new RemovePair(card, null) : null;
   },
-  mayAddCard: no
+  mayAddCard: () => false,
 };
 
 const PyramidWaste = {

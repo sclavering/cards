@@ -50,7 +50,6 @@ function Card(number, suit) {
   this.displayStr = suit + number;
   this.number = number;
   this.upNumber = number + 1; // this.number === other.number+1 used to be very common
-  this.isAce = number === 1;
 
   this.faceUp = false;
   this.pile = null; // the pile the card is in

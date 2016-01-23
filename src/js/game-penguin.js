@@ -10,8 +10,8 @@ gGameClasses.penguin = {
   layoutTemplate: '#<   c c c c c c c  [ffff]   ><   p p p p p p p>.',
 
   deal: function(cards) {
-    const aces = cards.filter(c => c.isAce);
-    const others = cards.filter(c => !c.isAce);
+    const aces = cards.filter(c => c.number === 1);
+    const others = cards.filter(c => c.number !== 1);
     this._deal_cards(aces, 0, this.piles[0], 0, 1);
     for(let i = 0; i < 3; ++i) this._deal_cards(aces, i + 1, this.foundations[i], 0, 1);
     let ix = 0;

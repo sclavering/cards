@@ -51,7 +51,7 @@ const UnionSquareFoundation = {
   isFoundation: true,
   mayTakeCard: () => false,
   mayAddCard: function(card) {
-    if(!this.hasCards) return card.isAce && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit !== card.suit) return false;
     if(pos < 13) return card.number === last.number + 1;

@@ -274,7 +274,7 @@ const Game = {
   // Subclasses may override this.
   foundation_destination_for: function(card) {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
-    if(card.isAce && this._foundation_clusters)
+    if(card.number === 1 && this._foundation_clusters)
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit))
           return findEmpty(fs);

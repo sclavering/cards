@@ -57,5 +57,5 @@ const MazePile = {
 
 
 function maze_allows_adjacent(a, b) {
-  return is_next_in_suit(a, b) || (a.number === 12 && b.isAce);
+  return is_next_in_suit(a, b) || (a.number === 12 && b.number === 1);
 };

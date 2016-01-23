@@ -346,7 +346,7 @@ const WaspPile = {
 
 function may_add_to_ascending_in_suit(card) {
   const last = this.lastCard;
-  return card.isLast && (last ? last.suit === card.suit && last.upNumber === card.number : card.isAce);
+  return card.isLast && (last ? last.suit === card.suit && last.upNumber === card.number : card.number === 1);
 }
 
 const KlondikeFoundation = {

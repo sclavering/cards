@@ -357,32 +357,24 @@ function mayAddCardToKlondikeFoundation(card) {
   return card.isLast && (last ? last.suit === card.suit && last.upNumber === card.number : card.isAce);
 }
 
-const NoWorryingBackFoundation = {
-  __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-};
-
-// "worrying back" is what removing cards from the foundation is called
-const WorryingBackFoundation = {
-  __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast
-};
-
 const KlondikeFoundation = {
-  __proto__: WorryingBackFoundation,
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: ifLast,
   mayAddCard: mayAddCardToKlondikeFoundation
 };
 
 const FanFoundation = {
-  __proto__: NoWorryingBackFoundation,
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   mayAddCard: mayAddCardToKlondikeFoundation
 };
 
 const GolfFoundation = {
-  __proto__: NoWorryingBackFoundation,
-
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   mayAddCard: function(card) {
     const l = this.lastCard;
     return l.number === card.upNumber || card.number === l.upNumber;

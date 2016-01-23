@@ -136,7 +136,9 @@ const PyramidPile = {
 };
 
 const PyramidFoundation = {
-  __proto__: NoWorryingBackFoundation,
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   getActionForDrop: function(card) {
     return card.isKing ? new RemovePair(card, null) : null;
   },

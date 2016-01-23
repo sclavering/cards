@@ -35,7 +35,9 @@ gGameClasses.acesup = {
 
 
 const AcesUpFoundation = {
-  __proto__: NoWorryingBackFoundation,
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   mayAddCard: function(card) {
     const c = card.pile.secondToLastCard;
     if(c && card.suit === c.suit && card.number < c.number) return true;

@@ -24,8 +24,9 @@ gGameClasses.doublesol = {
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K
 const DoubleSolFoundation = {
-  __proto__: WorryingBackFoundation,
-
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: ifLast,
   mayAddCard: function(card) {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.isAce && !includes_pile_starting_with_suit(this.following(), card.suit);

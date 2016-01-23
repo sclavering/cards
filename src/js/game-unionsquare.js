@@ -47,8 +47,9 @@ const UnionSquarePile = {
 
 // Built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right from the a->k, so that it's clear what card should be played next.
 const UnionSquareFoundation = {
-  __proto__: NoWorryingBackFoundation,
-
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   mayAddCard: function(card) {
     if(!this.hasCards) return card.isAce && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;

@@ -76,7 +76,9 @@ gGameClasses.mod3 = {
 
 
 const _Mod3Foundation = {
-  __proto__: WorryingBackFoundation,
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: ifLast,
   _baseNum: -1, // set elsewhere
   contains_appropriate_cards: function() {
     const first = this.firstCard;

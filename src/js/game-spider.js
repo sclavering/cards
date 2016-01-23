@@ -165,8 +165,9 @@ const BlackWidowPile = {
 };
 
 const SpiderFoundation = {
-  __proto__: NoWorryingBackFoundation,
-
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: () => false,
   mayAddCard: function(card) {
     const cs = card.pile.cards, len = cs.length;
     if(card.index !== len - 13) return false;

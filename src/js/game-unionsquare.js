@@ -12,7 +12,7 @@ gGameClasses.unionsquare = {
 
   foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 
-  required_cards: [2],
+  init_cards: () => make_cards(2),
 
   best_destination_for: function(card) {
     const p = card.pile, ps = p.isPile ? p.following() : this.piles;

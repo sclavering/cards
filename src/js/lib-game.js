@@ -1,7 +1,6 @@
 // The base-type for all games
 const Game = {
-  // May be set by subclasses to a description of the card objects they want creating in .classInit()
-  required_cards: [1],
+  init_cards: () => make_cards(1),
 
   // Once a game is running, this is an array of the all the card objects used by the game.
   allcards: null,
@@ -134,7 +133,7 @@ const Game = {
     ui.movesDisplay.textContent = this.actionPtr;
     this._create_piles();
     this._create_pile_arrays();
-    if(this.required_cards) this.allcards = makeCards.apply(null, this.required_cards);
+    if(this.init_cards) this.allcards = this.init_cards();
     this.init();
     this._foundation_clusters = this._get_foundation_clusters(this.allcards, this.foundations);
     this.allcards.forEach((c, ix) => { if(c) c.__allcards_index = ix; });
@@ -151,7 +150,7 @@ const Game = {
     this.deal(cs);
   },
 
-  // For subclasses to optionally implement.  Called for each new game instance.  Typically used to set up .allcards (if it's something .required_cards can't handle), or to add extra properties to piles.
+  // For subclasses to optionally implement.  Called for each new game instance.  Typically used to add extra properties to piles.
   init: function() {},
 
   // Deal the provided pre-shuffled cards for a new game.  Many subclasses will find this version sufficient.

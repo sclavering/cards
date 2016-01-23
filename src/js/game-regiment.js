@@ -11,7 +11,7 @@ gGameClasses.regiment = {
 
   layoutTemplate: '#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.',
 
-  required_cards: [2],
+  init_cards: () => make_cards(2),
 
   init: function() {
     const cs = this.allcards;

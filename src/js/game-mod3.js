@@ -11,11 +11,11 @@ gGameClasses.mod3 = {
 
   layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
 
-  required_cards: null,
+  init_cards: () => null, // handled in .init() instead
 
   init: function() {
     const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
-    const cardss = [for(nums of numss) makeCards(2, null, nums)];
+    const cardss = [for(nums of numss) make_cards(2, null, nums)];
     this.allcards = flatten_array(cardss);
     const baseIxs = [0, 4, 8, 12, 16, 20, 24, 28];
     this.bases = [for(cards of cardss) [for(ix of baseIxs) cards[ix]]];

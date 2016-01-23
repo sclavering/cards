@@ -52,7 +52,8 @@ gGameClasses.fan = {
 gGameClasses.doublefan = {
   __proto__: Game,
 
-  required_cards: [2],
+  init_cards: () => make_cards(2),
+
   foundation_cluster_count: 4,
 
   pileDetails: () => [

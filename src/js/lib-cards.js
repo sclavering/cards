@@ -24,7 +24,7 @@ function shuffle_in_place(cards) {
 }
 
 
-function makeCards(repeat, suits, numbers, mod13) {
+function make_cards(repeat, suits, numbers, mod13) {
   if(!repeat) repeat = 1;
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];

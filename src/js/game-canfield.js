@@ -15,7 +15,7 @@ const CanfieldBase = {
 
   helpId: "canfield",
 
-  required_cards: [1, , , true],
+  init_cards: () => make_cards(1, null, null, true),
 
   deal: function(cards) {
     const num = cards[0].displayNum;

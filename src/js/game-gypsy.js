@@ -21,12 +21,12 @@ const GypsyBase = {
 
 gGameClasses.gypsy2 = {
   __proto__: GypsyBase,
-  required_cards: [4, "SH"],
+  init_cards: () => make_cards(4, "SH"),
   foundation_cluster_count: 2,
 };
 
 gGameClasses.gypsy4 = {
   __proto__: GypsyBase,
-  required_cards: [2],
+  init_cards: () => make_cards(2),
   foundation_cluster_count: 4,
 };

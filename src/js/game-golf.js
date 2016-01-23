@@ -25,13 +25,13 @@ const GolfBase = {
 
 gGameClasses.golf1 = {
   __proto__: GolfBase,
-  required_cards: [1, , , true]
+  init_cards: () => make_cards(1, null, null, true),
 };
 
 
 gGameClasses.golf2 = {
   __proto__: GolfBase,
-  required_cards: [2, , , true],
+  init_cards: () => make_cards(2, null, null, true),
   pileDetails: function() {
     const rv = GolfBase.pileDetails();
     rv[11] = 8; // 8 cards per pile

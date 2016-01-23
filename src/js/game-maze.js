@@ -7,11 +7,13 @@ gGameClasses.maze = {
 
   layoutTemplate: '#<  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p    >.',
 
-  required_cards: null,
+  init_cards: () => {
+    const cs = make_cards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings
+    cs.push(null, null, null, null, null, null); // Add 6 spaces
+    return cs;
+  },
 
   init: function() {
-    const cs = this.allcards = makeCards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings
-    cs.push(null, null, null, null, null, null); // Add 6 spaces
     // prev/next are not usually circular
     const ps = this.piles;
     ps[53].next = ps[0];

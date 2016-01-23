@@ -46,7 +46,7 @@ gGameClasses.tripeaks = {
 
   layoutTemplate: '[{class=pyramidlayout}#<     -  =  p  =  =  p  =  =  p  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.',
 
-  required_cards: [1, , , true],
+  init_cards: () => make_cards(1, null, null, true),
 
   init: function() {
     const ps = this.piles;

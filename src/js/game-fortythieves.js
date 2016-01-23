@@ -1,6 +1,8 @@
 gGameClasses.fortythieves = {
   __proto__: FreeCellGame,
 
+  foundation_cluster_count: 4,
+
   pileDetails: () => [
     "s", 1, StockDealToWaste, StockView, 0, 0,
     "w", 1, Waste, FanRightView, 0, 1,

@@ -9,10 +9,7 @@ gGameClasses.acesup = {
 
   layoutTemplate: '#<   s  p p p p  f   >.',
 
-  init_cards: () => make_cards(null, null, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]), // Aces are high
-
   init: function() {
-    for(var i = 0; i !== 4; i++) this.piles[i].num = i;
     const ps = this.piles;
     ps[0].prev = ps[3];
     ps[3].next = ps[0];
@@ -28,7 +25,7 @@ gGameClasses.acesup = {
 
   is_won: function() {
     if(this.stock.cards.length) return false;
-    for(let p of this.piles) if(p.cards.length !== 1 || !p.cards[0].isAce) return false;
+    for(let p of this.piles) if(p.cards.length !== 1) return false;
     return true;
   },
 };
@@ -39,12 +36,9 @@ const AcesUpFoundation = {
   isFoundation: true,
   mayTakeCard: () => false,
   mayAddCard: function(card) {
-    const c = card.pile.secondToLastCard;
-    if(c && card.suit === c.suit && card.number < c.number) return true;
-    for(let p of card.pile.following()) {
-      let c = p.lastCard;
-      if(c && card.suit === c.suit && card.number < c.number) return true;
-    }
+    const compare = (c, d) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
+    if(compare(card, card.pile.secondToLastCard)) return true;
+    for(let p of card.pile.following()) if(compare(card, p.lastCard)) return true;
     return false;
   },
 };

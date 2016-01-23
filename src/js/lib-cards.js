@@ -44,14 +44,13 @@ function _new_card_run(numbers, suit, mod13) {
 }
 
 
-// pass number === 14 for a "high" Ace
 function Card(number, suit) {
   this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
   this.suit = suit;
-  this.displayStr = suit + (number === 14 ? 1 : number);
+  this.displayStr = suit + number;
   this.number = number;
   this.upNumber = number + 1; // this.number === other.number+1 used to be very common
-  this.isAce = number === 1 || number === 14;
+  this.isAce = number === 1;
 
   this.faceUp = false;
   this.pile = null; // the pile the card is in

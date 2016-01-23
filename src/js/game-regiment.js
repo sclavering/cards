@@ -33,7 +33,7 @@ gGameClasses.regiment = {
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
     for(let p of ps) if(p.hasCards && p.mayAddCard(card)) return p;
 
-    if(parent.isReserve) for(let p of this.piles) if(!p.hasCard && p.mayAddCard(card)) return p;
+    if(parent.isReserve) for(let p of this.piles) if(!p.hasCards && p.mayAddCard(card)) return p;
     return null;
   },
 

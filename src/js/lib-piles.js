@@ -277,7 +277,7 @@ function mayAddToGypsyPile(card) {
 
 function mayAddToKlondikePile(card) {
   const last = this.lastCard;
-  return last ? last.number === card.upNumber && last.colour !== card.colour : card.isKing;
+  return last ? last.number === card.upNumber && last.colour !== card.colour : card.number === 13;
 }
 
 function mayAddSingleCardToEmpty(card) {
@@ -290,7 +290,7 @@ function mayAddOntoUpNumberOrEmpty(card) {
 
 function mayAddOntoNextUpInSuitOrPutKingInSpace(card) {
   const last = this.lastCard;
-  return last ? (card.pile !== this && card.suit === last.suit && card.number + 1 === last.number) : card.isKing;
+  return last ? (card.pile !== this && card.suit === last.suit && card.number + 1 === last.number) : card.number === 13;
 }
 
 

@@ -105,7 +105,7 @@ const RegimentKingFoundation = {
   isFoundation: true,
   mayTakeCard: ifLast,
   mayAddCard: function(card) {
-    if(!this.hasCards) return card.isKing && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
   },
 };

@@ -52,8 +52,6 @@ function Card(number, suit) {
   this.number = number;
   this.upNumber = number + 1; // this.number === other.number+1 used to be very common
   this.isAce = number === 1 || number === 14;
-  this.isKing = number === 13;
-  this.isQueen = number === 12;
   this.str = this.suit + number;
 }
 Card.prototype = {

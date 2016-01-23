@@ -23,7 +23,7 @@ gGameClasses.pyramid = {
   },
 
   best_action_for: function(card) {
-    return card.isKing && card.mayTake ? new RemovePair(card, null) : null;
+    return card.number === 13 && card.mayTake ? new RemovePair(card, null) : null;
   },
 
   // this game has no autoplay
@@ -140,7 +140,7 @@ const PyramidFoundation = {
   isFoundation: true,
   mayTakeCard: () => false,
   getActionForDrop: function(card) {
-    return card.isKing ? new RemovePair(card, null) : null;
+    return card.number === 13 ? new RemovePair(card, null) : null;
   },
   mayAddCard: () => false,
 };

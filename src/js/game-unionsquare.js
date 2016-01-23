@@ -56,6 +56,6 @@ const UnionSquareFoundation = {
     if(last.suit !== card.suit) return false;
     if(pos < 13) return card.number === last.number + 1;
     if(pos > 13) return card.number === last.number - 1;
-    return card.isKing;
+    return card.number === 13;
   }
 };

@@ -9,8 +9,6 @@ gGameClasses.penguin = {
 
   layoutTemplate: '#<   c c c c c c c  [ffff]   ><   p p p p p p p>.',
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   deal: function(cards) {
     const aces = cards.filter(c => c.isAce);
     const others = cards.filter(c => !c.isAce);

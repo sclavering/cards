@@ -26,8 +26,6 @@ const CanfieldBase = {
     ix = this._deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
     for(let p of this.piles) ix = this._deal_cards(cards, ix, p, 0, 1);
     this._deal_cards(cards, ix, this.stock, 52, 0);
-
-    this.foundationBaseIndexes = [num - 1, num + 12, num + 25, num + 38];
   },
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,

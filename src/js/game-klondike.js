@@ -8,8 +8,6 @@ const KlondikeBase = {
     "f", 4, KlondikeFoundation, View, 0, 0,
   ],
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   best_destination_for: find_destination__nearest_legal_pile,
 
   autoplay: autoplay_default,
@@ -69,7 +67,6 @@ gGameClasses.doubleklondike = {
   ],
   layoutTemplate: '#<   s w   f f f f f f f f   >.#<   p p p p p p p p p p   >.',
 
-  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   init_cards: () => make_cards(2),
   foundation_cluster_count: 4,
 

@@ -10,8 +10,6 @@ gGameClasses.whitehead = {
 
   layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   best_destination_for: function(card) {
     return find_pile_by_top_card(this.piles, top => is_next_in_suit(card, top))
         || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(card, top))

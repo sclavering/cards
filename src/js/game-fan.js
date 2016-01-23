@@ -27,8 +27,6 @@ gGameClasses.fan = {
     _num_grid_columns: 5,
   },
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   is_shuffle_impossible: function(cards) {
     for(let i = 0; i < 51; i += 3) {
       // These will form a pile c,d,e with c at the bottom.
@@ -67,8 +65,6 @@ gGameClasses.doublefan = {
     __proto__: FanLayoutProto,
     _num_grid_columns: 6,
   },
-
-  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
 
   best_destination_for: find_destination__nearest_legal_pile,
 

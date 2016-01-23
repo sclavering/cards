@@ -10,8 +10,6 @@ gGameClasses.unionsquare = {
 
   layoutTemplate: '#<   [sw]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.',
 
-  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-
   init_cards: () => make_cards(2),
 
   best_destination_for: function(card) {

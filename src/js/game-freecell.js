@@ -34,8 +34,6 @@ gGameClasses.freecell = {
 
   layoutTemplate: '#<  c c c c    f f f f  >.#<  p p p p p p p p  >.',
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   best_destination_for: function(card) {
     const p = find_destination__nearest_legal_pile_preferring_nonempty.call(this, card);
     return p || (card.isLast ? findEmpty(this.cells) : null);

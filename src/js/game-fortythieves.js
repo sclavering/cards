@@ -10,8 +10,6 @@ gGameClasses.fortythieves = {
 
   layoutTemplate: '#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.',
 
-  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
-
   init_cards: () => make_cards(2),
 
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,

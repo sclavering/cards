@@ -8,8 +8,6 @@ gGameClasses.russiansol = {
 
   layoutTemplate: '#<   p p p p p p p  [ffff]   >.',
 
-  foundationBaseIndexes: [0, 13, 26, 39],
-
   best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: autoplay_default,

@@ -17,7 +17,6 @@ gGameClasses.yukon = {
     "f", 4, KlondikeFoundation, View, 0, 0,
   ],
   layoutTemplate: '#<   p p p p p p p  [f_f_f_f]   >.',
-  foundationBaseIndexes: [0, 13, 26, 39]
 };
 
 
@@ -30,7 +29,6 @@ gGameClasses.sanibel = {
     "f", 8, KlondikeFoundation, View, 0, 0,
   ],
   layoutTemplate: '#<  s w    f f f f f f f f  >.#<   p p p p p p p p p p   >.',
-  foundationBaseIndexes: [0, 13, 26, 39, 52, 65, 78, 91],
   init_cards: () => make_cards(2),
   foundation_cluster_count: 4,
 };

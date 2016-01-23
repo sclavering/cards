@@ -257,7 +257,7 @@ function mayTakeDescendingRun(card) {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
   for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
-    if(cs[i].number !== cs[j].upNumber) return false;
+    if(cs[i].number !== cs[j].number + 1) return false;
   return true;
 }
 
@@ -265,18 +265,18 @@ function mayTakeRunningFlush(card) {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
   for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
-    if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].upNumber) return false;
+    if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].number + 1) return false;
   return true;
 }
 
 function mayAddToGypsyPile(card) {
   const last = this.lastCard;
-  return !last || (last.colour !== card.colour && last.number === card.upNumber);
+  return !last || (last.colour !== card.colour && last.number === card.number + 1);
 }
 
 function mayAddToKlondikePile(card) {
   const last = this.lastCard;
-  return last ? last.number === card.upNumber && last.colour !== card.colour : card.number === 13;
+  return last ? last.number === card.number + 1 && last.colour !== card.colour : card.number === 13;
 }
 
 function mayAddSingleCardToEmpty(card) {
@@ -284,7 +284,7 @@ function mayAddSingleCardToEmpty(card) {
 }
 
 function mayAddOntoUpNumberOrEmpty(card) {
-  return !this.hasCards || this.lastCard.number === card.upNumber;
+  return !this.hasCards || this.lastCard.number === card.number + 1;
 }
 
 function mayAddOntoNextUpInSuitOrPutKingInSpace(card) {
@@ -346,7 +346,7 @@ const WaspPile = {
 
 function may_add_to_ascending_in_suit(card) {
   const last = this.lastCard;
-  return card.isLast && (last ? last.suit === card.suit && last.upNumber === card.number : card.number === 1);
+  return card.isLast && (last ? last.suit === card.suit && last.number + 1 === card.number : card.number === 1);
 }
 
 const KlondikeFoundation = {

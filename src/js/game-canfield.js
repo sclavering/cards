@@ -59,3 +59,11 @@ gGameClasses.demon = {
   _reserveFaceDown: 0,
   _reserveFaceUp: 13
 };
+
+
+const CanfieldPile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: mayTakeIfFaceUp,
+  mayAddCard: mayAddToGypsyPile,
+};

@@ -301,13 +301,6 @@ const AcesUpPile = {
   mayAddCard: mayAddSingleCardToEmpty
 };
 
-const CanfieldPile = {
-  __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: mayAddToGypsyPile
-};
-
 const FanPile = {
   __proto__: Pile,
   isPile: true,

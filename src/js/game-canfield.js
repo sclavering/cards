@@ -15,8 +15,6 @@ const CanfieldBase = {
 
   helpId: "canfield",
 
-  init_cards: () => make_cards(1, null, null, true),
-
   deal: function(cards) {
     const num = cards[0].number;
     for(let f of this.foundations) f.canfield_foundation_base_num = num;
@@ -74,7 +72,9 @@ const CanfieldPile = {
   __proto__: Pile,
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: mayAddToGypsyPile,
+  mayAddCard: function(card) {
+    return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
+  },
 };
 
 

@@ -72,13 +72,17 @@ function is_next(a, b) {
   return a.number + 1 === b.number;
 };
 
+function is_next_mod13(a, b) {
+  return a.number === 13 ? b.number === 1 : a.number + 1 === b.number;
+};
+
 function is_next_in_suit(a, b) {
   return a.number + 1 === b.number && a.suit === b.suit;
 };
 
 function is_next_in_suit_mod13(a, b) {
-  return a.suit === b.suit && (a.number === 13 ? b.number === 1 : a.number + 1 === b.number);
-}
+  return a.suit === b.suit && is_next_mod13(a, b);
+};
 
 function is_next_and_same_colour(a, b) {
   return a.number + 1 === b.number && a.colour === b.colour;
@@ -89,9 +93,9 @@ function is_next_and_alt_colour(a, b) {
 };
 
 function is_next_and_alt_colour_mod13(a, b) {
-  return a.colour !== b.colour && (a.number === 13 ? b.number === 1 : a.number + 1 === b.number);
+  return a.colour !== b.colour && is_next_mod13(a, b);
 };
 
 function is_up_or_down_mod13(a, b) {
-  return a.number === b.number + 1 || a.number + 1 === b.number || (a.number === 1 && b.number === 13) || (a.number === 13 && b.number === 1);
+  return is_next_mod13(a, b) || is_next_mod13(b, a);
 };

@@ -52,13 +52,12 @@ function Card(number, suit) {
   this.number = number;
   this.upNumber = number + 1; // this.number === other.number+1 used to be very common
   this.isAce = number === 1 || number === 14;
+
+  this.faceUp = false;
+  this.pile = null; // the pile the card is in
+  this.index = -1;  // the position within the pile
 }
 Card.prototype = {
-  faceUp: false,
-
-  pile: null, // the pile the card is in
-  index: -1,  // the position within the pile
-
   get isLast() { return this.index === this.pile.cards.length - 1; },
   get isFirst() { return this.index === 0; },
 

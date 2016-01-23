@@ -6,7 +6,7 @@ gGameClasses.doublesol = {
   pileDetails: () => [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
-    "p", 10, KlondikePile, FanDownView, range(10), repeat(1, 10),
+    "p", 10, KlondikePile, FanDownView, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 1,
     "f", 4, DoubleSolFoundation, DoubleSolFoundationView, 0, 0,
   ],
 

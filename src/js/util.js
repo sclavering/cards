@@ -2,14 +2,6 @@ function* irange(N) {
   for(var i = 0; i < N; ++i) yield i;
 }
 
-function range(end) {
-  return [for(i of irange(end)) i];
-}
-
-function range2(start, end) {
-  return [for(i of irange(end - start)) start + i];
-}
-
 function repeat(item, number) {
   return [for(_ of irange(number)) item];
 }

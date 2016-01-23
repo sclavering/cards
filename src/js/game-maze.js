@@ -10,9 +10,8 @@ gGameClasses.maze = {
   required_cards: null,
 
   init: function() {
-    const cs = this.allcards = makeCards(1, null, range2(1, 13)); // no kings
-    cs[53] = cs[52] = cs[51] = cs[50] = cs[49] = cs[48] = null; // 6 spaces instead
-
+    const cs = this.allcards = makeCards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings
+    cs.push(null, null, null, null, null, null); // Add 6 spaces
     // prev/next are not usually circular
     const ps = this.piles;
     ps[53].next = ps[0];

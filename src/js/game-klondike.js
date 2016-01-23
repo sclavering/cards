@@ -64,7 +64,7 @@ gGameClasses.doubleklondike = {
   pileDetails: () => [
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
-    "p", 10, KlondikePile, FanDownView, range(10), 1,
+    "p", 10, KlondikePile, FanDownView, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 1,
     "f", 8, KlondikeFoundation, View, 0, 0,
   ],
   layoutTemplate: '#<   s w   f f f f f f f f   >.#<   p p p p p p p p p p   >.',

@@ -11,14 +11,9 @@ gGameClasses.mod3 = {
 
   layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
 
-  init_cards: () => null, // handled in .init() instead
+  init_cards: () => make_cards(2, null, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]), // no Aces
 
   init: function() {
-    const numss = [[2,5,8,11], [3,6,9,12], [4,7,10,13]];
-    const cardss = [for(nums of numss) make_cards(2, null, nums)];
-    this.allcards = flatten_array(cardss);
-    const baseIxs = [0, 4, 8, 12, 16, 20, 24, 28];
-    this.bases = [for(cards of cardss) [for(ix of baseIxs) cards[ix]]];
     const fs = this.foundations;
     this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
     // Ordinarily this excludes .foundations

@@ -356,13 +356,6 @@ const KlondikeFoundation = {
   mayAddCard: may_add_to_ascending_in_suit,
 };
 
-const FanFoundation = {
-  __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-  mayAddCard: may_add_to_ascending_in_suit,
-};
-
 const GolfFoundation = {
   __proto__: Pile,
   isFoundation: true,

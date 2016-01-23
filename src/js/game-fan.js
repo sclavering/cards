@@ -17,7 +17,7 @@ gGameClasses.fan = {
 
   pileDetails: () => [
     "p", 18, FanPile, FanRightView, 0, 3, // last pile gets just 1
-    "f", 4, FanFoundation, View, 0, 0,
+    "f", 4, KlondikeFoundation, View, 0, 0,
   ],
 
   layoutTemplate: "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
@@ -56,7 +56,7 @@ gGameClasses.doublefan = {
 
   pileDetails: () => [
     "p", 24, FanPile, FanRightView, 0, 5,
-    "f", 8, FanFoundation, View, 0, 0,
+    "f", 8, KlondikeFoundation, View, 0, 0,
   ],
 
   layoutTemplate: "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.",

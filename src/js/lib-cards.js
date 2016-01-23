@@ -24,23 +24,11 @@ function shuffle_in_place(cards) {
 }
 
 
-function make_cards(repeat, suits, numbers, mod13) {
+function make_cards(repeat, suits, numbers) {
   if(!repeat) repeat = 1;
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  if(!mod13) mod13 = false;
-  return flatten_array([for(suit of suits) _new_card_runs(repeat, suit, numbers, mod13)]);
-}
-
-function _new_card_runs(repeat, suit, numbers, mod13) {
-  const runs = [for(_ of irange(repeat)) _new_card_run(numbers, suit, mod13)];
-  return flatten_array(runs);
-}
-
-function _new_card_run(numbers, suit, mod13) {
-  const cs = [for(num of numbers) new Card(num, suit)];
-  if(mod13) cs[cs.length - 1].upNumber = 1; // copied from old code, may be unnecessary
-  return cs;
+  return [for(suit of suits) for(_ of irange(repeat)) for(num of numbers) new Card(num, suit)];
 }
 
 

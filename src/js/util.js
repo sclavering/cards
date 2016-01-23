@@ -19,10 +19,6 @@ function linkList(items, prevPropName, nextPropName, loop) {
   return items;
 }
 
-function flatten_array(xss) {
-  return [].concat.apply([], xss);
-}
-
 function findEmpty(piles) {
   for(let p of piles) if(!p.hasCards) return p;
   return null;

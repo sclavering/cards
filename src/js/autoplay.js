@@ -1,9 +1,9 @@
 // A very common implementation for games' .autoplay()
 function autoplay_default() {
-  const nums = this.autoplayable_numbers();
+  const predicate = this.autoplayable_predicate();
   for(let p of this.hint_and_autoplay_source_piles) {
     let c = p.lastCard;
-    if(!c || c.number > nums[c.suit]) continue;
+    if(!c || !predicate(c)) continue;
     let act = this.foundation_action_for(c);
     if(act) return act;
   }

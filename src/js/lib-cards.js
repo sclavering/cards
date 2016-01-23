@@ -100,6 +100,10 @@ function is_next_in_suit(a, b) {
   return a.number + 1 === b.number && a.suit === b.suit;
 };
 
+function is_next_in_suit_mod13(a, b) {
+  return a.suit === b.suit && (a.number === 13 ? b.number === 1 : a.number + 1 === b.number);
+}
+
 function is_next_and_same_colour(a, b) {
   return a.number + 1 === b.number && a.colour === b.colour;
 };

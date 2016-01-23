@@ -256,6 +256,12 @@ const Game = {
     return null;
   },
 
+  // Used by autoplay_default.
+  autoplayable_predicate: function() {
+    const nums = this.autoplayable_numbers();
+    return c => (c.number <= nums[c.suit]);
+  },
+
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
   foundation_action_for: function(card) {

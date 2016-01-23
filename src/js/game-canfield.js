@@ -5,7 +5,7 @@ const CanfieldBase = {
     "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
     "p", 4, CanfieldPile, FanDownView, 0, 0,
-    "f", 4, KlondikeFoundation, CountedView, 0, 0,
+    "f", 4, CanfieldFoundation, CountedView, 0, 0,
     "r", 1, Reserve, CountedView, 0, 0,
   ],
   _reserveFaceDown: 12,
@@ -18,8 +18,8 @@ const CanfieldBase = {
   init_cards: () => make_cards(1, null, null, true),
 
   deal: function(cards) {
-    const num = cards[0].displayNum;
-    for(let c of cards) c.renumber(num);
+    const num = cards[0].number;
+    for(let f of this.foundations) f.canfield_foundation_base_num = num;
 
     let ix = 0;
     ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);
@@ -32,7 +32,16 @@ const CanfieldBase = {
 
   autoplay: autoplay_default,
 
-  autoplayable_numbers: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
+  autoplayable_predicate: function() {
+    const base_num = this.foundations[0].canfield_foundation_base_num;
+    // Remap numbers so that we can just use less-than on them.
+    const _effective_num = num => num >= base_num ? num : num + 13;
+    const max_nums = { S: base_num, H: base_num, D: base_num, C: base_num };
+    for(let f of this.foundations) if(f.hasCards) max_nums[f.firstCard.suit] = _effective_num(f.lastCard.number);
+    // As in Klondike, if all the black "threes" are up, you can autoplay red "fours", and you can always autoplay "twos".  It's just that the "aces" is instead base_num, etc.
+    const autoplayable = { R: Math.min(max_nums.S, max_nums.C) + 1, B: Math.min(max_nums.H, max_nums.D) + 1 };
+    return function(card) _effective_num(card.number) <= autoplayable[card.colour];
+  },
 };
 
 gGameClasses.canfield = {
@@ -66,4 +75,14 @@ const CanfieldPile = {
   isPile: true,
   mayTakeCard: mayTakeIfFaceUp,
   mayAddCard: mayAddToGypsyPile,
+};
+
+
+const CanfieldFoundation = {
+  __proto__: Pile,
+  isFoundation: true,
+  mayTakeCard: ifLast,
+  mayAddCard: function(card) {
+    return this.hasCards ? is_next_in_suit_mod13(this.lastCard, card) : card.number === this.canfield_foundation_base_num;
+  },
 };

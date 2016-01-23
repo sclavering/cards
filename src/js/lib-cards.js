@@ -48,9 +48,13 @@ function _new_card_run(numbers, suit, mod13) {
 function Card(number, suit) {
   this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
   this.suit = suit;
-  this.displayNum = number === 14 ? 1 : number
-  this.displayStr = suit + this.displayNum;
-  this.setNumber(number);
+  this.displayStr = suit + (number === 14 ? 1 : number);
+  this.number = number;
+  this.upNumber = number + 1; // this.number === other.number+1 used to be very common
+  this.isAce = number === 1 || number === 14;
+  this.isKing = number === 13;
+  this.isQueen = number === 12;
+  this.str = this.suit + number;
 }
 Card.prototype = {
   faceUp: false,
@@ -63,23 +67,6 @@ Card.prototype = {
 
   // this is necessary so that somePile.build[card] works correctly
   toString: function() { return this.str; },
-
-  setNumber: function(number) {
-    this.number = number;
-    this.upNumber = number + 1; // this.number === other.number+1 used to be very common
-    this.isAce = number === 1 || number === 14;
-    this.isKing = number === 13;
-    this.isQueen = number === 12;
-    this.str = this.suit + number;
-  },
-
-  // Change the logical number to fit with newAceNumber being number === 1.
-  // Used in games where the starting card for foundations varies.
-  renumber: function(newAceNumber) {
-    // numbers being 1-based makes this messy
-    const neg = 1 - newAceNumber, pos = 14 - newAceNumber, n = this.displayNum;
-    this.setNumber(n + (n >= newAceNumber ? neg : pos));
-  },
 
   // pass a boolean
   setFaceUp: function(val) {

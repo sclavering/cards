@@ -69,11 +69,17 @@ gGameClasses.divorce = {
   __proto__: SpiderBase,
   pileDetails: () => [
     "s", 1, StockDealToNonemptyPiles, StockView, 0, 0,
-    "p", 10, SpiderPile, FanDownView, 0, 5,
+    "p", 10, DivorcePile, FanDownView, 0, 5,
     "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
   ],
 
-  init_cards: () => make_cards(2, null, null, true),
+  init_cards: () => make_cards(2),
+
+  // Can't re-use the standard Spider version because it doesn't do ace->king wraparound.
+  best_destination_for: function(card) {
+    const ps = card.pile.surrounding();
+    return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
+  },
 };
 
 
@@ -143,6 +149,21 @@ const SpiderPile = {
 };
 
 
+const DivorcePile = {
+  __proto__: Pile,
+  isPile: true,
+  mayTakeCard: function(card) {
+    if(!card.faceUp) return false;
+    const cs = card.pile.cards, len = cs.length;
+    for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit_mod13(cs[i + 1], cs[i])) return false;
+    return true;
+  },
+  mayAddCard: function(card) {
+    return !this.hasCards || is_next_mod13(card, this.lastCard);
+  },
+};
+
+
 const BlackWidowPile = {
   __proto__: Pile,
   isPile: true,
@@ -163,6 +184,7 @@ const BlackWidowPile = {
     return sources.reverse();
   }
 };
+
 
 const SpiderFoundation = {
   __proto__: Pile,

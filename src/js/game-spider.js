@@ -192,7 +192,8 @@ const SpiderFoundation = {
   mayTakeCard: () => false,
   mayAddCard: function(card) {
     const cs = card.pile.cards, len = cs.length;
-    if(card.index !== len - 13) return false;
+    // The .number test is important for Grounds for Divorce.
+    if(card.index !== len - 13 || card.number !== 13) return false;
     for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit(cs[i + 1], cs[i])) return false;
     return true;
   },

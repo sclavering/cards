@@ -36,12 +36,18 @@ const Pile = {
   next: null,
 
   mayTakeCard: function(card) { throw "mayTakeCard not implemented!"; },
-  // Note that this *must* handle the case of card.pile === this
+
+  // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
   mayAddCard: function(card) { throw "mayAddCard not implemented!"; },
+
+  // In generic code for hints etc it's easy to end up calling card.pile.mayAddCard(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .mayTakeCard and .mayAddCard will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
+  mayAddCardMaybeToSelf: function(card) {
+    return card.pile === this ? false : this.mayAddCard(card);
+  },
 
   // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
   getActionForDrop: function(card) {
-    return this.mayAddCard(card) ? new Move(card, this) : null;
+    return this.mayAddCardMaybeToSelf(card) ? new Move(card, this) : null;
   },
 
   // the sourrounding piles
@@ -269,7 +275,6 @@ function mayTakeRunningFlush(card) {
 }
 
 function mayAddToGypsyPile(card) {
-  if(card.pile === this) return false; // Gypsy and Canfield don't need this, but Yukon does
   const last = this.lastCard;
   return !last || (last.colour !== card.colour && last.number === card.upNumber);
 }
@@ -318,7 +323,7 @@ const _FreeCellPile = {
   __proto__: Pile,
   // mayAddCard returns 0 to mean "legal, but not enough cells+spaces to do the move"
   getActionForDrop: function(card) {
-    const may = this.mayAddCard(card);
+    const may = this.mayAddCardMaybeToSelf(card);
     if(may) return new Move(card, this);
     return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;
   }

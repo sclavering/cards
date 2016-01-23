@@ -272,7 +272,7 @@ const Game = {
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit))
           return findEmpty(fs);
-    for(let f of this.foundations) if(f.mayAddCard(card)) return f;
+    for(let f of this.foundations) if(f.mayAddCardMaybeToSelf(card)) return f;
     return null;
   },
 
@@ -317,8 +317,8 @@ const Game = {
 
   _add_hints_for: function(card, hints) {
     const ds = [];
-    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.mayAddCard(card)) ds.push(p);
-    for(let f of this.foundations) if(f.mayAddCard(card)) ds.push(f);
+    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.mayAddCardMaybeToSelf(card)) ds.push(p);
+    for(let f of this.foundations) if(f.mayAddCardMaybeToSelf(card)) ds.push(f);
     if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
   },
 

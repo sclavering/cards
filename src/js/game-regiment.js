@@ -31,9 +31,9 @@ gGameClasses.regiment = {
   best_destination_for: function(card) {
     const parent = card.pile;
     const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
-    for(let p of ps) if(p.hasCards && p.mayAddCard(card)) return p;
+    for(let p of ps) if(p.hasCards && p.mayAddCardMaybeToSelf(card)) return p;
 
-    if(parent.isReserve) for(let p of this.piles) if(!p.hasCards && p.mayAddCard(card)) return p;
+    if(parent.isReserve) for(let p of this.piles) if(!p.hasCards && p.mayAddCardMaybeToSelf(card)) return p;
     return null;
   },
 
@@ -66,7 +66,6 @@ const RegimentPile = {
   mayTakeCard: mayTakeSingleCard,
 
   mayAddCard: function(card) {
-    if(card.pile === this) return false;
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);

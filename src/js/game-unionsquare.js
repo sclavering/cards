@@ -12,18 +12,7 @@ gGameClasses.unionsquare = {
 
   init_cards: () => make_cards(2),
 
-  best_destination_for: function(card) {
-    const p = card.pile, ps = p.isPile ? p.following() : this.piles;
-    let empty = null;
-    for(let q of ps) {
-      if(q.hasCards) {
-        if(q.mayAddCard(card)) return q;
-      } else if(!empty) {
-        empty = q;
-      }
-    }
-    return empty;
-  },
+  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
 
   autoplay: autoplay_default,
 

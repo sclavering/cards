@@ -44,7 +44,6 @@ function Card(number, suit) {
 }
 Card.prototype = {
   get isLast() { return this.index === this.pile.cards.length - 1; },
-  get isFirst() { return this.index === 0; },
 
   // pass a boolean
   setFaceUp: function(val) {

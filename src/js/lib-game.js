@@ -256,10 +256,9 @@ const Game = {
     return null;
   },
 
-  // Used by autoplay_default.
+  // Used by autoplay_default.  It should return a (Card -> boolean) function saying whether the passed card is currently suitable for autoplaying.
   autoplayable_predicate: function() {
-    const nums = this.autoplayable_numbers();
-    return c => (c.number <= nums[c.suit]);
+    throw "not implemented";
   },
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.

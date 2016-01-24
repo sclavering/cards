@@ -13,7 +13,7 @@ gGameClasses.towers = {
 
   autoplay: autoplay_default,
 
-  autoplayable_numbers: autoplay_any_card,
+  autoplayable_predicate() { return _ => true; },
 };
 
 

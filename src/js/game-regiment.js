@@ -47,13 +47,13 @@ gGameClasses.regiment = {
   _autoplay: autoplay_default,
 
   // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
-  autoplayable_numbers: function() {
+  autoplayable_predicate: function() {
     const ace_nums = {}, king_nums = {};
     for_each_top_card(this.aceFoundations, c => ace_nums[c.suit] = c.number);
     for_each_top_card(this.kingFoundations, c => king_nums[c.suit] = c.number);
-    const rv = { "S": 0, "H": 0, "D": 0, "C": 0 };
-    for(let k in rv) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) rv[k] = 13;
-    return rv;
+    const autoplayable_suits = { S: false, H: false, D: false, C: false };
+    for(let k in autoplayable_suits) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
+    return card => autoplayable_suits[card.suit];
   },
 };
 

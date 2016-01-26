@@ -56,55 +56,27 @@ Deal3Action.prototype = {
     w.deal3t = w.cards.length + num;
     for(var i = 0; i !== num; ++i) s.deal_card_to(w);
   },
-
   undo: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste, num = this.numMoved;
     w.deal3v = this.old_deal3v;
     w.deal3t = this.old_deal3t;
     for(var i = 0; i !== num; ++i) s.undeal_card_from(w);
-  }
-}
+  },
+};
 
 
-// has to work for Wasp, where just 3 cards are dealt, but there are seven piles
-function DealToPiles() {}
-DealToPiles.prototype = {
-  dealt: 0,
-
+function DealToAsManyOfSpecifiedPilesAsPossible(stock, piles) {
+  this._stock = stock;
+  this._piles = piles.length > stock.cards.length ? piles.slice(0, stock.cards.length) : piles;
+};
+DealToAsManyOfSpecifiedPilesAsPossible.prototype = {
   perform: function() {
-    const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
-    for(var i = 0; i !== len && s.hasCards; ++i) s.deal_card_to(ps[i]);
-    this.dealt = i;
+    for(let p of this._piles) this._stock.deal_card_to(p);
   },
   undo: function() {
-    const s = gCurrentGame.stock, ps = gCurrentGame.piles;
-    for(var i = this.dealt; i !== 0; i--) s.undeal_card_from(ps[i - 1]);
-  }
-}
-
-
-function DealToNonEmptyPilesAction() {}
-DealToNonEmptyPilesAction.prototype = {
-  last: 0, // the pile index we reached on the final deal before running out of cards
-  num: 0, // num piles dealt to
-
-  perform: function() {
-    const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
-    var num = 0;
-    for(var i = 0; i !== len && s.hasCards; ++i) {
-      if(!ps[i].hasCards) continue;
-      s.deal_card_to(ps[i]);
-      this.last = i;
-      num++;
-    }
-    this.num = num;
+    for(let p of this._piles.slice().reverse()) this._stock.undeal_card_from(p);
   },
-  undo: function() {
-    const s = gCurrentGame.stock, ps = gCurrentGame.piles;
-    for(var i = this.last; i !== -1; i--)
-      if(ps[i].hasCards) s.undeal_card_from(ps[i]);
-  }
-}
+};
 
 
 function Move(card, destination) {

@@ -176,7 +176,7 @@ const StockDealToFoundation = {
 const StockDealToPiles = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPiles(gCurrentGame.piles) : null;
+    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles) : null;
   },
   get counter() {
     return Math.ceil(this.cards.length / gCurrentGame.piles.length);
@@ -186,18 +186,16 @@ const StockDealToPiles = {
 const StockDealToPilesIfNoneAreEmpty = {
   __proto__: StockDealToPiles,
   deal: function() {
-    if(!this.hasCards) return null;
-    const ps = gCurrentGame.piles, num = ps.length;
-    for(var i = 0; i !== num; ++i) if(!ps[i].hasCards) return null;
-    return new DealToPiles(ps);
+    if(!this.hasCards || gCurrentGame.piles.some(p => !p.hasCards)) return null;
+    return new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles);
   }
 };
 
 const StockDealToNonemptyPiles = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToNonEmptyPilesAction() : null;
-  }
+    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles.filter(p => p.hasCards)) : null;
+  },
 };
 
 

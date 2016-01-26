@@ -11,14 +11,13 @@ redo()
   Undo/redo the effects of the action.  Must *not* use animation.
   If redo() is omitted, perform() is used instead, and must not use animation.
 
-Pile.action_for_drop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
+Piles' .action_for_drop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
 function DealToPile(pile) {
   this.to = pile;
-}
+};
 DealToPile.prototype = {
-
   perform: function() {
     const s = gCurrentGame.stock;
     s.deal_card_to(this.to);
@@ -26,13 +25,12 @@ DealToPile.prototype = {
   undo: function() {
     const s = gCurrentGame.stock;
     s.undeal_card_from(this.to);
-  }
-}
+  },
+};
 
 
-function RefillStock() {}
+function RefillStock() {};
 RefillStock.prototype = {
-
   perform: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
     while(w.hasCards) s.undeal_card_from(w);
@@ -40,13 +38,12 @@ RefillStock.prototype = {
   undo: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
     while(s.hasCards) s.deal_card_to(w);
-  }
-}
+  },
+};
 
 
-function Deal3Action() {}
+function Deal3Action() {};
 Deal3Action.prototype = {
-
   perform: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
     this.old_deal3v = w.deal3v;
@@ -101,15 +98,14 @@ Move.prototype = {
     this.destination.add_cards(this.card);
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
   },
-}
+};
 
 
 function RemovePair(card1, card2) {
   this.c1 = card1; this.p1 = card1.pile;
   this.c2 = card2; this.p2 = card2 && card2.pile;
-}
+};
 RemovePair.prototype = {
-
   perform: function() {
     gCurrentGame.foundation.add_cards(this.c1);
     if(this.c2) gCurrentGame.foundation.add_cards(this.c2);
@@ -117,17 +113,16 @@ RemovePair.prototype = {
   undo: function(undo) {
     if(this.c2) this.p2.add_cards(this.c2);
     this.p1.add_cards(this.c1);
-  }
-}
-
+  },
+};
 
 
 function ErrorMsg(msgText1, msgText2) {
   this._msgText1 = msgText1;
   this._msgText2 = msgText2;
-}
+};
 ErrorMsg.prototype = {
   show: function() {
     showMessage(this._msgText1, this._msgText2);
-  }
-}
+  },
+};

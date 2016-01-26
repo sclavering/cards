@@ -240,10 +240,6 @@ function may_take_descending_alt_colour(card) {
   return true;
 }
 
-function mayTakeIfFaceUp(card) {
-  return card.faceUp;
-}
-
 function mayTakeDescendingRun(card) {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
@@ -265,22 +261,8 @@ function mayAddToGypsyPile(card) {
   return !last || (last.colour !== card.colour && last.number === card.number + 1);
 }
 
-function mayAddToKlondikePile(card) {
-  const last = this.lastCard;
-  return last ? last.number === card.number + 1 && last.colour !== card.colour : card.number === 13;
-}
-
-function mayAddSingleCardToEmpty(card) {
-  return card.isLast && !this.hasCards;
-}
-
 function mayAddOntoUpNumberOrEmpty(card) {
   return !this.hasCards || this.lastCard.number === card.number + 1;
-}
-
-function mayAddOntoNextUpInSuitOrPutKingInSpace(card) {
-  const last = this.lastCard;
-  return last ? card.suit === last.suit && card.number + 1 === last.number : card.number === 13;
 }
 
 
@@ -288,14 +270,18 @@ const AcesUpPile = {
   __proto__: Pile,
   is_pile: true,
   may_take_card: mayTakeSingleCard,
-  may_add_card: mayAddSingleCardToEmpty,
+  may_add_card: function(card) {
+    return card.isLast && !this.hasCards;
+  },
 };
 
 const FanPile = {
   __proto__: Pile,
   is_pile: true,
   may_take_card: mayTakeSingleCard,
-  may_add_card: mayAddOntoNextUpInSuitOrPutKingInSpace,
+  may_add_card: function(card) {
+    return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
+  },
 };
 
 const _FreeCellPile = {
@@ -318,14 +304,16 @@ const GypsyPile = {
 const KlondikePile = {
   __proto__: Pile,
   is_pile: true,
-  may_take_card: mayTakeIfFaceUp,
-  may_add_card: mayAddToKlondikePile,
+  may_take_card: card => card.faceUp,
+  may_add_card: function(card) {
+    return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : card.number === 13;
+  },
 };
 
 const WaspPile = {
   __proto__: Pile,
   is_pile: true,
-  may_take_card: mayTakeIfFaceUp,
+  may_take_card: card => card.faceUp,
   may_add_card: function(card) {
     return !this.hasCards || is_next_in_suit(card, this.lastCard);
   },
@@ -334,17 +322,13 @@ const WaspPile = {
   },
 };
 
-
-function may_add_to_ascending_in_suit(card) {
-  const last = this.lastCard;
-  return card.isLast && (last ? last.suit === card.suit && last.number + 1 === card.number : card.number === 1);
-}
-
 const KlondikeFoundation = {
   __proto__: Pile,
   is_foundation: true,
   may_take_card: ifLast,
-  may_add_card: may_add_to_ascending_in_suit,
+  may_add_card: function(card) {
+    return card.isLast && (this.hasCards ? is_next_in_suit(this.lastCard, card) : card.number === 1);
+  },
 };
 
 const UpDownMod13Foundation = {

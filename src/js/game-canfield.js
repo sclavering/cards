@@ -71,7 +71,7 @@ gGameClasses.demon = {
 const CanfieldPile = {
   __proto__: Pile,
   is_pile: true,
-  may_take_card: mayTakeIfFaceUp,
+  may_take_card: card => card.faceUp,
   may_add_card: function(card) {
     return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
   },

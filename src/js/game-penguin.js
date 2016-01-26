@@ -30,5 +30,7 @@ const PenguinPile = {
   __proto__: Pile,
   is_pile: true,
   may_take_card: mayTakeRunningFlush,
-  may_add_card: mayAddOntoNextUpInSuitOrPutKingInSpace,
+  may_add_card: function(card) {
+    return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
+  },
 };

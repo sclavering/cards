@@ -70,9 +70,9 @@ gGameClasses.demon = {
 
 const CanfieldPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: function(card) {
+  is_pile: true,
+  may_take_card: mayTakeIfFaceUp,
+  may_add_card: function(card) {
     return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
   },
 };
@@ -80,9 +80,9 @@ const CanfieldPile = {
 
 const CanfieldFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: ifLast,
+  may_add_card: function(card) {
     return this.hasCards ? is_next_in_suit_mod13(this.lastCard, card) : card.number === this.canfield_foundation_base_num;
   },
 };

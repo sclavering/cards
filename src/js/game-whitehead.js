@@ -32,9 +32,9 @@ gGameClasses.whitehead = {
 
 const WhiteheadPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: function(card) {
+  is_pile: true,
+  may_take_card: mayTakeRunningFlush,
+  may_add_card: function(card) {
     const last = this.lastCard;
     return last ? is_next_and_same_colour(card, last) : true;
   },

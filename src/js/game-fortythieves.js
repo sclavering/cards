@@ -24,11 +24,11 @@ gGameClasses.fortythieves = {
 
 const FortyThievesPile = {
   __proto__: Pile,
-  isPile: true,
+  is_pile: true,
 
-  mayTakeCard: mayTakeRunningFlush,
+  may_take_card: mayTakeRunningFlush,
 
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
     if(card.isLast) return true;

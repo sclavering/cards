@@ -25,7 +25,7 @@ gGameClasses.maze = {
   },
 
   best_destination_for: function(card) {
-    for(let p of card.pile.following()) if(p.mayAddCard(card)) return p;
+    for(let p of card.pile.following()) if(p.may_add_card(card)) return p;
     return null;
   },
 
@@ -46,9 +46,9 @@ gGameClasses.maze = {
 
 const MazePile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: () => true,
-  mayAddCard: function(card) {
+  is_pile: true,
+  may_take_card: _ => true,
+  may_add_card: function(card) {
     if(this.hasCards) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;
     return (prev && maze_allows_adjacent(prev, card)) || (next && maze_allows_adjacent(card, next));

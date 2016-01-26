@@ -29,7 +29,7 @@ gGameClasses.mod3 = {
   },
 
   best_destination_for: function(card) {
-    return this.foundation_destination_for(card) || findEmpty(card.pile.isPile ? card.pile.surrounding() : this.piles);
+    return this.foundation_destination_for(card) || findEmpty(card.pile.is_pile ? card.pile.surrounding() : this.piles);
   },
 
   autoplay: autoplay_default,
@@ -38,7 +38,7 @@ gGameClasses.mod3 = {
     const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
     return card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
-        && !(card.pile.isFoundation && card.pile.contains_appropriate_cards());
+        && !(card.pile.is_foundation && card.pile.contains_appropriate_cards());
   },
 
   // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).
@@ -68,19 +68,19 @@ gGameClasses.mod3 = {
 
 const _Mod3Foundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast,
+  is_foundation: true,
+  may_take_card: ifLast,
   _baseNum: -1, // set elsewhere
   contains_appropriate_cards: function() {
     const first = this.firstCard;
     return first ? first.number === this._baseNum : false;
   },
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     const last = this.lastCard;
     if(!this.hasCards) return card.number === this._baseNum;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
   },
-  getHintSources: function() {
+  hint_sources: function() {
     const c = this.firstCard;
     return c && !this.contains_appropriate_cards() ? [c] : [];
   }

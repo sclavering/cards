@@ -41,16 +41,16 @@ gGameClasses.doublepileon = {
 const _PileOnPile = {
   __proto__: Pile,
   _depth: NaN,
-  isPile: true,
+  is_pile: true,
   // May move any group of cards all of the same rank.
-  mayTakeCard: function(card) {
+  may_take_card: function(card) {
     const num = card.number, cs = card.pile.cards, len = cs.length;
     for(var i = card.index + 1; i !== len; ++i) if(cs[i].number !== num) return false;
     return true;
   },
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     const last = this.lastCard;
     if(last && last.number !== card.number) return false;
     const numCards = card.pile.cards.length - card.index;

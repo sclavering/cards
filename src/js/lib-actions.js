@@ -11,7 +11,7 @@ redo()
   Undo/redo the effects of the action.  Must *not* use animation.
   If redo() is omitted, perform() is used instead, and must not use animation.
 
-Pile.getActionForDrop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
+Pile.action_for_drop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
 function DealToPile(pile) {
@@ -21,11 +21,11 @@ DealToPile.prototype = {
 
   perform: function() {
     const s = gCurrentGame.stock;
-    s.dealCardTo(this.to);
+    s.deal_card_to(this.to);
   },
   undo: function() {
     const s = gCurrentGame.stock;
-    s.undealCardFrom(this.to);
+    s.undeal_card_from(this.to);
   }
 }
 
@@ -35,11 +35,11 @@ RefillStock.prototype = {
 
   perform: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
-    while(w.hasCards) s.undealCardFrom(w);
+    while(w.hasCards) s.undeal_card_from(w);
   },
   undo: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste;
-    while(s.hasCards) s.dealCardTo(w);
+    while(s.hasCards) s.deal_card_to(w);
   }
 }
 
@@ -54,14 +54,14 @@ Deal3Action.prototype = {
     const cs = s.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
     this.numMoved = w.deal3v = num;
     w.deal3t = w.cards.length + num;
-    for(var i = 0; i !== num; ++i) s.dealCardTo(w);
+    for(var i = 0; i !== num; ++i) s.deal_card_to(w);
   },
 
   undo: function() {
     const s = gCurrentGame.stock, w = gCurrentGame.waste, num = this.numMoved;
     w.deal3v = this.old_deal3v;
     w.deal3t = this.old_deal3t;
-    for(var i = 0; i !== num; ++i) s.undealCardFrom(w);
+    for(var i = 0; i !== num; ++i) s.undeal_card_from(w);
   }
 }
 
@@ -73,12 +73,12 @@ DealToPiles.prototype = {
 
   perform: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles, len = ps.length;
-    for(var i = 0; i !== len && s.hasCards; ++i) s.dealCardTo(ps[i]);
+    for(var i = 0; i !== len && s.hasCards; ++i) s.deal_card_to(ps[i]);
     this.dealt = i;
   },
   undo: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles;
-    for(var i = this.dealt; i !== 0; i--) s.undealCardFrom(ps[i - 1]);
+    for(var i = this.dealt; i !== 0; i--) s.undeal_card_from(ps[i - 1]);
   }
 }
 
@@ -93,7 +93,7 @@ DealToNonEmptyPilesAction.prototype = {
     var num = 0;
     for(var i = 0; i !== len && s.hasCards; ++i) {
       if(!ps[i].hasCards) continue;
-      s.dealCardTo(ps[i]);
+      s.deal_card_to(ps[i]);
       this.last = i;
       num++;
     }
@@ -102,7 +102,7 @@ DealToNonEmptyPilesAction.prototype = {
   undo: function() {
     const s = gCurrentGame.stock, ps = gCurrentGame.piles;
     for(var i = this.last; i !== -1; i--)
-      if(ps[i].hasCards) s.undealCardFrom(ps[i]);
+      if(ps[i].hasCards) s.undeal_card_from(ps[i]);
   }
 }
 
@@ -117,16 +117,16 @@ function Move(card, destination) {
 Move.prototype = {
   perform: function() {
     const rv = prepare_move_animation(this.card, this.destination);
-    this.destination.addCards(this.card, true); // doesn't update view
+    this.destination.add_cards(this.card, true); // doesn't update view
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
     return rv;
   },
   undo: function() {
     if(this.revealed_card) this.revealed_card.setFaceUp(false);
-    this.source.addCards(this.card);
+    this.source.add_cards(this.card);
   },
   redo: function() {
-    this.destination.addCards(this.card);
+    this.destination.add_cards(this.card);
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
   },
 }
@@ -139,12 +139,12 @@ function RemovePair(card1, card2) {
 RemovePair.prototype = {
 
   perform: function() {
-    gCurrentGame.foundation.addCards(this.c1);
-    if(this.c2) gCurrentGame.foundation.addCards(this.c2);
+    gCurrentGame.foundation.add_cards(this.c1);
+    if(this.c2) gCurrentGame.foundation.add_cards(this.c2);
   },
   undo: function(undo) {
-    if(this.c2) this.p2.addCards(this.c2);
-    this.p1.addCards(this.c1);
+    if(this.c2) this.p2.add_cards(this.c2);
+    this.p1.add_cards(this.c1);
   }
 }
 

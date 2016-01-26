@@ -112,17 +112,17 @@ const Game = {
 
   _create_pile_arrays: function() {
     const all = this.allpiles;
-    this.dragDropTargets = [for(f of all) if(f.canDrop) f];
-    this.piles = [for(p of all) if(p.isPile) p];
-    this.cells = [for(p of all) if(p.isCell) p];
-    this.reserves = [for(p of all) if(p.isReserve) p];
-    this.foundations = [for(p of all) if(p.isFoundation) p];
+    this.dragDropTargets = [for(f of all) if(f.is_drop_target) f];
+    this.piles = [for(p of all) if(p.is_pile) p];
+    this.cells = [for(p of all) if(p.is_cell) p];
+    this.reserves = [for(p of all) if(p.is_reserve) p];
+    this.foundations = [for(p of all) if(p.is_foundation) p];
     for(let i in this.foundations) this.foundations[i].index = i;
-    this.wastes = [for(p of all) if(p.isWaste) p];
+    this.wastes = [for(p of all) if(p.is_waste) p];
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
-    this.stock = [for(p of all) if(p.isStock) p][0] || null;
+    this.stock = [for(p of all) if(p.is_stock) p][0] || null;
     this.hint_and_autoplay_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
   },
 
@@ -165,14 +165,14 @@ const Game = {
   _deal_cards: function(cards, ix, pile, num_face_down, num_face_up) {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
     for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
-    pile.addCardsFromArray(cs);
+    pile.add_cards_from_array(cs);
     return ix + cs.length;
   },
 
   _deal_cards_with_nulls_for_spaces: function(cards) {
     for(let [i, c] of cards.entries()) if(c) {
       c.faceUp = true;
-      this.piles[i].addCardsFromArray([c]);
+      this.piles[i].add_cards_from_array([c]);
     }
   },
 
@@ -264,7 +264,7 @@ const Game = {
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
   foundation_action_for: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
+    if(!card.pile.may_take_card(card)) return null;
     const f = this.foundation_destination_for(card);
     return f ? new Move(card, f) : null;
   },
@@ -277,14 +277,14 @@ const Game = {
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit))
           return findEmpty(fs);
-    for(let f of this.foundations) if(f.mayAddCardMaybeToSelf(card)) return f;
+    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) return f;
     return null;
   },
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
   best_action_for: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
+    if(!card.pile.may_take_card(card)) return null;
     const target = this.best_destination_for(card);
     return target ? new Move(card, target) : null;
   },
@@ -316,14 +316,14 @@ const Game = {
 
   get_hints: function() {
     const rv = [];
-    for(let p of this.hint_and_autoplay_source_piles) for(let source of p.getHintSources()) this._add_hints_for(source, rv);
+    for(let p of this.hint_and_autoplay_source_piles) for(let source of p.hint_sources()) this._add_hints_for(source, rv);
     return rv;
   },
 
   _add_hints_for: function(card, hints) {
     const ds = [];
-    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.mayAddCardMaybeToSelf(card)) ds.push(p);
-    for(let f of this.foundations) if(f.mayAddCardMaybeToSelf(card)) ds.push(f);
+    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_card_maybe_to_self(card)) ds.push(p);
+    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) ds.push(f);
     if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
   },
 

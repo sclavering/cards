@@ -30,10 +30,10 @@ gGameClasses.regiment = {
 
   best_destination_for: function(card) {
     const parent = card.pile;
-    const ps = parent.isPile ? parent.following() : this.piles, num = ps.length;
-    for(let p of ps) if(p.hasCards && p.mayAddCardMaybeToSelf(card)) return p;
+    const ps = parent.is_pile ? parent.following() : this.piles, num = ps.length;
+    for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(card)) return p;
 
-    if(parent.isReserve) for(let p of this.piles) if(!p.hasCards && p.mayAddCardMaybeToSelf(card)) return p;
+    if(parent.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_card_maybe_to_self(card)) return p;
     return null;
   },
 
@@ -60,19 +60,19 @@ gGameClasses.regiment = {
 
 const RegimentPile = {
   __proto__: Pile,
-  isPile: true,
+  is_pile: true,
   reserve: null,
 
-  mayTakeCard: mayTakeSingleCard,
+  may_take_card: mayTakeSingleCard,
 
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
     const source = card.pile;
-    if(!source.isReserve) return false;
+    if(!source.is_reserve) return false;
 
     const reserve = this.reserve;
     if(reserve === source) return true;
@@ -92,9 +92,9 @@ const RegimentPile = {
 
 const RegimentAceFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: ifLast,
+  may_add_card: function(card) {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(this.lastCard, card);
   },
@@ -102,9 +102,9 @@ const RegimentAceFoundation = {
 
 const RegimentKingFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: ifLast,
+  may_add_card: function(card) {
     if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
   },

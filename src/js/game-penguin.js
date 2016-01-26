@@ -28,7 +28,7 @@ gGameClasses.penguin = {
 
 const PenguinPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: mayAddOntoNextUpInSuitOrPutKingInSpace,
+  is_pile: true,
+  may_take_card: mayTakeRunningFlush,
+  may_add_card: mayAddOntoNextUpInSuitOrPutKingInSpace,
 };

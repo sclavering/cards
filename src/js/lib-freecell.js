@@ -3,7 +3,7 @@ const FreeCellGame = {
   __proto__: Game,
 
   best_action_for: function(card) {
-    if(!card.pile.mayTakeCard(card)) return null;
+    if(!card.pile.may_take_card(card)) return null;
     const dest = this.best_destination_for(card);
     if(!dest) return null;
     if(card.isLast) return new Move(card, dest);
@@ -35,13 +35,13 @@ function FreeCellMoveAction(card, destination, cells, spaces) {
 }
 FreeCellMoveAction.prototype = {
   perform: function() {
-    this.destination.addCards(this.card, true); // Don't update view.
+    this.destination.add_cards(this.card, true); // Don't update view.
     return this._anim;
   },
   undo: function() {
-    this.source.addCards(this.card);
+    this.source.add_cards(this.card);
   },
   redo: function() {
-    this.destination.addCards(this.card);
+    this.destination.add_cards(this.card);
   },
 };

@@ -26,15 +26,15 @@ const KlondikeBase = {
     const c = act.card, s = act.source, d = act.destination;
     // If a card on the waste *could* be moved down to the playing piles (for 5 points)
     // then award those points event when moving it directly to the foundations.
-    if(s.isWaste && d.isFoundation) {
+    if(s.is_waste && d.is_foundation) {
       for(let p of this.piles)
-        if(p.mayAddCard(c))
+        if(p.may_add_card(c))
           return 15;
       return 10;
     }
-    if(d.isFoundation) return s.isFoundation ? 0 : 10;
-    if(s.isFoundation) return -15;
-    return s.isWaste ? 5 : 0;
+    if(d.is_foundation) return s.is_foundation ? 0 : 10;
+    if(s.is_foundation) return -15;
+    return s.is_waste ? 5 : 0;
   },
 };
 

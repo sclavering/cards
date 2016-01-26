@@ -23,7 +23,7 @@ gGameClasses.pyramid = {
   },
 
   best_action_for: function(card) {
-    return card.number === 13 && card.pile.mayTakeCard(card) ? new RemovePair(card, null) : null;
+    return card.number === 13 && card.pile.may_take_card(card) ? new RemovePair(card, null) : null;
   },
 
   // this game has no autoplay
@@ -69,7 +69,7 @@ gGameClasses.tripeaks = {
   },
 
   best_destination_for: function(card) {
-    return this.foundation.mayAddCard(card) ? this.foundation : null;
+    return this.foundation.may_add_card(card) ? this.foundation : null;
   },
 
   is_won: function() {
@@ -104,7 +104,7 @@ gGameClasses.tripeaks = {
 
 const BasePyramidPile = {
   __proto__: Pile,
-  isPile: true,
+  is_pile: true,
 
   // set in games' init()s
   leftParent: null,
@@ -112,17 +112,17 @@ const BasePyramidPile = {
   leftChild: null,
   rightChild: null,
 
-  mayTakeCard: function(card) {
+  may_take_card: function(card) {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
   },
 
-  mayAddCard: () => false,
+  may_add_card: _ => false,
 };
 
 const PyramidPile = {
   __proto__: BasePyramidPile,
-  getActionForDrop: function(card) {
+  action_for_drop: function(card) {
     const c = this.firstCard;
     if(!c || card.number + c.number !== 13) return null;
     const l = this.leftChild, lc = l && l.firstCard;
@@ -135,18 +135,18 @@ const PyramidPile = {
 
 const PyramidFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-  getActionForDrop: function(card) {
+  is_foundation: true,
+  may_take_card: _ => false,
+  action_for_drop: function(card) {
     return card.number === 13 ? new RemovePair(card, null) : null;
   },
-  mayAddCard: () => false,
+  may_add_card: _ => false,
 };
 
 const PyramidWaste = {
   __proto__: Waste,
-  canDrop: true,
-  getActionForDrop: function(card) {
+  is_drop_target: true,
+  action_for_drop: function(card) {
     const c = this.lastCard;
     return c && card.number + c.number === 13 ? new RemovePair(card, c) : null;
   }

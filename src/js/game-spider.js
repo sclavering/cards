@@ -17,7 +17,7 @@ const SpiderBase = {
       let n = p.cards.length - 13;
       if(n < 0) continue;
       let c = p.cards[n];
-      if(c.pile.mayTakeCard(c) && f.mayAddCard(c)) return new Move(c, f);
+      if(c.pile.may_take_card(c) && f.may_add_card(c)) return new Move(c, f);
     }
     return null;
   },
@@ -143,22 +143,22 @@ gGameClasses.doublesimon = {
 
 const SpiderPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: mayAddOntoUpNumberOrEmpty
+  is_pile: true,
+  may_take_card: mayTakeRunningFlush,
+  may_add_card: mayAddOntoUpNumberOrEmpty
 };
 
 
 const DivorcePile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: function(card) {
+  is_pile: true,
+  may_take_card: function(card) {
     if(!card.faceUp) return false;
     const cs = card.pile.cards, len = cs.length;
     for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit_mod13(cs[i + 1], cs[i])) return false;
     return true;
   },
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     return !this.hasCards || is_next_mod13(card, this.lastCard);
   },
 };
@@ -166,10 +166,10 @@ const DivorcePile = {
 
 const BlackWidowPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeDescendingRun,
-  mayAddCard: mayAddOntoUpNumberOrEmpty,
-  getHintSources: function() {
+  is_pile: true,
+  may_take_card: mayTakeDescendingRun,
+  may_add_card: mayAddOntoUpNumberOrEmpty,
+  hint_sources: function() {
     const sources = [];
     const cs = this.cards;
     for(var j = cs.length; j;) {
@@ -188,9 +188,9 @@ const BlackWidowPile = {
 
 const SpiderFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: _ => false,
+  may_add_card: function(card) {
     const cs = card.pile.cards, len = cs.length;
     // The .number test is important for Grounds for Divorce.
     if(card.index !== len - 13 || card.number !== 13) return false;

@@ -17,7 +17,7 @@ gGameClasses.acesup = {
 
   best_destination_for: function(card) {
     const f = this.foundation;
-    if(f.mayAddCard(card)) return f;
+    if(f.may_add_card(card)) return f;
     return findEmpty(card.pile.following());
   },
 
@@ -33,9 +33,9 @@ gGameClasses.acesup = {
 
 const AcesUpFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: _ => false,
+  may_add_card: function(card) {
     const compare = (c, d) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
     if(compare(card, card.pile.secondToLastCard)) return true;
     for(let p of card.pile.following()) if(compare(card, p.lastCard)) return true;

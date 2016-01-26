@@ -36,10 +36,10 @@ gGameClasses.sanibel = {
 
 const YukonPile = {
   __proto__: Pile,
-  isPile: true,
-  mayTakeCard: mayTakeIfFaceUp,
-  mayAddCard: mayAddToGypsyPile,
-  getHintSources: function() {
+  is_pile: true,
+  may_take_card: mayTakeIfFaceUp,
+  may_add_card: mayAddToGypsyPile,
+  hint_sources: function() {
     return [for(c of this.cards) if(c.faceUp) c];
   },
 };

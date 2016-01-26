@@ -28,12 +28,12 @@ gGameClasses.unionsquare = {
 const UnionSquarePile = {
   __proto__: Pile,
 
-  isPile: true,
+  is_pile: true,
 
-  mayTakeCard: ifLast,
+  may_take_card: ifLast,
 
   // Piles built up or down in suit, but not both ways at once.
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     const cs = this.cards, num = cs.length, last = this.lastCard;
     if(!last) return true;
     if(last.suit !== card.suit) return false;
@@ -48,9 +48,9 @@ const UnionSquarePile = {
 // Built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right from the a->k, so that it's clear what card should be played next.
 const UnionSquareFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: () => false,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: _ => false,
+  may_add_card: function(card) {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit !== card.suit) return false;

@@ -25,9 +25,9 @@ gGameClasses.doublesol = {
 // Built A,A,2,2,3,3,...,Q,Q,K,K
 const DoubleSolFoundation = {
   __proto__: Pile,
-  isFoundation: true,
-  mayTakeCard: ifLast,
-  mayAddCard: function(card) {
+  is_foundation: true,
+  may_take_card: ifLast,
+  may_add_card: function(card) {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const expected_number = Math.floor(this.cards.length / 2) + 1;

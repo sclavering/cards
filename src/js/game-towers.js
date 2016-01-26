@@ -19,9 +19,9 @@ gGameClasses.towers = {
 
 const TowersPile = {
   __proto__: _FreeCellPile,
-  isPile: true,
-  mayTakeCard: mayTakeRunningFlush,
-  mayAddCard: function(card) {
+  is_pile: true,
+  may_take_card: mayTakeRunningFlush,
+  may_add_card: function(card) {
     if(!(this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13)) return false;
     const num_to_move = card.pile.cards.length - card.index;
     return num_to_move <= 1 + gCurrentGame.numEmptyCells ? true : 0;

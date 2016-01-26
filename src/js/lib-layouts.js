@@ -164,7 +164,7 @@ const Layout = {
 
   _start_drag: function(event_or_touch) {
     const card = this._target_card(event_or_touch);
-    if(!card || !card.pile.mayTakeCard(card)) return false;
+    if(!card || !card.pile.may_take_card(card)) return false;
     interrupt();
     this._card_for_dragging = card;
     this._ex0 = event_or_touch.pageX;
@@ -228,7 +228,7 @@ const Layout = {
       // skip if we don't overlap the target at all
       if(fr.right < tr.left || fr.left > tr.right) continue;
       if(fr.bottom < tr.top || fr.top > tr.bottom) continue;
-      let act = target.getActionForDrop(card);
+      let act = target.action_for_drop(card);
       if(!act) continue;
       if(act instanceof ErrorMsg) {
         act.show();
@@ -251,7 +251,7 @@ const Layout = {
     if(ev.button || ev.ctrlKey) return true;
     const card = this._target_card(ev);
     interrupt();
-    if(card) doo(card.pile.getClickAction(card));
+    if(card) doo(card.pile.action_for_click(card));
     this._reset_handlers();
     return false;
   },

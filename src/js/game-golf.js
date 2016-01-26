@@ -13,7 +13,7 @@ const GolfBase = {
 
   best_action_for: function(card) {
     const f = this.foundation;
-    return card.pile.mayTakeCard(card) && f.mayAddCard(card) ? new Move(card, f) : null;
+    return card.pile.may_take_card(card) && f.may_add_card(card) ? new Move(card, f) : null;
   },
 
   is_won: function() {
@@ -41,8 +41,8 @@ gGameClasses.golf2 = {
 
 const GolfPile = {
   __proto__: Pile,
-  isPile: true,
+  is_pile: true,
   // don't allow drag_drop because it's slower than just clicking the cards
-  mayTakeCard: mayTakeSingleCard,
-  mayAddCard: () => false,
+  may_take_card: mayTakeSingleCard,
+  may_add_card: _ => false,
 };

@@ -47,11 +47,11 @@ gGameClasses.freecell = {
 
 const FreeCellPile = {
   __proto__: _FreeCellPile,
-  isPile: true,
+  is_pile: true,
 
-  mayTakeCard: may_take_descending_alt_colour,
+  may_take_card: may_take_descending_alt_colour,
 
-  mayAddCard: function(card) {
+  may_add_card: function(card) {
     if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;
     // Check there are enough cells+spaces to perform the move
     if(card.isLast) return true;

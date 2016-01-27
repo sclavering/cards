@@ -153,10 +153,7 @@ const DivorcePile = {
   __proto__: Pile,
   is_pile: true,
   may_take_card: function(card) {
-    if(!card.faceUp) return false;
-    const cs = card.pile.cards, len = cs.length;
-    for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit_mod13(cs[i + 1], cs[i])) return false;
-    return true;
+    return card.faceUp && check_consecutive_cards(card, is_next_in_suit_mod13);
   },
   may_add_card: function(card) {
     return !this.hasCards || is_next_mod13(card, this.lastCard);
@@ -191,10 +188,6 @@ const SpiderFoundation = {
   is_foundation: true,
   may_take_card: _ => false,
   may_add_card: function(card) {
-    const cs = card.pile.cards, len = cs.length;
-    // The .number test is important for Grounds for Divorce.
-    if(card.index !== len - 13 || card.number !== 13) return false;
-    for(let i = card.index; i !== len - 1; ++i) if(!is_next_in_suit(cs[i + 1], cs[i])) return false;
-    return true;
+    return card.number === 13 && check_count_and_consecutive_cards(card, 13, is_next_in_suit);
   },
 };

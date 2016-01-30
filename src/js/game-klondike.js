@@ -38,6 +38,7 @@ const KlondikeBase = {
   },
 };
 
+
 gGameClasses.klondike1 = {
   __proto__: KlondikeBase,
   helpId: "klondike",

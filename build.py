@@ -37,6 +37,7 @@ JS_FILES = [
     'game-towers.js',
     'game-unionsquare.js',
     'game-whitehead.js',
+    'game-winston.js',
     'game-yukon.js',
 ]
 

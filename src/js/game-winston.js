@@ -21,8 +21,7 @@ gGameClasses.winston = {
 
   autoplay: autoplay_default,
 
-  // xxx this is over-eager - it would autoplay 5C if all 4H and 4D were up, but really if only one 4C is up you might want to put the other 5C up instead.
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
+  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks,
 };
 
 

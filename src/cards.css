@@ -25,6 +25,12 @@ body {
   overflow: hidden;
 }
 
+#games * {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+}
+
 #games > .game {
   width: 100%;
   padding-top: 10px;

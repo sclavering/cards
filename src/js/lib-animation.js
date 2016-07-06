@@ -81,6 +81,8 @@ const g_floating_pile = {
   init: function() {
     this._canvas = document.createElement("canvas");
     this._canvas.style.position = "absolute";
+    // So people don't accidentally right-click and then pick the "View Image" item that's first in Firefox's menu.
+    this._canvas.oncontextmenu = function(ev) { return false; };
     document.body.appendChild(this._canvas);
     this.hide();
     this.context = this._canvas.getContext("2d");

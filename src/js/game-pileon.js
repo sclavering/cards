@@ -62,7 +62,7 @@ const _PileOnPile = {
   _depth: NaN,
   _is_pileup: false,
   is_pile: true,
-  may_take_card: function(card) all_same_number(card.pile.cards.slice(card.index)),
+  may_take_card: card => all_same_number(card.pile.cards.slice(card.index)),
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
   may_add_card: function(card) {

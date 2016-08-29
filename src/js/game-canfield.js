@@ -38,7 +38,7 @@ const CanfieldBase = {
     for(let f of this.foundations) if(f.hasCards) max_nums[f.firstCard.suit] = _effective_num(f.lastCard.number);
     // As in Klondike, if all the black "threes" are up, you can autoplay red "fours", and you can always autoplay "twos".  It's just that the "aces" is instead base_num, etc.
     const autoplayable = { R: Math.min(max_nums.S, max_nums.C) + 1, B: Math.min(max_nums.H, max_nums.D) + 1 };
-    return function(card) _effective_num(card.number) <= autoplayable[card.colour];
+    return card => _effective_num(card.number) <= autoplayable[card.colour];
   },
 };
 

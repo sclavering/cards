@@ -90,3 +90,15 @@ function is_next_and_alt_colour_mod13(a, b) {
 function is_up_or_down_mod13(a, b) {
   return is_next_mod13(a, b) || is_next_mod13(b, a);
 };
+
+
+// Represents one or more cards that are being moved, or are under consideration for moving.
+function CardSequence(source, index) {
+  this.source = source;
+  this.index = index;
+  this.first = source.cards[index];
+};
+
+CardSequence.from_card = function(card) {
+  return card ? new CardSequence(card.pile, card.index) : null;
+};

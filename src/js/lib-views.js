@@ -125,7 +125,8 @@ const _View = {
     return { x: 0, y: 0 };
   },
 
-  card_at_coords: function(x, y) {
+  // Return a CardSequence (or null) for the card at the specified coords within the View's Pile.
+  cseq_at_coords: function(x, y) {
     throw "not implemented";
   },
 
@@ -153,9 +154,9 @@ const View = {
     this._draw_hint_destination(tmp, 0, 0);
   },
 
-  card_at_coords: function(x, y) {
-    return this.pile.lastCard;
-  }
+  cseq_at_coords: function(x, y) {
+    return CardSequence.from_card(this.pile.lastCard);
+  },
 };
 
 const CountedView = {
@@ -222,8 +223,8 @@ const _FanView = {
     return this.pile.cards.length;
   },
 
-  card_at_coords: function(x, y) {
-    return this._get_target_card_at_relative_coords_from_list(x, y, this.pile.cards);
+  cseq_at_coords: function(x, y) {
+    return CardSequence.from_card(this._get_target_card_at_relative_coords_from_list(x, y, this.pile.cards));
   },
 
   // handles only purely-horizontal or purely-vertical fans
@@ -255,8 +256,8 @@ const _SelectiveFanView = {
     return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   },
 
-  card_at_coords: function(x, y) {
-    return this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards));
+  cseq_at_coords: function(x, y) {
+    return CardSequence.from_card(this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards)));
   },
 
   _get_hint_source_rect: function(card) {
@@ -318,9 +319,9 @@ const _SlideView = {
   __proto__: _FlexFanView,
   _fan_x_default_offset: gHSlideOffset,
   _fan_y_default_offset: gVSlideOffset,
-  // Adequate in all the games it's used in
-  card_at_coords: function(x, y) {
-    return this.pile.lastCard;
+  cseq_at_coords: function(x, y) {
+    // This implementation is sufficient for all the games it's currently used in.
+    return CardSequence.from_card(this.pile.lastCard);
   },
 };
 
@@ -471,8 +472,8 @@ const UnionSquareFoundationView = {
 const StockView = {
   __proto__: View,
   _has_counter: true,
-  card_at_coords: function(x, y) {
-    return this.pile.lastCard || this.pile.magicStockStubCard;
+  cseq_at_coords: function(x, y) {
+    return CardSequence.from_card(this.pile.lastCard || this.pile.magicStockStubCard);
   },
 };
 

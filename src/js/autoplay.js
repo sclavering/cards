@@ -4,7 +4,7 @@ function autoplay_default() {
   for(let p of this.hint_and_autoplay_source_piles) {
     let c = p.lastCard;
     if(!c || !predicate(c)) continue;
-    let act = this.foundation_action_for(c);
+    let act = this.foundation_action_for(CardSequence.from_card(c));
     if(act) return act;
   }
   return null;

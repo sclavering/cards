@@ -144,7 +144,7 @@ const Layout = {
   _ey0: 0,
   _tx: 0, // coords of the mouse relative to g_floating_pile
   _ty: 0,
-  _card_for_dragging: null, // a Card, from when mousedown occurs on one, until mouseup occurs thereafter
+  _cseq_for_dragging: null, // a CardSequence, from when mousedown occurs on one, until mouseup occurs thereafter
   _is_drag_threshold_exceeded: false, // have we exceeded the small movement threshold before we show a drag as in progress?
   _current_touch_id: null, // a Touch.identifier value, when a touch-based drag is in progress
 
@@ -163,10 +163,10 @@ const Layout = {
   },
 
   _start_drag: function(event_or_touch) {
-    const card = this._target_card(event_or_touch);
-    if(!card || !card.pile.may_take_card(card)) return false;
+    const cseq = this._target_cseq(event_or_touch);
+    if(!cseq || !cseq.source.may_take_card(cseq.first)) return false;
     interrupt();
-    this._card_for_dragging = card;
+    this._cseq_for_dragging = cseq;
     this._ex0 = event_or_touch.pageX;
     this._ey0 = event_or_touch.pageY;
     return true;
@@ -180,7 +180,7 @@ const Layout = {
     // Ignore very tiny movements of the mouse during a click (otherwise clicking without dragging is rather difficult).
     const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    g_floating_pile.start_animation_or_drag(this._card_for_dragging);
+    g_floating_pile.start_animation_or_drag(this._cseq_for_dragging.first);
     const rect = g_floating_pile.bounding_rect();
     this._tx = ex0 - rect.x;
     this._ty = ey0 - rect.y;
@@ -195,18 +195,18 @@ const Layout = {
 
   cancel_drag: function() {
     if(!this._is_drag_threshold_exceeded) return;
-    const card = this._card_for_dragging;
+    const cseq = this._cseq_for_dragging;
     this._reset_handlers();
     g_floating_pile.hide();
-    card.pile.view.update();
+    cseq.source.view.update();
   },
 
   _onmouseup: function(e) {
     if(this._is_drag_threshold_exceeded) {
-      const card = this._card_for_dragging;
-      if(!this._attempt_drop(card)) {
+      const cseq = this._cseq_for_dragging;
+      if(!this._attempt_drop(cseq)) {
         g_floating_pile.hide();
-        card.pile.view.update();
+        cseq.source.view.update();
       }
     }
     this._reset_handlers();
@@ -218,17 +218,17 @@ const Layout = {
     this._onmouseup(ev);
   },
 
-  _attempt_drop: function(card) {
-    if(!card) return false;
+  _attempt_drop: function(cseq) {
+    if(!cseq) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
     for(let target of gCurrentGame.dragDropTargets) {
-      if(target === card.pile) continue;
+      if(target === cseq.source) continue;
       let tr = target.view.pixel_rect();
       // skip if we don't overlap the target at all
       if(fr.right < tr.left || fr.left > tr.right) continue;
       if(fr.bottom < tr.top || fr.top > tr.bottom) continue;
-      let act = target.action_for_drop(card);
+      let act = target.action_for_drop(cseq);
       if(!act) continue;
       if(act instanceof ErrorMsg) {
         act.show();
@@ -249,17 +249,17 @@ const Layout = {
   _onclick: function(ev) {
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
     if(ev.button || ev.ctrlKey) return true;
-    const card = this._target_card(ev);
+    const cseq = this._target_cseq(ev);
     interrupt();
-    if(card) doo(card.pile.action_for_click(card));
+    if(cseq) doo(cseq.source.action_for_click(cseq));
     this._reset_handlers();
     return false;
   },
 
   _oncontextmenu: function(e) {
-    const card = this._target_card(e);
+    const cseq = this._target_cseq(e);
     interrupt();
-    if(card) doo(gCurrentGame.foundation_action_for(card));
+    if(cseq) doo(gCurrentGame.foundation_action_for(cseq));
     this._reset_handlers();
     e.preventDefault();
     return false;
@@ -267,7 +267,7 @@ const Layout = {
 
   _reset_handlers: function(e) {
     this._is_drag_threshold_exceeded = false;
-    this._card_for_dragging = null;
+    this._cseq_for_dragging = null;
     this._current_touch_id = null;
     // The onclick/oncontextmenu handlers are bound on this._node since we don't want to interfere with clicking in the sidebar ui etc.
     this._node.oncontextmenu = this._bound_oncontextmenu;
@@ -288,12 +288,12 @@ const Layout = {
     return null;
   },
 
-  _target_card: function(event_or_touch) {
+  _target_cseq: function(event_or_touch) {
     let t = event_or_touch.target;
     while(t && !t.pileViewObj) t = t.parentNode;
     if(!t || !t.pileViewObj) return null;
     const view = t.pileViewObj, rect = view.pixel_rect();
-    return view.card_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
+    return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
   },
 
 

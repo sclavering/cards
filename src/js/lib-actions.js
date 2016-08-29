@@ -11,7 +11,7 @@ redo()
   Undo/redo the effects of the action.  Must *not* use animation.
   If redo() is omitted, perform() is used instead, and must not use animation.
 
-Piles' .action_for_drop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
+Piles' .action_for_drop(cseq) normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
 function DealToPile(from, to) {

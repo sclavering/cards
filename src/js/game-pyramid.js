@@ -122,7 +122,8 @@ const BasePyramidPile = {
 
 const PyramidPile = {
   __proto__: BasePyramidPile,
-  action_for_drop: function(card) {
+  action_for_drop: function(cseq) {
+    const card = cseq.first;
     const c = this.firstCard;
     if(!c || card.number + c.number !== 13) return null;
     const l = this.leftChild, lc = l && l.firstCard;
@@ -137,7 +138,8 @@ const PyramidFoundation = {
   __proto__: Pile,
   is_foundation: true,
   may_take_card: _ => false,
-  action_for_drop: function(card) {
+  action_for_drop: function(cseq) {
+    const card = cseq.first;
     return card.number === 13 ? new RemovePair(card, null) : null;
   },
   may_add_card: _ => false,
@@ -146,7 +148,8 @@ const PyramidFoundation = {
 const PyramidWaste = {
   __proto__: Waste,
   is_drop_target: true,
-  action_for_drop: function(card) {
+  action_for_drop: function(cseq) {
+    const card = cseq.first;
     const c = this.lastCard;
     return c && card.number + c.number === 13 ? new RemovePair(card, c) : null;
   }

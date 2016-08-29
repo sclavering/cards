@@ -41,8 +41,9 @@ const Pile = {
     return card.pile === this ? false : this.may_add_card(card);
   },
 
-  // Should return an Action/ErrorMsg appropriate for the card being dropped on the pile.
-  action_for_drop: function(card) {
+  // Should return an Action/ErrorMsg appropriate for the CardSequence being dropped on the pile.
+  action_for_drop: function(cseq) {
+    const card = cseq.first;
     return this.may_add_card_maybe_to_self(card) ? new Move(card, this) : null;
   },
 
@@ -98,8 +99,9 @@ const Pile = {
     if(!do_not_update_view) this.view.update();
   },
 
-  action_for_click: function(card) {
-    return card ? this.owning_game.best_action_for(card) : null;
+  // Should return an Action/ErrorMsg appropriate for the CardSequence being clicked on.
+  action_for_click: function(cseq) {
+    return cseq ? this.owning_game.best_action_for(cseq.first) : null;
   },
 
   // Return an array of cards to consider moving when computing hints.
@@ -134,11 +136,11 @@ const _Stock = {
     this.add_cards(card);
   },
 
-  action_for_click: function(card) {
+  action_for_click: function(cseq) {
     return this.deal();
   },
 
-  // The Layout mouse-handling code wants a Card as the target of the event. So we provide a stub object that just lets it get from there to the pile to call action_for_click.
+  // The Layout mouse-handling code wants a Card as the target of the event. So we provide a stub object that just lets it get from there to the pile to call .action_for_click().
   _stubCard: null,
   get magicStockStubCard() {
     return this._stubCard || (this._stubCard = { pile: this });
@@ -285,7 +287,8 @@ const FanPile = {
 const _FreeCellPile = {
   __proto__: Pile,
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
-  action_for_drop: function(card) {
+  action_for_drop: function(cseq) {
+    const card = cseq.first;
     const may = this.may_add_card_maybe_to_self(card);
     if(may) return new Move(card, this);
     return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;

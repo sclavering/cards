@@ -261,8 +261,9 @@ const Game = {
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
-  foundation_action_for: function(card) {
-    if(!card.pile.may_take_card(card)) return null;
+  foundation_action_for: function(cseq) {
+    const card = cseq.first;
+    if(!cseq.source.may_take_card(card)) return null;
     const f = this.foundation_destination_for(card);
     return f ? new Move(card, f) : null;
   },

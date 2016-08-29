@@ -14,7 +14,7 @@ gGameClasses.doublesol = {
 
   init_cards: () => make_cards(2),
 
-  best_destination_for: find_destination__nearest_legal_pile,
+  best_destination_for: best_destination_for__nearest_legal_pile,
 
   autoplay: autoplay_default,
 

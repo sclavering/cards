@@ -9,7 +9,7 @@ gGameClasses.towers = {
 
   layoutTemplate: '#<  c c c c    f f f f  >.#<   p p p p p p p p p p   >.',
 
-  best_destination_for: find_destination__nearest_legal_pile_or_cell,
+  best_destination_for: best_destination_for__nearest_legal_pile_or_cell,
 
   autoplay: autoplay_default,
 

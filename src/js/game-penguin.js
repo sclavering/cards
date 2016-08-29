@@ -18,7 +18,7 @@ gGameClasses.penguin = {
     for(let i = 0; i < 7; ++i) ix = this._deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
   },
 
-  best_destination_for: find_destination__nearest_legal_pile_or_cell,
+  best_destination_for: best_destination_for__nearest_legal_pile_or_cell,
 
   autoplay: autoplay_default,
 

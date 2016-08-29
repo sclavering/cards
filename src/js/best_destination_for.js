@@ -1,6 +1,6 @@
 // Standard implementations of .best_destination_for(card)
 
-function find_destination__nearest_legal_pile_preferring_nonempty(card) {
+function best_destination_for__nearest_legal_pile_preferring_nonempty(card) {
   const ps = card.pile.is_pile ? card.pile.surrounding() : this.piles;
   let maybe = null;
   for(let p of ps) {
@@ -11,13 +11,13 @@ function find_destination__nearest_legal_pile_preferring_nonempty(card) {
   return maybe;
 }
 
-function find_destination__nearest_legal_pile(card) {
+function best_destination_for__nearest_legal_pile(card) {
   const ps = card.pile.is_pile ? card.pile.surrounding() : this.piles;
   for(let p of ps) if(p.may_add_card_maybe_to_self(card)) return p;
   return null;
 }
 
-function find_destination__nearest_legal_pile_or_cell(card) {
-  const p = find_destination__nearest_legal_pile.call(this, card);
+function best_destination_for__nearest_legal_pile_or_cell(card) {
+  const p = best_destination_for__nearest_legal_pile.call(this, card);
   return p || (card.isLast ? findEmpty(this.cells) : null);;
 }

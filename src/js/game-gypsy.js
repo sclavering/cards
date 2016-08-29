@@ -11,7 +11,7 @@ const GypsyBase = {
 
   helpId: "gypsy",
 
-  best_destination_for: find_destination__nearest_legal_pile_preferring_nonempty,
+  best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
   autoplay: autoplay_default,
 

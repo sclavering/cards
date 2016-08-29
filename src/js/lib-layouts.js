@@ -131,7 +131,7 @@ const Layout = {
     }
     // sanity check
     if(box !== container) throw "Layout.init(): layout had unclosed box";
-    this.viewsNeedingUpdateOnResize = [for(v of this.views) if(v.needs_update_on_resize) v];
+    this.viewsNeedingUpdateOnResize = this.views.filter(v => v.needs_update_on_resize);
     return letters;
   },
 

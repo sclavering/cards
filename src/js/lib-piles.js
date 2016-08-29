@@ -316,7 +316,7 @@ const WaspPile = {
     return !this.hasCards || is_next_in_suit(card, this.lastCard);
   },
   hint_sources: function() {
-    return [for(c of this.cards) if(c.faceUp) c];
+    return this.cards.filter(c => c.faceUp);
   },
 };
 

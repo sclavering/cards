@@ -87,9 +87,9 @@ const Game = {
 
     // Convert to flattened lists, ordered the way the layout was created.
     this._pilesToCreateLetters = layoutletters;
-    this._pilesToCreate = [for(l of layoutletters) impls[l]];
-    this._cardsToDealDown = [for(l of layoutletters) downs[l].shift()];
-    this._cardsToDealUp = [for(l of layoutletters) ups[l].shift()];
+    this._pilesToCreate = layoutletters.map(l => impls[l]);
+    this._cardsToDealDown = layoutletters.map(l => downs[l].shift());
+    this._cardsToDealUp = layoutletters.map(l => ups[l].shift());
   },
 
 
@@ -98,7 +98,7 @@ const Game = {
     const views = this.layout.views;
     const impls = this._pilesToCreate;
     const letters = this._pilesToCreateLetters;
-    const all = this.allpiles = [for(impl of impls) createPile(impl)];
+    const all = this.allpiles = impls.map(impl => createPile(impl));
     const bytype = {};
     for(let [i, p] of all.entries()) {
       p.view = views[i];
@@ -112,17 +112,17 @@ const Game = {
 
   _create_pile_arrays: function() {
     const all = this.allpiles;
-    this.dragDropTargets = [for(f of all) if(f.is_drop_target) f];
-    this.piles = [for(p of all) if(p.is_pile) p];
-    this.cells = [for(p of all) if(p.is_cell) p];
-    this.reserves = [for(p of all) if(p.is_reserve) p];
-    this.foundations = [for(p of all) if(p.is_foundation) p];
+    this.dragDropTargets = all.filter(p => p.is_drop_target);
+    this.piles = all.filter(p => p.is_pile);
+    this.cells = all.filter(p => p.is_cell);
+    this.reserves = all.filter(p => p.is_reserve);
+    this.foundations = all.filter(p => p.is_foundation);
     for(let i in this.foundations) this.foundations[i].index = i;
-    this.wastes = [for(p of all) if(p.is_waste) p];
+    this.wastes = all.filter(p => p.is_waste);
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
-    this.stock = [for(p of all) if(p.is_stock) p][0] || null;
+    this.stock = all.filter(p => p.is_stock)[0] || null;
     this.hint_and_autoplay_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
   },
 
@@ -140,12 +140,12 @@ const Game = {
     let cs;
     // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for "Restart" to work properly (since it works by starting a new game with the same deal-order, and the new game instance has its own separate card objects).
     if(optional_order_to_deal) {
-      cs = [for(ix of optional_order_to_deal) this.allcards[ix] || null];
+      cs = optional_order_to_deal.map(ix => this.allcards[ix] || null);
       this.order_cards_dealt = optional_order_to_deal;
     } else {
       cs = this.allcards.slice();
       do { shuffle_in_place(cs) } while(this.is_shuffle_impossible(cs));
-      this.order_cards_dealt = [for(c of cs) c ? c.__allcards_index : null];
+      this.order_cards_dealt = cs.map(c => c ? c.__allcards_index : null);
     }
     this.deal(cs);
   },

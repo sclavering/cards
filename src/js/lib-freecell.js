@@ -7,8 +7,8 @@ const FreeCellGame = {
     const dest = this.best_destination_for(card);
     if(!dest) return null;
     if(card.isLast) return new Move(card, dest);
-    const spaces = [for(p of this.piles) if(p !== dest && !p.hasCards) p];
-    const cells = [for(c of this.cells) if(!c.hasCards) c];
+    const spaces = this.piles.filter(p => p !== dest && !p.hasCards);
+    const cells = this.cells.filter(c => !c.hasCards);
     return new FreeCellMoveAction(card, dest, cells, spaces);
   },
 

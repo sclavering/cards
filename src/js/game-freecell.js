@@ -15,7 +15,7 @@ gGameClasses.freecell = {
 
   _deal_for_animation_testing: function(card_indexes_list, num_cells_to_block, num_piles_to_block) {
     for(let [i, ixs] of card_indexes_list.entries()) {
-      let cs = [for(ix of ixs) this.allcards[ix]];
+      let cs = ixs.map(ix => this.allcards[ix]);
       this._deal_cards(cs, 0, this.piles[i], 0, cs.length);
     }
     const remaining = this.allcards.filter(c => !c.pile);

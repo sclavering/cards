@@ -40,6 +40,6 @@ const YukonPile = {
   may_take_card: card => card.faceUp,
   may_add_card: mayAddToGypsyPile,
   hint_sources: function() {
-    return [for(c of this.cards) if(c.faceUp) c];
+    return this.cards.filter(c => c.faceUp);
   },
 };

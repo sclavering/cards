@@ -28,7 +28,12 @@ function make_cards(repeat, suits, numbers) {
   if(!repeat) repeat = 1;
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  return [for(suit of suits) for(_ of irange(repeat)) for(num of numbers) new Card(num, suit)];
+  const rv = new Array();
+  for(let suit of suits)
+    for(let i = 0; i < repeat; ++i)
+      for(let num of numbers)
+        rv.push(new Card(num, suit));
+  return rv;
 }
 
 

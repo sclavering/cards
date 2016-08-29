@@ -3,7 +3,9 @@ function* irange(N) {
 }
 
 function repeat(item, number) {
-  return [for(_ of irange(number)) item];
+  const rv = new Array(number);
+  for(let i = 0; i < number; ++i) rv[i] = item;
+  return rv;
 }
 
 // Make a linked-list of the array items, using the given link field names

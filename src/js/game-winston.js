@@ -29,7 +29,7 @@ const WinstonStock = {
   __proto__: _Stock,
   deal: function() {
     const pred = p => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles.filter(pred)) : null;
+    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
   },
 };
 

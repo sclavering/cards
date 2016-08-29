@@ -14,50 +14,52 @@ redo()
 Piles' .action_for_drop() normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
-function DealToPile(pile) {
-  this.to = pile;
+function DealToPile(from, to) {
+  this.from = from;
+  this.to = to;
 };
 DealToPile.prototype = {
   perform: function() {
-    const s = gCurrentGame.stock;
-    s.deal_card_to(this.to);
+    this.from.deal_card_to(this.to);
   },
   undo: function() {
-    const s = gCurrentGame.stock;
-    s.undeal_card_from(this.to);
+    this.from.undeal_card_from(this.to);
   },
 };
 
 
-function RefillStock() {};
+function RefillStock(stock, waste) {
+  this.stock = stock;
+  this.waste = waste;
+};
 RefillStock.prototype = {
   perform: function() {
-    const s = gCurrentGame.stock, w = gCurrentGame.waste;
-    while(w.hasCards) s.undeal_card_from(w);
+    while(this.waste.hasCards) this.stock.undeal_card_from(this.waste);
   },
   undo: function() {
-    const s = gCurrentGame.stock, w = gCurrentGame.waste;
-    while(s.hasCards) s.deal_card_to(w);
+    while(this.stock.hasCards) this.stock.deal_card_to(this.waste);
   },
 };
 
 
-function Deal3Action() {};
-Deal3Action.prototype = {
+function DealThree(stock, waste) {
+  this.stock = stock;
+  this.waste = waste;
+};
+DealThree.prototype = {
   perform: function() {
-    const s = gCurrentGame.stock, w = gCurrentGame.waste;
-    this.old_deal3v = w.deal3v;
-    this.old_deal3t = w.deal3t;
-    const cs = s.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
-    this.numMoved = w.deal3v = num;
-    w.deal3t = w.cards.length + num;
-    for(var i = 0; i !== num; ++i) s.deal_card_to(w);
+    this.old_deal3v = this.waste.deal3v;
+    this.old_deal3t = this.waste.deal3t;
+    const cs = this.stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
+    this.numMoved = this.waste.deal3v = num;
+    this.waste.deal3t = this.waste.cards.length + num;
+    for(var i = 0; i !== num; ++i) this.stock.deal_card_to(this.waste);
   },
   undo: function() {
-    const s = gCurrentGame.stock, w = gCurrentGame.waste, num = this.numMoved;
-    w.deal3v = this.old_deal3v;
-    w.deal3t = this.old_deal3t;
-    for(var i = 0; i !== num; ++i) s.undeal_card_from(w);
+    const num = this.numMoved;
+    this.waste.deal3v = this.old_deal3v;
+    this.waste.deal3t = this.old_deal3t;
+    for(var i = 0; i !== num; ++i) this.stock.undeal_card_from(this.waste);
   },
 };
 
@@ -107,8 +109,9 @@ function RemovePair(card1, card2) {
 };
 RemovePair.prototype = {
   perform: function() {
-    gCurrentGame.foundation.add_cards(this.c1);
-    if(this.c2) gCurrentGame.foundation.add_cards(this.c2);
+    const f = this.p1.owning_game.foundation;
+    f.add_cards(this.c1);
+    if(this.c2) f.add_cards(this.c2);
   },
   undo: function(undo) {
     if(this.c2) this.p2.add_cards(this.c2);

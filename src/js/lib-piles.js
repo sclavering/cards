@@ -99,7 +99,7 @@ const Pile = {
   },
 
   action_for_click: function(card) {
-    return card ? gCurrentGame.best_action_for(card) : null;
+    return card ? this.owning_game.best_action_for(card) : null;
   },
 
   // Return an array of cards to consider moving when computing hints.
@@ -148,53 +148,53 @@ const _Stock = {
 const StockDealToWaste = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(gCurrentGame.waste) : null;
+    return this.hasCards ? new DealToPile(this, this.owning_game.waste) : null;
   }
 };
 
 const StockDealToWasteOrRefill = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(gCurrentGame.waste) : new RefillStock();
+    return this.hasCards ? new DealToPile(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 const Deal3OrRefillStock = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new Deal3Action() : new RefillStock();
+    return this.hasCards ? new DealThree(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 const StockDealToFoundation = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToPile(gCurrentGame.foundation) : null;
+    return this.hasCards ? new DealToPile(this, this.owning_game.foundation) : null;
   }
 };
 
 const StockDealToPiles = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles) : null;
+    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles) : null;
   },
   get counter() {
-    return Math.ceil(this.cards.length / gCurrentGame.piles.length);
+    return Math.ceil(this.cards.length / this.owning_game.piles.length);
   }
 };
 
 const StockDealToPilesIfNoneAreEmpty = {
   __proto__: StockDealToPiles,
   deal: function() {
-    if(!this.hasCards || gCurrentGame.piles.some(p => !p.hasCards)) return null;
-    return new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles);
+    if(!this.hasCards || this.owning_game.piles.some(p => !p.hasCards)) return null;
+    return new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles);
   }
 };
 
 const StockDealToNonemptyPiles = {
   __proto__: _Stock,
   deal: function() {
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, gCurrentGame.piles.filter(p => p.hasCards)) : null;
+    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(p => p.hasCards)) : null;
   },
 };
 

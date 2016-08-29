@@ -95,15 +95,13 @@ const Game = {
 
 
   _create_piles: function() {
-    const views = this.layout.views;
-    const impls = this._pilesToCreate;
-    const letters = this._pilesToCreateLetters;
-    const all = this.allpiles = impls.map(impl => createPile(impl));
+    this.allpiles = this._pilesToCreate.map(impl => createPile(impl));
     const bytype = {};
-    for(let [i, p] of all.entries()) {
-      p.view = views[i];
+    for(let [i, p] of this.allpiles.entries()) {
+      p.owning_game = this;
+      p.view = this.layout.views[i];
       p.view.attach(p);
-      var l = letters[i];
+      let l = this._pilesToCreateLetters[i];
       if(!bytype[l]) bytype[l] = [];
       bytype[l].push(p);
     }

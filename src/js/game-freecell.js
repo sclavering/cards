@@ -55,9 +55,9 @@ const FreeCellPile = {
     if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;
     // Check there are enough cells+spaces to perform the move
     if(card.isLast) return true;
-    let spaces = gCurrentGame.countEmptyPiles(this, card.pile);
+    let spaces = this.owning_game.empty_pile_count(this, card.pile);
     if(spaces) spaces = spaces * (spaces + 1) / 2;
-    const num_can_move = (gCurrentGame.numEmptyCells + 1) * (spaces + 1);
+    const num_can_move = (this.owning_game.empty_cell_count() + 1) * (spaces + 1);
     const num_to_move = card.pile.cards.length - card.index;
     return num_to_move <= num_can_move ? true : 0;
   }

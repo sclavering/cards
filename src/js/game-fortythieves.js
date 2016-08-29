@@ -32,7 +32,7 @@ const FortyThievesPile = {
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
     if(card.isLast) return true;
-    let num_can_move = gCurrentGame.countEmptyPiles(this, card.pile);
+    let num_can_move = this.owning_game.empty_pile_count(this, card.pile);
     if(num_can_move) num_can_move = num_can_move * (num_can_move + 1) / 2;
     ++num_can_move;
     const num_to_move = card.pile.cards.length - card.index;

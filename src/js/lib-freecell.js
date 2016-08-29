@@ -12,14 +12,14 @@ const FreeCellGame = {
     return new FreeCellMoveAction(card, dest, cells, spaces);
   },
 
-  get numEmptyCells() {
+  empty_cell_count: function() {
     let rv = 0;
     for(let c of this.cells) if(!c.hasCards) ++rv;
     return rv;
   },
 
   // Args are piles which should not be counted even if empty (typically the source and destination of a card being moved).
-  countEmptyPiles: function(ignore1, ignore2) {
+  empty_pile_count: function(ignore1, ignore2) {
     let rv = 0;
     for(let p of this.piles) if(p !== ignore1 && p !== ignore2 && !p.hasCards) ++rv;
     return rv;

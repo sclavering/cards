@@ -26,21 +26,21 @@ class FreeCellRelatedGame extends Game {
 };
 
 
-function FreeCellMoveAction(card, destination, cells, spaces) {
-  this._anim = prepare_freecell_move_animation(card, destination, cells, spaces);
-  this.card = card;
-  this.source = card.pile;
-  this.destination = destination;
-}
-FreeCellMoveAction.prototype = {
-  perform: function() {
+class FreeCellMoveAction {
+  constructor(card, destination, cells, spaces) {
+    this._anim = prepare_freecell_move_animation(card, destination, cells, spaces);
+    this.card = card;
+    this.source = card.pile;
+    this.destination = destination;
+  }
+  perform() {
     this.destination.add_cards(this.card, true); // Don't update view.
     return this._anim;
-  },
-  undo: function() {
+  }
+  undo() {
     this.source.add_cards(this.card);
-  },
-  redo: function() {
+  }
+  redo() {
     this.destination.add_cards(this.card);
-  },
+  }
 };

@@ -1,20 +1,20 @@
-gGameClasses.regiment = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    piles: [16, RegimentPile, 0, 1],
-    reserves: [8, Reserve, 10, 1],
-    ace_foundations: [4, RegimentAceFoundation, 0, 0],
-    king_foundations: [4, RegimentKingFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class RegimentGame extends Game {
+  static create_layout() {
     return new Layout("#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.", { p: RegimentSlideView, r: RegimentSlideView, a: RegimentSlideView, k: RegimentSlideView });
-  },
+  }
 
-  init_cards: () => make_cards(2),
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      piles: [16, RegimentPile, 0, 1],
+      reserves: [8, Reserve, 10, 1],
+      ace_foundations: [4, RegimentAceFoundation, 0, 0],
+      king_foundations: [4, RegimentKingFoundation, 0, 0],
+    };
+  }
 
-  init: function() {
+  init() {
     this.foundations = [].concat(this.ace_foundations, this.king_foundations);
     const ps = this.piles, rs = this.reserves;
     for(let i = 0; i !== 8; i++) rs[i].col = i;
@@ -23,17 +23,17 @@ gGameClasses.regiment = {
       p.col = i % 8;
       p.reserve = rs[p.col];
     }
-  },
+  }
 
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     const ps = cseq.source.is_pile ? cseq.source.following() : this.piles, num = ps.length;
     for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
 
     if(cseq.source.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
     return null;
-  },
+  }
 
-  autoplay: function() {
+  autoplay() {
     for(let pile of this.piles)
       if(!pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
@@ -45,8 +45,9 @@ gGameClasses.regiment = {
     const autoplayable_suits = { S: false, H: false, D: false, C: false };
     for(let k in autoplayable_suits) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
     return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
-  },
+  }
 };
+gGameClasses.regiment = RegimentGame;
 
 
 class RegimentPile extends _Pile {

@@ -1,37 +1,35 @@
-gGameClasses.maze = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    piles: [54, MazePile, 0, 1],
-  }),
-
-  static_create_layout() {
+class MazeGame extends Game {
+  static create_layout() {
     return new Layout("#<  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p    >.", { p: View });
-  },
+  }
 
-  init_cards: () => {
-    const cs = make_cards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings
-    cs.push(null, null, null, null, null, null); // Add 6 spaces
-    return cs;
-  },
+  constructor() {
+    super();
+    this.all_cards = make_cards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings
+    this.all_cards.push(null, null, null, null, null, null); // Add 6 spaces
+    this.pile_details = {
+      piles: [54, MazePile, 0, 1],
+    };
+    this.show_hints_to_empty_piles = true;
+  }
 
-  init: function() {
+  init() {
     // prev/next are not usually circular
     const ps = this.piles;
     ps[53].next = ps[0];
     ps[0].prev = ps[53];
-  },
+  }
 
-  deal: function(cards) {
+  deal(cards) {
     this._deal_cards_with_nulls_for_spaces(cards);
-  },
+  }
 
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     for(let p of cseq.source.following()) if(p.may_add_card(cseq.first)) return p;
     return null;
-  },
+  }
 
-  is_won: function() {
+  is_won() {
     const first = this.piles.find(x => x.hasCards);
     let p = first;
     do {
@@ -40,10 +38,9 @@ gGameClasses.maze = {
       p = next;
     } while(p !== first);
     return true;
-  },
-
-  show_hints_to_empty_piles: true,
+  }
 };
+gGameClasses.maze = MazeGame;
 
 
 class MazePile extends _Pile {

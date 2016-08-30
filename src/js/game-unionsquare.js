@@ -1,28 +1,31 @@
-gGameClasses.unionsquare = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    stocks: [1, StockDealToWaste, 0, 0],
-    wastes: [1, Waste, 0, 0],
-    piles: [16, UnionSquarePile, 0, 1],
-    foundations: [4, UnionSquareFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class UnionSquareGame extends Game {
+  static create_layout() {
     return new Layout("#<   [sw]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.", { p: UnionSquarePileView, f: UnionSquareFoundationView });
-  },
+  }
 
-  init_cards: () => make_cards(2),
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      stocks: [1, StockDealToWaste, 0, 0],
+      wastes: [1, Waste, 0, 0],
+      piles: [16, UnionSquarePile, 0, 1],
+      foundations: [4, UnionSquareFoundation, 0, 0],
+    };
+  }
 
-  best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+  }
 
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A.
-  autoplay: function() {
+  autoplay() {
     const autoplayable_suits = { S: false, H: false, D: false, C: false };
     for(let f of this.foundations) if(f.cards.length >= 12) autoplayable_suits[f.cards[0].suit] = true;
     return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
-  },
+  }
 };
+gGameClasses.unionsquare = UnionSquareGame;
 
 
 class UnionSquarePile extends _Pile {

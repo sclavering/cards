@@ -1,8 +1,19 @@
-gGameClasses.freecell = {
-  __proto__: FreeCellGame,
+class FreeCellGame extends FreeCellRelatedGame {
+  static create_layout() {
+    return new Layout("#<  c c c c    f f f f  >.#<  p p p p p p p p  >.", { p: FanDownView, f: View, c: View });
+  }
+
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [8, FreeCellPile, 0, [7, 7, 7, 7, 6, 6, 6, 6]],
+      foundations: [4, KlondikeFoundation, 0, 0],
+      cells: [4, Cell, 0, 0],
+    };
+  }
 
   /* Uncomment some of this code to set up the cards for easy testing of freecell animations.
-  deal: function() {
+  deal() {
     // Move the 6H onto the 7C to test a medium move.
     // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 3, 5);
     // Move the 8H onto the 9C to test a no-cells complex move.
@@ -11,40 +22,31 @@ gGameClasses.freecell = {
     // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 3, 4);
     // Move the JS into a space to test another complex move.
     // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 2, 4);
-  },
+  }
 
-  _deal_for_animation_testing: function(card_indexes_list, num_cells_to_block, num_piles_to_block) {
+  _deal_for_animation_testing(card_indexes_list, num_cells_to_block, num_piles_to_block) {
     for(let [i, ixs] of card_indexes_list.entries()) {
-      let cs = ixs.map(ix => this.allcards[ix]);
+      let cs = ixs.map(ix => this.all_cards[ix]);
       this._deal_cards(cs, 0, this.piles[i], 0, cs.length);
     }
-    const remaining = this.allcards.filter(c => !c.pile);
+    const remaining = this.all_cards.filter(c => !c.pile);
     let to_block = this.cells.slice(0, num_cells_to_block);
     if(num_piles_to_block) to_block = to_block.concat(this.piles.slice(-num_piles_to_block));
     for(let p of to_block) this._deal_cards([remaining.pop()], 0, p, 0, 1);
     this._deal_cards(remaining, 0, this.piles.slice(-1)[0], 0, remaining.length);
-  },
+  }
   // */
 
-  pile_details: () => ({
-    piles: [8, FreeCellPile, 0, [7, 7, 7, 7, 6, 6, 6, 6]],
-    foundations: [4, KlondikeFoundation, 0, 0],
-    cells: [4, Cell, 0, 0],
-  }),
-
-  static_create_layout() {
-    return new Layout("#<  c c c c    f f f f  >.#<  p p p p p p p p  >.", { p: FanDownView, f: View, c: View });
-  },
-
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     const p = best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
     return p || (cseq.first.isLast ? findEmpty(this.cells) : null);
-  },
+  }
 
-  autoplay: function() {
+  autoplay() {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
-  },
+  }
 };
+gGameClasses.freecell = FreeCellGame;
 
 
 class FreeCellPile extends _FreeCellPile {

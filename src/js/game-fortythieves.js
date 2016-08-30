@@ -1,27 +1,29 @@
-gGameClasses.fortythieves = {
-  __proto__: FreeCellGame,
-
-  foundation_cluster_count: 4,
-
-  pile_details: () => ({
-    stocks: [1, StockDealToWaste, 0, 0],
-    wastes: [1, Waste, 0, 1],
-    piles: [10, FortyThievesPile, 0, 4],
-    foundations: [8, KlondikeFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class FortyThievesGame extends FreeCellRelatedGame {
+  static create_layout() {
     return new Layout("#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.", { s: StockView, w: FanRightView, p: FanDownView, f: View });
-  },
+  }
 
-  init_cards: () => make_cards(2),
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      stocks: [1, StockDealToWaste, 0, 0],
+      wastes: [1, Waste, 0, 1],
+      piles: [10, FortyThievesPile, 0, 4],
+      foundations: [8, KlondikeFoundation, 0, 0],
+    };
+    this.foundation_cluster_count = 4;
+  }
 
-  best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+  }
 
-  autoplay: function() {
+  autoplay() {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
-  },
+  }
 };
+gGameClasses.fortythieves = FortyThievesGame;
 
 
 class FortyThievesPile extends _Pile {

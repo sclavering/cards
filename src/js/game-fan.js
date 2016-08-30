@@ -15,19 +15,20 @@ class FanLayout extends Layout {
 };
 
 
-gGameClasses.fan = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    piles: [18, FanPile, 0, 3], // last pile gets just 1
-    foundations: [4, KlondikeFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class FanGame extends Game {
+  static create_layout() {
     return new FanLayout(5, "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.", { p: FanRightView });
-  },
+  }
 
-  is_shuffle_impossible: function(cards) {
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [18, FanPile, 0, 3], // last pile gets just 1
+      foundations: [4, KlondikeFoundation, 0, 0],
+    };
+  }
+
+  is_shuffle_impossible(cards) {
     for(let i = 0; i < 51; i += 3) {
       // These will form a pile c,d,e with c at the bottom.
       let c = cards[i], d = cards[i + 1], e = cards[i + 2];
@@ -37,35 +38,40 @@ gGameClasses.fan = {
       if(c.suit === d.suit && is_next_in_suit(e, c) && d.number < e.number) return true;
     }
     return false;
-  },
+  }
 
-  best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+  }
 
-  autoplay: function() {
+  autoplay() {
     return this.autoplay_using_predicate(_ => true);
-  },
+  }
 };
+gGameClasses.fan = FanGame;
 
 
-gGameClasses.doublefan = {
-  __proto__: Game,
-
-  init_cards: () => make_cards(2),
-
-  foundation_cluster_count: 4,
-
-  pile_details: () => ({
-    piles: [24, FanPile, 0, 5],
-    foundations: [8, KlondikeFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class DoubleFanGame extends Game {
+  static create_layout() {
     return new FanLayout(6, "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.", { p: FanRightView });
-  },
+  }
 
-  best_destination_for: best_destination_for__nearest_legal_pile,
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      piles: [24, FanPile, 0, 5],
+      foundations: [8, KlondikeFoundation, 0, 0],
+    };
+    this.foundation_cluster_count = 4;
+  }
 
-  autoplay: function() {
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile.call(this, cseq);
+  }
+
+  autoplay() {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
-  },
+  }
 };
+gGameClasses.doublefan = DoubleFanGame;

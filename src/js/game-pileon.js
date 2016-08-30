@@ -1,69 +1,83 @@
-const PileOnBase = {
-  __proto__: Game,
-
-  best_destination_for: function(cseq) {
+class _PileOnGame extends Game {
+  best_destination_for(cseq) {
     const card = cseq.first;
     const ps = card.pile.surrounding();
     return find_pile_by_top_card(ps, top => top.number === card.number && top.pile.may_add_card(card))
         // Redundant with the above for Pile On, but not for Pile Up.
         || ps.find(p => p.hasCards && p.may_add_card(card))
         || findEmpty(ps);
-  },
+  }
 
   // Won when each pile is either empty or holds four cards of the same rank.
-  is_won: function() {
+  is_won() {
     for(let p of this.piles)
       if(p.cards.length && !(p.cards.length === this._pileon_depth && all_same_number(p.cards)))
         return false;
     return true;
-  },
+  }
 };
 
-gGameClasses.pileon = {
-  __proto__: PileOnBase,
-  _pileon_depth: 4,
-  pile_details: () => ({
-    piles: [15, PileOnPile4, 0, 4], // the last two are actually empty
-  }),
-  static_create_layout() {
+
+class PileOnGame extends _PileOnGame {
+  static create_layout() {
     return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p>.", { p: PileOnView4 });
-  },
+  }
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [15, PileOnPile4, 0, 4], // The last two are actually empty.
+    };
+    this._pileon_depth = 4;
+  }
 };
+gGameClasses.pileon = PileOnGame;
 
-gGameClasses.doublepileon = {
-  __proto__: PileOnBase,
-  init_cards: () => make_cards(2),
-  _pileon_depth: 8,
-  pile_details: () => ({
-    piles: [16, PileOnPile8, 0, 8], // the last three are actually empty
-  }),
-  static_create_layout() {
+
+class DoublePileOnGame extends _PileOnGame {
+  static create_layout() {
     return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p p>.", { p: PileOnView8 });
-  },
+  }
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      piles: [16, PileOnPile8, 0, 8], // The last three are actually empty.
+    };
+    this._pileon_depth = 8;
+  }
 };
+gGameClasses.doublepileon = DoublePileOnGame;
 
-gGameClasses.pileup = {
-  __proto__: PileOnBase,
-  _pileon_depth: 4,
-  pile_details: () => ({
-    piles: [14, PileUpPile4, 0, 4], // the last one is actually empty
-  }),
-  static_create_layout() {
+
+class PileUpGame extends _PileOnGame {
+  static create_layout() {
     return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p>.", { p: PileOnView4 });
-  },
+  }
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [14, PileUpPile4, 0, 4], // The last one is actually empty.
+    };
+    this._pileon_depth = 4;
+  }
 };
+gGameClasses.pileup = PileUpGame;
 
-gGameClasses.doublepileup = {
-  __proto__: PileOnBase,
-  init_cards: () => make_cards(2),
-  _pileon_depth: 8,
-  pile_details: () => ({
-    piles: [15, PileUpPile8, 0, 8], // the last two are are actually empty
-  }),
-  static_create_layout() {
+
+class DoublePileUpGame extends _PileOnGame {
+  static create_layout() {
     return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p>.", { p: PileOnView8 });
-  },
+  }
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      piles: [15, PileUpPile8, 0, 8], // The last two are are actually empty.
+    };
+    this._pileon_depth = 8;
+  }
 };
+gGameClasses.doublepileup = DoublePileUpGame;
 
 
 class _PileOnPile extends _Pile {

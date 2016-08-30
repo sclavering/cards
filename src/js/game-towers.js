@@ -1,22 +1,26 @@
-gGameClasses.towers = {
-  __proto__: FreeCellGame,
-
-  pile_details: () => ({
-    piles: [10, TowersPile, 0, 5],
-    foundations: [4, KlondikeFoundation, 0, 0],
-    cells: [4, Cell, 0, [0, 1, 1, 0]],
-  }),
-
-  static_create_layout() {
+class TowersGame extends FreeCellRelatedGame {
+  static create_layout() {
     return new Layout("#<  c c c c    f f f f  >.#<   p p p p p p p p p p   >.");
-  },
+  }
 
-  best_destination_for: best_destination_for__nearest_legal_pile_or_cell,
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [10, TowersPile, 0, 5],
+      foundations: [4, KlondikeFoundation, 0, 0],
+      cells: [4, Cell, 0, [0, 1, 1, 0]],
+    };
+  }
 
-  autoplay: function() {
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile_or_cell.call(this, cseq);
+  }
+
+  autoplay() {
     return this.autoplay_using_predicate(_ => true);
-  },
+  }
 };
+gGameClasses.towers = TowersGame;
 
 
 class TowersPile extends _FreeCellPile {

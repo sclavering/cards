@@ -1,37 +1,39 @@
-gGameClasses.acesup = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    stocks: [1, StockDealToPiles, 0, 0],
-    piles: [4, AcesUpPile, 0, 1],
-    foundations: [1, AcesUpFoundation, 0, 0],
-  }),
-
-  static_create_layout() {
+class AcesUpGame extends Game {
+  static create_layout() {
     return new Layout("#<   s  p p p p  f   >.", { s: StockView, p: FanDownView, f: CountedView });
-  },
+  }
 
-  init: function() {
+  constructor() {
+    super();
+    this.pile_details = {
+      stocks: [1, StockDealToPiles, 0, 0],
+      piles: [4, AcesUpPile, 0, 1],
+      foundations: [1, AcesUpFoundation, 0, 0],
+    };
+  }
+
+  init() {
     const ps = this.piles;
     ps[0].prev = ps[3];
     ps[3].next = ps[0];
-  },
+  }
 
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     const card = cseq.first;
     const f = this.foundation;
     if(f.may_add_card(card)) return f;
     return findEmpty(card.pile.following());
-  },
+  }
 
   // no autoplay for this game
 
-  is_won: function() {
+  is_won() {
     if(this.stock.cards.length) return false;
     for(let p of this.piles) if(p.cards.length !== 1) return false;
     return true;
-  },
+  }
 };
+gGameClasses.acesup = AcesUpGame;
 
 
 class AcesUpFoundation extends _Foundation {

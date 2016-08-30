@@ -1,16 +1,14 @@
 // Spider, Black Widow, Grounds for Divorce, Wasp, and Simple Simon
 // ids: blackwidow, divorce, wasp, spider-1suit, spider-2suits, spider, simon-1suit, simon-2suits, simon
 
-const SpiderBase = {
-  __proto__: Game,
-
-  best_destination_for: function(cseq) {
+class _SpiderRelatedGame extends Game {
+  best_destination_for(cseq) {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || findEmpty(ps);
-  },
+  }
 
-  autoplay: function() {
+  autoplay() {
     const f = this.foundation;
     for(let p of this.piles) {
       let n = p.cards.length - 13;
@@ -19,135 +17,168 @@ const SpiderBase = {
       if(c.pile.may_take_card(c) && f.may_add_card(c)) return new Move(c, f);
     }
     return null;
-  },
+  }
 };
 
 
 
-const Spider = {
-  __proto__: SpiderBase,
-  static_create_layout() {
+class _SpiderLayoutGame extends _SpiderRelatedGame {
+  static create_layout() {
     return new Layout("#<   p p p p p p p p p p  [fs]   >.", { f: Spider8FoundationView });
-  },
+  }
 };
 
-const StandardSpider = {
-  __proto__: Spider,
-  pile_details: () => ({
-    stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
-    piles: [10, SpiderPile, [5,5,5,5,4,4,4,4,4,4], 1],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-  helpId: "spider",
+class _StandardSpider extends _SpiderLayoutGame {
+  constructor() {
+    super();
+    this.helpId = "spider";
+    this.pile_details = {
+      stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
+      piles: [10, SpiderPile, [5,5,5,5,4,4,4,4,4,4], 1],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 };
 
-gGameClasses.spider1 = {
-  __proto__: StandardSpider,
-  init_cards: () => make_cards(8, "S"),
+class Spider1Game extends _StandardSpider {
+  constructor() {
+    super();
+    this.all_cards = make_cards(8, "S");
+  }
 };
+gGameClasses.spider1 = Spider1Game;
 
-gGameClasses.spider2 = {
-  __proto__: StandardSpider,
-  init_cards: () => make_cards(4, "SH"),
+class Spider2Game extends _StandardSpider {
+  constructor() {
+    super();
+    this.all_cards = make_cards(4, "SH");
+  }
 };
+gGameClasses.spider2 = Spider2Game;
 
-gGameClasses.spider4 = {
-  __proto__: StandardSpider,
-  init_cards: () => make_cards(2),
+class Spider4Game extends _StandardSpider {
+  constructor() {
+    super();
+    this.all_cards = make_cards(2);
+  }
 };
+gGameClasses.spider4 = Spider4Game;
 
-gGameClasses.blackwidow = {
-  __proto__: Spider,
-  helpId: null,
-  pile_details: () => ({
-    stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
-    piles: [10, BlackWidowPile, [5,5,5,5,4,4,4,4,4,4], 1],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-  init_cards: () => make_cards(2),
+class BlackWidowGame extends _SpiderLayoutGame {
+  constructor() {
+    super();
+    this.helpId = null;
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
+      piles: [10, BlackWidowPile, [5,5,5,5,4,4,4,4,4,4], 1],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 };
+gGameClasses.blackwidow = BlackWidowGame;
 
-gGameClasses.divorce = {
-  __proto__: Spider,
-  pile_details: () => ({
-    stocks: [1, StockDealToNonemptyPiles, 0, 0],
-    piles: [10, DivorcePile, 0, 5],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-
-  init_cards: () => make_cards(2),
+class DivorceGame extends _SpiderLayoutGame {
+  constructor() {
+    super();
+    this.all_cards = make_cards(2),
+    this.pile_details = {
+      stocks: [1, StockDealToNonemptyPiles, 0, 0],
+      piles: [10, DivorcePile, 0, 5],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 
   // Can't re-use the standard Spider version because it doesn't do ace->king wraparound.
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
-  },
+  }
 };
+gGameClasses.divorce = DivorceGame;
 
 
 
-gGameClasses.wasp = {
-  __proto__: SpiderBase,
-  pile_details: () => ({
-    stocks: [1, StockDealToPiles, 0, 0],
-    piles: [7, WaspPile, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7]],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-  static_create_layout() {
+class WaspGame extends _SpiderRelatedGame {
+  static create_layout() {
     return new Layout("#<   p p p p p p p  [fs]   >.", { f: Spider4FoundationView });
-  },
-  best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
+  }
+  constructor() {
+    super();
+    this.pile_details = {
+      stocks: [1, StockDealToPiles, 0, 0],
+      piles: [7, WaspPile, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7]],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
+  best_destination_for(cseq) {
+    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+  }
 };
+gGameClasses.wasp = WaspGame;
 
 
 
-const SimonBase = {
-  __proto__: SpiderBase,
-  pile_details: () => ({
-    piles: [10, SpiderPile, 0, [8,8,8,7,6,5,4,3,2,1]],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-  static_create_layout() {
+class SimonGame extends _SpiderRelatedGame {
+  static create_layout() {
     return new Layout("#<   p p p p p p p p p p  f   >.", { f: Spider4FoundationView });
-  },
-  helpId: "simon",
+  }
+  constructor() {
+    super();
+    this.helpId = "simon";
+    this.pile_details = {
+      piles: [10, SpiderPile, 0, [8,8,8,7,6,5,4,3,2,1]],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 };
+gGameClasses.simon4 = SimonGame;
 
-gGameClasses.simplersimon = {
-  __proto__: SimonBase,
-  pile_details: () => ({
-    piles: [10, BlackWidowPile, 0, [8,8,8,7,6,5,4,3,2,1]],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
+class SimplerSimonGame extends SimonGame {
+  constructor() {
+    super();
+    this.pile_details = {
+      piles: [10, BlackWidowPile, 0, [8,8,8,7,6,5,4,3,2,1]],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 };
+gGameClasses.simplersimon = SimplerSimonGame;
 
-gGameClasses.simon1 = {
-  __proto__: SimonBase,
-  init_cards: () => make_cards(4, "S"),
+class Simon1Game extends SimonGame {
+  constructor() {
+    super();
+    this.all_cards = make_cards(4, "S");
+  }
 };
+gGameClasses.simon1 = Simon1Game;
 
-gGameClasses.simon2 = {
-  __proto__: SimonBase,
-  init_cards: () => make_cards(2, "SH"),
+class Simon2Game extends SimonGame {
+  constructor() {
+    super();
+    this.all_cards = make_cards(2, "SH");
+  }
 };
+gGameClasses.simon2 = Simon2Game;
 
-gGameClasses.simon4 = {
-  __proto__: SimonBase
-};
-
-gGameClasses.doublesimon = {
-  __proto__: SimonBase,
-  init_cards: () => make_cards(2),
-  pile_details: () => ({
-    piles: [12, SpiderPile, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1]],
-    foundations: [1, SpiderFoundation, 0, 0],
-  }),
-  static_create_layout() {
+class DoubleSimonGame extends SimonGame {
+  static create_layout() {
     return new Layout("#<   p p p p p p p p p p p p  f   >.", { f: Spider8FoundationView });
-  },
-  helpId: "simon",
+  }
+
+  constructor() {
+    super();
+    this.helpId = "simon";
+    this.all_cards = make_cards(2);
+    this.pile_details = {
+      piles: [12, SpiderPile, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1]],
+      foundations: [1, SpiderFoundation, 0, 0],
+    };
+  }
 };
+gGameClasses.doublesimon = DoubleSimonGame;
+
 
 
 class SpiderPile extends _Pile {

@@ -1,50 +1,50 @@
-gGameClasses.mod3 = {
-  __proto__: Game,
-
-  pile_details: () => ({
-    stocks: [1, StockDealToPiles, 0, 0],
-    piles: [8, AcesUpPile, 0, 1],
-    f_foundations2: [8, Mod3Foundation2, 0, 1],
-    g_foundations3: [8, Mod3Foundation3, 0, 1],
-    h_foundations4: [8, Mod3Foundation4, 0, 1],
-  }),
-
-  static_create_layout() {
+class Mod3Game extends Game {
+  static create_layout() {
     return new Layout("#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.", { f: Mod3SlideView, g: Mod3SlideView, h: Mod3SlideView });
-  },
+  }
 
-  init_cards: () => make_cards(2, null, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]), // no Aces
+  constructor() {
+    super();
+    this.all_cards = make_cards(2, null, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]); // no Aces
+    this.pile_details = {
+      stocks: [1, StockDealToPiles, 0, 0],
+      piles: [8, AcesUpPile, 0, 1],
+      f_foundations2: [8, Mod3Foundation2, 0, 1],
+      g_foundations3: [8, Mod3Foundation3, 0, 1],
+      h_foundations4: [8, Mod3Foundation4, 0, 1],
+    };
+  }
 
-  init: function() {
+  init() {
     this.foundations = [].concat(this.f_foundations2, this.g_foundations3, this.h_foundations4);
     this.rows = [this.f_foundations2, this.g_foundations3, this.h_foundations4];
     // Ordinarily this excludes .foundations
     this.hint_and_autoplay_source_piles = [].concat(this.foundations, this.piles);
-  },
+  }
 
   // games that start with no cards in the correct place on the foundations are impossible
-  is_shuffle_impossible: function(cards) {
+  is_shuffle_impossible(cards) {
     for(let i = 0; i < 8; ++i)
       if(cards[i].number === 2 || cards[i + 8].number === 3 || cards[i + 16].number === 4)
         return false;
     return true;
-  },
+  }
 
-  best_destination_for: function(cseq) {
+  best_destination_for(cseq) {
     return this.foundation_destination_for(cseq) || findEmpty(cseq.source.is_pile ? cseq.source.surrounding() : this.piles);
-  },
+  }
 
-  autoplay: function() {
+  autoplay() {
     const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
     return this.autoplay_using_predicate(
       card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
         && !(card.pile.is_foundation && card.pile.contains_appropriate_cards())
     );
-  },
+  }
 
   // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).
-  _autoplayable_numbers_for_row: function(row) {
+  _autoplayable_numbers_for_row(row) {
     const rv = { S: 0, H: 0, D: 0, C: 0 };
     const seen = {};
     let seen_invalid_cards = false;
@@ -58,14 +58,16 @@ gGameClasses.mod3 = {
     const base_num = row[0]._baseNum;
     if(!seen_invalid_cards) for(let k in rv) if(rv[k] < base_num) rv[k] = base_num;
     return rv;
-  },
+  }
 
-  is_won: function() {
+  is_won() {
     if(this.stock.hasCards) return false;
     for(let p of this.piles) if(p.cards.length) return false;
     return true;
-  },
+  }
 };
+gGameClasses.mod3 = Mod3Game;
+
 
 
 class _Mod3Foundation extends _Foundation {

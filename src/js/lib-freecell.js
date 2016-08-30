@@ -1,8 +1,6 @@
 // Base class for FreeCell, Seahaven Towers and Forty Thieves
-const FreeCellGame = {
-  __proto__: Game,
-
-  best_action_for: function(cseq) {
+class FreeCellRelatedGame extends Game {
+  best_action_for(cseq) {
     const card = cseq.first;
     if(!card.pile.may_take_card(card)) return null;
     const dest = this.best_destination_for(cseq);
@@ -11,20 +9,20 @@ const FreeCellGame = {
     const spaces = this.piles.filter(p => p !== dest && !p.hasCards);
     const cells = this.cells.filter(c => !c.hasCards);
     return new FreeCellMoveAction(card, dest, cells, spaces);
-  },
+  }
 
-  empty_cell_count: function() {
+  empty_cell_count() {
     let rv = 0;
     for(let c of this.cells) if(!c.hasCards) ++rv;
     return rv;
-  },
+  }
 
   // Args are piles which should not be counted even if empty (typically the source and destination of a card being moved).
-  empty_pile_count: function(ignore1, ignore2) {
+  empty_pile_count(ignore1, ignore2) {
     let rv = 0;
     for(let p of this.piles) if(p !== ignore1 && p !== ignore2 && !p.hasCards) ++rv;
     return rv;
-  },
+  }
 };
 
 

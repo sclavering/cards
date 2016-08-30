@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "outDir": "build/"
+    },
+    "files": [
+        "src/typescript/lib-cards.ts"
+    ]
+}

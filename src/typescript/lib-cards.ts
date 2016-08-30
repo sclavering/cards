@@ -38,6 +38,14 @@ function make_cards(repeat, suits, numbers) {
 
 
 class Card {
+  colour: string;
+  suit: string;
+  displayStr: string;
+  number: number;
+  faceUp: boolean;
+  pile: any;
+  index: number;
+
   constructor(number, suit) {
     this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
     this.suit = suit;
@@ -93,12 +101,18 @@ function is_up_or_down_mod13(a, b) {
 
 
 // Represents one or more cards that are being moved, or are under consideration for moving.
-function CardSequence(source, index) {
-  this.source = source;
-  this.index = index;
-  this.first = source.cards[index];
-};
+class CardSequence {
+  source: any;
+  index: number;
+  first: Card;
 
-CardSequence.from_card = function(card) {
-  return card ? new CardSequence(card.pile, card.index) : null;
+  constructor(source, index) {
+    this.source = source;
+    this.index = index;
+    this.first = source.cards[index];
+  }
+
+  static from_card(card) {
+    return card ? new CardSequence(card.pile, card.index) : null;
+  }
 };

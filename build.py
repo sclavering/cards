@@ -3,41 +3,41 @@
 import os, sys
 
 JS_FILES = [
-    'util.js',
-    'main.js',
-    'lib-cards.js',
-    'lib-views.js',
-    'lib-layouts.js',
-    'lib-piles.js',
-    'lib-animation.js',
-    'lib-freecellanimation.js',
-    'autoplay.js',
-    'lib-actions.js',
-    'lib-game.js',
-    'lib-freecell.js',
+    "src/js/util.js",
+    "src/js/main.js",
+    "build/lib-cards.js",
+    "src/js/lib-views.js",
+    "src/js/lib-layouts.js",
+    "src/js/lib-piles.js",
+    "src/js/lib-animation.js",
+    "src/js/lib-freecellanimation.js",
+    "src/js/autoplay.js",
+    "src/js/lib-actions.js",
+    "src/js/lib-game.js",
+    "src/js/lib-freecell.js",
 
-    'game-acesup.js',
-    'game-canfield.js',
-    'game-doublesol.js',
-    'game-fan.js',
-    'game-fortythieves.js',
-    'game-freecell.js',
-    'game-golf.js',
-    'game-gypsy.js',
-    'game-klondike.js',
-    'game-maze.js',
-    'game-mod3.js',
-    'game-penguin.js',
-    'game-pileon.js',
-    'game-pyramid.js',
-    'game-regiment.js',
-    'game-russiansol.js',
-    'game-spider.js',
-    'game-towers.js',
-    'game-unionsquare.js',
-    'game-whitehead.js',
-    'game-winston.js',
-    'game-yukon.js',
+    "src/js/game-acesup.js",
+    "src/js/game-canfield.js",
+    "src/js/game-doublesol.js",
+    "src/js/game-fan.js",
+    "src/js/game-fortythieves.js",
+    "src/js/game-freecell.js",
+    "src/js/game-golf.js",
+    "src/js/game-gypsy.js",
+    "src/js/game-klondike.js",
+    "src/js/game-maze.js",
+    "src/js/game-mod3.js",
+    "src/js/game-penguin.js",
+    "src/js/game-pileon.js",
+    "src/js/game-pyramid.js",
+    "src/js/game-regiment.js",
+    "src/js/game-russiansol.js",
+    "src/js/game-spider.js",
+    "src/js/game-towers.js",
+    "src/js/game-unionsquare.js",
+    "src/js/game-whitehead.js",
+    "src/js/game-winston.js",
+    "src/js/game-yukon.js",
 ]
 
 
@@ -52,8 +52,8 @@ except OSError:
 
 js_code = ""
 for fn in JS_FILES:
-    js_code += "// ===== " + fn + " ===== \n\n"
-    js_code += open(path + "src/js/" + fn).read()
+    js_code += "// ===== " + fn + " =====\n\n"
+    js_code += open(path + fn).read()
     js_code += "\n\n\n\n"
 js_code = '<script type="application/javascript;version=1.7">\n' + js_code + '</script>\n'
 

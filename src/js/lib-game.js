@@ -19,8 +19,10 @@ const Game = {
   // A Layout (or subclass) instance.  One instance per game-type (not per game-instance).
   layout: null,
 
-  // A class like Layout (for subclasses to specify), to be used as __proto__ of ._layout
-  layoutProto: Layout,
+  // Used to create .layout, which must be an instance of Layout or a subclass.  Rarely needs overriding.
+  create_layout() {
+    return new Layout();
+  },
 
   // Instructions to the code the Layout class on how to create the needed HTML, in a compact string-based DSL.
   layoutTemplate: null,
@@ -81,7 +83,7 @@ const Game = {
       else ups[l] = ups[l].slice();
     }
 
-    this.layout = { __proto__: this.layoutProto };
+    this.layout = this.create_layout();
     // Returns a sequence of the letters from layoutTemplate that referred to views/piles excluding, e.g. annotations.
     const layoutletters = this.layout.init(this.layoutTemplate, view_types);
 

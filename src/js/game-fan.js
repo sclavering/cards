@@ -1,14 +1,17 @@
-const FanLayoutProto = {
-  __proto__: Layout,
+class FanLayout extends Layout {
+  constructor(num_grid_columns) {
+    super();
+    this._num_grid_columns = num_grid_columns;
+  }
   // No other layout has a grid of flexible views
-  update_flexible_views_sizes: function(views, width, height) {
+  update_flexible_views_sizes(views, width, height) {
     const kSpaceBetweenPiles = 4 * gSpacerSize;
     // 5 units per each of the columns, plus 2 to the left of everything, and 3 to the right.
     const unitwidth = (width - kSpaceBetweenPiles) / (5 * this._num_grid_columns + 2 + 2);
     // div.thinspacer in the previous <td>
     views[0]._canvas.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
     for(let v of views) v.canvas_width = unitwidth * 5;
-  },
+  }
 };
 
 
@@ -22,9 +25,8 @@ gGameClasses.fan = {
 
   layoutTemplate: "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
 
-  layoutProto: {
-    __proto__: FanLayoutProto,
-    _num_grid_columns: 5,
+  create_layout() {
+    return new FanLayout(5);
   },
 
   is_shuffle_impossible: function(cards) {
@@ -61,9 +63,8 @@ gGameClasses.doublefan = {
 
   layoutTemplate: "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.",
 
-  layoutProto: {
-    __proto__: FanLayoutProto,
-    _num_grid_columns: 6,
+  create_layout() {
+    return new FanLayout(6);
   },
 
   best_destination_for: best_destination_for__nearest_legal_pile,

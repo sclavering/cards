@@ -1,23 +1,34 @@
-const Layout = {
-  views: [],
+class Layout {
+  constructor() {
+    this.views = [];
 
-  // The root DOM element for this layout.
-  _node: null,
+    // The root DOM element for this layout.
+    this._node = null,
 
-  show: function() {
+    // Mouse/Touch handling
+    this._ex0 = 0; // coords of mousedown/touchstart event
+    this._ey0 = 0;
+    this._tx = 0; // coords of the mouse relative to g_floating_pile
+    this._ty = 0;
+    this._cseq_for_dragging = null; // a CardSequence, from when mousedown occurs on one, until mouseup occurs thereafter
+    this._is_drag_threshold_exceeded = false; // have we exceeded the small movement threshold before we show a drag as in progress?
+    this._current_touch_id = null; // a Touch.identifier value, when a touch-based drag is in progress
+  }
+
+  show() {
     if(!this._node) throw "layout not init()'d";
     setVisibility(this._node, true);
     this._reset_handlers();
     this._on_window_resize();
     window.onresize = this._bound_on_window_resize;
-  },
+  }
 
-  hide: function() {
+  hide() {
     setVisibility(this._node, false);
     window.onresize = null;
-  },
+  }
 
-  init: function(template, view_types) {
+  init(template, view_types) {
     if(this._node) throw "reinitialising layout";
 
     this._bound_on_window_resize = ev => this._on_window_resize(ev);
@@ -133,36 +144,28 @@ const Layout = {
     if(box !== container) throw "Layout.init(): layout had unclosed box";
     this.viewsNeedingUpdateOnResize = this.views.filter(v => v.needs_update_on_resize);
     return letters;
-  },
+  }
 
 
   // Mouse/Touch Handling
 
   // For right-click handling we just use .oncontextmenu, since e.g. on Mac we want ctrl+click to work too (and Fx 1.5 mac used to do weird things like convert a physical right-click into a left-click with .ctrlKey set, though I've no idea if that behaviour still exists).
 
-  _ex0: 0, // coords of mousedown/touchstart event
-  _ey0: 0,
-  _tx: 0, // coords of the mouse relative to g_floating_pile
-  _ty: 0,
-  _cseq_for_dragging: null, // a CardSequence, from when mousedown occurs on one, until mouseup occurs thereafter
-  _is_drag_threshold_exceeded: false, // have we exceeded the small movement threshold before we show a drag as in progress?
-  _current_touch_id: null, // a Touch.identifier value, when a touch-based drag is in progress
-
-  _onmousedown: function(e) {
+  _onmousedown(e) {
     if(e.button) return;
     if(!this._start_drag(e)) return;
     window.onmousemove = this._bound_onmousemove;
-  },
+  }
 
-  _ontouchstart: function(ev) {
+  _ontouchstart(ev) {
     if(this._current_touch_id) return;
     const t = ev.changedTouches[0];
     if(!this._start_drag(t)) return;
     window.ontouchmove = this._bound_ontouchmove;
     this._current_touch_id = t.identifier;
-  },
+  }
 
-  _start_drag: function(event_or_touch) {
+  _start_drag(event_or_touch) {
     const cseq = this._target_cseq(event_or_touch);
     if(!cseq || !cseq.source.may_take_card(cseq.first)) return false;
     interrupt();
@@ -170,9 +173,9 @@ const Layout = {
     this._ex0 = event_or_touch.pageX;
     this._ey0 = event_or_touch.pageY;
     return true;
-  },
+  }
 
-  _onmousemove: function(e) {
+  _onmousemove(e) {
     if(this._is_drag_threshold_exceeded) {
       g_floating_pile.set_position(e.pageX - this._tx, e.pageY - this._ty);
       return;
@@ -185,23 +188,23 @@ const Layout = {
     this._tx = ex0 - rect.x;
     this._ty = ey0 - rect.y;
     this._is_drag_threshold_exceeded = true;
-  },
+  }
 
-  _ontouchmove: function(ev) {
+  _ontouchmove(ev) {
     const t = this._current_touch_of(ev);
     if(!t) return;
     g_floating_pile.set_position(t.pageX - this._tx, t.pageY - this._ty);
-  },
+  }
 
-  cancel_drag: function() {
+  cancel_drag() {
     if(!this._is_drag_threshold_exceeded) return;
     const cseq = this._cseq_for_dragging;
     this._reset_handlers();
     g_floating_pile.hide();
     cseq.source.view.update();
-  },
+  }
 
-  _onmouseup: function(e) {
+  _onmouseup(e) {
     if(this._is_drag_threshold_exceeded) {
       const cseq = this._cseq_for_dragging;
       if(!this._attempt_drop(cseq)) {
@@ -210,15 +213,15 @@ const Layout = {
       }
     }
     this._reset_handlers();
-  },
+  }
 
-  _ontouchend: function(ev) {
+  _ontouchend(ev) {
     const t = this._current_touch_of(ev);
     if(!t) return;
     this._onmouseup(ev);
-  },
+  }
 
-  _attempt_drop: function(cseq) {
+  _attempt_drop(cseq) {
     if(!cseq) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
@@ -238,15 +241,15 @@ const Layout = {
       return true;
     }
     return false;
-  },
+  }
 
-  _ontouchcancel: function(ev) {
+  _ontouchcancel(ev) {
     const t = this._current_touch_of(ev);
     if(!t) return;
     this._reset_handlers();
-  },
+  }
 
-  _onclick: function(ev) {
+  _onclick(ev) {
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
     if(ev.button || ev.ctrlKey) return true;
     const cseq = this._target_cseq(ev);
@@ -254,18 +257,18 @@ const Layout = {
     if(cseq) doo(cseq.source.action_for_click(cseq));
     this._reset_handlers();
     return false;
-  },
+  }
 
-  _oncontextmenu: function(e) {
+  _oncontextmenu(e) {
     const cseq = this._target_cseq(e);
     interrupt();
     if(cseq) doo(gCurrentGame.foundation_action_for(cseq));
     this._reset_handlers();
     e.preventDefault();
     return false;
-  },
+  }
 
-  _reset_handlers: function(e) {
+  _reset_handlers(e) {
     this._is_drag_threshold_exceeded = false;
     this._cseq_for_dragging = null;
     this._current_touch_id = null;
@@ -281,25 +284,25 @@ const Layout = {
     window.ontouchmove = null;
     window.ontouchend = this._bound_ontouchend;
     window.ontouchcancel = this._bound_ontouchcancel;
-  },
+  }
 
-  _current_touch_of: function(ev) {
+  _current_touch_of(ev) {
     for(let t of ev.changedTouches) if(t.identifier === this._current_touch_id) return t;
     return null;
-  },
+  }
 
-  _target_cseq: function(event_or_touch) {
+  _target_cseq(event_or_touch) {
     let t = event_or_touch.target;
     while(t && !t.pileViewObj) t = t.parentNode;
     if(!t || !t.pileViewObj) return null;
     const view = t.pileViewObj, rect = view.pixel_rect();
     return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
-  },
+  }
 
 
   // Window resizing
 
-  _on_window_resize: function(e) {
+  _on_window_resize(e) {
     g_animations.cancel();
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
@@ -307,15 +310,15 @@ const Layout = {
     const vs = this.viewsNeedingUpdateOnResize;
     this.update_flexible_views_sizes(vs, width, height);
     for(let v of vs) v.update();
-  },
+  }
 
-  update_flexible_views_sizes: function(views, width, height) {
+  update_flexible_views_sizes(views, width, height) {
     for(let v of views) {
       let r = v.pixel_rect();
       if(v.update_canvas_height_on_resize) v.canvas_height = height - r.top;
       if(v.update_canvas_width_on_resize) v.canvas_width = width - r.left;
     }
-  },
+  }
 };
 
 

@@ -1,11 +1,13 @@
 gGameClasses.maze = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "p", 54, MazePile, View, 0, 1,
-  ],
+  pile_details: () => ({
+    piles: [54, MazePile, 0, 1],
+  }),
 
-  layoutTemplate: '#<  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p    >.',
+  static_create_layout() {
+    return new Layout("#<  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p p  ><  p p p p p p p p p p    >.", { p: View });
+  },
 
   init_cards: () => {
     const cs = make_cards(1, null, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]); // no kings

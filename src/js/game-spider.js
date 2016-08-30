@@ -4,8 +4,6 @@
 const SpiderBase = {
   __proto__: Game,
 
-  layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
-
   best_destination_for: function(cseq) {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
@@ -28,51 +26,54 @@ const SpiderBase = {
 
 const Spider = {
   __proto__: SpiderBase,
-  pileDetails: () => [
-    "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
-    "p", 10, SpiderPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
-    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
-  ],
-  helpId: "spider"
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p p p p  [fs]   >.", { f: Spider8FoundationView });
+  },
+};
+
+const StandardSpider = {
+  __proto__: Spider,
+  pile_details: () => ({
+    stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
+    piles: [10, SpiderPile, [5,5,5,5,4,4,4,4,4,4], 1],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
+  helpId: "spider",
 };
 
 gGameClasses.spider1 = {
-  __proto__: Spider,
+  __proto__: StandardSpider,
   init_cards: () => make_cards(8, "S"),
 };
 
 gGameClasses.spider2 = {
-  __proto__: Spider,
+  __proto__: StandardSpider,
   init_cards: () => make_cards(4, "SH"),
 };
 
 gGameClasses.spider4 = {
-  __proto__: Spider,
+  __proto__: StandardSpider,
   init_cards: () => make_cards(2),
 };
-
-
 
 gGameClasses.blackwidow = {
   __proto__: Spider,
   helpId: null,
-  pileDetails: () => [
-    "s", 1, StockDealToPilesIfNoneAreEmpty, StockView, 0, 0,
-    "p", 10, BlackWidowPile, FanDownView, [5,5,5,5,4,4,4,4,4,4], 1,
-    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
+    piles: [10, BlackWidowPile, [5,5,5,5,4,4,4,4,4,4], 1],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
   init_cards: () => make_cards(2),
 };
 
-
-
 gGameClasses.divorce = {
-  __proto__: SpiderBase,
-  pileDetails: () => [
-    "s", 1, StockDealToNonemptyPiles, StockView, 0, 0,
-    "p", 10, DivorcePile, FanDownView, 0, 5,
-    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
-  ],
+  __proto__: Spider,
+  pile_details: () => ({
+    stocks: [1, StockDealToNonemptyPiles, 0, 0],
+    piles: [10, DivorcePile, 0, 5],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
 
   init_cards: () => make_cards(2),
 
@@ -88,12 +89,14 @@ gGameClasses.divorce = {
 
 gGameClasses.wasp = {
   __proto__: SpiderBase,
-  pileDetails: () => [
-    "s", 1, StockDealToPiles, StockView, 0, 0,
-    "p", 7, WaspPile, FanDownView, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7],
-    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
-  ],
-  layoutTemplate: '#<   p p p p p p p  [fs]   >.',
+  pile_details: () => ({
+    stocks: [1, StockDealToPiles, 0, 0],
+    piles: [7, WaspPile, [3,3,3,0,0,0,0], [4,4,4,7,7,7,7]],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p  [fs]   >.", { f: Spider4FoundationView });
+  },
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 };
 
@@ -101,20 +104,22 @@ gGameClasses.wasp = {
 
 const SimonBase = {
   __proto__: SpiderBase,
-  pileDetails: () => [
-    "p", 10, SpiderPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
-    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
-  ],
-  layoutTemplate: '#<   p p p p p p p p p p  f   >.',
+  pile_details: () => ({
+    piles: [10, SpiderPile, 0, [8,8,8,7,6,5,4,3,2,1]],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p p p p  f   >.", { f: Spider4FoundationView });
+  },
   helpId: "simon",
 };
 
 gGameClasses.simplersimon = {
   __proto__: SimonBase,
-  pileDetails: () => [
-    "p", 10, BlackWidowPile, FanDownView, 0, [8,8,8,7,6,5,4,3,2,1],
-    "f", 1, SpiderFoundation, Spider4FoundationView, 0, 0,
-  ]
+  pile_details: () => ({
+    piles: [10, BlackWidowPile, 0, [8,8,8,7,6,5,4,3,2,1]],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
 };
 
 gGameClasses.simon1 = {
@@ -134,11 +139,13 @@ gGameClasses.simon4 = {
 gGameClasses.doublesimon = {
   __proto__: SimonBase,
   init_cards: () => make_cards(2),
-  pileDetails: () => [
-    "p", 12, SpiderPile, FanDownView, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1],
-    "f", 1, SpiderFoundation, Spider8FoundationView, 0, 0,
-  ],
-  layoutTemplate: '#<   p p p p p p p p p p p p  f   >.',
+  pile_details: () => ({
+    piles: [12, SpiderPile, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1]],
+    foundations: [1, SpiderFoundation, 0, 0],
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p p p p p p  f   >.", { f: Spider8FoundationView });
+  },
   helpId: "simon",
 };
 

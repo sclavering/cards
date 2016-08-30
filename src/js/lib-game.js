@@ -10,7 +10,9 @@ const Game = {
   foundations: [],
   reserves: [],
   cells: [],
+  stocks: [],
   stock: null,
+  wastes: [],
   waste: null,
   foundation: null,
   reserve: null,
@@ -19,35 +21,31 @@ const Game = {
   // A Layout (or subclass) instance.  The actual instance is shared with other games of the same type.
   layout: null,
 
-  // Used to create .layout, which must be an instance of Layout or a subclass.  Rarely needs overriding.
-  create_layout() {
-    return new Layout();
+  // All subclasses must implement this and have it return a Layout instance.  It's called on the "class" itself, not the instance.
+  static_create_layout() {
+    throw new Error("not implemented");
   },
 
-  // Instructions to the code the Layout class on how to create the needed HTML, in a compact string-based DSL.
-  layoutTemplate: null,
-
-  // Returns an array giving details of all the piles to be created.
-  // Consists of parts in the form:
-  //   letter, number, PileClass, ViewClass, face-down, face-up
-  // ...where 'letter' corresponds to one used in .layoutTemplate, 'number' is how many of that kind exist.
-  // 'face-down' and 'face-up' give the number of cards to be dealt
-  // to the pile, if .deal() isn't replaced. Either a number (applying to all
-  // of the piles) or an array of numbers (one per pile) can be used.
-  pileDetails: () => [
-  /* partial example:
-    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 1, KlondikePile, FanDownView, 0, 0,
-    "f", 1, KlondikeFoundation, View, 0, 0,
-    "c", 1, Cell, View, 0, 0,
-    "r", 1, Reserve, View, 0, 0,
-  */
-  ],
+  // Subclasses must implement this, which describes the piles to create.  It returns a mapping of:
+  //    pile_kind (string) -> tuple of [
+  //        num_piles_of_kind : int,
+  //        PileClass : class,
+  //        num_to_deal_face_down : int | int[],
+  //        num_to_deal_face_up : int | int[],
+  //    ]
+  // e.g.:
+  //     pile_details: () => ({
+  //       stocks: [1, StockDeal3OrRefill, 0, 0],
+  //       wastes: [1, Waste, 0, 0],
+  //       piles: [7, KlondikePile, [0,1,2,3,4,5,6], 1],
+  //       foundations: [4, KlondikeFoundation, 0, 0],
+  //     }),
+  // The keys usually refer to an existing AnyPile-array collections in Game, but *can* be custom ones.  The first letter of the key is used to match AnyPile objects to their View in the Layout.
+  pile_details: () => ({
+  }),
 
   show: function() {
-    // Some other game may have been using the layout, so need to reassociate piles+views
-    for(let p of this.allpiles) p.view.attach(p);
+    this.layout.attach_piles_to_views(this.pile_arrays_by_letter);
     this.layout.show();
     setVisibility(ui.scorePanel, this.hasScoring);
     ui.scoreDisplay.textContent = this.score;
@@ -58,80 +56,41 @@ const Game = {
     this.layout.hide();
   },
 
-  // This gets called just once per game class, rather than once per game instance.
-  classInit: function() {
-    this.classInit = null; // to avoid re-calling
-
-    const view_classes = {};
-    const details = this.pileDetails();
-    const eLen = 6; // length of an entry/row in .pileDetails()
-    const numletters = details.length / eLen;
-    const letters = [], nums = {}, impls = {}, downs = {}, ups = {};
-    // get mappings of stuff, grouped by letter used in layout template
-    for(let i of irange(numletters)) {
-      let l = letters[i] = details[i * eLen];
-      nums[l]  = details[i * eLen + 1];
-      impls[l] = details[i * eLen + 2];
-      view_classes[l] = details[i * eLen + 3];
-      downs[l] = details[i * eLen + 4];
-      ups[l]   = details[i * eLen + 5];
-      // turn single numbers for face up/down cards into sequences per-pile
-      if(typeof downs[l] === "number") downs[l] = repeat(downs[l], nums[l]);
-      else downs[l] = downs[l].slice(); //copy because we later modify it
-      if(typeof ups[l] === "number") ups[l] = repeat(ups[l], nums[l]);
-      else ups[l] = ups[l].slice();
-    }
-
-    this.layout = this.create_layout();
-    // Returns a sequence of the letters from layoutTemplate that referred to views/piles excluding, e.g. annotations.
-    const layoutletters = this.layout.init(this.layoutTemplate, view_classes);
-
-    // Convert to flattened lists, ordered the way the layout was created.
-    this._pilesToCreateLetters = layoutletters;
-    this._pilesToCreate = layoutletters.map(l => impls[l]);
-    this._cardsToDealDown = layoutletters.map(l => downs[l].shift());
-    this._cardsToDealUp = layoutletters.map(l => ups[l].shift());
-  },
-
-
-
   _create_piles: function() {
-    this.allpiles = this._pilesToCreate.map(PileClass => new PileClass());
-    const bytype = {};
-    for(let [i, p] of this.allpiles.entries()) {
-      p.owning_game = this;
-      p.view = this.layout.views[i];
-      p.view.attach(p);
-      let l = this._pilesToCreateLetters[i];
-      if(!bytype[l]) bytype[l] = [];
-      bytype[l].push(p);
+    const details = this.pile_details();
+    this.all_piles = [];
+    this.pile_arrays_by_letter = {};
+    for(let k in details) {
+      let [num, PileClass, face_down, face_up] = details[k];
+      let collection = this[k] = this.pile_arrays_by_letter[k[0]] = [];
+      for(let i = 0; i !== num; ++i) {
+        let p = new PileClass();
+        p.owning_game = this;
+        p.num_to_deal_face_down = face_down instanceof Array ? face_down[i] : face_down;
+        p.num_to_deal_face_up = face_up instanceof Array ? face_up[i] : face_up;
+        collection.push(p);
+        this.all_piles.push(p);
+      }
+      linkList(collection, "prev", "next");
     }
-    for(let k in bytype) linkList(bytype[k], "prev", "next");
-  },
 
-  _create_pile_arrays: function() {
-    const all = this.allpiles;
-    this.dragDropTargets = all.filter(p => p.is_drop_target);
-    this.piles = all.filter(p => p.is_pile);
-    this.cells = all.filter(p => p.is_cell);
-    this.reserves = all.filter(p => p.is_reserve);
-    this.foundations = all.filter(p => p.is_foundation);
+    this.dragDropTargets = this.all_piles.filter(p => p.is_drop_target);
     for(let i in this.foundations) this.foundations[i].index = i;
-    this.wastes = all.filter(p => p.is_waste);
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
-    this.stock = all.filter(p => p.is_stock)[0] || null;
+    this.stock = this.stocks[0] || null;
     this.hint_and_autoplay_source_piles = [].concat(this.reserves, this.cells, this.wastes, this.piles);
   },
 
   // The actual entry-point to starting a game instance.
-  begin: function(optional_order_to_deal) {
+  begin: function(shared_layout, optional_order_to_deal) {
+    this.layout = shared_layout;
+
     this.actionList = [];
     ui.scoreDisplay.textContent = this.score = 0;
     ui.movesDisplay.textContent = this.actionPtr;
     this._create_piles();
-    this._create_pile_arrays();
     if(this.init_cards) this.allcards = this.init_cards();
     this.init();
     this._foundation_clusters = this._get_foundation_clusters(this.allcards, this.foundations);
@@ -154,9 +113,8 @@ const Game = {
 
   // Deal the provided pre-shuffled cards for a new game.  Many subclasses will find this version sufficient.
   deal: function(cards) {
-    const ps = this.allpiles, down = this._cardsToDealDown, up = this._cardsToDealUp;
     let ix = 0;
-    for(let [i, p] of ps.entries()) ix = this._deal_cards(cards, ix, p, down[i], up[i]);
+    for(let p of this.all_piles) ix = this._deal_cards(cards, ix, p, p.num_to_deal_face_down, p.num_to_deal_face_up);
     if(ix < cards.length) ix = this._deal_cards(cards, ix, this.stock, cards.length, 0);
   },
 
@@ -164,14 +122,14 @@ const Game = {
   _deal_cards: function(cards, ix, pile, num_face_down, num_face_up) {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
     for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
-    pile.add_cards_from_array(cs);
+    pile.add_cards_from_array(cs, true);
     return ix + cs.length;
   },
 
   _deal_cards_with_nulls_for_spaces: function(cards) {
     for(let [i, c] of cards.entries()) if(c) {
       c.faceUp = true;
-      this.piles[i].add_cards_from_array([c]);
+      this.piles[i].add_cards_from_array([c], true);
     }
   },
 
@@ -378,10 +336,11 @@ class GameType {
       this.havePastGames = true;
     }
 
-    if(this.instanceProto.classInit) this.instanceProto.classInit();
-    gCurrentGame = this.currentGame = { __proto__: this.instanceProto };
-    gCurrentGame.begin(cardsOrder || null);
-    const act = gCurrentGame.autoplay();
+    if(!this.shared_layout) this.shared_layout = this.instanceProto.static_create_layout();
+    const game = gCurrentGame = this.currentGame = { __proto__: this.instanceProto };
+    game.begin(this.shared_layout, cardsOrder || null);
+    game.show();
+    const act = game.autoplay();
     if(act) doo(act);
   }
 

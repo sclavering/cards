@@ -1,13 +1,15 @@
 gGameClasses.penguin = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "p", 7, PenguinPile, FanDownView, 0, 0,
-    "f", 4, KlondikeFoundation, View, 0, 0,
-    "c", 7, Cell, View, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [7, PenguinPile, 0, 0],
+    foundations: [4, KlondikeFoundation, 0, 0],
+    cells: [7, Cell, 0, 0],
+  }),
 
-  layoutTemplate: '#<   c c c c c c c  [ffff]   ><   p p p p p p p>.',
+  static_create_layout() {
+    return new Layout("#<   c c c c c c c  [ffff]   ><   p p p p p p p>.", { p: FanDownView, f: View, c: View });
+  },
 
   deal: function(cards) {
     const aces = cards.filter(c => c.number === 1);

@@ -26,13 +26,15 @@ gGameClasses.freecell = {
   },
   // */
 
-  pileDetails: () => [
-    "p", 8, FreeCellPile, FanDownView, 0, [7, 7, 7, 7, 6, 6, 6, 6],
-    "f", 4, KlondikeFoundation, View, 0, 0,
-    "c", 4, Cell, View, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [8, FreeCellPile, 0, [7, 7, 7, 7, 6, 6, 6, 6]],
+    foundations: [4, KlondikeFoundation, 0, 0],
+    cells: [4, Cell, 0, 0],
+  }),
 
-  layoutTemplate: '#<  c c c c    f f f f  >.#<  p p p p p p p p  >.',
+  static_create_layout() {
+    return new Layout("#<  c c c c    f f f f  >.#<  p p p p p p p p  >.", { p: FanDownView, f: View, c: View });
+  },
 
   best_destination_for: function(cseq) {
     const p = best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);

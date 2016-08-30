@@ -1,13 +1,16 @@
 const GolfBase = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "p", 7, GolfPile, FanDownView, 0, 5,
-    "f", 1, UpDownMod13Foundation, CountedView, 0, 1,
-  ],
+  // Note: golf2 wraps this
+  pile_details: () => ({
+    stocks: [1, StockDealToFoundation, 0, 0],
+    piles: [7, GolfPile, 0, 5],
+    foundations: [1, UpDownMod13Foundation, 0, 1],
+  }),
 
-  layoutTemplate: '#<   s  f   >.#<   p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<   s  f   >.#<   p p p p p p p   >.");
+  },
 
   helpId: "golf",
 
@@ -31,9 +34,9 @@ gGameClasses.golf1 = {
 gGameClasses.golf2 = {
   __proto__: GolfBase,
   init_cards: () => make_cards(2),
-  pileDetails: function() {
-    const rv = GolfBase.pileDetails();
-    rv[11] = 8; // 8 cards per pile
+  pile_details: function() {
+    const rv = GolfBase.pile_details();
+    rv.piles[3] = 8; // 8 cards per pile
     return rv;
   },
 };

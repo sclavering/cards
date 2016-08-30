@@ -1,12 +1,14 @@
 gGameClasses.russiansol = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "p", 7, WaspPile, FanDownView, [0, 1, 2, 3, 4, 5, 6], [1, 5, 5, 5, 5, 5, 5],
-    "f", 4, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [7, WaspPile, [0, 1, 2, 3, 4, 5, 6], [1, 5, 5, 5, 5, 5, 5]],
+    foundations: [4, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   p p p p p p p  [ffff]   >.',
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p  [ffff]   >.", { p: FanDownView, f: View });
+  },
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 

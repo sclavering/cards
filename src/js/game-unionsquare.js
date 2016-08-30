@@ -1,14 +1,16 @@
 gGameClasses.unionsquare = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWaste, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 16, UnionSquarePile, UnionSquarePileView, 0, 1,
-    "f", 4, UnionSquareFoundation, UnionSquareFoundationView, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToWaste, 0, 0],
+    wastes: [1, Waste, 0, 0],
+    piles: [16, UnionSquarePile, 0, 1],
+    foundations: [4, UnionSquareFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   [sw]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.',
+  static_create_layout() {
+    return new Layout("#<   [sw]  p p p p  f   ><      p p p p  f><      p p p p  f><      p p p p  f>.", { p: UnionSquarePileView, f: UnionSquareFoundationView });
+  },
 
   init_cards: () => make_cards(2),
 

@@ -1,6 +1,6 @@
 class FanLayout extends Layout {
-  constructor(num_grid_columns) {
-    super();
+  constructor(num_grid_columns, template, view_classes_by_letter) {
+    super(template, view_classes_by_letter);
     this._num_grid_columns = num_grid_columns;
   }
   // No other layout has a grid of flexible views
@@ -18,15 +18,13 @@ class FanLayout extends Layout {
 gGameClasses.fan = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "p", 18, FanPile, FanRightView, 0, 3, // last pile gets just 1
-    "f", 4, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [18, FanPile, 0, 3], // last pile gets just 1
+    foundations: [4, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.",
-
-  create_layout() {
-    return new FanLayout(5);
+  static_create_layout() {
+    return new FanLayout(5, "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.", { p: FanRightView });
   },
 
   is_shuffle_impossible: function(cards) {
@@ -56,15 +54,13 @@ gGameClasses.doublefan = {
 
   foundation_cluster_count: 4,
 
-  pileDetails: () => [
-    "p", 24, FanPile, FanRightView, 0, 5,
-    "f", 8, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [24, FanPile, 0, 5],
+    foundations: [8, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.",
-
-  create_layout() {
-    return new FanLayout(6);
+  static_create_layout() {
+    return new FanLayout(6, "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.", { p: FanRightView });
   },
 
   best_destination_for: best_destination_for__nearest_legal_pile,

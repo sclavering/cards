@@ -1,13 +1,15 @@
 const GypsyBase = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToPiles, StockView, 0, 0,
-    "p", 8, GypsyPile, FanDownView, 2, 1,
-    "f", 8, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToPiles, 0, 0],
+    piles: [8, GypsyPile, 2, 1],
+    foundations: [8, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   p p p p p p p p  (#<f_f><f_f><f_f><f_f>.s)   >.',
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p p  (#<f_f><f_f><f_f><f_f>.s)   >.", { s: StockView, p: FanDownView, f: View });
+  },
 
   helpId: "gypsy",
 

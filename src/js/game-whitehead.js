@@ -1,14 +1,16 @@
 gGameClasses.whitehead = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWaste, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 7, WhiteheadPile, FanDownView, 0, [1, 2, 3, 4, 5, 6, 7],
-    "f", 4, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToWaste, 0, 0],
+    wastes: [1, Waste, 0, 0],
+    piles: [7, WhiteheadPile, 0, [1, 2, 3, 4, 5, 6, 7]],
+    foundations: [4, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<    s w  f f f f    >.#<   p p p p p p p   >.");
+  },
 
   best_destination_for: function(cseq) {
     return find_pile_by_top_card(this.piles, top => is_next_in_suit(cseq.first, top))

@@ -1,17 +1,22 @@
+const canfield_layout = "#<   s  f f f f  [r]   ><   w  p p p p>.";
+
 const CanfieldBase = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 4, CanfieldPile, FanDownView, 0, 0,
-    "f", 4, CanfieldFoundation, CountedView, 0, 0,
-    "r", 1, Reserve, CountedView, 0, 0,
-  ],
+  // Note: subclasses wrap this
+  pile_details: () => ({
+    stocks: [1, StockDealToWasteOrRefill, 0, 0],
+    wastes: [1, Waste, 0, 0],
+    piles: [4, CanfieldPile, 0, 0],
+    foundations: [4, CanfieldFoundation, 0, 0],
+    reserves: [1, Reserve, 0, 0],
+  }),
   _reserveFaceDown: 12,
   _reserveFaceUp: 1,
 
-  layoutTemplate: '#<   s  f f f f  [r]   ><   w  p p p p>.',
+  static_create_layout() {
+    return new Layout(canfield_layout, { f: CountedView, r: CountedView });
+  },
 
   helpId: "canfield",
 
@@ -48,23 +53,25 @@ gGameClasses.canfield = {
 
 gGameClasses.canfield3 = {
   __proto__: CanfieldBase,
-  pileDetails: function() {
-    const rv = CanfieldBase.pileDetails();
-    rv[2] = StockDeal3OrRefill; // Stock pile
-    rv[9] = Deal3VWasteView; // Waste view
+  pile_details: function() {
+    const rv = CanfieldBase.pile_details();
+    rv.stocks[1] = StockDeal3OrRefill;
     return rv;
+  },
+  static_create_layout() {
+    // Waste view is different
+    return new Layout(canfield_layout, { f: CountedView, r: CountedView, w: Deal3VWasteView });
   },
 };
 
 gGameClasses.demon = {
   __proto__: CanfieldBase,
-  pileDetails: function() {
-    const rv = CanfieldBase.pileDetails();
-    rv[27] = FanDownView; // Reserve view
-    return rv;
-  },
   _reserveFaceDown: 0,
-  _reserveFaceUp: 13
+  _reserveFaceUp: 13,
+  static_create_layout() {
+    // Reserve view is different
+    return new Layout(canfield_layout, { f: CountedView, r: FanDownView });
+  },
 };
 
 

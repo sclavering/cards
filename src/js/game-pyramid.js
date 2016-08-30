@@ -1,14 +1,16 @@
 gGameClasses.pyramid = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
-    "w", 1, PyramidWaste, CountedView, 0, 0,
-    "p", 28, PyramidPile, PyramidView, 0, 1,
-    "f", 1, PyramidFoundation, CountedView, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToWasteOrRefill, 0, 0],
+    wastes: [1, PyramidWaste, 0, 0],
+    piles: [28, PyramidPile, 0, 1],
+    foundations: [1, PyramidFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   [sw] [{class=pyramidlayout}#< p >.#< p_p >.#< p_p_p >.#< p_p_p_p >.#< p_p_p_p_p >.#< p_p_p_p_p_p >.#<p_p_p_p_p_p_p>.] f   >.',
+  static_create_layout() {
+    return new Layout("#<   [sw] [{class=pyramidlayout}#< p >.#< p_p >.#< p_p_p >.#< p_p_p_p >.#< p_p_p_p_p >.#< p_p_p_p_p_p >.#<p_p_p_p_p_p_p>.] f   >.", { p: PyramidView, f: CountedView });
+  },
 
   init: function() {
     const leftkid = [1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26], lknum = 21;
@@ -39,13 +41,15 @@ gGameClasses.pyramid = {
 gGameClasses.tripeaks = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToFoundation, StockView, 0, 0,
-    "p", 28, BasePyramidPile, TriPeaksView, 0, 0,
-    "f", 1, UpDownMod13Foundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToFoundation, 0, 0],
+    piles: [28, BasePyramidPile, 0, 0],
+    foundations: [1, UpDownMod13Foundation, 0, 0],
+  }),
 
-  layoutTemplate: '[{class=pyramidlayout}#<     -  =  p  =  =  p  =  =  p  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.',
+  static_create_layout() {
+    return new Layout("[{class=pyramidlayout}#<     -  =  p  =  =  p  =  =  p  =  -     >.#<      =  p  p  =  p  p  =  p  p  =      >.#<     -  p  p  p  p  p  p  p  p  p  -     >.#<      p  p  p  p  p  p  p  p  p  p      >.]____#<   s  f   >.", { p: TriPeaksView });
+  },
 
   init: function() {
     const ps = this.piles;

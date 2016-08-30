@@ -1,26 +1,23 @@
 gGameClasses.regiment = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "p", 16, RegimentPile, RegimentSlideView, 0, 1,
-    "r", 8, Reserve, RegimentSlideView, 10, 1,
-    // ace+king foundations
-    "a", 4, RegimentAceFoundation, RegimentSlideView, 0, 0,
-    "k", 4, RegimentKingFoundation, RegimentSlideView, 0, 0,
-  ],
+  pile_details: () => ({
+    piles: [16, RegimentPile, 0, 1],
+    reserves: [8, Reserve, 10, 1],
+    ace_foundations: [4, RegimentAceFoundation, 0, 0],
+    king_foundations: [4, RegimentKingFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.',
+  static_create_layout() {
+    return new Layout("#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.", { p: RegimentSlideView, r: RegimentSlideView, a: RegimentSlideView, k: RegimentSlideView });
+  },
 
   init_cards: () => make_cards(2),
 
   init: function() {
-    const cs = this.allcards;
-    const fs = this.foundations, ps = this.piles, rs = this.reserves;
-    this.aceFoundations = fs.slice(0,4);
-    this.kingFoundations = fs.slice(4,8);
-
+    this.foundations = [].concat(this.ace_foundations, this.king_foundations);
+    const ps = this.piles, rs = this.reserves;
     for(let i = 0; i !== 8; i++) rs[i].col = i;
-
     for(let i = 0; i !== 16; i++) {
       let p = ps[i];
       p.col = i % 8;
@@ -48,8 +45,8 @@ gGameClasses.regiment = {
   // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
   autoplayable_predicate: function() {
     const ace_nums = {}, king_nums = {};
-    for_each_top_card(this.aceFoundations, c => ace_nums[c.suit] = c.number);
-    for_each_top_card(this.kingFoundations, c => king_nums[c.suit] = c.number);
+    for_each_top_card(this.ace_foundations, c => ace_nums[c.suit] = c.number);
+    for_each_top_card(this.king_foundations, c => king_nums[c.suit] = c.number);
     const autoplayable_suits = { S: false, H: false, D: false, C: false };
     for(let k in autoplayable_suits) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
     return card => autoplayable_suits[card.suit];

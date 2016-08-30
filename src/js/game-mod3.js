@@ -1,21 +1,23 @@
 gGameClasses.mod3 = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToPiles, StockView, 0, 0,
-    "p", 8, AcesUpPile, FanDownView, 0, 1,
-    "f", 8, Mod3Foundation2, Mod3SlideView, 0, 1,
-    "g", 8, Mod3Foundation3, Mod3SlideView, 0, 1,
-    "h", 8, Mod3Foundation4, Mod3SlideView, 0, 1,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToPiles, 0, 0],
+    piles: [8, AcesUpPile, 0, 1],
+    f_foundations2: [8, Mod3Foundation2, 0, 1],
+    g_foundations3: [8, Mod3Foundation3, 0, 1],
+    h_foundations4: [8, Mod3Foundation4, 0, 1],
+  }),
 
-  layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
+  static_create_layout() {
+    return new Layout("#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.", { f: Mod3SlideView, g: Mod3SlideView, h: Mod3SlideView });
+  },
 
   init_cards: () => make_cards(2, null, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]), // no Aces
 
   init: function() {
-    const fs = this.foundations;
-    this.rows = [fs.slice(0,8), fs.slice(8,16), fs.slice(16)];
+    this.foundations = [].concat(this.f_foundations2, this.g_foundations3, this.h_foundations4);
+    this.rows = [this.f_foundations2, this.g_foundations3, this.h_foundations4];
     // Ordinarily this excludes .foundations
     this.hint_and_autoplay_source_piles = [].concat(this.foundations, this.piles);
   },

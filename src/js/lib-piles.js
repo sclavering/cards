@@ -18,6 +18,10 @@ class AnyPile {
     this.is_pile = false;
 
     this.is_drop_target = true;
+
+    // These are set by the game, and used when dealing the cards at the start of the game.
+    this.num_to_deal_face_down = 0;
+    this.num_to_deal_face_up = 0;
   }
 
   // An integer that may be displayed below the pile.

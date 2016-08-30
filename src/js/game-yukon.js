@@ -12,23 +12,27 @@ const YukonBase = {
 
 gGameClasses.yukon = {
   __proto__: YukonBase,
-  pileDetails: () => [
-    "p", 7, YukonPile, FanDownView, [0, 1, 2, 3, 4, 5, 6], [1, 5, 5, 5, 5, 5, 5],
-    "f", 4, KlondikeFoundation, View, 0, 0,
-  ],
-  layoutTemplate: '#<   p p p p p p p  [f_f_f_f]   >.',
+  pile_details: () => ({
+    piles: [7, YukonPile, [0, 1, 2, 3, 4, 5, 6], [1, 5, 5, 5, 5, 5, 5]],
+    foundations: [4, KlondikeFoundation, 0, 0],
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p p p p  [f_f_f_f]   >.");
+  },
 };
 
 
 gGameClasses.sanibel = {
   __proto__: YukonBase,
-  pileDetails: () => [
-    "s", 1, StockDealToWaste, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 10, YukonPile, FanDownView, 3, 7,
-    "f", 8, KlondikeFoundation, View, 0, 0,
-  ],
-  layoutTemplate: '#<  s w    f f f f f f f f  >.#<   p p p p p p p p p p   >.',
+  pile_details: () => ({
+    stocks: [1, StockDealToWaste, 0, 0],
+    wastes: [1, Waste, 0, 0],
+    piles: [10, YukonPile, 3, 7],
+    foundations: [8, KlondikeFoundation, 0, 0],
+  }),
+  static_create_layout() {
+    return new Layout("#<  s w    f f f f f f f f  >.#<   p p p p p p p p p p   >.");
+  },
   init_cards: () => make_cards(2),
   foundation_cluster_count: 4,
 };

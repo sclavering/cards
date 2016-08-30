@@ -1,6 +1,7 @@
 class Layout {
-  constructor() {
+  constructor(template, view_classes_by_letter) {
     this.views = [];
+    this.views_by_letter = {};
 
     // The root DOM element for this layout.
     this._node = null,
@@ -13,6 +14,8 @@ class Layout {
     this._cseq_for_dragging = null; // a CardSequence, from when mousedown occurs on one, until mouseup occurs thereafter
     this._is_drag_threshold_exceeded = false; // have we exceeded the small movement threshold before we show a drag as in progress?
     this._current_touch_id = null; // a Touch.identifier value, when a touch-based drag is in progress
+
+    this._init(template, view_classes_by_letter || {});
   }
 
   show() {
@@ -28,8 +31,10 @@ class Layout {
     window.onresize = null;
   }
 
-  init(template, view_classes) {
+  _init(template, view_classes) {
     if(this._node) throw "reinitialising layout";
+
+    const default_view_classes = { s: StockView, w: CountedView, p: FanDownView, f: View, c: View };
 
     this._bound_on_window_resize = ev => this._on_window_resize(ev);
     this._bound_oncontextmenu = ev => this._oncontextmenu(ev);
@@ -42,7 +47,7 @@ class Layout {
     this._bound_ontouchcancel = ev => this._ontouchcancel(ev);
     this._bound_ontouchmove = ev => this._ontouchmove(ev);
 
-    const views = this.views = [];
+    const views = this.views;
     const letters = []; // seq of view letters, to return to caller
 
     const container = this._node = createDIV("gamelayout game");
@@ -123,18 +128,14 @@ class Layout {
         case "}":
           throw "Layout.init: reached a } in template (without a { first)";
       // add pile views
-        case "p":
-        case "f":
-        case "c":
-        case "r":
-        case "w":
-        case "s":
         default: {
-          let ViewClass = view_classes[ch] || null;
+          let ViewClass = view_classes[ch] || default_view_classes[ch] || null;
           if(!ViewClass) throw "Layout.init(): unrecognised view char found in template: " + ch;
           letters.push(ch);
           let view = new ViewClass();
           views.push(view);
+          if(!this.views_by_letter[ch]) this.views_by_letter[ch] = [];
+          this.views_by_letter[ch].push(view);
           view.insert_into(boxOrTd());
           break;
         }
@@ -146,6 +147,19 @@ class Layout {
     return letters;
   }
 
+  attach_piles_to_views(pile_arrays_by_letter) {
+    for(let k in pile_arrays_by_letter) if(!this.views_by_letter[k]) throw new Error("missing view-letter: " + k);
+    for(let k in this.views_by_letter) if(!pile_arrays_by_letter[k]) throw new Error("missing pile-letter: " + k);
+    for(let k in pile_arrays_by_letter) {
+      let ps = pile_arrays_by_letter[k];
+      let views = this.views_by_letter[k];
+      if(ps.length !== views.length) throw new Error(ps.length + " piles but " + views.length + " views for letter " + k);
+      for(let i = 0; i !== ps.length; ++i) {
+        ps[i].view = views[i];
+        views[i].attach(ps[i]);
+      }
+    }
+  }
 
   // Mouse/Touch Handling
 

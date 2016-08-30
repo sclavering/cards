@@ -3,14 +3,16 @@ gGameClasses.fortythieves = {
 
   foundation_cluster_count: 4,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWaste, StockView, 0, 0,
-    "w", 1, Waste, FanRightView, 0, 1,
-    "p", 10, FortyThievesPile, FanDownView, 0, 4,
-    "f", 8, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToWaste, 0, 0],
+    wastes: [1, Waste, 0, 1],
+    piles: [10, FortyThievesPile, 0, 4],
+    foundations: [8, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.", { s: StockView, w: FanRightView, p: FanDownView, f: View });
+  },
 
   init_cards: () => make_cards(2),
 

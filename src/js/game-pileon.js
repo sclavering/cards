@@ -22,39 +22,47 @@ const PileOnBase = {
 gGameClasses.pileon = {
   __proto__: PileOnBase,
   _pileon_depth: 4,
-  pileDetails: () => [
-    "p", 15, PileOnPile4, PileOnView4, 0, 4, // last two actually empty
-  ],
-  layoutTemplate: '#<   p p p p   ><   p p p p><   p p p p><   p p p>.',
+  pile_details: () => ({
+    piles: [15, PileOnPile4, 0, 4], // the last two are actually empty
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p>.", { p: PileOnView4 });
+  },
 };
 
 gGameClasses.doublepileon = {
   __proto__: PileOnBase,
   init_cards: () => make_cards(2),
   _pileon_depth: 8,
-  pileDetails: () => [
-    "p", 16, PileOnPile8, PileOnView8, 0, 8, // last three actually empty
-  ],
-  layoutTemplate: '#<   p p p p   ><   p p p p><   p p p p><   p p p p>.',
+  pile_details: () => ({
+    piles: [16, PileOnPile8, 0, 8], // the last three are actually empty
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p p>.", { p: PileOnView8 });
+  },
 };
 
 gGameClasses.pileup = {
   __proto__: PileOnBase,
   _pileon_depth: 4,
-  pileDetails: () => [
-    "p", 14, PileUpPile4, PileOnView4, 0, 4, // last one is actually empty
-  ],
-  layoutTemplate: '#<   p p p p   ><   p p p p><   p p p p><   p p>.',
+  pile_details: () => ({
+    piles: [14, PileUpPile4, 0, 4], // the last one is actually empty
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p>.", { p: PileOnView4 });
+  },
 };
 
 gGameClasses.doublepileup = {
   __proto__: PileOnBase,
   init_cards: () => make_cards(2),
   _pileon_depth: 8,
-  pileDetails: () => [
-    "p", 15, PileUpPile8, PileOnView8, 0, 8, // last two are actually empty
-  ],
-  layoutTemplate: '#<   p p p p   ><   p p p p><   p p p p><   p p p>.',
+  pile_details: () => ({
+    piles: [15, PileUpPile8, 0, 8], // the last two are are actually empty
+  }),
+  static_create_layout() {
+    return new Layout("#<   p p p p   ><   p p p p><   p p p p><   p p p>.", { p: PileOnView8 });
+  },
 };
 
 

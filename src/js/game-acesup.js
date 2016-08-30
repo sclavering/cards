@@ -1,13 +1,15 @@
 gGameClasses.acesup = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToPiles, StockView, 0, 0,
-    "p", 4, AcesUpPile, FanDownView, 0, 1,
-    "f", 1, AcesUpFoundation, CountedView, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToPiles, 0, 0],
+    piles: [4, AcesUpPile, 0, 1],
+    foundations: [1, AcesUpFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   s  p p p p  f   >.',
+  static_create_layout() {
+    return new Layout("#<   s  p p p p  f   >.", { s: StockView, p: FanDownView, f: CountedView });
+  },
 
   init: function() {
     const ps = this.piles;

@@ -1,13 +1,15 @@
 gGameClasses.towers = {
   __proto__: FreeCellGame,
 
-  pileDetails: () => [
-    "p", 10, TowersPile, FanDownView, 0, 5,
-    "f", 4, KlondikeFoundation, View, 0, 0,
-    "c", 4, Cell, View, 0, [0, 1, 1, 0],
-  ],
+  pile_details: () => ({
+    piles: [10, TowersPile, 0, 5],
+    foundations: [4, KlondikeFoundation, 0, 0],
+    cells: [4, Cell, 0, [0, 1, 1, 0]],
+  }),
 
-  layoutTemplate: '#<  c c c c    f f f f  >.#<   p p p p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<  c c c c    f f f f  >.#<   p p p p p p p p p p   >.");
+  },
 
   best_destination_for: best_destination_for__nearest_legal_pile_or_cell,
 

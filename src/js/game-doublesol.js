@@ -3,14 +3,16 @@
 gGameClasses.doublesol = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
-    "w", 1, Waste, CountedView, 0, 0,
-    "p", 10, KlondikePile, FanDownView, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 1,
-    "f", 4, DoubleSolFoundation, DoubleSolFoundationView, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, StockDealToWasteOrRefill, 0, 0],
+    wastes: [1, Waste, 0, 0],
+    piles: [10, KlondikePile, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 1],
+    foundations: [4, DoubleSolFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   s w   f f f f   >.#<   p p p p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<   s w   f f f f   >.#<   p p p p p p p p p p   >.", { f: DoubleSolFoundationView });
+  },
 
   init_cards: () => make_cards(2),
 

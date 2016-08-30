@@ -1,14 +1,16 @@
 gGameClasses.winston = {
   __proto__: Game,
 
-  pileDetails: () => [
-    "s", 1, WinstonStock, StockView, 0, 0,
-    "r", 1, Reserve, WinstonReserveView, 0, 6,
-    "p", 10, WinstonPile, FanDownView, [0, 1, 2, 3, 4, 4, 3, 2, 1, 0], 1,
-    "f", 8, KlondikeFoundation, View, 0, 0,
-  ],
+  pile_details: () => ({
+    stocks: [1, WinstonStock, 0, 0],
+    reserves: [1, Reserve, 0, 6],
+    piles: [10, WinstonPile, [0, 1, 2, 3, 4, 4, 3, 2, 1, 0], 1],
+    foundations: [8, KlondikeFoundation, 0, 0],
+  }),
 
-  layoutTemplate: '#<   s r   f f f f f f f f   >.#<   p p p p p p p p p p   >.',
+  static_create_layout() {
+    return new Layout("#<   s r   f f f f f f f f   >.#<   p p p p p p p p p p   >.", { s: StockView, r: WinstonReserveView, p: FanDownView, f: View });
+  },
 
   init_cards: () => make_cards(2),
 

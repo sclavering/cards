@@ -1,7 +1,3 @@
-function* irange(N) {
-  for(var i = 0; i < N; ++i) yield i;
-}
-
 function repeat(item, number) {
   const rv = new Array(number);
   for(let i = 0; i < number; ++i) rv[i] = item;

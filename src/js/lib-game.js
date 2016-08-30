@@ -348,32 +348,29 @@ const Game = {
 
 
 
-function GameType(id, proto) {
-  this.id = id;
-  proto.id = id; // main.js still uses this
-  this.instanceProto = proto;
-  this.pastGames = [];
-  this.futureGames = [];
-}
-GameType.prototype = {
-  instanceProto: null,
-  pastGames: [],
-  havePastGames: false,
-  currentGame: null,
-  futureGames: [],
-  haveFutureGames: false,
+class GameType {
+  constructor(id, proto) {
+    this.id = id;
+    proto.id = id; // main.js still uses this
+    this.instanceProto = proto;
+    this.pastGames = [];
+    this.futureGames = [];
+    this.havePastGames = false;
+    this.haveFutureGames = false;
+    this.currentGame = null;
+  }
 
-  switchTo: function() {
+  switchTo() {
     if(!this.currentGame) this.newGame();
     else gCurrentGame = this.currentGame;
     gCurrentGame.show();
-  },
+  }
 
-  switchFrom: function() {
+  switchFrom() {
     this.currentGame.hide();
-  },
+  }
 
-  newGame: function(cardsOrder) {
+  newGame(cardsOrder) {
     if(this.currentGame) {
       if(this.pastGames.length === 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
@@ -385,13 +382,13 @@ GameType.prototype = {
     gCurrentGame.begin(cardsOrder || null);
     const act = gCurrentGame.autoplay();
     if(act) doo(act);
-  },
+  }
 
-  restart: function() {
+  restart() {
     this.newGame(this.currentGame.order_cards_dealt);
-  },
+  }
 
-  restorePastGame: function() {
+  restorePastGame() {
     if(!this.havePastGames) return;
     if(this.futureGames.length === 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
@@ -399,9 +396,9 @@ GameType.prototype = {
     gCurrentGame = this.currentGame = this.pastGames.pop();
     this.havePastGames = this.pastGames.length!=0;
     gCurrentGame.show();
-  },
+  }
 
-  restoreFutureGame: function() {
+  restoreFutureGame() {
     if(!this.haveFutureGames) return;
     if(this.pastGames.length === 2) this.pastGames.shift();
     this.pastGames.push(this.currentGame);
@@ -409,10 +406,10 @@ GameType.prototype = {
     gCurrentGame = this.currentGame = this.futureGames.pop();
     this.haveFutureGames = this.futureGames.length!=0;
     gCurrentGame.show();
-  },
+  }
 
-  clearFutureGames: function() {
+  clearFutureGames() {
     this.futureGames = [];
     this.haveFutureGames = false;
   }
-}
+};

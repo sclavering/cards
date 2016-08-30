@@ -44,9 +44,8 @@ class WinstonPile extends _Pile {
 };
 
 
-const WinstonReserveView = {
-  __proto__: _FanView,
-  _fan_x_offset: gHFanOffset,
-  _always_draw_background: true,
-  canvas_width: gCardWidth + 5 * gHFanOffset
+class WinstonReserveView extends _FixedFanView {
+  constructor() {
+    super({ capacity: 6, horizontal: true });
+  }
 };

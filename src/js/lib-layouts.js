@@ -28,7 +28,7 @@ class Layout {
     window.onresize = null;
   }
 
-  init(template, view_types) {
+  init(template, view_classes) {
     if(this._node) throw "reinitialising layout";
 
     this._bound_on_window_resize = ev => this._on_window_resize(ev);
@@ -130,12 +130,12 @@ class Layout {
         case "w":
         case "s":
         default: {
-          let viewType = view_types[ch] || null;
-          if(!viewType) throw "Layout.init(): unrecognised view char found in template: " + ch;
+          let ViewClass = view_classes[ch] || null;
+          if(!ViewClass) throw "Layout.init(): unrecognised view char found in template: " + ch;
           letters.push(ch);
-          var viewObj = createPileView(viewType);
-          views.push(viewObj);
-          viewObj.insert_into(boxOrTd());
+          let view = new ViewClass();
+          views.push(view);
+          view.insert_into(boxOrTd());
           break;
         }
       }

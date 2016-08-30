@@ -2,11 +2,11 @@ gGameClasses.regiment = {
   __proto__: Game,
 
   pileDetails: () => [
-    "p", 16, RegimentPile, FoundationSlideView, 0, 1,
-    "r", 8, Reserve, FoundationSlideView, 10, 1,
+    "p", 16, RegimentPile, RegimentSlideView, 0, 1,
+    "r", 8, Reserve, RegimentSlideView, 10, 1,
     // ace+king foundations
-    "a", 4, RegimentAceFoundation, FoundationSlideView, 0, 0,
-    "k", 4, RegimentKingFoundation, FoundationSlideView, 0, 0,
+    "a", 4, RegimentAceFoundation, RegimentSlideView, 0, 0,
+    "k", 4, RegimentKingFoundation, RegimentSlideView, 0, 0,
   ],
 
   layoutTemplate: '#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.',

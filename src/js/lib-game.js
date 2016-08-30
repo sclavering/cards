@@ -16,7 +16,7 @@ const Game = {
   reserve: null,
   dragDropTargets: null, // a list of piles on which cards can be dropped
 
-  // A Layout (or subclass) instance.  One instance per game-type (not per game-instance).
+  // A Layout (or subclass) instance.  The actual instance is shared with other games of the same type.
   layout: null,
 
   // Used to create .layout, which must be an instance of Layout or a subclass.  Rarely needs overriding.
@@ -29,17 +29,16 @@ const Game = {
 
   // Returns an array giving details of all the piles to be created.
   // Consists of parts in the form:
-  //   letter, number, PileClass, View, face-down, face-up
-  // Where 'letter' corresponds to one used in .layoutTemplate, 'number' is how
-  // many of that kind exist, PileClass and View are the subtypes of those objects
-  // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
+  //   letter, number, PileClass, ViewClass, face-down, face-up
+  // ...where 'letter' corresponds to one used in .layoutTemplate, 'number' is how many of that kind exist.
+  // 'face-down' and 'face-up' give the number of cards to be dealt
   // to the pile, if .deal() isn't replaced. Either a number (applying to all
   // of the piles) or an array of numbers (one per pile) can be used.
   pileDetails: () => [
   /* partial example:
-    "s", 1, null, StockView, 0, 0,
+    "s", 1, StockDealToWasteOrRefill, StockView, 0, 0,
     "w", 1, Waste, CountedView, 0, 0,
-    "p", 1, null, FanDownView, 0, 0,
+    "p", 1, KlondikePile, FanDownView, 0, 0,
     "f", 1, KlondikeFoundation, View, 0, 0,
     "c", 1, Cell, View, 0, 0,
     "r", 1, Reserve, View, 0, 0,
@@ -63,7 +62,7 @@ const Game = {
   classInit: function() {
     this.classInit = null; // to avoid re-calling
 
-    const view_types = {};
+    const view_classes = {};
     const details = this.pileDetails();
     const eLen = 6; // length of an entry/row in .pileDetails()
     const numletters = details.length / eLen;
@@ -73,7 +72,7 @@ const Game = {
       let l = letters[i] = details[i * eLen];
       nums[l]  = details[i * eLen + 1];
       impls[l] = details[i * eLen + 2];
-      view_types[l] = details[i * eLen + 3];
+      view_classes[l] = details[i * eLen + 3];
       downs[l] = details[i * eLen + 4];
       ups[l]   = details[i * eLen + 5];
       // turn single numbers for face up/down cards into sequences per-pile
@@ -85,7 +84,7 @@ const Game = {
 
     this.layout = this.create_layout();
     // Returns a sequence of the letters from layoutTemplate that referred to views/piles excluding, e.g. annotations.
-    const layoutletters = this.layout.init(this.layoutTemplate, view_types);
+    const layoutletters = this.layout.init(this.layoutTemplate, view_classes);
 
     // Convert to flattened lists, ordered the way the layout was created.
     this._pilesToCreateLetters = layoutletters;

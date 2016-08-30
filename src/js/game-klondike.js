@@ -50,7 +50,7 @@ gGameClasses.klondike3 = {
   __proto__: KlondikeBase,
   pileDetails: function() {
     const rv = KlondikeBase.pileDetails();
-    rv[2] = Deal3OrRefillStock; // Stock pile
+    rv[2] = StockDeal3OrRefill; // Stock pile
     rv[9] = Deal3HWasteView; // Waste view
     return rv;
   },

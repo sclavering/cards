@@ -57,14 +57,17 @@ gGameClasses.regiment = {
 };
 
 
-const RegimentPile = {
-  __proto__: Pile,
-  is_pile: true,
-  reserve: null,
+class RegimentPile extends _Pile {
+  constructor() {
+    super();
+    this.reserve = null;
+  }
 
-  may_take_card: mayTakeSingleCard,
+  may_take_card(card) {
+    return card.isLast && card.faceUp;
+  }
 
-  may_add_card: function(card) {
+  may_add_card(card) {
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
@@ -89,22 +92,22 @@ const RegimentPile = {
   }
 };
 
-const RegimentAceFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: ifLast,
-  may_add_card: function(card) {
+class RegimentAceFoundation extends _Foundation {
+  may_take_card(card) {
+    return card.isLast;
+  }
+  may_add_card(card) {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(this.lastCard, card);
-  },
+  }
 };
 
-const RegimentKingFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: ifLast,
-  may_add_card: function(card) {
+class RegimentKingFoundation extends _Foundation {
+  may_take_card(card) {
+    return card.isLast;
+  }
+  may_add_card(card) {
     if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
-  },
+  }
 };

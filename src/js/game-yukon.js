@@ -34,12 +34,14 @@ gGameClasses.sanibel = {
 };
 
 
-const YukonPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: card => card.faceUp,
-  may_add_card: mayAddToGypsyPile,
-  hint_sources: function() {
+class YukonPile extends _Pile {
+  may_take_card(card) {
+    return card.faceUp;
+  }
+  may_add_card(card) {
+    return may_add_to_gypsy_pile(card, this);
+  }
+  hint_sources() {
     return this.cards.filter(c => c.faceUp);
-  },
+  }
 };

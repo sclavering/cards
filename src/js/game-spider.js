@@ -143,32 +143,31 @@ gGameClasses.doublesimon = {
 };
 
 
-const SpiderPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: mayTakeRunningFlush,
-  may_add_card: mayAddOntoUpNumberOrEmpty
+class SpiderPile extends _Pile {
+  may_take_card(card) {
+    return may_take_running_flush(card);
+  }
+  may_add_card(card) {
+    return !this.hasCards || this.lastCard.number === card.number + 1;
+  }
 };
 
 
-const DivorcePile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: function(card) {
+class DivorcePile extends _Pile {
+  may_take_card(card) {
     return card.faceUp && check_consecutive_cards(card, is_next_in_suit_mod13);
-  },
-  may_add_card: function(card) {
+  }
+  may_add_card(card) {
     return !this.hasCards || is_next_mod13(card, this.lastCard);
-  },
+  }
 };
 
 
-const BlackWidowPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: mayTakeDescendingRun,
-  may_add_card: mayAddOntoUpNumberOrEmpty,
-  hint_sources: function() {
+class BlackWidowPile extends SpiderPile {
+  may_take_card(card) {
+    return may_take_descending_run(card);
+  }
+  hint_sources() {
     const sources = [];
     const cs = this.cards;
     for(var j = cs.length; j;) {
@@ -185,11 +184,11 @@ const BlackWidowPile = {
 };
 
 
-const SpiderFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: _ => false,
-  may_add_card: function(card) {
+class SpiderFoundation extends _Foundation {
+  may_take_card() {
+    return false;
+  }
+  may_add_card(card) {
     return card.number === 13 && check_count_and_consecutive_cards(card, 13, is_next_in_suit);
-  },
+  }
 };

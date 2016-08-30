@@ -27,9 +27,9 @@ const Game = {
 
   // Returns an array giving details of all the piles to be created.
   // Consists of parts in the form:
-  //   letter, number, Pile, View, face-down, face-up
+  //   letter, number, PileClass, View, face-down, face-up
   // Where 'letter' corresponds to one used in .layoutTemplate, 'number' is how
-  // many of that kind exist, Pile and View are the subtypes of those objects
+  // many of that kind exist, PileClass and View are the subtypes of those objects
   // to be used. 'face-down' and 'face-up' give the number of cards to be dealt
   // to the pile, if .deal() isn't replaced. Either a number (applying to all
   // of the piles) or an array of numbers (one per pile) can be used.
@@ -95,7 +95,7 @@ const Game = {
 
 
   _create_piles: function() {
-    this.allpiles = this._pilesToCreate.map(impl => createPile(impl));
+    this.allpiles = this._pilesToCreate.map(PileClass => new PileClass());
     const bytype = {};
     for(let [i, p] of this.allpiles.entries()) {
       p.owning_game = this;

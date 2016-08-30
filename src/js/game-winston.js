@@ -25,23 +25,22 @@ gGameClasses.winston = {
 };
 
 
-const WinstonStock = {
-  __proto__: _Stock,
-  deal: function() {
+class WinstonStock extends _Stock {
+  deal() {
     const pred = p => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
-  },
+  }
 };
 
 
-const WinstonPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: may_take_descending_alt_colour,
-  may_add_card: function(card) {
+class WinstonPile extends _Pile {
+  may_take_card(card) {
+    return may_take_descending_alt_colour(card);
+  }
+  may_add_card(card) {
     if(card.pile.is_reserve) return false;
     return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : true;
-  },
+  }
 };
 
 

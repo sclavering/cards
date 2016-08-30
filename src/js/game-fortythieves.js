@@ -22,13 +22,11 @@ gGameClasses.fortythieves = {
 };
 
 
-const FortyThievesPile = {
-  __proto__: Pile,
-  is_pile: true,
-
-  may_take_card: mayTakeRunningFlush,
-
-  may_add_card: function(card) {
+class FortyThievesPile extends _Pile {
+  may_take_card(card) {
+    return may_take_running_flush(card);
+  }
+  may_add_card(card) {
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
     if(card.isLast) return true;

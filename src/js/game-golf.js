@@ -39,10 +39,11 @@ gGameClasses.golf2 = {
 };
 
 
-const GolfPile = {
-  __proto__: Pile,
-  is_pile: true,
-  // don't allow drag_drop because it's slower than just clicking the cards
-  may_take_card: mayTakeSingleCard,
-  may_add_card: _ => false,
+class GolfPile extends _Pile {
+  may_take_card(card) {
+    return card.isLast && card.faceUp;
+  }
+  may_add_card(card) {
+    return false;
+  }
 };

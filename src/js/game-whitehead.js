@@ -30,12 +30,12 @@ gGameClasses.whitehead = {
 };
 
 
-const WhiteheadPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: mayTakeRunningFlush,
-  may_add_card: function(card) {
+class WhiteheadPile extends _Pile {
+  may_take_card(card) {
+    return may_take_running_flush(card);
+  }
+  may_add_card(card) {
     const last = this.lastCard;
     return last ? is_next_and_same_colour(card, last) : true;
-  },
+  }
 };

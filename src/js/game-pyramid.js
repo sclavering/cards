@@ -103,27 +103,26 @@ gGameClasses.tripeaks = {
 };
 
 
-const BasePyramidPile = {
-  __proto__: Pile,
-  is_pile: true,
-
-  // set in games' init()s
-  leftParent: null,
-  rightParent: null,
-  leftChild: null,
-  rightChild: null,
-
-  may_take_card: function(card) {
+class BasePyramidPile extends _Pile {
+  constructor() {
+    super();
+    // set in games' init()s
+    this.leftParent = null;
+    this.rightParent = null;
+    this.leftChild = null;
+    this.rightChild = null;
+  }
+  may_take_card(card) {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
-  },
-
-  may_add_card: _ => false,
+  }
+  may_add_card(card) {
+    return false;
+  }
 };
 
-const PyramidPile = {
-  __proto__: BasePyramidPile,
-  action_for_drop: function(cseq) {
+class PyramidPile extends BasePyramidPile {
+  action_for_drop(cseq) {
     const card = cseq.first;
     const c = this.firstCard;
     if(!c || card.number + c.number !== 13) return null;
@@ -135,21 +134,25 @@ const PyramidPile = {
   }
 };
 
-const PyramidFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: _ => false,
-  action_for_drop: function(cseq) {
+class PyramidFoundation extends _Foundation {
+  may_take_card(card) {
+    return false;
+  }
+  may_add_card(card) {
+    return false;
+  }
+  action_for_drop(cseq) {
     const card = cseq.first;
     return card.number === 13 ? new RemovePair(card, null) : null;
-  },
-  may_add_card: _ => false,
+  }
 };
 
-const PyramidWaste = {
-  __proto__: Waste,
-  is_drop_target: true,
-  action_for_drop: function(cseq) {
+class PyramidWaste extends Waste {
+  constructor() {
+    super();
+    this.is_drop_target = true;
+  }
+  action_for_drop(cseq) {
     const card = cseq.first;
     const c = this.lastCard;
     return c && card.number + c.number === 13 ? new RemovePair(card, c) : null;

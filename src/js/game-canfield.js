@@ -50,7 +50,7 @@ gGameClasses.canfield3 = {
   __proto__: CanfieldBase,
   pileDetails: function() {
     const rv = CanfieldBase.pileDetails();
-    rv[2] = Deal3OrRefillStock; // Stock pile
+    rv[2] = StockDeal3OrRefill; // Stock pile
     rv[9] = Deal3VWasteView; // Waste view
     return rv;
   },
@@ -68,21 +68,21 @@ gGameClasses.demon = {
 };
 
 
-const CanfieldPile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: card => card.faceUp,
-  may_add_card: function(card) {
+class CanfieldPile extends _Pile {
+  may_take_card(card) {
+    return card.faceUp;
+  }
+  may_add_card(card) {
     return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
-  },
+  }
 };
 
 
-const CanfieldFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: ifLast,
-  may_add_card: function(card) {
+class CanfieldFoundation extends _Foundation {
+  may_take_card(card) {
+    return card.isLast;
+  }
+  may_add_card(card) {
     return this.hasCards ? is_next_in_suit_mod13(this.lastCard, card) : card.number === this.canfield_foundation_base_num;
-  },
+  }
 };

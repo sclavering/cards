@@ -58,15 +58,18 @@ gGameClasses.doublepileup = {
 };
 
 
-const _PileOnPile = {
-  __proto__: Pile,
-  _depth: NaN,
-  _is_pileup: false,
-  is_pile: true,
-  may_take_card: card => all_same_number(card.pile.cards.slice(card.index)),
+class _PileOnPile extends _Pile {
+  constructor() {
+    super();
+    this._depth = NaN;
+    this._is_pileup = false;
+  }
+  may_take_card(card) {
+    return all_same_number(card.pile.cards.slice(card.index));
+  }
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
-  may_add_card: function(card) {
+  may_add_card(card) {
     const last = this.lastCard;
     if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
     const numCards = card.pile.cards.length - card.index;
@@ -74,26 +77,34 @@ const _PileOnPile = {
   }
 };
 
-const PileOnPile4 = {
-  __proto__: _PileOnPile,
-  _depth: 4,
+class PileOnPile4 extends _PileOnPile {
+  constructor() {
+    super()
+    this._depth = 4;
+  }
 };
 
-const PileOnPile8 = {
-  __proto__: _PileOnPile,
-  _depth: 8,
+class PileOnPile8 extends _PileOnPile {
+  constructor() {
+    super()
+    this._depth = 8;
+  }
 };
 
-const PileUpPile4 = {
-  __proto__: _PileOnPile,
-  _depth: 4,
-  _is_pileup: true,
+class PileUpPile4 extends _PileOnPile {
+  constructor() {
+    super()
+    this._depth = 4;
+    this._is_pileup = true;
+  }
 };
 
-const PileUpPile8 = {
-  __proto__: _PileOnPile,
-  _depth: 8,
-  _is_pileup: true,
+class PileUpPile8 extends _PileOnPile {
+  constructor() {
+    super()
+    this._depth = 8;
+    this._is_pileup = true;
+  }
 };
 
 

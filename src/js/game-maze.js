@@ -44,15 +44,15 @@ gGameClasses.maze = {
 };
 
 
-const MazePile = {
-  __proto__: Pile,
-  is_pile: true,
-  may_take_card: _ => true,
-  may_add_card: function(card) {
+class MazePile extends _Pile {
+  may_take_card(card) {
+    return true;
+  }
+  may_add_card(card) {
     if(this.hasCards) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;
     return (prev && maze_allows_adjacent(prev, card)) || (next && maze_allows_adjacent(card, next));
-  },
+  }
 };
 
 

@@ -23,14 +23,14 @@ gGameClasses.doublesol = {
 
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K
-const DoubleSolFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: ifLast,
-  may_add_card: function(card) {
+class DoubleSolFoundation extends _Foundation {
+  may_take_card(card) {
+    return card.isLast;
+  }
+  may_add_card(card) {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const expected_number = Math.floor(this.cards.length / 2) + 1;
     return card.number === expected_number && card.suit === this.cards[0].suit;
-  },
+  }
 };

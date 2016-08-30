@@ -473,7 +473,7 @@ const StockView = {
   __proto__: View,
   _has_counter: true,
   cseq_at_coords: function(x, y) {
-    return CardSequence.from_card(this.pile.lastCard || this.pile.magicStockStubCard);
+    return CardSequence.from_card(this.pile.lastCard || this.pile.magic_stock_stub_card || null);
   },
 };
 

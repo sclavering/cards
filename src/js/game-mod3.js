@@ -4,9 +4,9 @@ gGameClasses.mod3 = {
   pileDetails: () => [
     "s", 1, StockDealToPiles, StockView, 0, 0,
     "p", 8, AcesUpPile, FanDownView, 0, 1,
-    "f", 8, { __proto__: _Mod3Foundation, _baseNum: 2 }, Mod3SlideView, 0, 1,
-    "g", 8, { __proto__: _Mod3Foundation, _baseNum: 3 }, Mod3SlideView, 0, 1,
-    "h", 8, { __proto__: _Mod3Foundation, _baseNum: 4 }, Mod3SlideView, 0, 1,
+    "f", 8, Mod3Foundation2, Mod3SlideView, 0, 1,
+    "g", 8, Mod3Foundation3, Mod3SlideView, 0, 1,
+    "h", 8, Mod3Foundation4, Mod3SlideView, 0, 1,
   ],
 
   layoutTemplate: '#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.',
@@ -66,22 +66,44 @@ gGameClasses.mod3 = {
 };
 
 
-const _Mod3Foundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: ifLast,
-  _baseNum: -1, // set elsewhere
-  contains_appropriate_cards: function() {
-    const first = this.firstCard;
-    return first ? first.number === this._baseNum : false;
-  },
-  may_add_card: function(card) {
+class _Mod3Foundation extends _Foundation {
+  constructor(base_num) {
+    super();
+    this._base_num = base_num;
+  }
+  may_take_card(card) {
+    return card.isLast;
+  }
+  may_add_card(card) {
     const last = this.lastCard;
-    if(!this.hasCards) return card.number === this._baseNum;
+    if(!this.hasCards) return card.number === this._base_num;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
-  },
-  hint_sources: function() {
+  }
+  contains_appropriate_cards() {
+    const first = this.firstCard;
+    return first ? first.number === this._base_num : false;
+  }
+  hint_sources() {
     const c = this.firstCard;
     return c && !this.contains_appropriate_cards() ? [c] : [];
+  }
+};
+
+
+class Mod3Foundation2 extends _Mod3Foundation {
+  constructor() {
+    super(2);
+  }
+};
+
+class Mod3Foundation3 extends _Mod3Foundation {
+  constructor() {
+    super(3);
+  }
+};
+
+class Mod3Foundation4 extends _Mod3Foundation {
+  constructor() {
+    super(4);
   }
 };

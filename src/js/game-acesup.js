@@ -32,14 +32,14 @@ gGameClasses.acesup = {
 };
 
 
-const AcesUpFoundation = {
-  __proto__: Pile,
-  is_foundation: true,
-  may_take_card: _ => false,
-  may_add_card: function(card) {
+class AcesUpFoundation extends _Foundation {
+  may_take_card() {
+    return false;
+  }
+  may_add_card(card) {
     const compare = (c, d) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
     if(compare(card, card.pile.secondToLastCard)) return true;
     for(let p of card.pile.following()) if(compare(card, p.lastCard)) return true;
     return false;
-  },
+  }
 };

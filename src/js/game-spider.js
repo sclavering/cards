@@ -172,12 +172,12 @@ const BlackWidowPile = {
     const sources = [];
     const cs = this.cards;
     for(var j = cs.length; j;) {
-      var card = cs[--j];
+      let card = cs[--j];
       if(!card.faceUp) break;
       let prv = j >= 1 ? this.cards[j - 1] : null;
       if(prv && prv.faceUp && prv.number === card.number + 1 && prv.suit === card.suit) continue;
       sources.push(card);
-      if(prv.number !== card.number + 1) break;
+      if(!prv || prv.number !== card.number + 1) break;
     }
     // longer-run hints are probably better, so show those first
     return sources.reverse();

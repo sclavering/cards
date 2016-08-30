@@ -37,19 +37,14 @@ gGameClasses.regiment = {
     for(let pile of this.piles)
       if(!pile.hasCards && this.reserves[pile.col].hasCards)
         return new Move(this.reserves[pile.col].lastCard, pile);
-    return this._autoplay();
-  },
 
-  _autoplay: autoplay_default,
-
-  // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
-  autoplayable_predicate: function() {
+    // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
     const ace_nums = {}, king_nums = {};
     for_each_top_card(this.ace_foundations, c => ace_nums[c.suit] = c.number);
     for_each_top_card(this.king_foundations, c => king_nums[c.suit] = c.number);
     const autoplayable_suits = { S: false, H: false, D: false, C: false };
     for(let k in autoplayable_suits) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
-    return card => autoplayable_suits[card.suit];
+    return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
   },
 };
 

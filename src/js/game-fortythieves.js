@@ -18,9 +18,9 @@ gGameClasses.fortythieves = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate: autoplay_any_where_all_lower_of_same_suit_are_on_foundations,
+  autoplay: function() {
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
+  },
 };
 
 

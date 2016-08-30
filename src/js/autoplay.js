@@ -1,32 +1,20 @@
-// A very common implementation for games' .autoplay()
-function autoplay_default() {
-  const predicate = this.autoplayable_predicate();
-  for(let p of this.hint_and_autoplay_source_piles) {
-    let c = p.lastCard;
-    if(!c || !predicate(c)) continue;
-    let act = this.foundation_action_for(CardSequence.from_card(c));
-    if(act) return act;
-  }
-  return null;
-};
+// Various predicate-getters for use with Game .autoplay_using_predicate().
 
-
-// Various commonly-used implementations of games' .autoplayable_predicate().
 
 // Can put 5H up if 4C and 4S are up (since there's then no reason to keep 5H down).
 // Can always put A* up, and also 2* (because they're never needed to put an Ace on).
-function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two() {
-  return _autoplayable_predicate_for_klondike(this.foundations, true, false);
-}
+function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(foundations) {
+  return _autoplayable_predicate_for_klondike(foundations, true, false);
+};
 
 // Similar to autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two, except that (for two-deck games) you also shouldn't autoplay a 5H until both 5H can go up (i.e. until both 4H are already up) since it's not clear which 5H it would be better to put up first.
-function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks() {
-  return _autoplayable_predicate_for_klondike(this.foundations, true, true);
-}
+function autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks(foundations) {
+  return _autoplayable_predicate_for_klondike(foundations, true, true);
+};
 
-function autoplay_any_where_all_lower_of_other_colour_are_on_foundations() {
-  return _autoplayable_predicate_for_klondike(this.foundations, false, false);
-}
+function autoplay_any_where_all_lower_of_other_colour_are_on_foundations(foundations) {
+  return _autoplayable_predicate_for_klondike(foundations, false, false);
+};
 
 function _autoplayable_predicate_for_klondike(fs, always_allow_twos, have_two_decks) {
   const colour_nums = { R: 1000, B: 1000 }; // colour -> smallest num of that colour on the top of an f
@@ -50,8 +38,8 @@ function _autoplayable_predicate_for_klondike(fs, always_allow_twos, have_two_de
 
 
 // e.g. can autoplay 5D when all 4Ds are on foundations.  Assumes two full decks are in use.
-function autoplay_any_where_all_lower_of_same_suit_are_on_foundations() {
-  const [nums, counts] = lowest_numbers_and_counts_by_suit_on_foundations(this.foundations);
+function autoplay_any_where_all_lower_of_same_suit_are_on_foundations(foundations) {
+  const [nums, counts] = lowest_numbers_and_counts_by_suit_on_foundations(foundations);
   for(let suit in counts) {
     if(counts[suit] < 2) nums[suit] = 1;
     else ++nums[suit];

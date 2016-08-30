@@ -213,9 +213,15 @@ const Game = {
     return null;
   },
 
-  // Used by autoplay_default.  It should return a (Card -> boolean) function saying whether the passed card is currently suitable for autoplaying.
-  autoplayable_predicate: function() {
-    throw "not implemented";
+  // Used to implement .autoplay() for many games.
+  autoplay_using_predicate: function(predicate) {
+    for(let p of this.hint_and_autoplay_source_piles) {
+      let c = p.lastCard;
+      if(!c || !predicate(c)) continue;
+      let act = this.foundation_action_for(CardSequence.from_card(c));
+      if(act) return act;
+    }
+    return null;
   },
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.

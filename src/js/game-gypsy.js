@@ -15,10 +15,10 @@ const GypsyBase = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: autoplay_default,
-
-  // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
+  autoplay: function() {
+    // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations(this.foundations));
+  },
 };
 
 gGameClasses.gypsy2 = {

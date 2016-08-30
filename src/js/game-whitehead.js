@@ -18,16 +18,14 @@ gGameClasses.whitehead = {
         || findEmpty(this.piles);
   },
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate: function() {
+  autoplay: function() {
     const nums = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
     const suitmap = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
     for(let f of this.foundations) {
       let c = f.lastCard;
       if(c) nums[suitmap[c.suit]] = c.number + 1;
     }
-    return card => card.number <= nums[card.suit];
+    return this.autoplay_using_predicate(card => card.number <= nums[card.suit]);
   },
 };
 

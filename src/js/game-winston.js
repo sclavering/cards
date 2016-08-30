@@ -21,9 +21,9 @@ gGameClasses.winston = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks,
+  autoplay: function() {
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks(this.foundations));
+  },
 };
 
 

@@ -22,9 +22,9 @@ gGameClasses.penguin = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_or_cell,
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate() { return _ => true; },
+  autoplay: function() {
+    return this.autoplay_using_predicate(_ => true);
+  },
 };
 
 

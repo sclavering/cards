@@ -3,9 +3,9 @@ const KlondikeBase = {
 
   best_destination_for: best_destination_for__nearest_legal_pile,
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two,
+  autoplay: function() {
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
+  },
 
   hasScoring: true,
 
@@ -76,6 +76,8 @@ gGameClasses.doubleklondike = {
   init_cards: () => make_cards(2),
   foundation_cluster_count: 4,
 
-  // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
+  autoplay: function() {
+    // With eight foundations it can make sense to keep a 2 down and put its twin up instead.
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations(this.foundations));
+  },
 };

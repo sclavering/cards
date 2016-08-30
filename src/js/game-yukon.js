@@ -3,10 +3,10 @@ const YukonBase = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: autoplay_default,
-
-  // Keeping a 2 down so you can put an Ace on it can be useful if the Ace has other junk on top of it.
-  autoplayable_predicate: autoplay_any_where_all_lower_of_other_colour_are_on_foundations,
+  autoplay: function() {
+    // Keeping a 2 down so you can put an Ace on it can be useful if the Ace has other junk on top of it.
+    return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations(this.foundations));
+  },
 };
 
 

@@ -16,13 +16,11 @@ gGameClasses.unionsquare = {
 
   best_destination_for: best_destination_for__nearest_legal_pile_preferring_nonempty,
 
-  autoplay: autoplay_default,
-
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A.
-  autoplayable_predicate: function() {
+  autoplay: function() {
     const autoplayable_suits = { S: false, H: false, D: false, C: false };
     for(let f of this.foundations) if(f.cards.length >= 12) autoplayable_suits[f.cards[0].suit] = true;
-    return card => autoplayable_suits[card.suit];
+    return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
   },
 };
 

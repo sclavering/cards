@@ -34,13 +34,13 @@ gGameClasses.mod3 = {
     return this.foundation_destination_for(cseq) || findEmpty(cseq.source.is_pile ? cseq.source.surrounding() : this.piles);
   },
 
-  autoplay: autoplay_default,
-
-  autoplayable_predicate: function() {
+  autoplay: function() {
     const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
-    return card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
+    return this.autoplay_using_predicate(
+      card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
-        && !(card.pile.is_foundation && card.pile.contains_appropriate_cards());
+        && !(card.pile.is_foundation && card.pile.contains_appropriate_cards())
+    );
   },
 
   // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).

@@ -11,9 +11,9 @@ const GolfBase = {
 
   helpId: "golf",
 
-  best_action_for: function(card) {
+  best_action_for: function(cseq) {
     const f = this.foundation;
-    return card.pile.may_take_card(card) && f.may_add_card(card) ? new Move(card, f) : null;
+    return cseq.source.may_take_card(cseq.first) && f.may_add_card(cseq.first) ? new Move(cseq.first, f) : null;
   },
 
   is_won: function() {

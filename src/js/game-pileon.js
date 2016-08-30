@@ -1,7 +1,8 @@
 const PileOnBase = {
   __proto__: Game,
 
-  best_destination_for: function(card) {
+  best_destination_for: function(cseq) {
+    const card = cseq.first;
     const ps = card.pile.surrounding();
     return find_pile_by_top_card(ps, top => top.number === card.number && top.pile.may_add_card(card))
         // Redundant with the above for Pile On, but not for Pile Up.

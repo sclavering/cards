@@ -15,7 +15,8 @@ gGameClasses.acesup = {
     ps[3].next = ps[0];
   },
 
-  best_destination_for: function(card) {
+  best_destination_for: function(cseq) {
+    const card = cseq.first;
     const f = this.foundation;
     if(f.may_add_card(card)) return f;
     return findEmpty(card.pile.following());

@@ -22,7 +22,8 @@ gGameClasses.pyramid = {
     }
   },
 
-  best_action_for: function(card) {
+  best_action_for: function(cseq) {
+    const card = cseq.first;
     return card.number === 13 && card.pile.may_take_card(card) ? new RemovePair(card, null) : null;
   },
 
@@ -68,8 +69,8 @@ gGameClasses.tripeaks = {
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   },
 
-  best_destination_for: function(card) {
-    return this.foundation.may_add_card(card) ? this.foundation : null;
+  best_destination_for: function(cseq) {
+    return this.foundation.may_add_card(cseq.first) ? this.foundation : null;
   },
 
   is_won: function() {

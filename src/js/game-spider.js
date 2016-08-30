@@ -6,8 +6,9 @@ const SpiderBase = {
 
   layoutTemplate: '#<   p p p p p p p p p p  [fs]   >.',
 
-  best_destination_for: function(card) {
-    const ps = card.pile.surrounding();
+  best_destination_for: function(cseq) {
+    const card = cseq.first;
+    const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || findEmpty(ps);
   },
 
@@ -76,8 +77,9 @@ gGameClasses.divorce = {
   init_cards: () => make_cards(2),
 
   // Can't re-use the standard Spider version because it doesn't do ace->king wraparound.
-  best_destination_for: function(card) {
-    const ps = card.pile.surrounding();
+  best_destination_for: function(cseq) {
+    const card = cseq.first;
+    const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
   },
 };

@@ -101,7 +101,7 @@ const Pile = {
 
   // Should return an Action/ErrorMsg appropriate for the CardSequence being clicked on.
   action_for_click: function(cseq) {
-    return cseq ? this.owning_game.best_action_for(cseq.first) : null;
+    return cseq ? this.owning_game.best_action_for(cseq) : null;
   },
 
   // Return an array of cards to consider moving when computing hints.

@@ -28,8 +28,8 @@ gGameClasses.mod3 = {
     return true;
   },
 
-  best_destination_for: function(card) {
-    return this.foundation_destination_for(card) || findEmpty(card.pile.is_pile ? card.pile.surrounding() : this.piles);
+  best_destination_for: function(cseq) {
+    return this.foundation_destination_for(cseq) || findEmpty(cseq.source.is_pile ? cseq.source.surrounding() : this.piles);
   },
 
   autoplay: autoplay_default,

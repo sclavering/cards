@@ -264,33 +264,33 @@ const Game = {
   foundation_action_for: function(cseq) {
     const card = cseq.first;
     if(!cseq.source.may_take_card(card)) return null;
-    const f = this.foundation_destination_for(card);
+    const f = this.foundation_destination_for(cseq);
     return f ? new Move(card, f) : null;
   },
 
-  // Given a card (that has already been determined to be movable), return a foundation pile it can be legally moved to, or null.
+  // Given a CardSequence that has already been determined to be movable, return a foundation pile it can be legally moved to, or null.
   // Subclasses may override this.
-  foundation_destination_for: function(card) {
+  foundation_destination_for: function(cseq) {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
-    if(card.number === 1 && this._foundation_clusters)
+    if(this._foundation_clusters && cseq.first.number === 1)
       for(let fs of this._foundation_clusters)
-        if(fs.every(f => !f.hasCards || f.cards[0].suit === card.suit))
+        if(fs.every(f => !f.hasCards || f.cards[0].suit === cseq.first.suit))
           return findEmpty(fs);
-    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) return f;
+    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(cseq.first)) return f;
     return null;
   },
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
-  best_action_for: function(card) {
-    if(!card.pile.may_take_card(card)) return null;
-    const target = this.best_destination_for(card);
-    return target ? new Move(card, target) : null;
+  best_action_for: function(cseq) {
+    if(!cseq.source.may_take_card(cseq.first)) return null;
+    const target = this.best_destination_for(cseq);
+    return target ? new Move(cseq.first, target) : null;
   },
 
-  // Given a card, return the preferred legal destination pile to move it to, or null.
+  // Given a CardSequence, return the preferred legal destination pile to move it to, or null.
   // Subclasses should override this.
-  best_destination_for: function(card) {
+  best_destination_for: function(cseq) {
     return null;
   },
 

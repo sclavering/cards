@@ -10,9 +10,9 @@ gGameClasses.whitehead = {
 
   layoutTemplate: '#<    s w  f f f f    >.#<   p p p p p p p   >.',
 
-  best_destination_for: function(card) {
-    return find_pile_by_top_card(this.piles, top => is_next_in_suit(card, top))
-        || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(card, top))
+  best_destination_for: function(cseq) {
+    return find_pile_by_top_card(this.piles, top => is_next_in_suit(cseq.first, top))
+        || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(cseq.first, top))
         || findEmpty(this.piles);
   },
 

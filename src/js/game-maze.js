@@ -24,8 +24,8 @@ gGameClasses.maze = {
     this._deal_cards_with_nulls_for_spaces(cards);
   },
 
-  best_destination_for: function(card) {
-    for(let p of card.pile.following()) if(p.may_add_card(card)) return p;
+  best_destination_for: function(cseq) {
+    for(let p of cseq.source.following()) if(p.may_add_card(cseq.first)) return p;
     return null;
   },
 

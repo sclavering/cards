@@ -28,12 +28,11 @@ gGameClasses.regiment = {
     }
   },
 
-  best_destination_for: function(card) {
-    const parent = card.pile;
-    const ps = parent.is_pile ? parent.following() : this.piles, num = ps.length;
-    for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(card)) return p;
+  best_destination_for: function(cseq) {
+    const ps = cseq.source.is_pile ? cseq.source.following() : this.piles, num = ps.length;
+    for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
 
-    if(parent.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_card_maybe_to_self(card)) return p;
+    if(cseq.source.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
     return null;
   },
 

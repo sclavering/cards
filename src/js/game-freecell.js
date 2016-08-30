@@ -34,9 +34,9 @@ gGameClasses.freecell = {
 
   layoutTemplate: '#<  c c c c    f f f f  >.#<  p p p p p p p p  >.',
 
-  best_destination_for: function(card) {
-    const p = best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, card);
-    return p || (card.isLast ? findEmpty(this.cells) : null);
+  best_destination_for: function(cseq) {
+    const p = best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+    return p || (cseq.first.isLast ? findEmpty(this.cells) : null);
   },
 
   autoplay: autoplay_default,

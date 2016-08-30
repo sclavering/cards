@@ -37,25 +37,25 @@ function make_cards(repeat, suits, numbers) {
 }
 
 
-function Card(number, suit) {
-  this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
-  this.suit = suit;
-  this.displayStr = suit + number;
-  this.number = number;
+class Card {
+  constructor(number, suit) {
+    this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
+    this.suit = suit;
+    this.displayStr = suit + number;
+    this.number = number;
 
-  this.faceUp = false;
-  this.pile = null; // the pile the card is in
-  this.index = -1;  // the position within the pile
-}
-Card.prototype = {
-  get isLast() { return this.index === this.pile.cards.length - 1; },
-
-  // pass a boolean
-  setFaceUp: function(val) {
+    this.faceUp = false;
+    this.pile = null; // the pile the card is in
+    this.index = -1;  // the position within the pile
+  }
+  get isLast() {
+    return this.index === this.pile.cards.length - 1;
+  }
+  setFaceUp(val) { // pass a boolean
     this.faceUp = val;
     const p = this.pile;
     if(p) p.view.update();
-  },
+  }
 };
 
 

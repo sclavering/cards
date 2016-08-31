@@ -1,4 +1,24 @@
 class AnyPile {
+  public view: any;
+  public owning_game: any;
+
+  cards: Card[];
+  prev: AnyPile;
+  next: AnyPile;
+  index: number;
+  is_foundation: boolean;
+  is_cell: boolean;
+  is_reserve: boolean;
+  is_stock: boolean;
+  is_waste: boolean;
+  is_pile: boolean;
+  is_drop_target: boolean;
+  num_to_deal_face_down: number;
+  num_to_deal_face_up: number;
+
+  protected _surrounding: AnyPile[];
+  protected _following: AnyPile[];
+
   constructor() {
     this.cards = [];
     // Previous and next pile of the same type.  Game._create_piles() forms these into doubly-linked non-circular lists.
@@ -59,7 +79,7 @@ class AnyPile {
   }
 
   // Should return an Action/ErrorMsg appropriate for the CardSequence being dropped on the pile.
-  action_for_drop(cseq) {
+  action_for_drop(cseq) : Action | ErrorMsg {
     const card = cseq.first;
     return this.may_add_card_maybe_to_self(card) ? new Move(card, this) : null;
   }
@@ -83,7 +103,7 @@ class AnyPile {
     let p;
     for(p = this.next; p && p !== this; p = p.next) ps.push(p);
     if(!p) { // next/prev links have *not* been formed into a loop
-      let fst = this;
+      let fst : AnyPile = this;
       while(fst.prev) fst = fst.prev;
       for(p = fst; p !== this; p = p.next) ps.push(p);
     }
@@ -102,7 +122,7 @@ class AnyPile {
   }
 
   // Add the passed card and all other cards of higher .index from the same pile.
-  add_cards(card, do_not_update_view) {
+  add_cards(card : Card, do_not_update_view? : boolean) {
     const p = card.pile, pcs = p.cards, ix = card.index;
     this.add_cards_from_array(pcs.slice(ix), do_not_update_view);
     p.remove_cards_after(ix, do_not_update_view);
@@ -127,7 +147,9 @@ class AnyPile {
 };
 
 
-class _Stock extends AnyPile {
+abstract class _Stock extends AnyPile {
+  magic_stock_stub_card: any;
+
   constructor() {
     super();
     this.is_stock = true;
@@ -158,6 +180,8 @@ class _Stock extends AnyPile {
   action_for_click(cseq) {
     return this.deal();
   }
+
+  abstract deal() : void;
 };
 
 class StockDealToWaste extends _Stock {
@@ -208,6 +232,9 @@ class StockDealToNonemptyPiles extends _Stock {
 
 
 class Waste extends AnyPile {
+  deal3v: number;
+  deal3t: number;
+
   constructor() {
     super();
     this.is_waste = true;
@@ -311,7 +338,7 @@ class FanPile extends _Pile {
 
 class _FreeCellPile extends _Pile {
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
-  action_for_drop(cseq) {
+  action_for_drop(cseq) : Action | ErrorMsg {
     const card = cseq.first;
     const may = this.may_add_card_maybe_to_self(card);
     if(may) return new Move(card, this);

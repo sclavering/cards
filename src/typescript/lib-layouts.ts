@@ -1,10 +1,33 @@
 class Layout {
+  views: View[];
+  views_by_letter: { [key: string]: View[] };
+
+  private viewsNeedingUpdateOnResize: View[];
+  private _node: HTMLElement;
+  private _ex0: number;
+  private _ey0: number;
+  private _tx: number;
+  private _ty: number;
+  private _cseq_for_dragging: CardSequence;
+  private _is_drag_threshold_exceeded: boolean;
+  private _current_touch_id: string;
+  private _bound_on_window_resize: any;
+  private _bound_oncontextmenu: any;
+  private _bound_onclick: any;
+  private _bound_onmousedown: any;
+  private _bound_onmouseup: any;
+  private _bound_onmousemove: any;
+  private _bound_ontouchstart: any;
+  private _bound_ontouchend: any;
+  private _bound_ontouchcancel: any;
+  private _bound_ontouchmove: any;
+
   constructor(template, view_classes_by_letter) {
     this.views = [];
     this.views_by_letter = {};
 
     // The root DOM element for this layout.
-    this._node = null,
+    this._node = null;
 
     // Mouse/Touch handling
     this._ex0 = 0; // coords of mousedown/touchstart event
@@ -36,7 +59,7 @@ class Layout {
 
     const default_view_classes = { s: StockView, w: CountedView, p: FanDownView, f: View, c: View };
 
-    this._bound_on_window_resize = ev => this._on_window_resize(ev);
+    this._bound_on_window_resize = ev => this._on_window_resize();
     this._bound_oncontextmenu = ev => this._oncontextmenu(ev);
     this._bound_onclick = ev => this._onclick(ev);
     this._bound_onmousedown = ev => this._onmousedown(ev);
@@ -52,14 +75,14 @@ class Layout {
 
     const container = this._node = createDIV("gamelayout game");
     ui.gameStack.appendChild(container);
-    container.style.top = container.style.left = 0; // to make explicit sizing work
+    container.style.top = container.style.left = "0px"; // to make explicit sizing work
 
-    var box = container;
+    let box : HTMLElement = container;
     var stack = [];
 
     function pushBox(tagName, className) {
       stack.push(box);
-      const el = document.createElement(tagName);
+      const el : HTMLElement = document.createElement(tagName);
       el.className = className;
       boxOrTd().appendChild(el);
       box = el;
@@ -97,8 +120,8 @@ class Layout {
         case ">":
           // Set <td> widths, but only on the first row (so that subsequent rows can omit trailing empties).
           if(!box.previousSibling) {
-            let empties = Array.filter(box.childNodes, function(x) { return !x.hasChildNodes(); });
-            let cellWidth = (100 / empties.length) + '%';
+            const empties = [].filter.call(box.childNodes, x => !x.hasChildNodes());
+            const cellWidth = (100 / empties.length) + '%';
             for(let td of empties) td.style.width = cellWidth;
           }
           // fall through
@@ -118,13 +141,13 @@ class Layout {
           boxOrTd().appendChild(createDIV("horizontal-pilespacer"));
           break;
       // "{attr=val}", applies to most-recent pile or box
-        case "{":
-          var i0 = i;
+        case "{": {
+          let i0 = i;
           while(template[i] !== "}") ++i;
-          var blob = template.substring(i0 + 1, i);
-          let ix = blob.indexOf('='), k = blob.slice(0, ix), v = blob.slice(ix + 1);
-          (box.lastChild || box).setAttribute(k, v);
+          let attr_val = template.substring(i0 + 1, i).split("=");
+          (box.lastChild as HTMLElement || box).setAttribute(attr_val[0], attr_val[1]);
           break;
+        }
         case "}":
           throw "Layout.init: reached a } in template (without a { first)";
       // add pile views
@@ -282,7 +305,7 @@ class Layout {
     return false;
   }
 
-  _reset_handlers(e) {
+  _reset_handlers() {
     this._is_drag_threshold_exceeded = false;
     this._cseq_for_dragging = null;
     this._current_touch_id = null;
@@ -316,7 +339,7 @@ class Layout {
 
   // Window resizing
 
-  _on_window_resize(e) {
+  _on_window_resize() {
     g_animations.cancel();
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;

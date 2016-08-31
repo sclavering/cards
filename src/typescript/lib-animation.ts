@@ -1,12 +1,20 @@
-const g_animations = {
-  _active: false,
+interface AnimationRunArgs {
+  steps: [number, () => void][];
+  piles_to_update?: AnyPile[];
+}
+
+class g_animations {
+  static _active: boolean = false;
+  static _args: any;
+  static _onsuccess: any;
+  static _timeouts: number[];
 
   // args: {
   //   steps: [relative delay in ms, function],
   //   piles_to_update: [Pile],
   // },
   // onsuccess: optional function called after the animation completes
-  run: function(args, onsuccess) {
+  static run(args: AnimationRunArgs, onsuccess?: () => void): void {
     this._active = true;
     this._args = args;
     this._onsuccess = onsuccess || null;
@@ -17,22 +25,22 @@ const g_animations = {
       this._timeouts.push(setTimeout(func, time));
     }
     this._timeouts.push(setTimeout(() => g_animations._finished(true), time));
-  },
+  }
 
-  cancel: function() {
+  static cancel() {
     if(!this._active) return;
     if(this._timeouts) for(let t of this._timeouts) clearTimeout(t);
     this._finished(false);
-  },
+  }
 
-  _finished: function(success) {
+  static _finished(success) {
     this._active = false;
     g_floating_pile.hide();
     for(let p of this._args.piles_to_update) p.view.update();
     const func = this._onsuccess;
     this._onsuccess = this._args = this._timeouts = null;
     if(success && func) func();
-  },
+  }
 };
 
 
@@ -77,8 +85,12 @@ function show_hints(card, destinations) {
 
 
 // A <canvas/> used to show cards being dragged or animated.
-const g_floating_pile = {
-  init: function() {
+class g_floating_pile {
+  static _canvas: HTMLCanvasElement;
+  static context: CanvasRenderingContext2D;
+  static _prev_card: Card;
+
+  static init() {
     this._canvas = document.createElement("canvas");
     this._canvas.style.position = "absolute";
     // So people don't accidentally right-click and then pick the "View Image" item that's first in Firefox's menu.
@@ -87,17 +99,19 @@ const g_floating_pile = {
     this.hide();
     this.context = this._canvas.getContext("2d");
     this._prev_card = null;
-  },
+  }
 
-  bounding_rect: function() { return this._canvas.getBoundingClientRect(); },
+  static bounding_rect() {
+    return this._canvas.getBoundingClientRect();
+  }
 
-  hide: function() {
+  static hide() {
     g_floating_pile._canvas.style.transition = "";
     this.set_position(-1000, -1000);
     this._prev_card = null;
-  },
+  }
 
-  start_animation_or_drag: function(card) {
+  static start_animation_or_drag(card) {
     // If we're already dragging a card and are about to animate its drop onto a pile, we want the animation to run from the current location, not from the original pile.
     if(this._prev_card === card) return;
     this._prev_card = card;
@@ -110,30 +124,30 @@ const g_floating_pile = {
     this.set_position(r.left + coords.x, r.top + coords.y);
     const cards_remaining = pile.cards.slice(0, card.index);
     view.update_with(cards_remaining);
-  },
+  }
 
   // It's always of just the top card
-  start_freecell_animation: function(src, cards_remaining, moving_card, x, y) {
+  static start_freecell_animation(src, cards_remaining, moving_card, x, y) {
     const view = src.view;
     view.draw_into(this.context, [moving_card], false);
     this.set_position(x, y);
     view.update_with(cards_remaining);
-  },
+  }
 
-  set_position: function(x, y) {
+  static set_position(x, y) {
     this._canvas.style.left = x + "px";
     this._canvas.style.top = y + "px";
-  },
+  }
 
-  transition_from_to: function(x0, y0, x1, y1, duration_ms) {
+  static transition_from_to(x0, y0, x1, y1, duration_ms) {
     this.set_position(x0, y0);
     this._canvas.style.transition = "left " + duration_ms + "ms, top " + duration_ms + "ms";
     this.set_position(x1, y1);
-  },
+  }
 
-  get_transition_duration_ms: function(x0, y0, x1, y1) {
+  static get_transition_duration_ms(x0, y0, x1, y1) {
     const dx = x1 - x0, dy = y1 - y0;
     // We move 55px diagonally per k_animation_delay.  (This is left over from when animation was done without CSS transitions).
     return Math.round(Math.sqrt(dx * dx + dy * dy) / 55 * k_animation_delay);
-  },
+  }
 };

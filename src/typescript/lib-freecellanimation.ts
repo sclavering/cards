@@ -1,4 +1,4 @@
-function prepare_freecell_move_animation(card, dest, cells, spaces) {
+function prepare_freecell_move_animation(card: Card, dest: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
   const src = card.pile;
   const num_movable_via_cells = cells.length + 1;
   const steps = [];
@@ -17,7 +17,7 @@ function prepare_freecell_move_animation(card, dest, cells, spaces) {
     _freecell_animate_complex(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces);
   }
 
-  return { steps: steps, piles_to_update: Array.concat(card.pile, dest, cells, spaces) };
+  return { steps: steps, piles_to_update: [].concat(card.pile, dest, cells, spaces) };
 }
 
 function _freecell_evil_get_card_absolute_coords(pile, num_in_pile, card_index) {

@@ -12,7 +12,7 @@ JS_FILES = [
     "src/js/lib-animation.js",
     "src/js/lib-freecellanimation.js",
     "src/js/autoplay.js",
-    "src/js/lib-actions.js",
+    "build/lib-actions.js",
     "src/js/lib-game.js",
     "src/js/lib-freecell.js",
 

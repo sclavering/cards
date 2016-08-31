@@ -4,6 +4,7 @@
         "outDir": "build/"
     },
     "files": [
+        "src/typescript/lib-actions.ts",
         "src/typescript/lib-cards.ts"
     ]
 }

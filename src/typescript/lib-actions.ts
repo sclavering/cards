@@ -1,3 +1,5 @@
+/// <reference path="./misctypes.ts" />
+
 /*
 "Action" objects are card-moves that can be done, undone, and redone.
 
@@ -14,7 +16,16 @@ redo()
 Piles' .action_for_drop(cseq) normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
 */
 
-class DealToPile {
+interface Action {
+  perform() : any;
+  undo() : void;
+  redo?() : void;
+}
+
+
+class DealToPile implements Action {
+  from: Pile;
+  to: Pile;
   constructor(from, to) {
     this.from = from;
     this.to = to;
@@ -28,7 +39,9 @@ class DealToPile {
 };
 
 
-class RefillStock {
+class RefillStock implements Action {
+  stock: Pile;
+  waste: Pile;
   constructor(stock, waste) {
     this.stock = stock;
     this.waste = waste;
@@ -42,7 +55,12 @@ class RefillStock {
 };
 
 
-class DealThree {
+class DealThree implements Action {
+  stock: Pile;
+  waste: Pile;
+  old_deal3v: number;
+  old_deal3t: number;
+  num_moved: number;
   constructor(stock, waste) {
     this.stock = stock;
     this.waste = waste;
@@ -51,12 +69,12 @@ class DealThree {
     this.old_deal3v = this.waste.deal3v;
     this.old_deal3t = this.waste.deal3t;
     const cs = this.stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
-    this.numMoved = this.waste.deal3v = num;
+    this.num_moved = this.waste.deal3v = num;
     this.waste.deal3t = this.waste.cards.length + num;
     for(var i = 0; i !== num; ++i) this.stock.deal_card_to(this.waste);
   }
   undo() {
-    const num = this.numMoved;
+    const num = this.num_moved;
     this.waste.deal3v = this.old_deal3v;
     this.waste.deal3t = this.old_deal3t;
     for(var i = 0; i !== num; ++i) this.stock.undeal_card_from(this.waste);
@@ -64,7 +82,9 @@ class DealThree {
 };
 
 
-class DealToAsManyOfSpecifiedPilesAsPossible {
+class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
+  _stock: Pile;
+  _piles: Pile[];
   constructor(stock, piles) {
     this._stock = stock;
     this._piles = piles.length > stock.cards.length ? piles.slice(0, stock.cards.length) : piles;
@@ -78,7 +98,11 @@ class DealToAsManyOfSpecifiedPilesAsPossible {
 };
 
 
-class Move {
+class Move implements Action {
+  card: Card;
+  source: Pile;
+  destination: Pile;
+  revealed_card: Pile;
   constructor(card, destination) {
     this.card = card;
     this.source = card.pile;
@@ -103,17 +127,23 @@ class Move {
 };
 
 
-class RemovePair {
+class RemovePair implements Action {
+  c1: Card;
+  c2: Card;
+  p1: Pile;
+  p2: Pile;
   constructor(card1, card2) {
-    this.c1 = card1; this.p1 = card1.pile;
-    this.c2 = card2; this.p2 = card2 && card2.pile;
+    this.c1 = card1;
+    this.p1 = card1.pile;
+    this.c2 = card2;
+    this.p2 = card2 && card2.pile;
   }
   perform() {
     const f = this.p1.owning_game.foundation;
     f.add_cards(this.c1);
     if(this.c2) f.add_cards(this.c2);
   }
-  undo(undo) {
+  undo() {
     if(this.c2) this.p2.add_cards(this.c2);
     this.p1.add_cards(this.c1);
   }
@@ -121,11 +151,13 @@ class RemovePair {
 
 
 class ErrorMsg {
-  constructor(msgText1, msgText2) {
-    this._msgText1 = msgText1;
-    this._msgText2 = msgText2;
+  msg1: string;
+  msg2: string;
+  constructor(msg1, msg2) {
+    this.msg1 = msg1;
+    this.msg2 = msg2;
   }
   show() {
-    showMessage(this._msgText1, this._msgText2);
+    showMessage(this.msg1, this.msg2);
   }
 };

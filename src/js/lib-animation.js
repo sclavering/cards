@@ -48,7 +48,7 @@ function prepare_move_animation(card, destination) {
   const r = destination.view.pixel_rect();
   const x1 = r.left + final_offset.x, y1 = r.top + final_offset.y;
   const r0 = g_floating_pile.bounding_rect();
-  const x0 = r0.x, y0 = r0.y;
+  const x0 = r0.left, y0 = r0.top;
 
   const transition_duration_ms = g_floating_pile.get_transition_duration_ms(x0, y0, x1, y1);
   const steps = [

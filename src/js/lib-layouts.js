@@ -199,8 +199,8 @@ class Layout {
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
     g_floating_pile.start_animation_or_drag(this._cseq_for_dragging.first);
     const rect = g_floating_pile.bounding_rect();
-    this._tx = ex0 - rect.x;
-    this._ty = ey0 - rect.y;
+    this._tx = ex0 - rect.left;
+    this._ty = ey0 - rect.top;
     this._is_drag_threshold_exceeded = true;
   }
 

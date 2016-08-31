@@ -3,7 +3,7 @@ var gCurrentGameType = null;
 const gGameClasses = {}; // game-id -> Game subclass, filled by game-*.js
 const gGameTypes = {}; // game-id -> GameType object
 
-const ui = {
+const ui_ids = {
   btnUndo: "btn-undo",
   btnRedo: "btn-redo",
   messageBox: "message",
@@ -19,9 +19,12 @@ const ui = {
   cardImages: "cardsimg",
 };
 
+// It's really a mapping full of HTMLElements.
+const ui: any = {};
+
 
 window.onload = function() {
-  for(let k in ui) ui[k] = document.getElementById(ui[k]);
+  for(let k in ui_ids) ui[k] = document.getElementById(ui_ids[k]);
   document.addEventListener('keypress', keyPressHandler, false);
   g_floating_pile.init();
   for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
@@ -126,7 +129,7 @@ function restartGame() {
 }
 
 
-function doo(action, was_dragging) { // "do" is a reserved word
+function doo(action: Action, was_dragging?: boolean) { // "do" is a reserved word
   if(!action) return;
   interrupt(was_dragging);
   // enable undo + disable redo (but avoid doing so unnecessarily)
@@ -152,7 +155,7 @@ function done() {
 }
 
 
-function interrupt(was_dragging) {
+function interrupt(was_dragging?: boolean) {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
   if(!was_dragging && gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
@@ -200,7 +203,7 @@ function showGameWon() {
 var gMessageBoxIsShowing = false;
 var gMessageCallback = null;
 
-function showMessage(msgText1, msgText2, fun) {
+function showMessage(msgText1: string, msgText2: string, fun?: () => void) {
   gMessageCallback = fun;
   ui.messageLine1.textContent = msgText1;
   ui.messageLine2.textContent = msgText2;

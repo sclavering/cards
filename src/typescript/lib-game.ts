@@ -259,7 +259,7 @@ class Game {
 
   // Subclasses may override this.
   // Called after each move (unless interrupted by user), it should return an Action or null.  Revealing face-down cards is generally handled elsewhere.
-  autoplay() {
+  autoplay(): Action {
     return null;
   }
 

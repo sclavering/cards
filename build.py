@@ -4,7 +4,7 @@ import os, sys
 
 JS_FILES = [
     "build/util.js",
-    "src/js/main.js",
+    "build/main.js",
     "build/lib-cards.js",
     "build/lib-views.js",
     "build/lib-layouts.js",

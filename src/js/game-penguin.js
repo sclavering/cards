@@ -22,7 +22,7 @@ class PenguinGame extends Game {
   }
 
   best_destination_for(cseq) {
-    return best_destination_for__nearest_legal_pile_or_cell.call(this, cseq);
+    return this.best_destination_for__nearest_legal_pile_or_cell(cseq);
   }
 
   autoplay() {

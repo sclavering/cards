@@ -15,7 +15,7 @@ class UnionSquareGame extends Game {
   }
 
   best_destination_for(cseq) {
-    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+    return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A.

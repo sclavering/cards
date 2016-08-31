@@ -38,7 +38,7 @@ class FreeCellGame extends FreeCellRelatedGame {
   // */
 
   best_destination_for(cseq) {
-    const p = best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+    const p = this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
     return p || (cseq.first.isLast ? findEmpty(this.cells) : null);
   }
 

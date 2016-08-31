@@ -12,7 +12,7 @@ class RussianSolGame extends Game {
   }
 
   best_destination_for(cseq) {
-    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+    return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
   autoplay() {

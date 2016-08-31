@@ -19,7 +19,7 @@ class WinstonGame extends Game {
   // xxx "4S _ 6S 10S 9S _" is almost-impossible (requires moving things back from the foundations)
 
   best_destination_for(cseq) {
-    return best_destination_for__nearest_legal_pile_preferring_nonempty.call(this, cseq);
+    return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
   autoplay() {

@@ -272,6 +272,30 @@ class Game {
     return null;
   }
 
+  // Commonly-useful implementations of .best_destination_for(cseq)
+
+  best_destination_for__nearest_legal_pile_preferring_nonempty(cseq) {
+    const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
+    let maybe = null;
+    for(let p of ps) {
+      if(!p.may_add_card_maybe_to_self(cseq.first)) continue;
+      if(p.cards.length) return p;
+      if(!maybe) maybe = p;
+    }
+    return maybe;
+  }
+
+  best_destination_for__nearest_legal_pile(cseq) {
+    const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
+    for(let p of ps) if(p.may_add_card_maybe_to_self(cseq.first)) return p;
+    return null;
+  }
+
+  best_destination_for__nearest_legal_pile_or_cell(cseq) {
+    const p = this.best_destination_for__nearest_legal_pile(cseq);
+    return p || (cseq.first.isLast ? findEmpty(this.cells) : null);;
+  }
+
 
   // === Hints ============================================
   // Generally nothing here needs overriding by subclasses.

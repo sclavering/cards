@@ -6,7 +6,7 @@ JS_FILES = [
     "build/util.js",
     "src/js/main.js",
     "build/lib-cards.js",
-    "src/js/lib-views.js",
+    "build/lib-views.js",
     "src/js/lib-layouts.js",
     "src/js/lib-piles.js",
     "src/js/lib-animation.js",

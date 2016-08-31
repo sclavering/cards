@@ -1,3 +1,5 @@
+/// <reference path="./misctypes.ts" />
+
 var gVFanOffset = 25; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 15; // num pixels between left edges of two cards in a horizontal fan
 var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
@@ -22,9 +24,10 @@ function draw_card_by_name(canvascx, x, y, name) {
 
 function initCardImageOffsets() {
   const off = gCardImageOffsets = {};
-  for(let [l, n] of [["S", 0], ["H", 1], ["D", 2], ["C", 3]])
-    for(var i = 1; i !== 14; ++i)
-      off[l + i] = n * 13 + i - 1;
+  const suit_order_in_image = { S: 0, H: 1, D: 2, C: 3 };
+  for(let s in suit_order_in_image)
+    for(let i = 1; i !== 14; ++i)
+      off[s + i] = suit_order_in_image[s] * 13 + i - 1;
   off[''] = 4 * 13; // facedown image is last
 }
 
@@ -32,6 +35,13 @@ function initCardImageOffsets() {
 
 // Base class for pile views.
 class _View {
+  _canvas: HTMLCanvasElement;
+  _root_node: Node;
+  _context: CanvasRenderingContext2D;
+  _counter: HTMLElement;
+  needs_update_on_resize: boolean;
+  pile: Pile;
+
   constructor() {
     this.needs_update_on_resize = false;
 
@@ -46,7 +56,7 @@ class _View {
   init_counter() {
     this._root_node = document.createDocumentFragment();
     this._root_node.appendChild(this._canvas);
-    this._counter = this._root_node.appendChild(document.createElement("div"));
+    this._counter = this._root_node.appendChild(document.createElement("div")) as HTMLElement;
     this._counter.className = "counter";
   }
 
@@ -75,7 +85,7 @@ class _View {
     throw "not implemented";
   }
 
-  _draw_background_into(ctx, width, height) {
+  _draw_background_into(ctx, width?, height?) {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
     round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width) - 3, (height || ctx.canvas.height) - 3, 5);
@@ -159,6 +169,14 @@ class CountedView extends View {
 };
 
 class _FanView extends _View {
+  protected canvas_width: number;
+  protected canvas_height: number;
+  protected _fan_x_offset: number;
+  protected _fan_y_offset: number;
+  protected update_canvas_width_on_resize: boolean;
+  protected update_canvas_height_on_resize: boolean;
+  protected _always_draw_background: boolean;
+
   constructor() {
     super();
 
@@ -184,7 +202,7 @@ class _FanView extends _View {
   _recalculate_offsets(num) {
   }
 
-  draw_into(ctx, cards, draw_background, use_minimum_size) {
+  draw_into(ctx, cards, draw_background, use_minimum_size?: boolean) {
     // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
     const num = cards.length, xo = this._fan_x_offset, yo = this._fan_y_offset;
     const width = use_minimum_size ? (num - 1) * xo + gCardWidth : this.canvas_width;
@@ -252,7 +270,7 @@ class _FixedFanView extends _FanView {
 };
 
 class _SelectiveFanView extends _FixedFanView {
-  _visible_cards_of(cs) {
+  _visible_cards_of(cs) : Card[] {
     throw "not implemented";
   }
 
@@ -280,6 +298,9 @@ class _SelectiveFanView extends _FixedFanView {
 
 // A fan that stretches in one dimension, and varies the card offset so all its cards always visible
 class _FlexFanView extends _FanView {
+  protected _fan_x_default_offset: number;
+  protected _fan_y_default_offset: number;
+
   constructor() {
     super();
     this.needs_update_on_resize = true;
@@ -397,6 +418,8 @@ class PileOnView8 extends _FixedFanView {
 };
 
 class PyramidView extends View {
+  protected _draw_covered_cards_face_down: boolean;
+
   constructor() {
     super();
     // In TriPeaks, cards in the peaks should only be face-up when there are no cards on top of them.  It's simpler to handle this at the View level rather than the Pile level.

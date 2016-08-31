@@ -1,7 +1,10 @@
 var gCurrentGame = null;
 var gCurrentGameType = null;
-const gGameClasses = {}; // game-id -> Game subclass, filled by game-*.js
-const gGameTypes = {}; // game-id -> GameType object
+
+// This is filled in by game-*.js
+const gGameClasses: { [game_id: string]: typeof Game } = {};
+
+const gGameTypes: { [game_id: string]: GameType } = {};
 
 const ui_ids = {
   btnUndo: "btn-undo",

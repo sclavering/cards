@@ -21,7 +21,7 @@ class YukonGame extends _YukonRelatedGame {
     };
   }
 };
-gGameClasses.yukon = YukonGame;
+gGameClasses["yukon"] = YukonGame;
 
 class SanibelGame extends _YukonRelatedGame {
   static create_layout() {
@@ -39,7 +39,7 @@ class SanibelGame extends _YukonRelatedGame {
     this.foundation_cluster_count = 4;
   }
 };
-gGameClasses.sanibel = SanibelGame;
+gGameClasses["sanibel"] = SanibelGame;
 
 class YukonPile extends _Pile {
   may_take_card(card) {

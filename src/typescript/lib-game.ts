@@ -6,7 +6,7 @@ interface Hint {
 
 // The base-type for all games
 class Game {
-  private pile_details: any;
+  protected pile_details: any;
   all_cards: Card[];
   foundation_cluster_count: number;
   private show_hints_to_empty_piles: boolean;

@@ -37,7 +37,7 @@ JS_FILES = [
     "src/js/game-unionsquare.js",
     "src/js/game-whitehead.js",
     "src/js/game-winston.js",
-    "src/js/game-yukon.js",
+    "build/game-yukon.js",
 ]
 
 

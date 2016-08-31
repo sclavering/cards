@@ -22,7 +22,7 @@ class Layout {
   private _bound_ontouchcancel: any;
   private _bound_ontouchmove: any;
 
-  constructor(template, view_classes_by_letter) {
+  constructor(template, view_classes_by_letter?) {
     this.views = [];
     this.views_by_letter = {};
 

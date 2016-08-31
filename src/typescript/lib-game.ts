@@ -297,7 +297,7 @@ class Game {
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
-  best_action_for(cseq) {
+  best_action_for(cseq: CardSequence) : Action {
     if(!cseq.source.may_take_card(cseq.first)) return null;
     const target = this.best_destination_for(cseq);
     return target ? new Move(cseq.first, target) : null;

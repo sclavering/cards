@@ -14,7 +14,7 @@ JS_FILES = [
     "src/js/autoplay.js",
     "build/lib-actions.js",
     "build/lib-game.js",
-    "src/js/lib-freecell.js",
+    "build/lib-freecell.js",
 
     "src/js/game-acesup.js",
     "src/js/game-canfield.js",

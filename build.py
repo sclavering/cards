@@ -11,7 +11,7 @@ JS_FILES = [
     "build/lib-piles.js",
     "build/lib-animation.js",
     "build/lib-freecellanimation.js",
-    "src/js/autoplay.js",
+    "build/lib-autoplay.js",
     "build/lib-actions.js",
     "build/lib-game.js",
     "build/lib-freecell.js",

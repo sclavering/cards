@@ -1,9 +1,9 @@
 // takes an array of cards, returns a *new* shuffled array
-function shuffle(cards) {
+function shuffle(cards: Card[]) {
   return shuffle_in_place(cards.slice());
 }
 
-function shuffle_in_place(cards) {
+function shuffle_in_place(cards: Card[]) {
   // shuffle several times, because Math.random() appears to be rather bad.
   for(var i = 0; i !== 5; i++) {
     // invariant: cards[0..n) unshuffled, cards[n..N) shuffled
@@ -24,7 +24,7 @@ function shuffle_in_place(cards) {
 }
 
 
-function make_cards(repeat, suits, numbers) {
+function make_cards(repeat: number, suits?: string, numbers?: number[]) {
   if(!repeat) repeat = 1;
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
@@ -45,6 +45,7 @@ class Card {
   faceUp: boolean;
   pile: any;
   index: number;
+  __all_cards_index: number; // used by Game
 
   constructor(number, suit) {
     this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];

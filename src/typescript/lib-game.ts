@@ -1,7 +1,44 @@
+interface Hint {
+    hint_source_card: Card;
+    hint_destinations: AnyPile[];
+}
+
+
 // The base-type for all games
 class Game {
+  private pile_details: any;
+  all_cards: Card[];
+  foundation_cluster_count: number;
+  private show_hints_to_empty_piles: boolean;
+  hasScoring: boolean;
+  score: number;
+  piles: AnyPile[];
+  cells: AnyPile[];
+  foundations: AnyPile[];
+  foundation: AnyPile;
+  reserves: AnyPile[];
+  reserve: AnyPile;
+  stocks: AnyPile[];
+  stock: AnyPile;
+  wastes: AnyPile[];
+  waste: AnyPile;
+  pile_arrays_by_letter: { [key: string]: AnyPile[] };
+  _foundation_clusters: AnyPile[][];
+  all_piles: AnyPile[];
+  dragDropTargets: AnyPile[];
+  hint_and_autoplay_source_piles: AnyPile[];
+  actionList: Action[];
+  actionPtr: number;
+  canUndo: boolean;
+  canRedo: boolean;
+  private _hints: Hint[];
+  private _next_hint_index: number;
+  helpId: string;
+  layout: Layout;
+  order_cards_dealt: number[];
+
   // All subclasses must implement this and have it return a Layout instance.  It's called on the "class" itself, not the instance.
-  static create_layout() {
+  static create_layout(): Layout {
     throw new Error("not implemented");
   }
 
@@ -101,7 +138,7 @@ class Game {
     }
 
     this.dragDropTargets = this.all_piles.filter(p => p.is_drop_target);
-    for(let i in this.foundations) this.foundations[i].index = i;
+    this.foundations.forEach((f, ix) => f.index = ix);
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null
     this.reserve = this.reserves[0] || null;
@@ -340,6 +377,15 @@ class Game {
 
 
 class GameType {
+  id: string;
+  private game_class: typeof Game;
+  private pastGames: Game[];
+  private futureGames: Game[];
+  private havePastGames: boolean;
+  private haveFutureGames: boolean;
+  private currentGame: Game;
+  private shared_layout: Layout;
+
   constructor(id, game_class) {
     this.id = id;
     game_class.id = id; // main.js still uses this
@@ -361,7 +407,7 @@ class GameType {
     this.currentGame.hide();
   }
 
-  newGame(cardsOrder) {
+  newGame(cardsOrder?: number[]) {
     if(this.currentGame) {
       if(this.pastGames.length === 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);

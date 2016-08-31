@@ -5,7 +5,7 @@ function repeat(item, number) {
 }
 
 // Make a linked-list of the array items, using the given link field names
-function linkList(items, prevPropName, nextPropName, loop) {
+function linkList(items, prevPropName: string, nextPropName: string, loop?: boolean) {
   for(var i = 0; i !== items.length; ++i) {
     items[i][prevPropName] = items[i - 1] || null;
     items[i][nextPropName] = items[i + 1] || null;

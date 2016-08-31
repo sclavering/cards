@@ -20,6 +20,7 @@ interface Action {
   perform() : any;
   undo() : void;
   redo?() : void;
+  score?: number; // This just gets set and used by Game subclasses directly.
 }
 
 

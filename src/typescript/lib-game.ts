@@ -9,7 +9,7 @@ class Game {
   protected pile_details: any;
   all_cards: Card[];
   foundation_cluster_count: number;
-  private show_hints_to_empty_piles: boolean;
+  protected show_hints_to_empty_piles: boolean;
   hasScoring: boolean;
   score: number;
   piles: AnyPile[];

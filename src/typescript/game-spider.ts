@@ -46,7 +46,7 @@ class Spider1Game extends _StandardSpider {
     this.all_cards = make_cards(8, "S");
   }
 };
-gGameClasses.spider1 = Spider1Game;
+gGameClasses["spider1"] = Spider1Game;
 
 class Spider2Game extends _StandardSpider {
   constructor() {
@@ -54,7 +54,7 @@ class Spider2Game extends _StandardSpider {
     this.all_cards = make_cards(4, "SH");
   }
 };
-gGameClasses.spider2 = Spider2Game;
+gGameClasses["spider2"] = Spider2Game;
 
 class Spider4Game extends _StandardSpider {
   constructor() {
@@ -62,7 +62,7 @@ class Spider4Game extends _StandardSpider {
     this.all_cards = make_cards(2);
   }
 };
-gGameClasses.spider4 = Spider4Game;
+gGameClasses["spider4"] = Spider4Game;
 
 class BlackWidowGame extends _SpiderLayoutGame {
   constructor() {
@@ -76,7 +76,7 @@ class BlackWidowGame extends _SpiderLayoutGame {
     };
   }
 };
-gGameClasses.blackwidow = BlackWidowGame;
+gGameClasses["blackwidow"] = BlackWidowGame;
 
 class DivorceGame extends _SpiderLayoutGame {
   constructor() {
@@ -96,7 +96,7 @@ class DivorceGame extends _SpiderLayoutGame {
     return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
   }
 };
-gGameClasses.divorce = DivorceGame;
+gGameClasses["divorce"] = DivorceGame;
 
 
 
@@ -116,7 +116,7 @@ class WaspGame extends _SpiderRelatedGame {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 };
-gGameClasses.wasp = WaspGame;
+gGameClasses["wasp"] = WaspGame;
 
 
 
@@ -133,7 +133,7 @@ class SimonGame extends _SpiderRelatedGame {
     };
   }
 };
-gGameClasses.simon4 = SimonGame;
+gGameClasses["simon4"] = SimonGame;
 
 class SimplerSimonGame extends SimonGame {
   constructor() {
@@ -144,7 +144,7 @@ class SimplerSimonGame extends SimonGame {
     };
   }
 };
-gGameClasses.simplersimon = SimplerSimonGame;
+gGameClasses["simplersimon"] = SimplerSimonGame;
 
 class Simon1Game extends SimonGame {
   constructor() {
@@ -152,7 +152,7 @@ class Simon1Game extends SimonGame {
     this.all_cards = make_cards(4, "S");
   }
 };
-gGameClasses.simon1 = Simon1Game;
+gGameClasses["simon1"] = Simon1Game;
 
 class Simon2Game extends SimonGame {
   constructor() {
@@ -160,7 +160,7 @@ class Simon2Game extends SimonGame {
     this.all_cards = make_cards(2, "SH");
   }
 };
-gGameClasses.simon2 = Simon2Game;
+gGameClasses["simon2"] = Simon2Game;
 
 class DoubleSimonGame extends SimonGame {
   static create_layout() {
@@ -177,7 +177,7 @@ class DoubleSimonGame extends SimonGame {
     };
   }
 };
-gGameClasses.doublesimon = DoubleSimonGame;
+gGameClasses["doublesimon"] = DoubleSimonGame;
 
 
 

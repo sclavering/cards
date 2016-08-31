@@ -26,7 +26,7 @@ class WinstonGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks(this.foundations));
   }
 };
-gGameClasses.winston = WinstonGame;
+gGameClasses["winston"] = WinstonGame;
 
 
 class WinstonStock extends _Stock {

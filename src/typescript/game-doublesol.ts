@@ -24,7 +24,7 @@ class DoubleSolGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 };
-gGameClasses.doublesol = DoubleSolGame;
+gGameClasses["doublesol"] = DoubleSolGame;
 
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K

@@ -20,7 +20,7 @@ class TowersGame extends FreeCellRelatedGame {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses.towers = TowersGame;
+gGameClasses["towers"] = TowersGame;
 
 
 class TowersPile extends _FreeCellPile {

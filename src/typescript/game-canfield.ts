@@ -2,6 +2,9 @@ const canfield_layout = "#<   s  f f f f  [r]   ><   w  p p p p>.";
 
 
 class CanfieldGame extends Game {
+  protected _reserveFaceDown: number;
+  protected _reserveFaceUp: number;
+
   static create_layout() {
     return new Layout(canfield_layout, { f: CountedView, r: CountedView });
   }
@@ -23,7 +26,7 @@ class CanfieldGame extends Game {
 
   deal(cards) {
     const num = cards[0].number;
-    for(let f of this.foundations) f.canfield_foundation_base_num = num;
+    for(let f of this.foundations) (f as CanfieldFoundation).canfield_foundation_base_num = num;
 
     let ix = 0;
     ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);
@@ -37,7 +40,7 @@ class CanfieldGame extends Game {
   }
 
   autoplay() {
-    const base_num = this.foundations[0].canfield_foundation_base_num;
+    const base_num = (this.foundations[0] as CanfieldFoundation).canfield_foundation_base_num;
     // Remap numbers so that we can just use less-than on them.
     const _effective_num = num => num >= base_num ? num : num + 13;
     const max_nums = { S: base_num, H: base_num, D: base_num, C: base_num };
@@ -47,7 +50,7 @@ class CanfieldGame extends Game {
     return this.autoplay_using_predicate(card => _effective_num(card.number) <= autoplayable[card.colour]);
   }
 };
-gGameClasses.canfield = CanfieldGame;
+gGameClasses["canfield"] = CanfieldGame;
 
 
 class CanfieldDrawThreeGame extends CanfieldGame {
@@ -60,7 +63,7 @@ class CanfieldDrawThreeGame extends CanfieldGame {
     this.pile_details.stocks[1] = StockDeal3OrRefill;
   }
 };
-gGameClasses.canfield3 = CanfieldDrawThreeGame;
+gGameClasses["canfield3"] = CanfieldDrawThreeGame;
 
 
 class DemonGame extends CanfieldGame {
@@ -74,7 +77,7 @@ class DemonGame extends CanfieldGame {
     this._reserveFaceUp = 13;
   }
 };
-gGameClasses.demon = DemonGame;
+gGameClasses["demon"] = DemonGame;
 
 
 class CanfieldPile extends _Pile {
@@ -88,6 +91,8 @@ class CanfieldPile extends _Pile {
 
 
 class CanfieldFoundation extends _Foundation {
+  canfield_foundation_base_num: number;
+
   may_take_card(card) {
     return card.isLast;
   }

@@ -1,4 +1,5 @@
 class FanLayout extends Layout {
+  private _num_grid_columns: number;
   constructor(num_grid_columns, template, view_classes_by_letter) {
     super(template, view_classes_by_letter);
     this._num_grid_columns = num_grid_columns;
@@ -48,7 +49,7 @@ class FanGame extends Game {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses.fan = FanGame;
+gGameClasses["fan"] = FanGame;
 
 
 class DoubleFanGame extends Game {
@@ -74,4 +75,4 @@ class DoubleFanGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
   }
 };
-gGameClasses.doublefan = DoubleFanGame;
+gGameClasses["doublefan"] = DoubleFanGame;

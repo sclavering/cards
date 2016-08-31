@@ -23,7 +23,7 @@ class FortyThievesGame extends FreeCellRelatedGame {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
   }
 };
-gGameClasses.fortythieves = FortyThievesGame;
+gGameClasses["fortythieves"] = FortyThievesGame;
 
 
 class FortyThievesPile extends _Pile {

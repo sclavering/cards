@@ -33,7 +33,7 @@ class AcesUpGame extends Game {
     return true;
   }
 };
-gGameClasses.acesup = AcesUpGame;
+gGameClasses["acesup"] = AcesUpGame;
 
 
 class AcesUpFoundation extends _Foundation {

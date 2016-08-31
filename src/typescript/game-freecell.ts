@@ -46,7 +46,7 @@ class FreeCellGame extends FreeCellRelatedGame {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 };
-gGameClasses.freecell = FreeCellGame;
+gGameClasses["freecell"] = FreeCellGame;
 
 
 class FreeCellPile extends _FreeCellPile {

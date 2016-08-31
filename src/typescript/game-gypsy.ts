@@ -30,7 +30,7 @@ class Gypsy2Game extends _GypsyGame {
     this.foundation_cluster_count = 2;
   }
 };
-gGameClasses.gypsy2 = Gypsy2Game;
+gGameClasses["gypsy2"] = Gypsy2Game;
 
 class Gypsy4Game extends _GypsyGame {
   constructor() {
@@ -39,4 +39,4 @@ class Gypsy4Game extends _GypsyGame {
     this.foundation_cluster_count = 4;
   }
 };
-gGameClasses.gypsy4 = Gypsy4Game;
+gGameClasses["gypsy4"] = Gypsy4Game;

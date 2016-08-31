@@ -1,4 +1,6 @@
 class _PileOnGame extends Game {
+  protected _pileon_depth: number;
+
   best_destination_for(cseq) {
     const card = cseq.first;
     const ps = card.pile.surrounding();
@@ -30,7 +32,7 @@ class PileOnGame extends _PileOnGame {
     this._pileon_depth = 4;
   }
 };
-gGameClasses.pileon = PileOnGame;
+gGameClasses["pileon"] = PileOnGame;
 
 
 class DoublePileOnGame extends _PileOnGame {
@@ -46,7 +48,7 @@ class DoublePileOnGame extends _PileOnGame {
     this._pileon_depth = 8;
   }
 };
-gGameClasses.doublepileon = DoublePileOnGame;
+gGameClasses["doublepileon"] = DoublePileOnGame;
 
 
 class PileUpGame extends _PileOnGame {
@@ -61,7 +63,7 @@ class PileUpGame extends _PileOnGame {
     this._pileon_depth = 4;
   }
 };
-gGameClasses.pileup = PileUpGame;
+gGameClasses["pileup"] = PileUpGame;
 
 
 class DoublePileUpGame extends _PileOnGame {
@@ -77,10 +79,12 @@ class DoublePileUpGame extends _PileOnGame {
     this._pileon_depth = 8;
   }
 };
-gGameClasses.doublepileup = DoublePileUpGame;
+gGameClasses["doublepileup"] = DoublePileUpGame;
 
 
 class _PileOnPile extends _Pile {
+  protected _depth: number;
+  protected _is_pileup: boolean;
   constructor() {
     super();
     this._depth = NaN;

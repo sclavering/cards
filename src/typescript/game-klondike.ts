@@ -50,7 +50,7 @@ class KlondikeGame extends _Klondike {
     };
   }
 };
-gGameClasses.klondike1 = KlondikeGame;
+gGameClasses["klondike1"] = KlondikeGame;
 
 
 class KlondikeDrawThreeGame extends _Klondike {
@@ -67,7 +67,7 @@ class KlondikeDrawThreeGame extends _Klondike {
     };
   }
 };
-gGameClasses.klondike3 = KlondikeDrawThreeGame;
+gGameClasses["klondike3"] = KlondikeDrawThreeGame;
 
 
 class DoubleKlondikeGame extends _Klondike {
@@ -90,4 +90,4 @@ class DoubleKlondikeGame extends _Klondike {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations(this.foundations));
   }
 };
-gGameClasses.doubleklondike = DoubleKlondikeGame;
+gGameClasses["doubleklondike"] = DoubleKlondikeGame;

@@ -25,7 +25,7 @@ class UnionSquareGame extends Game {
     return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
   }
 };
-gGameClasses.unionsquare = UnionSquareGame;
+gGameClasses["unionsquare"] = UnionSquareGame;
 
 
 class UnionSquarePile extends _Pile {

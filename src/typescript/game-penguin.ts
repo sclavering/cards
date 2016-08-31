@@ -29,7 +29,7 @@ class PenguinGame extends Game {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses.penguin = PenguinGame;
+gGameClasses["penguin"] = PenguinGame;
 
 
 class PenguinPile extends _Pile {

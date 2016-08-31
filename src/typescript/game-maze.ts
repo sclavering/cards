@@ -40,7 +40,7 @@ class MazeGame extends Game {
     return true;
   }
 };
-gGameClasses.maze = MazeGame;
+gGameClasses["maze"] = MazeGame;
 
 
 class MazePile extends _Pile {

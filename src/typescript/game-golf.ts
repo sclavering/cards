@@ -24,7 +24,7 @@ class Golf1Game extends Game {
     return true;
   }
 };
-gGameClasses.golf1 = Golf1Game;
+gGameClasses["golf1"] = Golf1Game;
 
 
 class Golf2Game extends Golf1Game {
@@ -34,7 +34,7 @@ class Golf2Game extends Golf1Game {
     this.pile_details.piles[3] = 9; // 8 cards per pile
   }
 };
-gGameClasses.golf2 = Golf2Game;
+gGameClasses["golf2"] = Golf2Game;
 
 
 class GolfPile extends _Pile {

@@ -19,4 +19,4 @@ class RussianSolGame extends Game {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses.russiansol = RussianSolGame;
+gGameClasses["russiansol"] = RussianSolGame;

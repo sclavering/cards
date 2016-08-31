@@ -1,4 +1,9 @@
 class Mod3Game extends Game {
+  private f_foundations2: Mod3Foundation2[];
+  private g_foundations3: Mod3Foundation3[];
+  private h_foundations4: Mod3Foundation4[];
+  private rows: _Mod3Foundation[][];
+
   static create_layout() {
     return new Layout("#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.", { f: Mod3SlideView, g: Mod3SlideView, h: Mod3SlideView });
   }
@@ -66,11 +71,11 @@ class Mod3Game extends Game {
     return true;
   }
 };
-gGameClasses.mod3 = Mod3Game;
-
+gGameClasses["mod3"] = Mod3Game;
 
 
 class _Mod3Foundation extends _Foundation {
+  private _base_num: number;
   constructor(base_num) {
     super();
     this._base_num = base_num;

@@ -29,7 +29,7 @@ class WhiteheadGame extends Game {
     return this.autoplay_using_predicate(card => card.number <= nums[card.suit]);
   }
 };
-gGameClasses.whitehead = WhiteheadGame;
+gGameClasses["whitehead"] = WhiteheadGame;
 
 
 class WhiteheadPile extends _Pile {

@@ -4,7 +4,7 @@ class _PileOnGame extends Game {
   best_destination_for(cseq) {
     const card = cseq.first;
     const ps = card.pile.surrounding();
-    return find_pile_by_top_card(ps, top => top.number === card.number && top.pile.may_add_card(card))
+    return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add_card(card))
         // Redundant with the above for Pile On, but not for Pile Up.
         || ps.find(p => p.hasCards && p.may_add_card(card))
         || findEmpty(ps);

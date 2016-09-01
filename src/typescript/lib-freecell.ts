@@ -1,6 +1,6 @@
 // Base class for FreeCell, Seahaven Towers and Forty Thieves
 class FreeCellRelatedGame extends Game {
-  best_action_for(cseq: CardSequence) : Action {
+  best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
     if(!card.pile.may_take_card(card)) return null;
     const dest = this.best_destination_for(cseq);

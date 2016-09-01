@@ -282,7 +282,7 @@ class _FixedFanView extends _FanView {
 };
 
 class _SelectiveFanView extends _FixedFanView {
-  protected visible_cards_of(cs: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     throw "not implemented";
   }
 
@@ -370,7 +370,7 @@ class _SlideView extends _FlexFanView {
 };
 
 class _Deal3WasteView extends _SelectiveFanView {
-  protected visible_cards_of(cards: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     if(!cards.length) return [];
     const first = this.pile.deal3t - this.pile.deal3v;
     if(cards.length <= first) return cards.slice(-1);
@@ -397,7 +397,7 @@ class DoubleSolFoundationView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  protected visible_cards_of(cards: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     return cards.slice(-2);
   }
   protected get_next_card_offset(): number {
@@ -470,7 +470,7 @@ class TriPeaksView extends PyramidView {
 
 // Just displays Kings from the start of each King->Ace run.
 class _SpiderFoundationView extends _SelectiveFanView {
-  protected visible_cards_of(cards: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     return cards.filter((el, ix) => ix % 13 === 0);
   }
   protected get_next_card_offset(): number {
@@ -495,7 +495,7 @@ class UnionSquarePileView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  protected visible_cards_of(cards: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     if(cards.length > 1) return [cards[0], cards[cards.length - 1]];
     return cards.slice(0, 1);
   }
@@ -509,7 +509,7 @@ class UnionSquareFoundationView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  protected visible_cards_of(cards: Card[]) : Card[] {
+  protected visible_cards_of(cards: Card[]): Card[] {
     if(cards.length > 13) return [cards[12], cards[cards.length - 1]];
     return cards.slice(-1);
   }

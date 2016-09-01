@@ -2,9 +2,42 @@
     "compilerOptions": {
         "noImplicitAny": true,
         "target": "ES5",
-        "outDir": "build/"
+        "outFile": "build.js"
     },
-    "include": [
-        "src/typescript/*.ts"
+    "files": [
+        "src/typescript/util.ts",
+        "src/typescript/main.ts",
+        "src/typescript/lib-cards.ts",
+        "src/typescript/lib-views.ts",
+        "src/typescript/lib-layouts.ts",
+        "src/typescript/lib-piles.ts",
+        "src/typescript/lib-animation.ts",
+        "src/typescript/lib-freecellanimation.ts",
+        "src/typescript/lib-autoplay.ts",
+        "src/typescript/lib-actions.ts",
+        "src/typescript/lib-game.ts",
+        "src/typescript/lib-freecell.ts",
+        "src/typescript/game-acesup.ts",
+        "src/typescript/game-canfield.ts",
+        "src/typescript/game-doublesol.ts",
+        "src/typescript/game-fan.ts",
+        "src/typescript/game-fortythieves.ts",
+        "src/typescript/game-freecell.ts",
+        "src/typescript/game-golf.ts",
+        "src/typescript/game-gypsy.ts",
+        "src/typescript/game-klondike.ts",
+        "src/typescript/game-maze.ts",
+        "src/typescript/game-mod3.ts",
+        "src/typescript/game-penguin.ts",
+        "src/typescript/game-pileon.ts",
+        "src/typescript/game-pyramid.ts",
+        "src/typescript/game-regiment.ts",
+        "src/typescript/game-russiansol.ts",
+        "src/typescript/game-spider.ts",
+        "src/typescript/game-towers.ts",
+        "src/typescript/game-unionsquare.ts",
+        "src/typescript/game-whitehead.ts",
+        "src/typescript/game-winston.ts",
+        "src/typescript/game-yukon.ts"
     ]
 }

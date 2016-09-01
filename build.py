@@ -3,41 +3,7 @@
 import os, sys
 
 JS_FILES = [
-    "build/util.js",
-    "build/main.js",
-    "build/lib-cards.js",
-    "build/lib-views.js",
-    "build/lib-layouts.js",
-    "build/lib-piles.js",
-    "build/lib-animation.js",
-    "build/lib-freecellanimation.js",
-    "build/lib-autoplay.js",
-    "build/lib-actions.js",
-    "build/lib-game.js",
-    "build/lib-freecell.js",
-
-    "build/game-acesup.js",
-    "build/game-canfield.js",
-    "build/game-doublesol.js",
-    "build/game-fan.js",
-    "build/game-fortythieves.js",
-    "build/game-freecell.js",
-    "build/game-golf.js",
-    "build/game-gypsy.js",
-    "build/game-klondike.js",
-    "build/game-maze.js",
-    "build/game-mod3.js",
-    "build/game-penguin.js",
-    "build/game-pileon.js",
-    "build/game-pyramid.js",
-    "build/game-regiment.js",
-    "build/game-russiansol.js",
-    "build/game-spider.js",
-    "build/game-towers.js",
-    "build/game-unionsquare.js",
-    "build/game-whitehead.js",
-    "build/game-winston.js",
-    "build/game-yukon.js",
+    "build.js"
 ]
 
 

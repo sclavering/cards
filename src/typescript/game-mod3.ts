@@ -60,7 +60,7 @@ class Mod3Game extends Game {
       else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], c.number) + 3;
       else seen[c.suit] = c.number;
     }
-    const base_num = row[0]._baseNum;
+    const base_num = row[0]._base_num;
     if(!seen_invalid_cards) for(let k in rv) if(rv[k] < base_num) rv[k] = base_num;
     return rv;
   }
@@ -75,7 +75,7 @@ gGameClasses["mod3"] = Mod3Game;
 
 
 class _Mod3Foundation extends _Foundation {
-  private _base_num: number;
+  public _base_num: number;
   constructor(base_num) {
     super();
     this._base_num = base_num;

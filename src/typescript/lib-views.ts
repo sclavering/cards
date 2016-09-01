@@ -60,9 +60,12 @@ class _View {
 
     this._canvas = document.createElement("canvas");
     this._root_node = this._canvas;
-    this._canvas.pileViewObj = this;
     this._context = this._canvas.getContext("2d");
     this._counter = null;
+  }
+
+  public mark_canvas_for_event_handling(attr: string, val: string): void {
+    this._canvas.setAttribute(attr, val);
   }
 
   // This is intended to be called by subclasses in their constructor.  It exists here both because a variety of different subclasses want it, and because it'd be fragile to have subclasses fiddling with the structure of the HTML.

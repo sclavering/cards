@@ -148,6 +148,8 @@ class Layout {
     // sanity check
     if(box !== container) throw "Layout.init(): layout had unclosed box";
     this.viewsNeedingUpdateOnResize = this.views.filter(v => v.needs_update_on_resize);
+
+    this.views.forEach((v, ix) => v.mark_canvas_for_event_handling("data-cardgames-view-id", ix.toString()));
   }
 
   show(): void {
@@ -322,13 +324,19 @@ class Layout {
   }
 
   _target_cseq(event_or_touch: MouseEvent | Touch): CardSequence {
-    let t = event_or_touch.target as HTMLElement;
-    while(t && !t.pileViewObj) t = t.parentNode as HTMLElement;
-    if(!t || !t.pileViewObj) return null;
-    const view = t.pileViewObj, rect = view.pixel_rect();
+    const id = this._target_view_id(event_or_touch.target as HTMLElement);
+    if(!id) return;
+    const view = this.views[id], rect = view.pixel_rect();
     return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
   }
 
+  _target_view_id(el: HTMLElement): string {
+    for(; el && el.getAttribute; el = el.parentNode as HTMLElement) {
+      const val = el.getAttribute("data-cardgames-view-id");
+      if(val) return val;
+    }
+    return null;
+  }
 
   // Window resizing
 

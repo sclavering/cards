@@ -27,7 +27,7 @@ class FreeCellRelatedGame extends Game {
 
 
 class FreeCellMoveAction {
-  private _anim: AnimationRunArgs;
+  private _anim: AnimationDetails;
   private card: Card;
   private source: AnyPile;
   private destination: AnyPile;
@@ -37,7 +37,7 @@ class FreeCellMoveAction {
     this.source = card.pile;
     this.destination = destination;
   }
-  perform(): AnimationRunArgs {
+  perform(): AnimationDetails {
     this.destination.add_cards(this.card, true); // Don't update view.
     return this._anim;
   }

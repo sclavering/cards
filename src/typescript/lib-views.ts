@@ -241,7 +241,7 @@ class _FanView extends _View {
     return { x: offset * xo, y: offset * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
   }
 
-  get_next_card_xy() {
+  get_next_card_xy(): ViewCoord {
     const offset = this.get_next_card_offset();
     return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   }

@@ -18,10 +18,10 @@ class Game {
   foundation: AnyPile;
   reserves: AnyPile[];
   reserve: AnyPile;
-  stocks: AnyPile[];
-  stock: AnyPile;
-  wastes: AnyPile[];
-  waste: AnyPile;
+  stocks: Stock[];
+  stock: Stock;
+  wastes: Waste[];
+  waste: Waste;
   pile_arrays_by_letter: { [key: string]: AnyPile[] };
   _foundation_clusters: AnyPile[][];
   all_piles: AnyPile[];

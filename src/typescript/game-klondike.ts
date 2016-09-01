@@ -12,13 +12,13 @@ class _Klondike extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 
-  getScoreFor(act) {
+  getScoreFor(act: Action) {
     if(act instanceof RefillStock) return -100;
-    if(!(act instanceof Move)) return 0;
-    return this._get_score(act) + (act.revealed_card ? 5 : 0);
+    if(act instanceof Move) return this._get_score(act) + (act.revealed_card ? 5 : 0);
+    return 0;
   }
 
-  _get_score(act) {
+  _get_score(act: Move): number {
     const c = act.card, s = act.source, d = act.destination;
     // If a card on the waste *could* be moved down to the playing piles (for 5 points)
     // then award those points event when moving it directly to the foundations.

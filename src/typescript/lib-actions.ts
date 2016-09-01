@@ -1,23 +1,14 @@
-/*
-"Action" objects are card-moves that can be done, undone, and redone.
-
-The required interface is:
-
-perform()
-  Carry out the action.
-  If animation is desired, this should return appropriate details to pass to g_animations.run().  It should not start the animation itself.  And it almost certainly needs to implement .redo() as well.
-undo()
-redo()
-  Undo/redo the effects of the action.  Must *not* use animation.
-  If redo() is omitted, perform() is used instead, and must not use animation.
-
-Piles' .action_for_drop(cseq) normally returns an Action, but in FreeCell and similar it may return an ErrorMsg instead.
-*/
-
+// Action objects are moves (either initiated by the player, or automatic ones) that can be done, undone, and redone.  Turning cards face up is generally treated as an incidental side-effect of an Action, rather than being an Action in its own right.
 interface Action {
-  perform() : any;
-  undo() : void;
-  redo?() : void;
+  // Either carry out the action immediately and return void, or return an animation that will perform the action.
+  perform(): AnimationDetails | void;
+
+  // Undo the effects of .perform() and .redo(), never using animation
+  undo(): void;
+
+  // Omit this if .perform() is non-animated.  Otherwise it should make the same changes as .perform() would, but never using animation.
+  redo?(): void;
+
   // These are just set and used by Game subclasses directly.
   score?: number;
   streakLength?: number;
@@ -25,103 +16,104 @@ interface Action {
 
 
 class DealToPile implements Action {
-  from: Stock;
-  to: AnyPile;
-  constructor(from, to) {
-    this.from = from;
-    this.to = to;
+  private _from: Stock;
+  private _to: AnyPile;
+  constructor(from: Stock, to: AnyPile) {
+    this._from = from;
+    this._to = to;
   }
-  perform() {
-    this.from.deal_card_to(this.to);
+  perform(): void {
+    this._from.deal_card_to(this._to);
   }
-  undo() {
-    this.from.undeal_card_from(this.to);
+  undo(): void {
+    this._from.undeal_card_from(this._to);
   }
 };
 
 
 class RefillStock implements Action {
-  stock: Stock;
-  waste: Waste;
-  constructor(stock, waste) {
-    this.stock = stock;
-    this.waste = waste;
+  private _stock: Stock;
+  private _waste: Waste;
+  constructor(from: Stock, to: Waste) {
+    this._stock = from;
+    this._waste = to;
   }
-  perform() {
-    while(this.waste.hasCards) this.stock.undeal_card_from(this.waste);
+  perform(): void {
+    while(this._waste.hasCards) this._stock.undeal_card_from(this._waste);
   }
-  undo() {
-    while(this.stock.hasCards) this.stock.deal_card_to(this.waste);
+  undo(): void {
+    while(this._stock.hasCards) this._stock.deal_card_to(this._waste);
   }
 };
 
 
 class DealThree implements Action {
-  stock: Stock;
-  waste: Waste;
-  old_deal3v: number;
-  old_deal3t: number;
-  num_moved: number;
-  constructor(stock, waste) {
-    this.stock = stock;
-    this.waste = waste;
+  private _stock: Stock;
+  private _waste: Waste;
+  private _old_deal3v: number;
+  private _old_deal3t: number;
+  private num_moved: number;
+  constructor(from: Stock, to: Waste) {
+    this._stock = from;
+    this._waste = to;
   }
-  perform() {
-    this.old_deal3v = this.waste.deal3v;
-    this.old_deal3t = this.waste.deal3t;
-    const cs = this.stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
-    this.num_moved = this.waste.deal3v = num;
-    this.waste.deal3t = this.waste.cards.length + num;
-    for(var i = 0; i !== num; ++i) this.stock.deal_card_to(this.waste);
+  perform(): void {
+    this._old_deal3v = this._waste.deal3v;
+    this._old_deal3t = this._waste.deal3t;
+    const cs = this._stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
+    this.num_moved = this._waste.deal3v = num;
+    this._waste.deal3t = this._waste.cards.length + num;
+    for(var i = 0; i !== num; ++i) this._stock.deal_card_to(this._waste);
   }
-  undo() {
+  undo(): void {
     const num = this.num_moved;
-    this.waste.deal3v = this.old_deal3v;
-    this.waste.deal3t = this.old_deal3t;
-    for(var i = 0; i !== num; ++i) this.stock.undeal_card_from(this.waste);
+    this._waste.deal3v = this._old_deal3v;
+    this._waste.deal3t = this._old_deal3t;
+    for(var i = 0; i !== num; ++i) this._stock.undeal_card_from(this._waste);
   }
 };
 
 
 class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
-  _stock: Stock;
-  _piles: AnyPile[];
-  constructor(stock, piles) {
+  private _stock: Stock;
+  private _piles: AnyPile[];
+  constructor(stock: Stock, piles: AnyPile[]) {
     this._stock = stock;
     this._piles = piles.length > stock.cards.length ? piles.slice(0, stock.cards.length) : piles;
   }
-  perform() {
+  perform(): void {
     for(let p of this._piles) this._stock.deal_card_to(p);
   }
-  undo() {
+  undo(): void {
     for(let p of this._piles.slice().reverse()) this._stock.undeal_card_from(p);
   }
 };
 
 
 class Move implements Action {
-  card: Card;
-  source: AnyPile;
-  destination: AnyPile;
-  revealed_card: Card;
-  constructor(card, destination) {
+  // These are all public for Klondike scoring purposes.
+  public card: Card;
+  public source: AnyPile;
+  public destination: AnyPile;
+  public revealed_card: Card;
+  constructor(card: Card, destination: AnyPile) {
     this.card = card;
     this.source = card.pile;
     this.destination = destination;
     const new_source_top_card = this.source.cards[card.index - 1] || null;
     this.revealed_card = new_source_top_card && !new_source_top_card.faceUp ? new_source_top_card : null;
   }
-  perform() {
+  perform(): AnimationDetails {
     const rv = prepare_move_animation(this.card, this.destination);
     this.destination.add_cards(this.card, true); // doesn't update view
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
     return rv;
   }
-  undo() {
+  undo(): void {
     if(this.revealed_card) this.revealed_card.setFaceUp(false);
     this.source.add_cards(this.card);
   }
-  redo() {
+  redo(): void {
     this.destination.add_cards(this.card);
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
   }
@@ -129,36 +121,36 @@ class Move implements Action {
 
 
 class RemovePair implements Action {
-  c1: Card;
-  c2: Card;
-  p1: AnyPile;
-  p2: AnyPile;
+  private _c1: Card;
+  private _c2: Card;
+  private _p1: AnyPile;
+  private _p2: AnyPile;
   constructor(card1, card2) {
-    this.c1 = card1;
-    this.p1 = card1.pile;
-    this.c2 = card2;
-    this.p2 = card2 && card2.pile;
+    this._c1 = card1;
+    this._p1 = card1.pile;
+    this._c2 = card2;
+    this._p2 = card2 && card2.pile;
   }
-  perform() {
-    const f = this.p1.owning_game.foundation;
-    f.add_cards(this.c1);
-    if(this.c2) f.add_cards(this.c2);
+  perform(): void {
+    const f = this._p1.owning_game.foundation;
+    f.add_cards(this._c1);
+    if(this._c2) f.add_cards(this._c2);
   }
-  undo() {
-    if(this.c2) this.p2.add_cards(this.c2);
-    this.p1.add_cards(this.c1);
+  undo(): void {
+    if(this._c2) this._p2.add_cards(this._c2);
+    this._p1.add_cards(this._c1);
   }
 };
 
 
 class ErrorMsg {
-  msg1: string;
-  msg2: string;
+  private _msg1: string;
+  private _msg2: string;
   constructor(msg1, msg2) {
-    this.msg1 = msg1;
-    this.msg2 = msg2;
+    this._msg1 = msg1;
+    this._msg2 = msg2;
   }
   show() {
-    showMessage(this.msg1, this.msg2);
+    showMessage(this._msg1, this._msg2);
   }
 };

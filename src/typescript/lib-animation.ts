@@ -1,11 +1,12 @@
-interface AnimationRunArgs {
-  steps: [number, () => void][];
+type AnimationSteps = [number, () => void][];
+interface AnimationDetails {
+  steps: AnimationSteps;
   piles_to_update?: AnyPile[];
 }
 
 class g_animations {
   static _active: boolean = false;
-  static _args: AnimationRunArgs;
+  static _args: AnimationDetails;
   static _onsuccess: () => void;
   static _timeouts: number[];
 
@@ -14,7 +15,7 @@ class g_animations {
   //   piles_to_update: [Pile],
   // },
   // onsuccess: optional function called after the animation completes
-  static run(args: AnimationRunArgs, onsuccess?: () => void): void {
+  static run(args: AnimationDetails, onsuccess?: () => void): void {
     this._active = true;
     this._args = args;
     this._onsuccess = onsuccess || null;
@@ -47,10 +48,10 @@ class g_animations {
 const k_animation_delay = 20;
 const k_animation_repack_delay = 100;
 
-function prepare_move_animation(card, destination) {
+function prepare_move_animation(card: Card, destination: AnyPile): AnimationDetails {
   // xxx It's slightly icky that this line has immediate effect, rather than just preparing stuff to run later.
   g_floating_pile.start_animation_or_drag(card);
-  const final_offset = destination.view.get_next_card_xy(destination.cards);
+  const final_offset = destination.view.get_next_card_xy();
 
   // final coords (relative to ui.gameStack)
   const r = destination.view.pixel_rect();
@@ -59,7 +60,7 @@ function prepare_move_animation(card, destination) {
   const x0 = r0.left, y0 = r0.top;
 
   const transition_duration_ms = g_floating_pile.get_transition_duration_ms(x0, y0, x1, y1);
-  const steps = [
+  const steps : AnimationSteps = [
     [0, function() { g_floating_pile.transition_from_to(x0, y0, x1, y1, transition_duration_ms); }],
     // The small extra delay also serves to briefly show the cards at their destination but still floating.  This makes animations look a little better if the pile is a flex-fan that will re-pack the cards once actually added.
     [transition_duration_ms + k_animation_delay, function() {

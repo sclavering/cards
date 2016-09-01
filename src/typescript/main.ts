@@ -94,7 +94,7 @@ function help(): void {
 
 function onGameSelected(ev: Event): boolean {
   hideGameChooser();
-  const m = ev.target.id.match(/^choosegame-(.*)$/);
+  const m = (ev.target as Element).id.match(/^choosegame-(.*)$/);
   if(m) playGame(m[1]);
   return false;
 }

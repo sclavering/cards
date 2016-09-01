@@ -132,7 +132,7 @@ function restartGame() {
 }
 
 
-function doo(action: Action, was_dragging?: boolean) { // "do" is a reserved word
+function doo(action: Action | ErrorMsg, was_dragging?: boolean) { // "do" is a reserved word
   if(!action) return;
   interrupt(was_dragging);
   // enable undo + disable redo (but avoid doing so unnecessarily)

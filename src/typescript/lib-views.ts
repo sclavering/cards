@@ -49,6 +49,12 @@ class _View {
   needs_update_on_resize: boolean;
   pile: any; // xxx should be AnyPile
 
+  // Note: these are only set on _FanView
+  public update_canvas_width_on_resize?: boolean;
+  public update_canvas_height_on_resize: boolean;
+  public canvas_width?: number;
+  public canvas_height?: number;
+
   constructor() {
     this.needs_update_on_resize = false;
 
@@ -176,12 +182,8 @@ class CountedView extends View {
 };
 
 class _FanView extends _View {
-  protected canvas_width: number;
-  protected canvas_height: number;
   protected _fan_x_offset: number;
   protected _fan_y_offset: number;
-  protected update_canvas_width_on_resize: boolean;
-  protected update_canvas_height_on_resize: boolean;
   protected _always_draw_background: boolean;
 
   constructor() {

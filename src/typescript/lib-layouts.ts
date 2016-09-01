@@ -10,19 +10,21 @@ class Layout {
   private _ty: number;
   private _cseq_for_dragging: CardSequence;
   private _is_drag_threshold_exceeded: boolean;
-  private _current_touch_id: string;
+  private _current_touch_id: number;
   private _bound_on_window_resize: (Event) => void;
   private _bound_oncontextmenu: (Event) => void;
-  private _bound_onclick: (Event) => void;
-  private _bound_onmousedown: (Event) => void;
-  private _bound_onmouseup: (Event) => void;
-  private _bound_onmousemove: (Event) => void;
-  private _bound_ontouchstart: (Event) => void;
-  private _bound_ontouchend: (Event) => void;
-  private _bound_ontouchcancel: (Event) => void;
-  private _bound_ontouchmove: (Event) => void;
+  private _bound_onclick: (MouseEvent) => void;
+  private _bound_onmousedown: (MouseEvent) => void;
+  private _bound_onmouseup: (MouseEvent) => void;
+  private _bound_onmousemove: (MouseEvent) => void;
+  private _bound_ontouchstart: (TouchEvent) => void;
+  private _bound_ontouchend: (TouchEvent) => void;
+  private _bound_ontouchcancel: (TouchEvent) => void;
+  private _bound_ontouchmove: (TouchEvent) => void;
 
-  constructor(template, view_classes_by_letter?) {
+  constructor(template: string, view_classes?: { [template_letter: string]: typeof View }) {
+    if(!view_classes) view_classes = {};
+
     this.views = [];
     this.views_by_letter = {};
 
@@ -38,32 +40,13 @@ class Layout {
     this._is_drag_threshold_exceeded = false; // have we exceeded the small movement threshold before we show a drag as in progress?
     this._current_touch_id = null; // a Touch.identifier value, when a touch-based drag is in progress
 
-    this._init(template, view_classes_by_letter || {});
-  }
-
-  show() {
-    if(!this._node) throw "layout not init()'d";
-    setVisibility(this._node, true);
-    this._reset_handlers();
-    this._on_window_resize();
-    window.onresize = this._bound_on_window_resize;
-  }
-
-  hide() {
-    setVisibility(this._node, false);
-    window.onresize = null;
-  }
-
-  _init(template, view_classes) {
-    if(this._node) throw "reinitialising layout";
-
     const default_view_classes = { s: StockView, w: CountedView, p: FanDownView, f: View, c: View };
 
     this._bound_on_window_resize = ev => this._on_window_resize();
     this._bound_oncontextmenu = ev => this._oncontextmenu(ev);
     this._bound_onclick = ev => this._onclick(ev);
     this._bound_onmousedown = ev => this._onmousedown(ev);
-    this._bound_onmouseup = ev => this._onmouseup(ev);
+    this._bound_onmouseup = ev => this._onmouseup();
     this._bound_onmousemove = ev => this._onmousemove(ev);
     this._bound_ontouchstart = ev => this._ontouchstart(ev);
     this._bound_ontouchend = ev => this._ontouchend(ev);
@@ -71,14 +54,13 @@ class Layout {
     this._bound_ontouchmove = ev => this._ontouchmove(ev);
 
     const views = this.views;
-    const letters = []; // seq of view letters, to return to caller
 
     const container = this._node = createDIV("gamelayout game");
     ui.gameStack.appendChild(container);
     container.style.top = container.style.left = "0px"; // to make explicit sizing work
 
     let box : HTMLElement = container;
-    var stack = [];
+    const stack = [];
 
     function pushBox(tagName, className) {
       stack.push(box);
@@ -90,14 +72,14 @@ class Layout {
 
     function boxOrTd() {
       if(box.localName !== "tr") return box;
-      var td = document.createElement('td');
+      const td = document.createElement('td');
       box.appendChild(td);
       return td;
     }
 
     const len = template.length;
-    for(var i = 0; i !== len; ++i) {
-      var ch = template[i];
+    for(let i = 0; i !== len; ++i) {
+      const ch = template[i];
       switch(ch) {
       // boxes
         case "#":
@@ -142,9 +124,9 @@ class Layout {
           break;
       // "{attr=val}", applies to most-recent pile or box
         case "{": {
-          let i0 = i;
+          const i0 = i;
           while(template[i] !== "}") ++i;
-          let attr_val = template.substring(i0 + 1, i).split("=");
+          const attr_val = template.substring(i0 + 1, i).split("=");
           (box.lastChild as HTMLElement || box).setAttribute(attr_val[0], attr_val[1]);
           break;
         }
@@ -152,10 +134,9 @@ class Layout {
           throw "Layout.init: reached a } in template (without a { first)";
       // add pile views
         default: {
-          let ViewClass = view_classes[ch] || default_view_classes[ch] || null;
+          const ViewClass = view_classes[ch] || default_view_classes[ch] || null;
           if(!ViewClass) throw "Layout.init(): unrecognised view char found in template: " + ch;
-          letters.push(ch);
-          let view = new ViewClass();
+          const view = new ViewClass();
           views.push(view);
           if(!this.views_by_letter[ch]) this.views_by_letter[ch] = [];
           this.views_by_letter[ch].push(view);
@@ -167,15 +148,27 @@ class Layout {
     // sanity check
     if(box !== container) throw "Layout.init(): layout had unclosed box";
     this.viewsNeedingUpdateOnResize = this.views.filter(v => v.needs_update_on_resize);
-    return letters;
   }
 
-  attach_piles_to_views(pile_arrays_by_letter) {
+  show(): void {
+    if(!this._node) throw "layout not init()'d";
+    setVisibility(this._node, true);
+    this._reset_handlers();
+    this._on_window_resize();
+    window.onresize = this._bound_on_window_resize;
+  }
+
+  hide(): void {
+    setVisibility(this._node, false);
+    window.onresize = null;
+  }
+
+  attach_piles_to_views(pile_arrays_by_letter: { [letter: string]: AnyPile[] }): void {
     for(let k in pile_arrays_by_letter) if(!this.views_by_letter[k]) throw new Error("missing view-letter: " + k);
     for(let k in this.views_by_letter) if(!pile_arrays_by_letter[k]) throw new Error("missing pile-letter: " + k);
     for(let k in pile_arrays_by_letter) {
-      let ps = pile_arrays_by_letter[k];
-      let views = this.views_by_letter[k];
+      const ps = pile_arrays_by_letter[k];
+      const views = this.views_by_letter[k];
       if(ps.length !== views.length) throw new Error(ps.length + " piles but " + views.length + " views for letter " + k);
       for(let i = 0; i !== ps.length; ++i) {
         ps[i].view = views[i];
@@ -188,13 +181,13 @@ class Layout {
 
   // For right-click handling we just use .oncontextmenu, since e.g. on Mac we want ctrl+click to work too (and Fx 1.5 mac used to do weird things like convert a physical right-click into a left-click with .ctrlKey set, though I've no idea if that behaviour still exists).
 
-  _onmousedown(e) {
-    if(e.button) return;
-    if(!this._start_drag(e)) return;
+  _onmousedown(ev: MouseEvent): void {
+    if(ev.button) return;
+    if(!this._start_drag(ev)) return;
     window.onmousemove = this._bound_onmousemove;
   }
 
-  _ontouchstart(ev) {
+  _ontouchstart(ev: TouchEvent): void {
     if(this._current_touch_id) return;
     const t = ev.changedTouches[0];
     if(!this._start_drag(t)) return;
@@ -202,7 +195,7 @@ class Layout {
     this._current_touch_id = t.identifier;
   }
 
-  _start_drag(event_or_touch) {
+  _start_drag(event_or_touch: MouseEvent | Touch): boolean {
     const cseq = this._target_cseq(event_or_touch);
     if(!cseq || !cseq.source.may_take_card(cseq.first)) return false;
     interrupt();
@@ -212,13 +205,14 @@ class Layout {
     return true;
   }
 
-  _onmousemove(e) {
+  _onmousemove(ev: MouseEvent): void {
     if(this._is_drag_threshold_exceeded) {
-      g_floating_pile.set_position(e.pageX - this._tx, e.pageY - this._ty);
+      g_floating_pile.set_position(ev.pageX - this._tx, ev.pageY - this._ty);
       return;
     }
     // Ignore very tiny movements of the mouse during a click (otherwise clicking without dragging is rather difficult).
-    const ex = e.pageX, ey = e.pageY, ex0 = this._ex0, ey0 = this._ey0;
+    const ex = ev.pageX, ey = ev.pageY;
+    const ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
     g_floating_pile.start_animation_or_drag(this._cseq_for_dragging.first);
     const rect = g_floating_pile.bounding_rect();
@@ -227,13 +221,13 @@ class Layout {
     this._is_drag_threshold_exceeded = true;
   }
 
-  _ontouchmove(ev) {
+  _ontouchmove(ev: TouchEvent): void {
     const t = this._current_touch_of(ev);
     if(!t) return;
     g_floating_pile.set_position(t.pageX - this._tx, t.pageY - this._ty);
   }
 
-  cancel_drag() {
+  cancel_drag(): void {
     if(!this._is_drag_threshold_exceeded) return;
     const cseq = this._cseq_for_dragging;
     this._reset_handlers();
@@ -241,7 +235,7 @@ class Layout {
     cseq.source.view.update();
   }
 
-  _onmouseup(e) {
+  _onmouseup(): void {
     if(this._is_drag_threshold_exceeded) {
       const cseq = this._cseq_for_dragging;
       if(!this._attempt_drop(cseq)) {
@@ -252,13 +246,13 @@ class Layout {
     this._reset_handlers();
   }
 
-  _ontouchend(ev) {
+  _ontouchend(ev: TouchEvent): void {
     const t = this._current_touch_of(ev);
     if(!t) return;
-    this._onmouseup(ev);
+    this._onmouseup();
   }
 
-  _attempt_drop(cseq) {
+  _attempt_drop(cseq: CardSequence): boolean {
     if(!cseq) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
@@ -280,32 +274,31 @@ class Layout {
     return false;
   }
 
-  _ontouchcancel(ev) {
+  _ontouchcancel(ev: TouchEvent): void {
     const t = this._current_touch_of(ev);
     if(!t) return;
     this._reset_handlers();
   }
 
-  _onclick(ev) {
+  _onclick(ev: MouseEvent): void {
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
-    if(ev.button || ev.ctrlKey) return true;
+    if(ev.button || ev.ctrlKey) return;
     const cseq = this._target_cseq(ev);
     interrupt();
     if(cseq) doo(cseq.source.action_for_click(cseq));
     this._reset_handlers();
-    return false;
   }
 
-  _oncontextmenu(e) {
-    const cseq = this._target_cseq(e);
+  _oncontextmenu(ev: MouseEvent): boolean {
+    const cseq = this._target_cseq(ev);
     interrupt();
     if(cseq) doo(gCurrentGame.foundation_action_for(cseq));
     this._reset_handlers();
-    e.preventDefault();
+    ev.preventDefault();
     return false;
   }
 
-  _reset_handlers() {
+  _reset_handlers(): void {
     this._is_drag_threshold_exceeded = false;
     this._cseq_for_dragging = null;
     this._current_touch_id = null;
@@ -323,14 +316,14 @@ class Layout {
     window.ontouchcancel = this._bound_ontouchcancel;
   }
 
-  _current_touch_of(ev) {
+  _current_touch_of(ev: TouchEvent): Touch {
     for(let t of ev.changedTouches) if(t.identifier === this._current_touch_id) return t;
     return null;
   }
 
-  _target_cseq(event_or_touch) {
-    let t = event_or_touch.target;
-    while(t && !t.pileViewObj) t = t.parentNode;
+  _target_cseq(event_or_touch: MouseEvent | Touch): CardSequence {
+    let t = event_or_touch.target as HTMLElement;
+    while(t && !t.pileViewObj) t = t.parentNode as HTMLElement;
     if(!t || !t.pileViewObj) return null;
     const view = t.pileViewObj, rect = view.pixel_rect();
     return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
@@ -339,7 +332,7 @@ class Layout {
 
   // Window resizing
 
-  _on_window_resize() {
+  _on_window_resize(): void {
     g_animations.cancel();
     const rect = ui.gameStack.getBoundingClientRect();
     const width = rect.right - rect.left;
@@ -349,7 +342,7 @@ class Layout {
     for(let v of vs) v.update();
   }
 
-  update_flexible_views_sizes(views, width, height) {
+  update_flexible_views_sizes(views: View[], width: number, height: number): void {
     for(let v of views) {
       let r = v.pixel_rect();
       if(v.update_canvas_height_on_resize) v.canvas_height = height - r.top;
@@ -359,7 +352,7 @@ class Layout {
 };
 
 
-function createDIV(class_name) {
+function createDIV(class_name: string): HTMLElement {
   const el = document.createElement("div");
   el.className = class_name;
   return el;

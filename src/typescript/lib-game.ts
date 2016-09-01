@@ -136,7 +136,11 @@ class Game {
         collection.push(p);
         this.all_piles.push(p);
       }
-      linkList(collection, "prev", "next");
+
+      for(let i = 0; i !== collection.length; ++i) {
+        collection[i].prev = collection[i - 1] || null;
+        collection[i].next = collection[i + 1] || null;
+      }
     }
 
     this.dragDropTargets = this.all_piles.filter(p => p.is_drop_target);

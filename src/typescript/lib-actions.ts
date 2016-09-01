@@ -125,7 +125,7 @@ class RemovePair implements Action {
   private _c2: Card;
   private _p1: AnyPile;
   private _p2: AnyPile;
-  constructor(card1, card2) {
+  constructor(card1: Card, card2: Card) {
     this._c1 = card1;
     this._p1 = card1.pile;
     this._c2 = card2;
@@ -146,7 +146,7 @@ class RemovePair implements Action {
 class ErrorMsg {
   private _msg1: string;
   private _msg2: string;
-  constructor(msg1, msg2) {
+  constructor(msg1: string, msg2: string) {
     this._msg1 = msg1;
     this._msg2 = msg2;
   }

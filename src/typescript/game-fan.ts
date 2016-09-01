@@ -1,16 +1,16 @@
 class FanLayout extends Layout {
   private _num_grid_columns: number;
-  constructor(num_grid_columns, template, view_classes_by_letter) {
-    super(template, view_classes_by_letter);
+  constructor(num_grid_columns: number, template: string) {
+    super(template, { p: FanRightView });
     this._num_grid_columns = num_grid_columns;
   }
   // No other layout has a grid of flexible views
-  update_flexible_views_sizes(views, width, height) {
+  update_flexible_views_sizes(views: View[], width: number, height: number): void {
     const kSpaceBetweenPiles = 4 * gSpacerSize;
     // 5 units per each of the columns, plus 2 to the left of everything, and 3 to the right.
     const unitwidth = (width - kSpaceBetweenPiles) / (5 * this._num_grid_columns + 2 + 2);
     // div.thinspacer in the previous <td>
-    views[0]._canvas.parentNode.previousSibling.firstChild.style.width = (2 * unitwidth) + 'px';
+    (views[0]._canvas.parentNode.previousSibling.firstChild as HTMLElement).style.width = (2 * unitwidth) + "px";
     for(let v of views) v.canvas_width = unitwidth * 5;
   }
 };
@@ -18,7 +18,7 @@ class FanLayout extends Layout {
 
 class FanGame extends Game {
   static create_layout() {
-    return new FanLayout(5, "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.", { p: FanRightView });
+    return new FanLayout(5, "#<  f f f f  >.#<_p_p_p_p_p_>< p_p_p_p_p>< p_p_p_p_p>< p_p_p>.");
   }
 
   constructor() {
@@ -29,7 +29,7 @@ class FanGame extends Game {
     };
   }
 
-  is_shuffle_impossible(cards) {
+  protected is_shuffle_impossible(cards: Card[]): boolean {
     for(let i = 0; i < 51; i += 3) {
       // These will form a pile c,d,e with c at the bottom.
       let c = cards[i], d = cards[i + 1], e = cards[i + 2];
@@ -41,7 +41,7 @@ class FanGame extends Game {
     return false;
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
@@ -54,7 +54,7 @@ gGameClasses["fan"] = FanGame;
 
 class DoubleFanGame extends Game {
   static create_layout() {
-    return new FanLayout(6, "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.", { p: FanRightView });
+    return new FanLayout(6, "#<  f f f f f f f f  >.#<_p_p_p_p_p_p_>< p_p_p_p_p_p>< p_p_p_p_p_p>< p_p_p_p_p_p>.");
   }
 
   constructor() {
@@ -67,7 +67,7 @@ class DoubleFanGame extends Game {
     this.foundation_cluster_count = 4;
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile(cseq);
   }
 

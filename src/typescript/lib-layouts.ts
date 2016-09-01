@@ -1,3 +1,7 @@
+interface ViewClassesByLetter {
+  [template_letter: string]: typeof View;
+}
+
 class Layout {
   views: View[];
   views_by_letter: { [key: string]: View[] };
@@ -11,18 +15,18 @@ class Layout {
   private _cseq_for_dragging: CardSequence;
   private _is_drag_threshold_exceeded: boolean;
   private _current_touch_id: number;
-  private _bound_on_window_resize: (Event) => void;
-  private _bound_oncontextmenu: (Event) => void;
-  private _bound_onclick: (MouseEvent) => void;
-  private _bound_onmousedown: (MouseEvent) => void;
-  private _bound_onmouseup: (MouseEvent) => void;
-  private _bound_onmousemove: (MouseEvent) => void;
-  private _bound_ontouchstart: (TouchEvent) => void;
-  private _bound_ontouchend: (TouchEvent) => void;
-  private _bound_ontouchcancel: (TouchEvent) => void;
-  private _bound_ontouchmove: (TouchEvent) => void;
+  private _bound_on_window_resize: (ev: Event) => void;
+  private _bound_oncontextmenu: (ev: MouseEvent) => void;
+  private _bound_onclick: (ev: MouseEvent) => void;
+  private _bound_onmousedown: (ev: MouseEvent) => void;
+  private _bound_onmouseup: (ev: MouseEvent) => void;
+  private _bound_onmousemove: (ev: MouseEvent) => void;
+  private _bound_ontouchstart: (ev: TouchEvent) => void;
+  private _bound_ontouchend: (ev: TouchEvent) => void;
+  private _bound_ontouchcancel: (ev: TouchEvent) => void;
+  private _bound_ontouchmove: (ev: TouchEvent) => void;
 
-  constructor(template: string, view_classes?: { [template_letter: string]: typeof View }) {
+  constructor(template: string, view_classes?: ViewClassesByLetter) {
     if(!view_classes) view_classes = {};
 
     this.views = [];
@@ -40,7 +44,7 @@ class Layout {
     this._is_drag_threshold_exceeded = false; // have we exceeded the small movement threshold before we show a drag as in progress?
     this._current_touch_id = null; // a Touch.identifier value, when a touch-based drag is in progress
 
-    const default_view_classes = { s: StockView, w: CountedView, p: FanDownView, f: View, c: View };
+    const default_view_classes: ViewClassesByLetter = { s: StockView, w: CountedView, p: FanDownView, f: View, c: View };
 
     this._bound_on_window_resize = ev => this._on_window_resize();
     this._bound_oncontextmenu = ev => this._oncontextmenu(ev);
@@ -59,12 +63,12 @@ class Layout {
     ui.gameStack.appendChild(container);
     container.style.top = container.style.left = "0px"; // to make explicit sizing work
 
-    let box : HTMLElement = container;
-    const stack = [];
+    let box: HTMLElement = container;
+    const stack: HTMLElement[] = [];
 
-    function pushBox(tagName, className) {
+    function pushBox(tag: string, className: string) {
       stack.push(box);
-      const el : HTMLElement = document.createElement(tagName);
+      const el: HTMLElement = document.createElement(tag);
       el.className = className;
       boxOrTd().appendChild(el);
       box = el;
@@ -102,7 +106,7 @@ class Layout {
         case ">":
           // Set <td> widths, but only on the first row (so that subsequent rows can omit trailing empties).
           if(!box.previousSibling) {
-            const empties = [].filter.call(box.childNodes, x => !x.hasChildNodes());
+            const empties = [].filter.call(box.childNodes, (x: Node) => !x.hasChildNodes());
             const cellWidth = (100 / empties.length) + '%';
             for(let td of empties) td.style.width = cellWidth;
           }
@@ -326,7 +330,7 @@ class Layout {
   _target_cseq(event_or_touch: MouseEvent | Touch): CardSequence {
     const id = this._target_view_id(event_or_touch.target as HTMLElement);
     if(!id) return;
-    const view = this.views[id], rect = view.pixel_rect();
+    const view = this.views[parseInt(id)], rect = view.pixel_rect();
     return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
   }
 

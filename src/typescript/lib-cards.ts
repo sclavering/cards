@@ -43,7 +43,7 @@ class Card {
   displayStr: string;
   number: number;
   faceUp: boolean;
-  pile: any;
+  pile: AnyPile;
   index: number;
   __all_cards_index: number; // used by Game
 
@@ -103,7 +103,7 @@ function is_up_or_down_mod13(a, b) {
 
 // Represents one or more cards that are being moved, or are under consideration for moving.
 class CardSequence {
-  source: any;
+  source: AnyPile;
   index: number;
   first: Card;
 

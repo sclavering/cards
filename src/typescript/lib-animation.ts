@@ -5,8 +5,8 @@ interface AnimationRunArgs {
 
 class g_animations {
   static _active: boolean = false;
-  static _args: any;
-  static _onsuccess: any;
+  static _args: AnimationRunArgs;
+  static _onsuccess: () => void;
   static _timeouts: number[];
 
   // args: {

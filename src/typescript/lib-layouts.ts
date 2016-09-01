@@ -11,16 +11,16 @@ class Layout {
   private _cseq_for_dragging: CardSequence;
   private _is_drag_threshold_exceeded: boolean;
   private _current_touch_id: string;
-  private _bound_on_window_resize: any;
-  private _bound_oncontextmenu: any;
-  private _bound_onclick: any;
-  private _bound_onmousedown: any;
-  private _bound_onmouseup: any;
-  private _bound_onmousemove: any;
-  private _bound_ontouchstart: any;
-  private _bound_ontouchend: any;
-  private _bound_ontouchcancel: any;
-  private _bound_ontouchmove: any;
+  private _bound_on_window_resize: (Event) => void;
+  private _bound_oncontextmenu: (Event) => void;
+  private _bound_onclick: (Event) => void;
+  private _bound_onmousedown: (Event) => void;
+  private _bound_onmouseup: (Event) => void;
+  private _bound_onmousemove: (Event) => void;
+  private _bound_ontouchstart: (Event) => void;
+  private _bound_ontouchend: (Event) => void;
+  private _bound_ontouchcancel: (Event) => void;
+  private _bound_ontouchmove: (Event) => void;
 
   constructor(template, view_classes_by_letter?) {
     this.views = [];

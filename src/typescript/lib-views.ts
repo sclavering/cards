@@ -322,11 +322,12 @@ class _FlexFanView extends _FanView {
 
   protected recalculate_offsets(num: number): void {
     const xo = this._fan_x_default_offset, yo = this._fan_y_default_offset;
-    if(xo) this._fan_x_offset = this._calculate_new_offset(xo, this.canvas_width - gCardWidth, num);
-    if(yo) this._fan_y_offset = this._calculate_new_offset(yo, this.canvas_height - gCardHeight, num);
+    if(xo) this._fan_x_offset = this.calculate_new_offset(xo, this.canvas_width - gCardWidth, num);
+    if(yo) this._fan_y_offset = this.calculate_new_offset(yo, this.canvas_height - gCardHeight, num);
   }
 
-  private _calculate_new_offset(preferred_offset: number, available_space: number, num_cards: number): number {
+  // prepare_freecell_move_animation() needs this
+  public calculate_new_offset(preferred_offset: number, available_space: number, num_cards: number): number {
     let offset = Math.min(num_cards ? available_space / (num_cards - 1) : available_space, preferred_offset);
     if(offset > 2) offset = Math.floor(offset); // use integer offsets if possible, to avoid fuzzyness
     return offset;

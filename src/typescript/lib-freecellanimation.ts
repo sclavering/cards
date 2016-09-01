@@ -1,7 +1,7 @@
 function prepare_freecell_move_animation(card: Card, dest: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
   const src = card.pile;
   const num_movable_via_cells = cells.length + 1;
-  const steps = [];
+  const steps: AnimationSteps = [];
 
   const src_cards = src.cards.slice(0, card.index);
   const moving_cards = src.cards.slice(card.index);
@@ -20,15 +20,16 @@ function prepare_freecell_move_animation(card: Card, dest: AnyPile, cells: AnyPi
   return { steps: steps, piles_to_update: [].concat(card.pile, dest, cells, spaces) };
 }
 
-function _freecell_evil_get_card_absolute_coords(pile, num_in_pile, card_index) {
-  // xxx We're cheating here, assuming that views are all vertical _FlexFanView, or just plain View (for cells).  But doing otherwise would require a lot of changes to how views work.
+function _freecell_evil_get_card_absolute_coords(pile: AnyPile, num_in_pile: number, card_index: number) {
+  // xxx Making this work for all possible View subclasses (rather than those actually used in relevant games) would require more work, and this will do for now.
   const view = pile.view;
-  const y_offset = view._calculate_new_offset ? view._calculate_new_offset(gVFanOffset, view.canvas_height - gCardHeight, num_in_pile) : 0;
+  let y_offset = 0;
+  if(view instanceof _FlexFanView) y_offset = view.calculate_new_offset(gVFanOffset, view.canvas_height - gCardHeight, num_in_pile);
   const r = view.pixel_rect();
   return [r.left, r.top + y_offset * card_index];
 }
 
-function _freecell_animate_step(steps, src, dest, src_cards, moving_card, dest_cards) {
+function _freecell_animate_step(steps: AnimationSteps, src: AnyPile, dest: AnyPile, src_cards: Card[], moving_card: Card, dest_cards: Card[]) {
   const [x0, y0] = _freecell_evil_get_card_absolute_coords(src, src_cards.length + 1, src_cards.length);
   steps.push([k_animation_delay, () => g_floating_pile.start_freecell_animation(src, src_cards, moving_card, x0, y0)]);
 
@@ -45,9 +46,10 @@ function _freecell_animate_step(steps, src, dest, src_cards, moving_card, dest_c
 }
 
 // Put one card in each cell (or space), then move the main card, then move them all back on to it.
-function _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, dest_cards, cells) {
+function _freecell_animate_simple(steps: AnimationSteps, src: AnyPile, dest: AnyPile, src_cards: Card[], moving_cards: Card[], dest_cards: Card[], cells: AnyPile[]): void {
   // The name "batches" is just for consistency with the other similar functions.
-  const batches = [];
+  interface SimpleBatch { where: AnyPile; card: Card; src_extra_cards: Card[]; };
+  const batches: SimpleBatch[] = [];
   for(let ix = moving_cards.length - 1, n = 0; ix >= 1; --ix, ++n) batches.push({ where: cells[n], card: moving_cards[ix], src_extra_cards: moving_cards.slice(0, ix) });
 
   for(let batch of batches) _freecell_animate_step(steps, src, batch.where, src_cards.concat(batch.src_extra_cards), batch.card, []);
@@ -56,12 +58,13 @@ function _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, des
 }
 
 // Use C cells to put C+1 cards in each space, until there's C+1 or fewer remaining, and they can move to the destination rather than a space (still via cells).  Then transfer each space's cards to the destination.
-function _freecell_animate_medium(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces) {
+function _freecell_animate_medium(steps: AnimationSteps, src: AnyPile, dest: AnyPile, src_cards: Card[], moving_cards: Card[], dest_cards: Card[], cells: AnyPile[], spaces: AnyPile[]): void {
   const num_movable_via_cells = cells.length + 1;
   if(moving_cards.length <= num_movable_via_cells) return _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, dest_cards, cells);
   if(moving_cards.length <= num_movable_via_cells + spaces.length) return _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, dest_cards, cells.concat(spaces));
 
-  const batches = [];
+  interface MediumBatch { where: AnyPile; cards: Card[]; src_extra_cards: Card[]; };
+  const batches: MediumBatch[] = [];
   let s = 0;
   let ix = moving_cards.length;
   while(ix > num_movable_via_cells) {
@@ -77,9 +80,10 @@ function _freecell_animate_medium(steps, src, dest, src_cards, moving_cards, des
 }
 
 // This fills each space with (cells.length + 1) cards like above, then packs them all into a single space.  This process is repeated (with ever-fewer spaces) until there are few enough cards to switch to a simpler strategy.
-function _freecell_animate_complex(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces) {
+function _freecell_animate_complex(steps: AnimationSteps, src: AnyPile, dest: AnyPile, src_cards: Card[], moving_cards: Card[], dest_cards: Card[], cells: AnyPile[], spaces: AnyPile[]): void {
   const num_movable_via_cells = cells.length + 1;
-  const batches = [];
+  interface ComplexBatch { where: AnyPile; cards: Card[]; src_extra_cards: Card[]; available: AnyPile[] };
+  const batches: ComplexBatch[] = [];
   let top = moving_cards.length;
   let dest_cards_acc = dest_cards;
   while(true) {

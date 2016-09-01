@@ -34,7 +34,7 @@ class g_animations {
     this._finished(false);
   }
 
-  static _finished(success): void {
+  static _finished(success: boolean): void {
     this._active = false;
     g_floating_pile.hide();
     for(let p of this._args.piles_to_update) p.view.update();

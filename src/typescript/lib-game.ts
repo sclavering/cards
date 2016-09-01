@@ -127,7 +127,8 @@ class Game {
     this.pile_arrays_by_letter = {};
     for(let k in details) {
       let [num, PileClass, face_down, face_up] = details[k];
-      let collection = this[k] = this.pile_arrays_by_letter[k[0]] = [];
+      let collection: AnyPile[] = this.pile_arrays_by_letter[k[0]] = [];
+      this[k] = collection;
       for(let i = 0; i !== num; ++i) {
         let p = new PileClass();
         p.owning_game = this;
@@ -164,7 +165,7 @@ class Game {
     this.init();
     this._foundation_clusters = this._get_foundation_clusters(this.all_cards, this.foundations);
     this.all_cards.forEach((c, ix) => { if(c) c.__all_cards_index = ix; });
-    let cs;
+    let cs: Card[];
     // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for "Restart" to work properly (since it works by starting a new game with the same deal-order, and the new game instance has its own separate card objects).
     if(optional_order_to_deal) {
       cs = optional_order_to_deal.map(ix => this.all_cards[ix] || null);
@@ -172,7 +173,7 @@ class Game {
     } else {
       cs = this.all_cards.slice();
       do { shuffle_in_place(cs) } while(this.is_shuffle_impossible(cs));
-      this.order_cards_dealt = cs.map(c => c ? c.__all_cards_index : null);
+      this.order_cards_dealt = cs.map((c: Card) => c ? c.__all_cards_index : null);
     }
     this.deal(cs);
   }
@@ -271,7 +272,7 @@ class Game {
   }
 
   // Used to implement .autoplay() for many games.
-  protected autoplay_using_predicate(predicate: (Card) => boolean): Action {
+  protected autoplay_using_predicate(predicate: (c: Card) => boolean): Action {
     for(let p of this.hint_and_autoplay_source_piles) {
       let c = p.lastCard;
       if(!c || !predicate(c)) continue;
@@ -320,7 +321,7 @@ class Game {
 
   protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
-    let maybe = null;
+    let maybe: AnyPile = null;
     for(let p of ps) {
       if(!p.may_add_card_maybe_to_self(cseq.first)) continue;
       if(p.cards.length) return p;
@@ -356,13 +357,13 @@ class Game {
   }
 
   protected get_hints(): Hint[] {
-    const rv = [];
+    const rv: Hint[] = [];
     for(let p of this.hint_and_autoplay_source_piles) for(let source of p.hint_sources()) this._add_hints_for(source, rv);
     return rv;
   }
 
   protected _add_hints_for(card: Card, hints: Hint[]): void {
-    const ds = [];
+    const ds: AnyPile[] = [];
     for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_card_maybe_to_self(card)) ds.push(p);
     for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) ds.push(f);
     if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
@@ -375,7 +376,7 @@ class Game {
   _get_foundation_clusters(cards: Card[], foundations: AnyPile[]): AnyPile[][] {
     if(!this.foundation_cluster_count) return null;
     const cluster_size = this.foundations.length / this.foundation_cluster_count;
-    const rv = [];
+    const rv: AnyPile[][] = [];
     for(let i = 0; i < foundations.length; i += cluster_size) rv.push(foundations.slice(i, i + cluster_size));
     return rv;
   }

@@ -44,7 +44,7 @@ class Mod3Game extends Game {
     return this.autoplay_using_predicate(
       card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
-        && !(card.pile.is_foundation && card.pile.contains_appropriate_cards())
+        && !(card.pile.is_foundation && (card.pile as _Mod3Foundation).contains_appropriate_cards())
     );
   }
 

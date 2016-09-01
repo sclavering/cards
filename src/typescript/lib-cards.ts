@@ -24,7 +24,7 @@ function shuffle_in_place(cards: Card[]) {
 }
 
 
-function make_cards(repeat: number, suits?: string, numbers?: number[]) {
+function make_cards(repeat: number, suits?: string, numbers?: number[]): Card[] {
   if(!repeat) repeat = 1;
   if(!suits) suits = 'SHDC';
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
@@ -47,7 +47,7 @@ class Card {
   index: number;
   __all_cards_index: number; // used by Game
 
-  constructor(number, suit) {
+  constructor(number: number, suit: string) {
     this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
     this.suit = suit;
     this.displayStr = suit + number;
@@ -57,10 +57,10 @@ class Card {
     this.pile = null; // the pile the card is in
     this.index = -1;  // the position within the pile
   }
-  get isLast() {
+  get isLast(): boolean {
     return this.index === this.pile.cards.length - 1;
   }
-  setFaceUp(val) { // pass a boolean
+  setFaceUp(val: boolean): void {
     this.faceUp = val;
     const p = this.pile;
     if(p) p.view.update();
@@ -68,35 +68,35 @@ class Card {
 };
 
 
-function is_next(a, b) {
+function is_next(a: Card, b: Card): boolean {
   return a.number + 1 === b.number;
 };
 
-function is_next_mod13(a, b) {
+function is_next_mod13(a: Card, b: Card): boolean {
   return a.number === 13 ? b.number === 1 : a.number + 1 === b.number;
 };
 
-function is_next_in_suit(a, b) {
+function is_next_in_suit(a: Card, b: Card): boolean {
   return a.number + 1 === b.number && a.suit === b.suit;
 };
 
-function is_next_in_suit_mod13(a, b) {
+function is_next_in_suit_mod13(a: Card, b: Card): boolean {
   return a.suit === b.suit && is_next_mod13(a, b);
 };
 
-function is_next_and_same_colour(a, b) {
+function is_next_and_same_colour(a: Card, b: Card): boolean {
   return a.number + 1 === b.number && a.colour === b.colour;
 };
 
-function is_next_and_alt_colour(a, b) {
+function is_next_and_alt_colour(a: Card, b: Card): boolean {
   return a.number + 1 === b.number && a.colour !== b.colour;
 };
 
-function is_next_and_alt_colour_mod13(a, b) {
+function is_next_and_alt_colour_mod13(a: Card, b: Card): boolean {
   return a.colour !== b.colour && is_next_mod13(a, b);
 };
 
-function is_up_or_down_mod13(a, b) {
+function is_up_or_down_mod13(a: Card, b: Card): boolean {
   return is_next_mod13(a, b) || is_next_mod13(b, a);
 };
 
@@ -107,13 +107,13 @@ class CardSequence {
   index: number;
   first: Card;
 
-  constructor(source, index) {
+  constructor(source: AnyPile, index: number) {
     this.source = source;
     this.index = index;
     this.first = source.cards[index];
   }
 
-  static from_card(card) {
+  static from_card(card: Card): CardSequence {
     return card ? new CardSequence(card.pile, card.index) : null;
   }
 };

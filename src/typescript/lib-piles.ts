@@ -1,6 +1,6 @@
 class AnyPile {
-  public view: any;
-  public owning_game: any;
+  public view: View;
+  public owning_game: Game;
 
   cards: Card[];
   prev: AnyPile;

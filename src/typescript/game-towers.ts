@@ -30,6 +30,6 @@ class TowersPile extends _FreeCellPile {
   may_add_card(card: Card): boolean | 0 {
     if(!(this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13)) return false;
     const num_to_move = card.pile.cards.length - card.index;
-    return num_to_move <= 1 + this.owning_game.empty_cell_count() ? true : 0;
+    return num_to_move <= 1 + (this.owning_game as FreeCellRelatedGame).empty_cell_count() ? true : 0;
   }
 };

@@ -2,7 +2,7 @@
 
 This is a single-page web app consisting of a collection of single-player card games.
 
-Currently it's probably only compatible with Firefox, due to using javascript features that other browsers don't support yet (though it would be nice to fix this, perhaps by using an ES6 transpiler).  It also doesn't work well on touch-screen devices, because the code for dragging/dropping cards only uses mouse events, and not touch events (which is probably relatively easy to fix).
+It's only regularly tested in Firefox (and started life as a XUL add-on for it), though in principal there's no reason it shouldn't be cross-browser.  It's unpolished on touch-screen devices, though does include basic support for touch events.
 
 Notable feature include:
 
@@ -16,18 +16,16 @@ Notable feature include:
 
 ## Building/Running
 
-Running ./build.py script will populate dist/ with a runnable self-contained copy of the games.
+Use "tsc" (the TypeScript command-line tool, version 2.0.2 RC) to convert src/typescript/* into tsc_output.js, then load src/cards.html
 
-Basically it just copies a few static files, and generates cards.html by combining all the various .js files with the .html skeleton and the .css file.
-
+For deploying, run ./dist.py, which will generate dist/ containing all the necessary files.  It also merges the CSS and (generated) JS into the HTML file, to avoid users ending with non-matching versions due to HTTP cacheing).
 
 ## Copyright/Licence
 
-Copyright 2003-2015 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
+Copyright 2003-2016 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
 Copyright 2003 Neil Rashbrook &lt;neil@parkwaycc.co.uk&gt;
 Copyright 2003 Derek Seabury &lt;drokzilla@seabury.net&gt;
 
 The code and documentation are distributed under the MPL version 2.
-
 
 The card images are public domain, originating in dondorf.svg from https://web.archive.org/web/20110712004247/http://www.rahga.com/svg/

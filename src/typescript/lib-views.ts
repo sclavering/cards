@@ -30,12 +30,12 @@ function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: num
 }
 
 function initCardImageOffsets(): void {
-  const off = gCardImageOffsets = {};
+  gCardImageOffsets = {};
   const suit_order_in_image = { S: 0, H: 1, D: 2, C: 3 };
   for(let s in suit_order_in_image)
     for(let i = 1; i !== 14; ++i)
-      off[s + i] = suit_order_in_image[s] * 13 + i - 1;
-  off[''] = 4 * 13; // facedown image is last
+      gCardImageOffsets[s + i] = suit_order_in_image[s] * 13 + i - 1;
+  gCardImageOffsets[""] = 4 * 13; // The face-down card image is last.
 }
 
 
@@ -260,7 +260,7 @@ class _FanView extends _View {
     return this._get_target_card_at_relative_coords_from_list2(y, this._fan_y_offset, gCardHeight, cards);
   }
 
-  private _get_target_card_at_relative_coords_from_list2(pos, offset, cardsize, cards) {
+  private _get_target_card_at_relative_coords_from_list2(pos: number, offset: number, cardsize: number, cards: Card[]): Card {
     const ix = Math.floor(pos / offset);
     if(cards[ix]) return cards[ix];
     return pos < (cards.length - 1) * offset + cardsize ? cards[cards.length - 1] : null;
@@ -536,14 +536,14 @@ const gTemporaryCanvasContext = {
   },
 };
 
-function clear_and_resize_canvas(context, width, height) {
+function clear_and_resize_canvas(context: CanvasRenderingContext2D, width: number, height: number): CanvasRenderingContext2D {
   context.canvas.width = width;
   context.canvas.height = height;
   context.clearRect(0, 0, width, height);
   return context;
 };
 
-function round_rect_path(ctx, x, y, w, h, r) {
+function round_rect_path(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number): void {
   const deg_to_rad = Math.PI / 180;
   const x2 = x + w, y2 = y + h;
   ctx.beginPath();

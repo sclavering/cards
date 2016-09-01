@@ -1,9 +1,3 @@
-function repeat(item, number) {
-  const rv = new Array(number);
-  for(let i = 0; i < number; ++i) rv[i] = item;
-  return rv;
-}
-
 // Make a linked-list of the array items, using the given link field names
 function linkList(items, prevPropName: string, nextPropName: string, loop?: boolean) {
   for(var i = 0; i !== items.length; ++i) {

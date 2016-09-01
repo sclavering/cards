@@ -21,7 +21,7 @@ for fn in JS_FILES:
     js_code += "// ===== " + fn + " =====\n\n"
     js_code += open(path + fn).read()
     js_code += "\n\n\n\n"
-js_code = '<script type="application/javascript;version=1.7">\n' + js_code + '</script>\n'
+js_code = '<script>\n' + js_code + '</script>\n'
 
 css_code = "<style>\n" + open(path + "src/cards.css").read() + "</style>\n"
 

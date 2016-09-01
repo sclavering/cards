@@ -53,7 +53,7 @@ class FreeCellPile extends _FreeCellPile {
   may_take_card(card) {
     return may_take_descending_alt_colour(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean | 0 {
     if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;
     // Check there are enough cells+spaces to perform the move
     if(card.isLast) return true;

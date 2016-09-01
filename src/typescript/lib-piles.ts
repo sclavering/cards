@@ -69,12 +69,13 @@ class AnyPile {
   }
 
   // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
-  may_add_card(card) {
+  // Games like FreeCell (where moving multiple cards actually means many single-card moves) return 0 to mean that a move is legal but there aren't enough cells/spaces to perform it.
+  may_add_card(card: Card) : boolean | 0 {
     throw "may_add_card not implemented!";
   }
 
   // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take_card and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
-  may_add_card_maybe_to_self(card) {
+  may_add_card_maybe_to_self(card: Card): boolean | 0 {
     return card.pile === this ? false : this.may_add_card(card);
   }
 

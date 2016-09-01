@@ -30,7 +30,7 @@ class FortyThievesPile extends _Pile {
   may_take_card(card) {
     return may_take_running_flush(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean | 0 {
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
     if(card.isLast) return true;

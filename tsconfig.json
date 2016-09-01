@@ -2,7 +2,7 @@
     "compilerOptions": {
         "noImplicitAny": true,
         "target": "ES5",
-        "outFile": "build.js"
+        "outFile": "tsc_output.js"
     },
     "files": [
         "src/typescript/util.ts",

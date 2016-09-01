@@ -37,7 +37,7 @@ class RegimentGame extends Game {
     return null;
   }
 
-  autoplay() {
+  autoplay(): Action {
     for(let pile of this.piles as RegimentPile[])
       if(!pile.hasCards && this.reserves[pile.regiment_column].hasCards)
         return new Move(this.reserves[pile.regiment_column].lastCard, pile);

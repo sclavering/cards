@@ -1,11 +1,13 @@
 interface Hint {
-    hint_source_card: Card;
-    hint_destinations: AnyPile[];
+  hint_source_card: Card;
+  hint_destinations: AnyPile[];
 }
 
 
 // The base-type for all games
 class Game {
+  public static id: string;
+
   protected pile_details: any;
   all_cards: Card[];
   foundation_cluster_count: number;
@@ -107,7 +109,7 @@ class Game {
     this.layout = null;
   }
 
-  show() {
+  show(): void {
     this.layout.attach_piles_to_views(this.pile_arrays_by_letter);
     this.layout.show();
     setVisibility(ui.scorePanel, this.hasScoring);
@@ -115,11 +117,11 @@ class Game {
     ui.movesDisplay.textContent = this.actionPtr;
   }
 
-  hide() {
+  hide(): void {
     this.layout.hide();
   }
 
-  _create_piles() {
+  _create_piles(): void {
     const details = this.pile_details;
     this.all_piles = [];
     this.pile_arrays_by_letter = {};
@@ -147,7 +149,7 @@ class Game {
   }
 
   // The actual entry-point to starting a game instance.
-  begin(shared_layout, optional_order_to_deal) {
+  begin(shared_layout: Layout, optional_order_to_deal?: number[]): void {
     this.layout = shared_layout;
 
     this.actionList = [];
@@ -172,33 +174,34 @@ class Game {
   }
 
   // For subclasses to optionally implement.  Typically used to add extra properties to piles.
-  init() {
+  init(): void {
   }
 
   // Deal the provided pre-shuffled cards for a new game.  Many subclasses will find this version sufficient.
-  deal(cards) {
+  deal(cards: Card[]): void {
     let ix = 0;
     for(let p of this.all_piles) ix = this._deal_cards(cards, ix, p, p.num_to_deal_face_down, p.num_to_deal_face_up);
     if(ix < cards.length) ix = this._deal_cards(cards, ix, this.stock, cards.length, 0);
   }
 
   // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
-  _deal_cards(cards, ix, pile, num_face_down, num_face_up) {
+  protected _deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
     for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
     pile.add_cards_from_array(cs, true);
     return ix + cs.length;
   }
 
-  _deal_cards_with_nulls_for_spaces(cards) {
-    for(let [i, c] of cards.entries()) if(c) {
+  protected _deal_cards_with_nulls_for_spaces(cards: Card[]): void {
+    cards.forEach((c, ix) => {
+      if(!c) return;
       c.faceUp = true;
-      this.piles[i].add_cards_from_array([c], true);
-    }
+      this.piles[ix].add_cards_from_array([c], true);
+    });
   }
 
   // Subclasses may override this to prevent (some) impossible games from being dealt. Cards will be shuffled repeatedly until this returns false.
-  is_shuffle_impossible(shuffled_cards) {
+  protected is_shuffle_impossible(shuffled_cards: Card[]): boolean {
     return false;
   }
 
@@ -206,7 +209,7 @@ class Game {
   // === Winning ==========================================
 
   // Most subclasses will find this sufficient.
-  is_won() {
+  public is_won(): boolean {
     const expected_foundation_length = this.all_cards.length / this.foundations.length;
     for(let f of this.foundations) if(f.cards.length !== expected_foundation_length) return false;
     return true;
@@ -215,14 +218,14 @@ class Game {
 
   // === Scoring ==========================================
 
-  getScoreFor(action) {
+  protected getScoreFor(action: Action): number {
     return 0;
   }
 
 
   // === Move tracking and Undoing ========================
 
-  doo(action) {
+  public doo(action: Action): AnimationDetails | void {
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
     this.actionList[this.actionPtr++] = action;
     action.score = this.getScoreFor(action);
@@ -232,7 +235,7 @@ class Game {
     return animation_details;
   }
 
-  undo() {
+  public undo(): void {
     --this.actionPtr;
     const action = this.actionList[this.actionPtr];
     this.score -= action.score;
@@ -240,7 +243,7 @@ class Game {
     this._on_do_or_undo();
   }
 
-  redo() {
+  public redo(): void {
     const action = this.actionList[this.actionPtr];
     ++this.actionPtr;
     this.score += action.score;
@@ -249,7 +252,7 @@ class Game {
     this._on_do_or_undo();
   }
 
-  _on_do_or_undo() {
+  private _on_do_or_undo(): void {
     ui.scoreDisplay.textContent = this.score;
     ui.movesDisplay.textContent = this.actionPtr;
     this._hints = null;
@@ -264,7 +267,7 @@ class Game {
   }
 
   // Used to implement .autoplay() for many games.
-  autoplay_using_predicate(predicate) {
+  protected autoplay_using_predicate(predicate: (Card) => boolean): Action {
     for(let p of this.hint_and_autoplay_source_piles) {
       let c = p.lastCard;
       if(!c || !predicate(c)) continue;
@@ -276,7 +279,7 @@ class Game {
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
-  foundation_action_for(cseq) {
+  public foundation_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
     if(!cseq.source.may_take_card(card)) return null;
     const f = this.foundation_destination_for(cseq);
@@ -285,7 +288,7 @@ class Game {
 
   // Given a CardSequence that has already been determined to be movable, return a foundation pile it can be legally moved to, or null.
   // Subclasses may override this.
-  foundation_destination_for(cseq) {
+  protected foundation_destination_for(cseq: CardSequence): AnyPile {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
     if(this._foundation_clusters && cseq.first.number === 1)
       for(let fs of this._foundation_clusters)
@@ -297,7 +300,7 @@ class Game {
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
-  best_action_for(cseq: CardSequence): Action {
+  public best_action_for(cseq: CardSequence): Action {
     if(!cseq.source.may_take_card(cseq.first)) return null;
     const target = this.best_destination_for(cseq);
     return target ? new Move(cseq.first, target) : null;
@@ -305,13 +308,13 @@ class Game {
 
   // Given a CardSequence, return the preferred legal destination pile to move it to, or null.
   // Subclasses should override this.
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return null;
   }
 
   // Commonly-useful implementations of .best_destination_for(cseq)
 
-  best_destination_for__nearest_legal_pile_preferring_nonempty(cseq) {
+  protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
     let maybe = null;
     for(let p of ps) {
@@ -322,13 +325,13 @@ class Game {
     return maybe;
   }
 
-  best_destination_for__nearest_legal_pile(cseq) {
+  protected best_destination_for__nearest_legal_pile(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
     for(let p of ps) if(p.may_add_card_maybe_to_self(cseq.first)) return p;
     return null;
   }
 
-  best_destination_for__nearest_legal_pile_or_cell(cseq) {
+  protected best_destination_for__nearest_legal_pile_or_cell(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile(cseq);
     return p || (cseq.first.isLast ? findEmpty(this.cells) : null);;
   }
@@ -337,7 +340,7 @@ class Game {
   // === Hints ============================================
   // Generally nothing here needs overriding by subclasses.
 
-  hint() {
+  public hint(): void {
     if(!this._hints) {
       this._hints = this.get_hints();
       this._next_hint_index = 0;
@@ -348,13 +351,13 @@ class Game {
     show_hints(hint.hint_source_card, hint.hint_destinations);
   }
 
-  get_hints() {
+  protected get_hints(): Hint[] {
     const rv = [];
     for(let p of this.hint_and_autoplay_source_piles) for(let source of p.hint_sources()) this._add_hints_for(source, rv);
     return rv;
   }
 
-  _add_hints_for(card, hints) {
+  protected _add_hints_for(card: Card, hints: Hint[]): void {
     const ds = [];
     for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_card_maybe_to_self(card)) ds.push(p);
     for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) ds.push(f);
@@ -365,7 +368,7 @@ class Game {
   // === Preferred foundations ============================
   // When a game has multiple foundations of the same suit (e.g. Gypsy), it looks nicer if they are grouped together.  Games can opt in to automoves doing such grouping, which works by dividing the foundations into "clusters", and then using the first cluster that is empty or has matching suits.  (This only works so long as the user doesn't move aces to other foundations for themself, but handling that would complicate it significantly.)
 
-  _get_foundation_clusters(cards, foundations) {
+  _get_foundation_clusters(cards: Card[], foundations: AnyPile[]): AnyPile[][] {
     if(!this.foundation_cluster_count) return null;
     const cluster_size = this.foundations.length / this.foundation_cluster_count;
     const rv = [];
@@ -386,7 +389,7 @@ class GameType {
   private currentGame: Game;
   private shared_layout: Layout;
 
-  constructor(id, game_class) {
+  constructor(id: string, game_class: typeof Game) {
     this.id = id;
     game_class.id = id; // main.js still uses this
     this.game_class = game_class;
@@ -397,17 +400,17 @@ class GameType {
     this.currentGame = null;
   }
 
-  switchTo() {
+  switchTo(): void {
     if(!this.currentGame) this.newGame();
     else gCurrentGame = this.currentGame;
     gCurrentGame.show();
   }
 
-  switchFrom() {
+  switchFrom(): void {
     this.currentGame.hide();
   }
 
-  newGame(cardsOrder?: number[]) {
+  newGame(cardsOrder?: number[]): void {
     if(this.currentGame) {
       if(this.pastGames.length === 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
@@ -422,11 +425,11 @@ class GameType {
     if(act) doo(act);
   }
 
-  restart() {
+  restart(): void {
     this.newGame(this.currentGame.order_cards_dealt);
   }
 
-  restorePastGame() {
+  restorePastGame(): void {
     if(!this.havePastGames) return;
     if(this.futureGames.length === 2) this.futureGames.shift();
     this.futureGames.push(this.currentGame);
@@ -436,7 +439,7 @@ class GameType {
     gCurrentGame.show();
   }
 
-  restoreFutureGame() {
+  restoreFutureGame(): void {
     if(!this.haveFutureGames) return;
     if(this.pastGames.length === 2) this.pastGames.shift();
     this.pastGames.push(this.currentGame);
@@ -446,7 +449,7 @@ class GameType {
     gCurrentGame.show();
   }
 
-  clearFutureGames() {
+  clearFutureGames(): void {
     this.futureGames = [];
     this.haveFutureGames = false;
   }

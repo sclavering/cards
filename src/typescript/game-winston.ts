@@ -18,7 +18,7 @@ class WinstonGame extends Game {
   // xxx implement .is_shuffle_impossible, to detect games where the reserve starts with e.g. "4H ... 8H ... 8H ..." (it's impossible to get past two identical cards if a lower one from the suit is beneath them).  Also "... AH AH ... 8H ..."
   // xxx "4S _ 6S 10S 9S _" is almost-impossible (requires moving things back from the foundations)
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
@@ -30,18 +30,18 @@ gGameClasses["winston"] = WinstonGame;
 
 
 class WinstonStock extends Stock {
-  deal() {
-    const pred = p => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
+  deal(): Action {
+    const pred = (p: AnyPile) => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
   }
 };
 
 
 class WinstonPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_descending_alt_colour(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(card.pile.is_reserve) return false;
     return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : true;
   }

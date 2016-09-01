@@ -4,7 +4,7 @@ class _Klondike extends Game {
     this.hasScoring = true;
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile(cseq);
   }
 

@@ -30,14 +30,14 @@ class PyramidGame extends BasePyramidGame {
     this.init_pyramid_links([1,3,4,6,7,8,10,11,12,13,15,16,17,18,19,21,22,23,24,25,26]);
   }
 
-  best_action_for(cseq) {
+  public best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
     return card.number === 13 && card.pile.may_take_card(card) ? new RemovePair(card, null) : null;
   }
 
   // This game has no autoplay
 
-  is_won() {
+  public is_won(): boolean {
     // Won once the tip of the pyramid has been removed.
     return !this.piles[0].hasCards;
   }
@@ -66,18 +66,18 @@ class TriPeaksGame extends BasePyramidGame {
     for(let i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
   }
 
-  deal(cards) {
+  deal(cards: Card[]): void {
     let ix = 0;
     for(let p of this.piles) ix = this._deal_cards(cards, ix, p, 0, 1);
     ix = this._deal_cards(cards, ix, this.foundation, 0, 1);
     ix = this._deal_cards(cards, ix, this.stock, 52, 0);
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.foundation.may_add_card(cseq.first) ? this.foundation : null;
   }
 
-  is_won() {
+  public is_won(): boolean {
     // won when the the peaks are empty
     for(var i = 0; i !== 3; i++) if(this.piles[i].hasCards) return false;
     return true;
@@ -122,11 +122,11 @@ class BasePyramidPile extends _Pile {
     this.leftChild = null;
     this.rightChild = null;
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return false;
   }
 };
@@ -145,10 +145,10 @@ class PyramidPile extends BasePyramidPile {
 };
 
 class PyramidFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return false;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return false;
   }
   action_for_drop(cseq) {

@@ -11,7 +11,7 @@ class RussianSolGame extends Game {
     };
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 

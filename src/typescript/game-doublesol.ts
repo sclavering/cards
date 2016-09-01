@@ -16,7 +16,7 @@ class DoubleSolGame extends Game {
     };
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile(cseq);
   }
 
@@ -29,10 +29,10 @@ gGameClasses["doublesol"] = DoubleSolGame;
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K
 class DoubleSolFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(!card.isLast) return false;
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const expected_number = Math.floor(this.cards.length / 2) + 1;

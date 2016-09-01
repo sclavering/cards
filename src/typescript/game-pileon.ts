@@ -1,7 +1,7 @@
 class _PileOnGame extends Game {
   protected _pileon_depth: number;
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = card.pile.surrounding();
     return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add_card(card))
@@ -11,7 +11,7 @@ class _PileOnGame extends Game {
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.
-  is_won() {
+  public is_won(): boolean {
     for(let p of this.piles)
       if(p.cards.length && !(p.cards.length === this._pileon_depth && all_same_number(p.cards)))
         return false;
@@ -90,12 +90,12 @@ class _PileOnPile extends _Pile {
     this._depth = NaN;
     this._is_pileup = false;
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return all_same_number(card.pile.cards.slice(card.index));
   }
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     const last = this.lastCard;
     if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
     const numCards = card.pile.cards.length - card.index;

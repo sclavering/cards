@@ -12,7 +12,7 @@ class PenguinGame extends Game {
     };
   }
 
-  deal(cards) {
+  deal(cards: Card[]): void {
     const aces = cards.filter(c => c.number === 1);
     const others = cards.filter(c => c.number !== 1);
     this._deal_cards(aces, 0, this.piles[0], 0, 1);
@@ -21,7 +21,7 @@ class PenguinGame extends Game {
     for(let i = 0; i < 7; ++i) ix = this._deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_or_cell(cseq);
   }
 
@@ -33,10 +33,10 @@ gGameClasses["penguin"] = PenguinGame;
 
 
 class PenguinPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_running_flush(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
   }
 };

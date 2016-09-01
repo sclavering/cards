@@ -12,7 +12,7 @@ class TowersGame extends FreeCellRelatedGame {
     };
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_or_cell(cseq);
   }
 
@@ -24,7 +24,7 @@ gGameClasses["towers"] = TowersGame;
 
 
 class TowersPile extends _FreeCellPile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_running_flush(card);
   }
   may_add_card(card: Card): boolean | 0 {

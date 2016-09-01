@@ -2,7 +2,7 @@
 // ids: blackwidow, divorce, wasp, spider-1suit, spider-2suits, spider, simon-1suit, simon-2suits, simon
 
 class _SpiderRelatedGame extends Game {
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || findEmpty(ps);
@@ -90,7 +90,7 @@ class DivorceGame extends _SpiderLayoutGame {
   }
 
   // Can't re-use the standard Spider version because it doesn't do ace->king wraparound.
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
     return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
@@ -112,7 +112,7 @@ class WaspGame extends _SpiderRelatedGame {
       foundations: [1, SpiderFoundation, 0, 0],
     };
   }
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 };
@@ -182,27 +182,27 @@ gGameClasses["doublesimon"] = DoubleSimonGame;
 
 
 class SpiderPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_running_flush(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return !this.hasCards || this.lastCard.number === card.number + 1;
   }
 };
 
 
 class DivorcePile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.faceUp && check_consecutive_cards(card, is_next_in_suit_mod13);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return !this.hasCards || is_next_mod13(card, this.lastCard);
   }
 };
 
 
 class BlackWidowPile extends SpiderPile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_descending_run(card);
   }
   hint_sources() {
@@ -226,7 +226,7 @@ class SpiderFoundation extends _Foundation {
   may_take_card() {
     return false;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return card.number === 13 && check_count_and_consecutive_cards(card, 13, is_next_in_suit);
   }
 };

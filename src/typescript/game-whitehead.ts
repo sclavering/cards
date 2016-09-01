@@ -13,7 +13,7 @@ class WhiteheadGame extends Game {
     };
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return find_pile_by_top_card(this.piles, top => is_next_in_suit(cseq.first, top))
         || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(cseq.first, top))
         || findEmpty(this.piles);
@@ -33,10 +33,10 @@ gGameClasses["whitehead"] = WhiteheadGame;
 
 
 class WhiteheadPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_running_flush(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     const last = this.lastCard;
     return last ? is_next_and_same_colour(card, last) : true;
   }

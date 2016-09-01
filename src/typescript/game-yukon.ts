@@ -1,5 +1,5 @@
 class _YukonRelatedGame extends Game {
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
@@ -42,10 +42,10 @@ class SanibelGame extends _YukonRelatedGame {
 gGameClasses["sanibel"] = SanibelGame;
 
 class YukonPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return may_add_to_gypsy_pile(card, this);
   }
   hint_sources() {

@@ -28,14 +28,14 @@ class Mod3Game extends Game {
   }
 
   // games that start with no cards in the correct place on the foundations are impossible
-  is_shuffle_impossible(cards) {
+  protected is_shuffle_impossible(cards: Card[]): boolean {
     for(let i = 0; i < 8; ++i)
       if(cards[i].number === 2 || cards[i + 8].number === 3 || cards[i + 16].number === 4)
         return false;
     return true;
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.foundation_destination_for(cseq) || findEmpty(cseq.source.is_pile ? cseq.source.surrounding() : this.piles);
   }
 
@@ -65,7 +65,7 @@ class Mod3Game extends Game {
     return rv;
   }
 
-  is_won() {
+  public is_won(): boolean {
     if(this.stock.hasCards) return false;
     for(let p of this.piles) if(p.cards.length) return false;
     return true;
@@ -80,10 +80,10 @@ class _Mod3Foundation extends _Foundation {
     super();
     this._base_num = base_num;
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     const last = this.lastCard;
     if(!this.hasCards) return card.number === this._base_num;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;

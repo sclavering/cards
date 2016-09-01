@@ -20,20 +20,20 @@ class MazeGame extends Game {
     ps[0].prev = ps[53];
   }
 
-  deal(cards) {
+  deal(cards: Card[]): void {
     this._deal_cards_with_nulls_for_spaces(cards);
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     for(let p of cseq.source.following()) if(p.may_add_card(cseq.first)) return p;
     return null;
   }
 
-  is_won() {
-    const first = this.piles.find(x => x.hasCards);
-    let p = first;
+  public is_won(): boolean {
+    const first = this.piles.find((x: AnyPile) => x.hasCards);
+    let p: AnyPile = first;
     do {
-      let next = p.following().find(x => x.hasCards);
+      let next = p.following().find((x: AnyPile) => x.hasCards);
       if(!maze_allows_adjacent(p.firstCard, next.firstCard)) return false;
       p = next;
     } while(p !== first);
@@ -44,10 +44,10 @@ gGameClasses["maze"] = MazeGame;
 
 
 class MazePile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return true;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(this.hasCards) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;
     return (prev && maze_allows_adjacent(prev, card)) || (next && maze_allows_adjacent(card, next));
@@ -55,6 +55,6 @@ class MazePile extends _Pile {
 };
 
 
-function maze_allows_adjacent(a, b) {
+function maze_allows_adjacent(a: Card, b: Card): boolean {
   return is_next_in_suit(a, b) || (a.number === 12 && b.number === 1);
 };

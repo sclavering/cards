@@ -14,7 +14,7 @@ class UnionSquareGame extends Game {
     };
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
@@ -29,11 +29,11 @@ gGameClasses["unionsquare"] = UnionSquareGame;
 
 
 class UnionSquarePile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
   // Piles are built up or down in suit, but only one direction at once.
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     const cs = this.cards, num = cs.length, last = this.lastCard;
     if(!last) return true;
     if(last.suit !== card.suit) return false;
@@ -47,10 +47,10 @@ class UnionSquarePile extends _Pile {
 
 // Built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right from the a->k, so that it's clear what card should be played next.
 class UnionSquareFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return false;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit !== card.suit) return false;

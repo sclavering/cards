@@ -14,12 +14,12 @@ class Golf1Game extends Game {
     };
   }
 
-  best_action_for(cseq) {
+  public best_action_for(cseq: CardSequence): Action {
     const f = this.foundation;
     return cseq.source.may_take_card(cseq.first) && f.may_add_card(cseq.first) ? new Move(cseq.first, f) : null;
   }
 
-  is_won() {
+  public is_won(): boolean {
     for(let p of this.piles) if(p.cards.length) return false;
     return true;
   }
@@ -38,10 +38,10 @@ gGameClasses["golf2"] = Golf2Game;
 
 
 class GolfPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast && card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return false;
   }
 };

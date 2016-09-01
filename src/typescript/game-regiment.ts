@@ -29,7 +29,7 @@ class RegimentGame extends Game {
     }
   }
 
-  best_destination_for(cseq) {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.following() : this.piles, num = ps.length;
     for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
 
@@ -68,11 +68,11 @@ class RegimentPile extends _Pile {
     this.regiment_reserve = null;
   }
 
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast && card.faceUp;
   }
 
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
@@ -98,20 +98,20 @@ class RegimentPile extends _Pile {
 };
 
 class RegimentAceFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(this.lastCard, card);
   }
 };
 
 class RegimentKingFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
   }

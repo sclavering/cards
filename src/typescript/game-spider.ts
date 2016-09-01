@@ -206,7 +206,7 @@ class BlackWidowPile extends SpiderPile {
     return may_take_descending_run(card);
   }
   hint_sources() {
-    const sources = [];
+    const sources: Card[] = [];
     const cs = this.cards;
     for(var j = cs.length; j;) {
       let card = cs[--j];

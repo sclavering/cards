@@ -67,7 +67,8 @@ class Card {
   __all_cards_index: number; // used by Game
 
   constructor(number: number, suit: Suit) {
-    this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
+    const suit_to_colour: LookupBySuit<Colour> = { S: "B", H: "R", D: "R", C: "B" };
+    this.colour = suit_to_colour[suit];
     this.suit = suit;
     this.displayStr = suit + number;
     this.number = number;

@@ -83,7 +83,7 @@ class TriPeaksGame extends BasePyramidGame {
     return true;
   }
 
-  getScoreFor(action) {
+  protected getScoreFor(action: Action): number {
     if(action instanceof DealToPile) {
       (action as Action).streakLength = 0;
       return -5;
@@ -96,7 +96,7 @@ class TriPeaksGame extends BasePyramidGame {
     let score = action.streakLength = prev ? prev.streakLength + 1 : 1;
 
     // Bonuses for removing a peak card
-    if(action.source.isPeak) {
+    if(((action as Move).source as BasePyramidPile).isPeak) {
       const ps = this.piles;
       const num_on_peaks = ps[0].cards.length + ps[1].cards.length + ps[2].cards.length;
       score += num_on_peaks === 1 ? 30 : 15;
@@ -132,7 +132,7 @@ class BasePyramidPile extends _Pile {
 };
 
 class PyramidPile extends BasePyramidPile {
-  action_for_drop(cseq) {
+  action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const c = this.firstCard;
     if(!c || card.number + c.number !== 13) return null;
@@ -151,7 +151,7 @@ class PyramidFoundation extends _Foundation {
   may_add_card(card: Card): boolean {
     return false;
   }
-  action_for_drop(cseq) {
+  action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     return card.number === 13 ? new RemovePair(card, null) : null;
   }
@@ -162,7 +162,7 @@ class PyramidWaste extends Waste {
     super();
     this.is_drop_target = true;
   }
-  action_for_drop(cseq) {
+  action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const c = this.lastCard;
     return c && card.number + c.number === 13 ? new RemovePair(card, c) : null;

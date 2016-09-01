@@ -6,7 +6,7 @@ class _PileOnGame extends Game {
     const ps = card.pile.surrounding();
     return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add_card(card))
         // Redundant with the above for Pile On, but not for Pile Up.
-        || ps.find(p => p.hasCards && p.may_add_card(card))
+        || ps.find((p: AnyPile) => p.hasCards && p.may_add_card(card))
         || findEmpty(ps);
   }
 
@@ -134,14 +134,14 @@ class PileUpPile8 extends _PileOnPile {
 };
 
 
-function all_same_number(cards) {
+function all_same_number(cards: Card[]): boolean {
   const num = cards[0].number;
   for(let i = 1; i < cards.length; ++i) if(cards[i].number !== num) return false;
   return true;
 };
 
 
-function is_same_number_or_one_different_mod13(a, b) {
+function is_same_number_or_one_different_mod13(a: Card, b: Card): boolean {
   return a.number === b.number
     || (a.number === 13 ? 1 : a.number + 1) === b.number
     || (a.number === 1 ? 13 : a.number - 1) === b.number

@@ -43,11 +43,12 @@ class RegimentGame extends Game {
         return new Move(this.reserves[pile.regiment_column].lastCard, pile);
 
     // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
-    const ace_nums = {}, king_nums = {};
+    const ace_nums: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };
+    const king_nums: LookupBySuit<number> = { S: 14, H: 14, D: 14, C: 14 };
     for_each_top_card(this.ace_foundations, c => ace_nums[c.suit] = c.number);
     for_each_top_card(this.king_foundations, c => king_nums[c.suit] = c.number);
-    const autoplayable_suits = { S: false, H: false, D: false, C: false };
-    for(let k in autoplayable_suits) if(ace_nums[k] && king_nums[k] && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
+    const autoplayable_suits: LookupBySuit<boolean> = { S: false, H: false, D: false, C: false };
+    for(let k in autoplayable_suits) if(ace_nums[k] > 0 && king_nums[k] < 14 && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
     return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
   }
 };
@@ -78,8 +79,8 @@ class RegimentPile extends _Pile {
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
-    const source = card.pile;
-    if(!source.is_reserve) return false;
+    if(!card.pile.is_reserve) return false;
+    const source = card.pile as RegimentReserve;
 
     const reserve = this.regiment_reserve;
     if(reserve === source) return true;

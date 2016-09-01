@@ -2,7 +2,7 @@ class Mod3Game extends Game {
   private f_foundations2: Mod3Foundation2[];
   private g_foundations3: Mod3Foundation3[];
   private h_foundations4: Mod3Foundation4[];
-  private rows: _Mod3Foundation[][];
+  private rows: Mod3Foundation[][];
 
   static create_layout() {
     return new Layout("#<   f f f f f f f f     ><   g g g g g g g g><   h h h h h h h h><   p p p p p p p p s>.", { f: Mod3SlideView, g: Mod3SlideView, h: Mod3SlideView });
@@ -44,13 +44,13 @@ class Mod3Game extends Game {
     return this.autoplay_using_predicate(
       card => card.number <= autoplayable_numbers_by_row[(card.number - 2) % 3][card.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
-        && !(card.pile.is_foundation && (card.pile as _Mod3Foundation).contains_appropriate_cards())
+        && !(card.pile.is_foundation && (card.pile as Mod3Foundation).contains_appropriate_cards())
     );
   }
 
   // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).
-  _autoplayable_numbers_for_row(row) {
-    const rv = { S: 0, H: 0, D: 0, C: 0 };
+  _autoplayable_numbers_for_row(row: Mod3Foundation[]): LookupBySuit<number> {
+    const rv: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };
     const seen = {};
     let seen_invalid_cards = false;
     for(let f of row) {
@@ -74,9 +74,9 @@ class Mod3Game extends Game {
 gGameClasses["mod3"] = Mod3Game;
 
 
-class _Mod3Foundation extends _Foundation {
+abstract class Mod3Foundation extends _Foundation {
   public _base_num: number;
-  constructor(base_num) {
+  constructor(base_num: number) {
     super();
     this._base_num = base_num;
   }
@@ -99,19 +99,19 @@ class _Mod3Foundation extends _Foundation {
 };
 
 
-class Mod3Foundation2 extends _Mod3Foundation {
+class Mod3Foundation2 extends Mod3Foundation {
   constructor() {
     super(2);
   }
 };
 
-class Mod3Foundation3 extends _Mod3Foundation {
+class Mod3Foundation3 extends Mod3Foundation {
   constructor() {
     super(3);
   }
 };
 
-class Mod3Foundation4 extends _Mod3Foundation {
+class Mod3Foundation4 extends Mod3Foundation {
   constructor() {
     super(4);
   }

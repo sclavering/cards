@@ -12,7 +12,7 @@ class _Klondike extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 
-  getScoreFor(act: Action) {
+  protected getScoreFor(act: Action): number {
     if(act instanceof RefillStock) return -100;
     if(act instanceof Move) return this._get_score(act) + (act.revealed_card ? 5 : 0);
     return 0;

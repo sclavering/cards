@@ -16,7 +16,7 @@ var gCardWidth = 79;
 var gSpacerSize = 10;
 
 
-var gCardImageOffsets = null;
+var gCardImageOffsets: { [_: string]: number } = null;
 
 function drawCard(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
   draw_card_by_name(canvascx, x, y, card.faceUp ? card.displayStr : "");
@@ -31,7 +31,7 @@ function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: num
 
 function initCardImageOffsets(): void {
   gCardImageOffsets = {};
-  const suit_order_in_image = { S: 0, H: 1, D: 2, C: 3 };
+  const suit_order_in_image: LookupBySuit<number> = { S: 0, H: 1, D: 2, C: 3 };
   for(let s in suit_order_in_image)
     for(let i = 1; i !== 14; ++i)
       gCardImageOffsets[s + i] = suit_order_in_image[s] * 13 + i - 1;
@@ -268,7 +268,7 @@ class _FanView extends _View {
 };
 
 class _FixedFanView extends _FanView {
-  constructor(options) {
+  constructor(options: { horizontal: boolean; capacity: number }) {
     super();
     this._always_draw_background = true;
     if(options.horizontal) {
@@ -355,7 +355,7 @@ class FanRightView extends _FlexFanView {
 };
 
 class _SlideView extends _FlexFanView {
-  constructor(options) {
+  constructor(options: { slide_capacity: number }) {
     super();
     this._fan_x_default_offset = gHSlideOffset;
     this._fan_y_default_offset = gVSlideOffset;
@@ -530,11 +530,11 @@ class StockView extends View {
 };
 
 
-const gTemporaryCanvasContext = {
-  _context: null,
-  get: function() {
+class gTemporaryCanvasContext {
+  static _context: CanvasRenderingContext2D;
+  static get() {
     return this._context || (this._context = document.createElement("canvas").getContext("2d"));
-  },
+  }
 };
 
 function clear_and_resize_canvas(context: CanvasRenderingContext2D, width: number, height: number): CanvasRenderingContext2D {

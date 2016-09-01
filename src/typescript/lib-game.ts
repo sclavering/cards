@@ -3,6 +3,8 @@ interface Hint {
   hint_destinations: AnyPile[];
 }
 
+type AutoplayPredicate = (c: Card) => boolean;
+
 
 // The base-type for all games
 class Game {
@@ -272,7 +274,7 @@ class Game {
   }
 
   // Used to implement .autoplay() for many games.
-  protected autoplay_using_predicate(predicate: (c: Card) => boolean): Action {
+  protected autoplay_using_predicate(predicate: AutoplayPredicate): Action {
     for(let p of this.hint_and_autoplay_source_piles) {
       let c = p.lastCard;
       if(!c || !predicate(c)) continue;

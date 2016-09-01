@@ -1,3 +1,22 @@
+type Suit = "S" | "H" | "D" | "C";
+type Colour = "R" | "B";
+
+// xxx Is there a better way of doing these?
+interface LookupBySuit<SomeType> {
+  S: SomeType;
+  H: SomeType;
+  D: SomeType;
+  C: SomeType;
+  // This is :string because :Suit isn't allowed by TypeScript.
+  [suit: string]: SomeType;
+};
+interface LookupByColour<SomeType> {
+  R: SomeType;
+  B: SomeType;
+  [colour: string]: SomeType;
+};
+
+
 // takes an array of cards, returns a *new* shuffled array
 function shuffle(cards: Card[]) {
   return shuffle_in_place(cards.slice());
@@ -32,14 +51,14 @@ function make_cards(repeat: number, suits?: string, numbers?: number[]): Card[] 
   for(let suit of suits)
     for(let i = 0; i < repeat; ++i)
       for(let num of numbers)
-        rv.push(new Card(num, suit));
+        rv.push(new Card(num, suit as Suit));
   return rv;
 }
 
 
 class Card {
-  colour: string;
-  suit: string;
+  colour: Colour;
+  suit: Suit;
   displayStr: string;
   number: number;
   faceUp: boolean;
@@ -47,7 +66,7 @@ class Card {
   index: number;
   __all_cards_index: number; // used by Game
 
-  constructor(number: number, suit: string) {
+  constructor(number: number, suit: Suit) {
     this.colour = { S: 'B', H: 'R', D: 'R', C: 'B' }[suit];
     this.suit = suit;
     this.displayStr = suit + number;

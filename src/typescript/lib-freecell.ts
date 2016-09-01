@@ -11,14 +11,14 @@ class FreeCellRelatedGame extends Game {
     return new FreeCellMoveAction(card, dest, cells, spaces);
   }
 
-  empty_cell_count() {
+  empty_cell_count(): number {
     let rv = 0;
     for(let c of this.cells) if(!c.hasCards) ++rv;
     return rv;
   }
 
   // Args are piles which should not be counted even if empty (typically the source and destination of a card being moved).
-  empty_pile_count(ignore1, ignore2) {
+  empty_pile_count(ignore1?: AnyPile, ignore2?: AnyPile): number {
     let rv = 0;
     for(let p of this.piles) if(p !== ignore1 && p !== ignore2 && !p.hasCards) ++rv;
     return rv;
@@ -31,20 +31,20 @@ class FreeCellMoveAction {
   private card: Card;
   private source: AnyPile;
   private destination: AnyPile;
-  constructor(card, destination, cells, spaces) {
+  constructor(card: Card, destination: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
     this._anim = prepare_freecell_move_animation(card, destination, cells, spaces);
     this.card = card;
     this.source = card.pile;
     this.destination = destination;
   }
-  perform() {
+  perform(): AnimationRunArgs {
     this.destination.add_cards(this.card, true); // Don't update view.
     return this._anim;
   }
-  undo() {
+  undo(): void {
     this.source.add_cards(this.card);
   }
-  redo() {
+  redo(): void {
     this.destination.add_cards(this.card);
   }
 };

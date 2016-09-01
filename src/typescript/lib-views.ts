@@ -1,3 +1,12 @@
+interface ViewCoord {
+  x: number;
+  y: number;
+}
+interface ViewRect extends ViewCoord {
+  w: number;
+  h: number;
+}
+
 var gVFanOffset = 25; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 15; // num pixels between left edges of two cards in a horizontal fan
 var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
@@ -9,18 +18,18 @@ var gSpacerSize = 10;
 
 var gCardImageOffsets = null;
 
-function drawCard(canvascx, card, x, y) {
-  return draw_card_by_name(canvascx, x, y, card.faceUp ? card.displayStr : "");
+function drawCard(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
+  draw_card_by_name(canvascx, x, y, card.faceUp ? card.displayStr : "");
 }
 
-function draw_card_by_name(canvascx, x, y, name) {
+function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: number, name: string): void {
   if(!gCardImageOffsets) initCardImageOffsets();
   const src_y = gCardImageOffsets[name] * gCardHeight;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   canvascx.drawImage(ui.cardImages, 0, src_y, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
 }
 
-function initCardImageOffsets() {
+function initCardImageOffsets(): void {
   const off = gCardImageOffsets = {};
   const suit_order_in_image = { S: 0, H: 1, D: 2, C: 3 };
   for(let s in suit_order_in_image)
@@ -51,7 +60,7 @@ class _View {
   }
 
   // This is intended to be called by subclasses in their constructor.  It exists here both because a variety of different subclasses want it, and because it'd be fragile to have subclasses fiddling with the structure of the HTML.
-  init_counter() {
+  init_counter(): void {
     this._root_node = document.createDocumentFragment();
     this._root_node.appendChild(this._canvas);
     this._counter = this._root_node.appendChild(document.createElement("div")) as HTMLElement;
@@ -59,64 +68,64 @@ class _View {
   }
 
   // Attach this view to a Pile
-  attach(pile) {
+  attach(pile: AnyPile): void {
     this.pile = pile;
     this.update();
   }
 
-  insert_into(parent_node) {
+  insert_into(parent_node: Node): void {
     parent_node.appendChild(this._root_node);
   }
 
-  pixel_rect() {
+  pixel_rect(): ClientRect {
     return this._canvas.getBoundingClientRect();
   }
 
   // Redraw the pile.
-  update() {
+  update(): void {
     const cs = this.pile.cards;
     this.update_with(cs);
   }
 
   // Show the supplied array of cards (which may be a prefix of pile's cards, during animation or dragging).
-  update_with(cards) {
+  update_with(cards: Card[]): void {
     throw "not implemented";
   }
 
-  _draw_background_into(ctx, width?, height?) {
+  protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
     round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width) - 3, (height || ctx.canvas.height) - 3, 5);
     this._context.stroke();
   }
 
-  draw_into(ctx, cards, draw_background) {
+  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
     throw "not implemented";
   }
 
-  coords_of_card(card) {
+  coords_of_card(card: Card): ViewCoord {
     return { x: 0, y: 0 };
   }
 
-  show_hint_source(card) {
-    const rect = this._get_hint_source_rect(card);
+  show_hint_source(card: Card): void {
+    const rect = this.get_hint_source_rect(card);
     this._context.fillStyle = "darkgrey";
     this._context.globalAlpha = 0.3;
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   }
 
-  _get_hint_source_rect(card) {
+  protected get_hint_source_rect(card: Card): ViewRect {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   }
 
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
   // This method should render them into a temporary canvas, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
-  draw_hint_destination(cards) {
+  draw_hint_destination(cards: Card[]): void {
     throw "not implemented";
   }
 
-  _draw_hint_destination(canvas_context, x, y) {
-    const canvas = canvas_context.canvas;
+  _draw_hint_destination(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    const canvas = ctx.canvas;
     this._context.globalAlpha = 0.9;
     this._context.fillStyle = "white";
     this._context.fillRect(x + 1, y + 1, canvas.width - 2, canvas.height - 2);
@@ -125,36 +134,36 @@ class _View {
   }
 
   // Return relative CSS-pixel coords for where a card being added should be displayed, both for animated moves and for hints.
-  get_next_card_xy() {
+  get_next_card_xy(): ViewCoord {
     return { x: 0, y: 0 };
   }
 
   // Return a CardSequence (or null) for the card at the specified coords within the View's Pile.
-  cseq_at_coords(x, y) {
+  cseq_at_coords(x: number, y: number): CardSequence {
     throw "not implemented";
   }
 };
 
 // A view where only the top card is ever visible (used for foundations).
 class View extends _View {
-  update_with(cs) {
+  update_with(cs: Card[]): void {
     this.draw_into(this._context, cs, !cs.length);
     if(this._counter) this._counter.textContent = this.pile.counter;
   }
 
-  draw_into(ctx, cards, draw_background) {
+  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
     clear_and_resize_canvas(ctx, gCardWidth, gCardHeight);
-    if(draw_background) this._draw_background_into(ctx);
+    if(draw_background) this.draw_background_into(ctx);
     if(cards.length) drawCard(ctx, cards[cards.length - 1], 0, 0);
   }
 
-  draw_hint_destination(cards) {
+  draw_hint_destination(cards: Card[]): void {
     const tmp = gTemporaryCanvasContext.get();
     this.draw_into(tmp, cards, false);
     this._draw_hint_destination(tmp, 0, 0);
   }
 
-  cseq_at_coords(x, y) {
+  cseq_at_coords(x: number, y: number): CardSequence {
     return CardSequence.from_card(this.pile.lastCard);
   }
 };
@@ -190,63 +199,63 @@ class _FanView extends _View {
     this._fan_y_offset = 0;
   }
 
-  update_with(cs) {
-    this._recalculate_offsets(cs.length);
+  update_with(cs: Card[]): void {
+    this.recalculate_offsets(cs.length);
     this.draw_into(this._context, cs, !cs.length || this._always_draw_background);
     if(this._counter) this._counter.textContent = this.pile.counter;
   }
 
   // Update the view's offsets to allow the specified number of cards to fit in the space.  Only implemented in _FlexFanView.
-  _recalculate_offsets(num) {
+  protected recalculate_offsets(num: number): void {
   }
 
-  draw_into(ctx, cards, draw_background, use_minimum_size?: boolean) {
+  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean, use_minimum_size?: boolean): void {
     // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
     const num = cards.length, xo = this._fan_x_offset, yo = this._fan_y_offset;
     const width = use_minimum_size ? (num - 1) * xo + gCardWidth : this.canvas_width;
     const height = use_minimum_size ? (num - 1) * yo + gCardHeight : this.canvas_height;
     clear_and_resize_canvas(ctx, width, height);
-    if(draw_background) this._draw_background_into(ctx);
+    if(draw_background) this.draw_background_into(ctx);
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], xo * i, yo * i);
   }
 
-  coords_of_card(card) {
+  coords_of_card(card: Card): ViewCoord {
     return { x: card.index * this._fan_x_offset, y: card.index * this._fan_y_offset };
   }
 
-  draw_hint_destination(cards) {
+  draw_hint_destination(cards: Card[]): void {
     const rect = this.get_next_card_xy();
     const tmp = gTemporaryCanvasContext.get();
     this.draw_into(tmp, cards, false, true);
     this._draw_hint_destination(tmp, rect.x, rect.y);
   }
 
-  _get_hint_source_rect(card) {
+  protected get_hint_source_rect(card: Card): ViewRect {
     const offset = card.index, size = this.pile.cards.length - 1 - card.index;
     const xo = this._fan_x_offset, yo = this._fan_y_offset;
     return { x: offset * xo, y: offset * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
   }
 
   get_next_card_xy() {
-    const offset = this._get_next_card_offset();
+    const offset = this.get_next_card_offset();
     return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   }
 
-  _get_next_card_offset() {
+  protected get_next_card_offset(): number {
     return this.pile.cards.length;
   }
 
-  cseq_at_coords(x, y) {
-    return CardSequence.from_card(this._get_target_card_at_relative_coords_from_list(x, y, this.pile.cards));
+  cseq_at_coords(x: number, y: number): CardSequence {
+    return CardSequence.from_card(this.get_target_card_at_relative_coords_from_list(x, y, this.pile.cards));
   }
 
   // handles only purely-horizontal or purely-vertical fans
-  _get_target_card_at_relative_coords_from_list(x, y, cards) {
+  protected get_target_card_at_relative_coords_from_list(x: number, y: number, cards: Card[]): Card {
     if(this._fan_x_offset) return this._get_target_card_at_relative_coords_from_list2(x, this._fan_x_offset, gCardWidth, cards);
     return this._get_target_card_at_relative_coords_from_list2(y, this._fan_y_offset, gCardHeight, cards);
   }
 
-  _get_target_card_at_relative_coords_from_list2(pos, offset, cardsize, cards) {
+  private _get_target_card_at_relative_coords_from_list2(pos, offset, cardsize, cards) {
     const ix = Math.floor(pos / offset);
     if(cards[ix]) return cards[ix];
     return pos < (cards.length - 1) * offset + cardsize ? cards[cards.length - 1] : null;
@@ -268,30 +277,30 @@ class _FixedFanView extends _FanView {
 };
 
 class _SelectiveFanView extends _FixedFanView {
-  _visible_cards_of(cs) : Card[] {
+  protected visible_cards_of(cs: Card[]) : Card[] {
     throw "not implemented";
   }
 
-  update_with(cards) {
-    return super.update_with(this._visible_cards_of(cards));
+  update_with(cs: Card[]): void {
+    return super.update_with(this.visible_cards_of(cs));
   }
 
-  coords_of_card(card) {
-    const offset = this._visible_cards_of(this.pile.cards).indexOf(card);
+  coords_of_card(card: Card): ViewCoord {
+    const offset = this.visible_cards_of(this.pile.cards).indexOf(card);
     return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   }
 
-  cseq_at_coords(x, y) {
-    return CardSequence.from_card(this._get_target_card_at_relative_coords_from_list(x, y, this._visible_cards_of(this.pile.cards)))
+  cseq_at_coords(x: number, y: number): CardSequence {
+    return CardSequence.from_card(this.get_target_card_at_relative_coords_from_list(x, y, this.visible_cards_of(this.pile.cards)))
   }
 
-  _get_hint_source_rect(card) {
+  protected get_hint_source_rect(card: Card): ViewRect {
     // Only the top card will ever be the source of a hint.
-    const num = this._visible_cards_of(this.pile.cards).indexOf(card);
+    const num = this.visible_cards_of(this.pile.cards).indexOf(card);
     return { x: num * this._fan_x_offset, y: num * this._fan_y_offset, w: gCardWidth, h: gCardHeight };
   }
 
-  // Subclasses will need to override ._get_next_card_offset(), except for waste-pile views, where it's irrelevant.
+  // Subclasses will need to override .get_next_card_offset(), except for waste-pile views, where it's irrelevant.
 };
 
 // A fan that stretches in one dimension, and varies the card offset so all its cards always visible
@@ -306,20 +315,20 @@ class _FlexFanView extends _FanView {
     this._fan_y_default_offset = 0;
   }
 
-  _recalculate_offsets(num) {
+  protected recalculate_offsets(num: number): void {
     const xo = this._fan_x_default_offset, yo = this._fan_y_default_offset;
     if(xo) this._fan_x_offset = this._calculate_new_offset(xo, this.canvas_width - gCardWidth, num);
     if(yo) this._fan_y_offset = this._calculate_new_offset(yo, this.canvas_height - gCardHeight, num);
   }
 
-  _calculate_new_offset(preferred_offset, available_space, num_cards) {
+  private _calculate_new_offset(preferred_offset: number, available_space: number, num_cards: number): number {
     let offset = Math.min(num_cards ? available_space / (num_cards - 1) : available_space, preferred_offset);
     if(offset > 2) offset = Math.floor(offset); // use integer offsets if possible, to avoid fuzzyness
     return offset;
   }
 
-  _draw_background_into(ctx) {
-    super._draw_background_into(ctx, gCardWidth, gCardHeight);
+  protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
+    super.draw_background_into(ctx, gCardWidth, gCardHeight);
   }
 };
 
@@ -349,14 +358,14 @@ class _SlideView extends _FlexFanView {
       this.canvas_height = gCardHeight + (options.slide_capacity - 1) * gVSlideOffset;
     }
   }
-  cseq_at_coords(x, y) {
+  cseq_at_coords(x: number, y: number): CardSequence {
     // This implementation is sufficient for all the games it's currently used in.
     return CardSequence.from_card(this.pile.lastCard);
   }
 };
 
 class _Deal3WasteView extends _SelectiveFanView {
-  _visible_cards_of(cards) {
+  protected visible_cards_of(cards: Card[]) : Card[] {
     if(!cards.length) return [];
     const first = this.pile.deal3t - this.pile.deal3v;
     if(cards.length <= first) return cards.slice(-1);
@@ -383,10 +392,10 @@ class DoubleSolFoundationView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  _visible_cards_of(cards) {
+  protected visible_cards_of(cards: Card[]) : Card[] {
     return cards.slice(-2);
   }
-  _get_next_card_offset() {
+  protected get_next_card_offset(): number {
     return this.pile.cards.length ? 1 : 0;
   }
 };
@@ -429,7 +438,7 @@ class PyramidView extends View {
     wrapper.className = "pyramid-pile-wrapper";
     wrapper.appendChild(this._canvas);
   }
-  update_with(cs) {
+  update_with(cs: Card[]): void {
     if(this._draw_covered_cards_face_down &&
         ((this.pile.leftChild && this.pile.leftChild.hasCards) || (this.pile.rightChild && this.pile.rightChild.hasCards))
     ) {
@@ -456,10 +465,10 @@ class TriPeaksView extends PyramidView {
 
 // Just displays Kings from the start of each King->Ace run.
 class _SpiderFoundationView extends _SelectiveFanView {
-  _visible_cards_of(cards) {
+  protected visible_cards_of(cards: Card[]) : Card[] {
     return cards.filter((el, ix) => ix % 13 === 0);
   }
-  _get_next_card_offset() {
+  protected get_next_card_offset(): number {
     return this.pile.cards.length / 13;
   }
 };
@@ -481,11 +490,11 @@ class UnionSquarePileView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  _visible_cards_of(cards) {
+  protected visible_cards_of(cards: Card[]) : Card[] {
     if(cards.length > 1) return [cards[0], cards[cards.length - 1]];
     return cards.slice(0, 1);
   }
-  _get_next_card_offset() {
+  protected get_next_card_offset(): number {
     return this.pile.cards.length ? 1 : 0;
   }
 };
@@ -495,11 +504,11 @@ class UnionSquareFoundationView extends _SelectiveFanView {
   constructor() {
     super({ capacity: 2, horizontal: true });
   }
-  _visible_cards_of(cards) {
+  protected visible_cards_of(cards: Card[]) : Card[] {
     if(cards.length > 13) return [cards[12], cards[cards.length - 1]];
     return cards.slice(-1);
   }
-  _get_next_card_offset() {
+  protected get_next_card_offset(): number {
     return this.pile.cards.length >= 13 ? 1 : 0;
   }
 };
@@ -509,7 +518,7 @@ class StockView extends View {
     super();
     this.init_counter();
   }
-  cseq_at_coords(x, y) {
+  cseq_at_coords(x: number, y: number): CardSequence {
     return CardSequence.from_card(this.pile.lastCard || this.pile.magic_stock_stub_card || null);
   }
 };

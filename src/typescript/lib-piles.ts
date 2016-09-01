@@ -45,32 +45,32 @@ class AnyPile {
   }
 
   // An integer that may be displayed below the pile.
-  get counter() {
+  get counter(): number {
     return this.cards.length;
   }
 
-  get hasCards() {
+  get hasCards(): boolean {
     return this.cards.length !== 0;
   }
-  get firstCard() {
+  get firstCard(): Card {
     return this.cards.length ? this.cards[0] : null;
   }
-  get lastCard() {
+  get lastCard(): Card {
     const cs = this.cards, l = cs.length;
     return l ? cs[l - 1] : null;
   }
-  get secondToLastCard() {
+  get secondToLastCard(): Card {
     const cs = this.cards;
     return cs.length > 1 ? cs[cs.length - 2] : null;
   }
 
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     throw "may_take_card not implemented!";
   }
 
   // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
   // Games like FreeCell (where moving multiple cards actually means many single-card moves) return 0 to mean that a move is legal but there aren't enough cells/spaces to perform it.
-  may_add_card(card: Card) : boolean | 0 {
+  may_add_card(card: Card): boolean | 0 {
     throw "may_add_card not implemented!";
   }
 
@@ -80,12 +80,12 @@ class AnyPile {
   }
 
   // Should return an Action/ErrorMsg appropriate for the CardSequence being dropped on the pile.
-  action_for_drop(cseq) : Action | ErrorMsg {
+  action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     return this.may_add_card_maybe_to_self(card) ? new Move(card, this) : null;
   }
 
-  surrounding() {
+  surrounding(): AnyPile[] {
     if(this._surrounding) return this._surrounding;
     const ps = [];
     var prev = this.prev, next = this.next;
@@ -98,7 +98,7 @@ class AnyPile {
     return this._surrounding = ps;
   }
 
-  following() {
+  following(): AnyPile[] {
     if(this._following) return this._following;
     const ps = [];
     let p;
@@ -111,7 +111,7 @@ class AnyPile {
     return this._following = ps;
   }
 
-  add_cards_from_array(cards, do_not_update_view) {
+  add_cards_from_array(cards: Card[], do_not_update_view?: boolean): void {
     const cs = this.cards, num = cards.length;
     for(let i = 0, j = cs.length; i !== num; ++i, ++j) {
       let c = cards[i];
@@ -123,25 +123,25 @@ class AnyPile {
   }
 
   // Add the passed card and all other cards of higher .index from the same pile.
-  add_cards(card : Card, do_not_update_view? : boolean) {
+  add_cards(card: Card, do_not_update_view?: boolean): void {
     const p = card.pile, pcs = p.cards, ix = card.index;
     this.add_cards_from_array(pcs.slice(ix), do_not_update_view);
     p.remove_cards_after(ix, do_not_update_view);
   }
 
   // Should generally not be called except by pile impls.
-  remove_cards_after(index, do_not_update_view) {
+  remove_cards_after(index: number, do_not_update_view: boolean): void {
     this.cards = this.cards.slice(0, index);
     if(!do_not_update_view) this.view.update();
   }
 
   // Should return an Action/ErrorMsg appropriate for the CardSequence being clicked on.
-  action_for_click(cseq) {
+  action_for_click(cseq: CardSequence): Action | ErrorMsg {
     return cseq ? this.owning_game.best_action_for(cseq) : null;
   }
 
   // Return an array of cards to consider moving when computing hints.
-  hint_sources() {
+  hint_sources(): Card[] {
     for(let c of this.cards) if(c.pile.may_take_card(c)) return [c];
     return [];
   }
@@ -159,74 +159,74 @@ abstract class Stock extends AnyPile {
     // The Layout mouse-handling code wants a Card as the target of the event. So we provide a stub object that just lets it get from there to the pile to call .action_for_click().
     this.magic_stock_stub_card = { pile: this };
   }
-  may_take_card() {
+  may_take_card(): boolean {
     return false;
   }
-  may_add_card() {
+  may_add_card(): boolean {
     return false;
   }
 
-  deal_card_to(destination) {
+  deal_card_to(destination: AnyPile): void {
     const card = this.lastCard;
     card.faceUp = true;
     destination.add_cards(card);
   }
 
-  undeal_card_from(source) {
+  undeal_card_from(source: AnyPile): void {
     const card = source.lastCard;
     card.faceUp = false;
     this.add_cards(card);
   }
 
-  action_for_click(cseq) {
+  action_for_click(cseq: CardSequence): Action {
     return this.deal();
   }
 
-  abstract deal() : void;
+  abstract deal(): Action;
 };
 
 class StockDealToWaste extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealToPile(this, this.owning_game.waste) : null;
   }
 };
 
 class StockDealToWasteOrRefill extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealToPile(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 class StockDeal3OrRefill extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealThree(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 class StockDealToFoundation extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealToPile(this, this.owning_game.foundation) : null;
   }
 };
 
 class StockDealToPiles extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles) : null;
   }
-  get counter() {
+  get counter(): number {
     return Math.ceil(this.cards.length / this.owning_game.piles.length);
   }
 };
 
 class StockDealToPilesIfNoneAreEmpty extends StockDealToPiles {
-  deal() {
+  deal(): Action {
     if(!this.hasCards || this.owning_game.piles.some(p => !p.hasCards)) return null;
     return new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles);
   }
 };
 
 class StockDealToNonemptyPiles extends Stock {
-  deal() {
+  deal(): Action {
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(p => p.hasCards)) : null;
   }
 };
@@ -245,10 +245,10 @@ class Waste extends AnyPile {
     this.deal3v = 0; // The number of cards that should have been visible after the last deal.
     this.deal3t = 0; // The number of cards on this pile after the last deal.
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return false;
   }
 };
@@ -259,10 +259,10 @@ class Cell extends AnyPile {
     super();
     this.is_cell = true;
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return true;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return !this.hasCards && card.isLast;
   }
 };
@@ -274,23 +274,23 @@ class Reserve extends AnyPile {
     this.is_reserve = true;
     this.is_drop_target = false;
   }
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast && card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return false;
   }
 };
 
 
-function may_take_descending_alt_colour(card) {
+function may_take_descending_alt_colour(card: Card): boolean {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
   for(let i = card.index; i !== num - 1; ++i) if(!is_next_and_alt_colour(cs[i + 1], cs[i])) return false;
   return true;
 }
 
-function may_take_descending_run(card) {
+function may_take_descending_run(card: Card): boolean {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
   for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
@@ -298,7 +298,7 @@ function may_take_descending_run(card) {
   return true;
 }
 
-function may_take_running_flush(card) {
+function may_take_running_flush(card: Card): boolean {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
   for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
@@ -306,7 +306,7 @@ function may_take_running_flush(card) {
   return true;
 }
 
-function may_add_to_gypsy_pile(card, self) {
+function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
   const last = self.lastCard;
   return !last || (last.colour !== card.colour && last.number === card.number + 1);
 }
@@ -320,26 +320,26 @@ class _Pile extends AnyPile {
 };
 
 class AcesUpPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast && card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return card.isLast && !this.hasCards;
   }
 };
 
 class FanPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast && card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
   }
 };
 
 class _FreeCellPile extends _Pile {
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
-  action_for_drop(cseq) : Action | ErrorMsg {
+  action_for_drop(cseq): Action | ErrorMsg {
     const card = cseq.first;
     const may = this.may_add_card_maybe_to_self(card);
     if(may) return new Move(card, this);
@@ -348,31 +348,31 @@ class _FreeCellPile extends _Pile {
 };
 
 class GypsyPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return may_take_descending_alt_colour(card);
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return may_add_to_gypsy_pile(card, this);
   }
 };
 
 class KlondikePile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : card.number === 13;
   }
 };
 
 class WaspPile extends _Pile {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.faceUp;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return !this.hasCards || is_next_in_suit(card, this.lastCard);
   }
-  hint_sources() {
+  hint_sources(): Card[] {
     return this.cards.filter(c => c.faceUp);
   }
 };
@@ -386,19 +386,19 @@ class _Foundation extends AnyPile {
 };
 
 class KlondikeFoundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return card.isLast;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return card.isLast && (this.hasCards ? is_next_in_suit(this.lastCard, card) : card.number === 1);
   }
 };
 
 class UpDownMod13Foundation extends _Foundation {
-  may_take_card(card) {
+  may_take_card(card: Card): boolean {
     return false;
   }
-  may_add_card(card) {
+  may_add_card(card: Card): boolean {
     return is_up_or_down_mod13(card, this.lastCard);
   }
 };

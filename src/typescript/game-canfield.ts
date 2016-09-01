@@ -97,6 +97,7 @@ class CanfieldFoundation extends _Foundation {
     return card.isLast;
   }
   may_add_card(card: Card): boolean {
+    if(!card.isLast) return false;
     return this.hasCards ? is_next_in_suit_mod13(this.lastCard, card) : card.number === this.canfield_foundation_base_num;
   }
 };

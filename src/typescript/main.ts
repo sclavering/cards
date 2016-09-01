@@ -1,5 +1,5 @@
-var gCurrentGame = null;
-var gCurrentGameType = null;
+var gCurrentGame: Game = null;
+var gCurrentGameType: GameType = null;
 
 // This is filled in by game-*.js
 const gGameClasses: { [game_id: string]: typeof Game } = {};
@@ -133,7 +133,7 @@ function restartGame(): void {
 
 
 // "do" is a reserved word
-function doo(action: Action | ErrorMsg, was_dragging?: boolean): void {
+function doo(action: Action, was_dragging?: boolean): void {
   if(!action) return;
   interrupt(was_dragging);
   // enable undo + disable redo (but avoid doing so unnecessarily)
@@ -208,7 +208,7 @@ function showGameWon(): void {
 
 
 var gMessageBoxIsShowing = false;
-var gMessageCallback = null;
+var gMessageCallback: () => void = null;
 
 function showMessage(msgText1: string, msgText2: string, fun?: () => void): void {
   gMessageCallback = fun;

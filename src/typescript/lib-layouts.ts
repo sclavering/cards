@@ -274,7 +274,7 @@ class Layout {
         act.show();
         return false;
       }
-      doo(act, true);
+      doo(act as Action, true);
       return true;
     }
     return false;

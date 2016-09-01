@@ -391,8 +391,8 @@ class GameType {
   private game_class: typeof Game;
   private pastGames: Game[];
   private futureGames: Game[];
-  private havePastGames: boolean;
-  private haveFutureGames: boolean;
+  public havePastGames: boolean;
+  public haveFutureGames: boolean;
   private currentGame: Game;
   private shared_layout: Layout;
 

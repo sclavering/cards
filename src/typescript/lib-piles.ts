@@ -79,7 +79,7 @@ class AnyPile {
     return card.pile === this ? false : this.may_add_card(card);
   }
 
-  // Should return an Action/ErrorMsg appropriate for the CardSequence being dropped on the pile.
+  // ErrorMsg is used for the FreeCell legal-but-not-enough-spaces case.
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     return this.may_add_card_maybe_to_self(card) ? new Move(card, this) : null;
@@ -135,8 +135,8 @@ class AnyPile {
     if(!do_not_update_view) this.view.update();
   }
 
-  // Should return an Action/ErrorMsg appropriate for the CardSequence being clicked on.
-  action_for_click(cseq: CardSequence): Action | ErrorMsg {
+  // Should return an Action appropriate for the CardSequence being clicked on.
+  action_for_click(cseq: CardSequence): Action {
     return cseq ? this.owning_game.best_action_for(cseq) : null;
   }
 

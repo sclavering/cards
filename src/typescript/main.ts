@@ -37,9 +37,9 @@ window.onload = function() {
 };
 
 
-function keyPressHandler(e) {
-  if(e.ctrlKey || e.metaKey) return; // don't interfere with browser shortcuts
-  switch(e.charCode) {
+function keyPressHandler(ev: KeyboardEvent): void {
+  if(ev.ctrlKey || ev.metaKey) return; // don't interfere with browser shortcuts
+  switch(ev.charCode) {
     case 104: // h
     case 105: // i
       hint();
@@ -60,19 +60,19 @@ function keyPressHandler(e) {
     default:
       return; // avoid the code below
   }
-  e.preventDefault();
+  ev.preventDefault();
 }
 
 
-function playGame(game) {
+function playGame(game_id: string): void {
   if(gCurrentGameType) gCurrentGameType.switchFrom();
 
-  var full_name = document.getElementById('choosegame-' + game).textContent;
-  var parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
+  const full_name = document.getElementById("choosegame-" + game_id).textContent;
+  const parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
   ui.gameName.textContent = parts ? parts[1] : full_name;
   ui.gameNameSub.textContent = parts ? parts[2] : '';
 
-  gCurrentGameType = gGameTypes[game];
+  gCurrentGameType = gGameTypes[game_id];
   gCurrentGameType.switchTo();
 
   updateUI();
@@ -81,7 +81,7 @@ function playGame(game) {
 }
 
 
-function help() {
+function help(): void {
   const helpid = gCurrentGame.helpId || gCurrentGame.id;
   // position the help window roughly centered on the Cards window
   const w = 450, h = 350;
@@ -92,7 +92,7 @@ function help() {
 }
 
 
-function onGameSelected(ev) {
+function onGameSelected(ev: Event): boolean {
   hideGameChooser();
   const m = ev.originalTarget.id.match(/^choosegame-(.*)$/);
   if(m) playGame(m[1]);
@@ -100,7 +100,7 @@ function onGameSelected(ev) {
 }
 
 
-function showGameChooser(ev) {
+function showGameChooser(ev: Event): void {
   interrupt();
   ui.gameChooser.style.display = 'block';
   window.onclick = hideGameChooser;
@@ -109,20 +109,20 @@ function showGameChooser(ev) {
 }
 
 
-function hideGameChooser() {
+function hideGameChooser(): void {
   ui.gameChooser.style.display = 'none';
   window.onclick = null;
 }
 
 
-function newGame() {
+function newGame(): void {
   interrupt();
   gCurrentGameType.newGame();
   updateUI();
 }
 
 
-function restartGame() {
+function restartGame(): void {
   interrupt();
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
@@ -132,7 +132,8 @@ function restartGame() {
 }
 
 
-function doo(action: Action | ErrorMsg, was_dragging?: boolean) { // "do" is a reserved word
+// "do" is a reserved word
+function doo(action: Action | ErrorMsg, was_dragging?: boolean): void {
   if(!action) return;
   interrupt(was_dragging);
   // enable undo + disable redo (but avoid doing so unnecessarily)
@@ -148,7 +149,7 @@ function doo(action: Action | ErrorMsg, was_dragging?: boolean) { // "do" is a r
 }
 
 
-function done() {
+function done(): void {
   const act = gCurrentGame.autoplay();
   if(act) {
     doo(act);
@@ -158,47 +159,50 @@ function done() {
 }
 
 
-function interrupt(was_dragging?: boolean) {
+function interrupt(was_dragging?: boolean): void {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
-  if(gMessageBoxIsShowing) { doneShowingMessage(); return; }
+  if(gMessageBoxIsShowing) {
+    doneShowingMessage();
+    return;
+  }
   if(!was_dragging && gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
   g_animations.cancel();
 }
 
 
-function undo() {
+function undo(): void {
   interrupt();
-  var couldRedo = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames;
+  const could_redo = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames;
   if(gCurrentGame.canUndo) gCurrentGame.undo();
   else gCurrentGameType.restorePastGame();
   if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.setAttribute("disabled","true");
-  if(!couldRedo) ui.btnRedo.removeAttribute("disabled");
+  if(!could_redo) ui.btnRedo.removeAttribute("disabled");
 }
 
 
-function redo() {
+function redo(): void {
   interrupt();
-  var couldUndo = gCurrentGame.canUndo || gCurrentGameType.havePastGames;
+  const could_undo = gCurrentGame.canUndo || gCurrentGameType.havePastGames;
   if(gCurrentGame.canRedo) gCurrentGame.redo();
   else gCurrentGameType.restoreFutureGame();
-  if(!couldUndo) ui.btnUndo.removeAttribute("disabled");
+  if(!could_undo) ui.btnUndo.removeAttribute("disabled");
   if(!gCurrentGame.canRedo && !gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
 }
 
 
-function hint() {
+function hint(): void {
   interrupt();
   gCurrentGame.hint();
 }
 
 
-function updateUI() {
+function updateUI(): void {
   ui.btnUndo.setAttribute("disabled", !(gCurrentGame.canUndo || gCurrentGameType.havePastGames));
   ui.btnRedo.setAttribute("disabled", !(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames));
 }
 
 
-function showGameWon() {
+function showGameWon(): void {
   showMessage("Congratulations – you've won!", "Click to play again", newGame);
 }
 
@@ -206,7 +210,7 @@ function showGameWon() {
 var gMessageBoxIsShowing = false;
 var gMessageCallback = null;
 
-function showMessage(msgText1: string, msgText2: string, fun?: () => void) {
+function showMessage(msgText1: string, msgText2: string, fun?: () => void): void {
   gMessageCallback = fun;
   ui.messageLine1.textContent = msgText1;
   ui.messageLine2.textContent = msgText2;
@@ -216,17 +220,17 @@ function showMessage(msgText1: string, msgText2: string, fun?: () => void) {
   setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
 }
 
-function doneShowingMessage() {
+function doneShowingMessage(): void {
   window.onclick = null;
   ui.messageBox.style.display = 'none';
   gMessageBoxIsShowing = false;
-  var f = gMessageCallback;
+  const f = gMessageCallback;
   gMessageCallback = null;
   if(f) f();
 }
 
 
-function setVisibility(el, visible) {
+function setVisibility(el: HTMLElement, visible: boolean): void {
   if(visible) el.style.display = '';
   else el.style.display = 'none';
 }

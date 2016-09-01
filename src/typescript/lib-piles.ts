@@ -87,7 +87,7 @@ class AnyPile {
 
   surrounding(): AnyPile[] {
     if(this._surrounding) return this._surrounding;
-    const ps = [];
+    const ps: AnyPile[] = [];
     var prev = this.prev, next = this.next;
     while(prev && next) {
       ps.push(next); ps.push(prev);
@@ -100,8 +100,8 @@ class AnyPile {
 
   following(): AnyPile[] {
     if(this._following) return this._following;
-    const ps = [];
-    let p;
+    const ps: AnyPile[] = [];
+    let p: AnyPile;
     for(p = this.next; p && p !== this; p = p.next) ps.push(p);
     if(!p) { // next/prev links have *not* been formed into a loop
       let fst : AnyPile = this;
@@ -339,7 +339,7 @@ class FanPile extends _Pile {
 
 class _FreeCellPile extends _Pile {
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
-  action_for_drop(cseq): Action | ErrorMsg {
+  action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const may = this.may_add_card_maybe_to_self(card);
     if(may) return new Move(card, this);

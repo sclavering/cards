@@ -1,5 +1,3 @@
-/// <reference path="./misctypes.ts" />
-
 var gVFanOffset = 25; // num pixels between top edges of two cards in a vertical fan
 var gHFanOffset = 15; // num pixels between left edges of two cards in a horizontal fan
 var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
@@ -40,7 +38,7 @@ class _View {
   _context: CanvasRenderingContext2D;
   _counter: HTMLElement;
   needs_update_on_resize: boolean;
-  pile: Pile;
+  pile: any; // xxx should be AnyPile
 
   constructor() {
     this.needs_update_on_resize = false;

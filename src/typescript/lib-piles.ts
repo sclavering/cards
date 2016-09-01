@@ -147,7 +147,7 @@ class AnyPile {
 };
 
 
-abstract class _Stock extends AnyPile {
+abstract class Stock extends AnyPile {
   magic_stock_stub_card: any;
 
   constructor() {
@@ -184,31 +184,31 @@ abstract class _Stock extends AnyPile {
   abstract deal() : void;
 };
 
-class StockDealToWaste extends _Stock {
+class StockDealToWaste extends Stock {
   deal() {
     return this.hasCards ? new DealToPile(this, this.owning_game.waste) : null;
   }
 };
 
-class StockDealToWasteOrRefill extends _Stock {
+class StockDealToWasteOrRefill extends Stock {
   deal() {
     return this.hasCards ? new DealToPile(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
-class StockDeal3OrRefill extends _Stock {
+class StockDeal3OrRefill extends Stock {
   deal() {
     return this.hasCards ? new DealThree(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
-class StockDealToFoundation extends _Stock {
+class StockDealToFoundation extends Stock {
   deal() {
     return this.hasCards ? new DealToPile(this, this.owning_game.foundation) : null;
   }
 };
 
-class StockDealToPiles extends _Stock {
+class StockDealToPiles extends Stock {
   deal() {
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles) : null;
   }
@@ -224,7 +224,7 @@ class StockDealToPilesIfNoneAreEmpty extends StockDealToPiles {
   }
 };
 
-class StockDealToNonemptyPiles extends _Stock {
+class StockDealToNonemptyPiles extends Stock {
   deal() {
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(p => p.hasCards)) : null;
   }

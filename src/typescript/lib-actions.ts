@@ -1,5 +1,3 @@
-/// <reference path="./misctypes.ts" />
-
 /*
 "Action" objects are card-moves that can be done, undone, and redone.
 
@@ -27,8 +25,8 @@ interface Action {
 
 
 class DealToPile implements Action {
-  from: Pile;
-  to: Pile;
+  from: Stock;
+  to: AnyPile;
   constructor(from, to) {
     this.from = from;
     this.to = to;
@@ -43,8 +41,8 @@ class DealToPile implements Action {
 
 
 class RefillStock implements Action {
-  stock: Pile;
-  waste: Pile;
+  stock: Stock;
+  waste: Waste;
   constructor(stock, waste) {
     this.stock = stock;
     this.waste = waste;
@@ -59,8 +57,8 @@ class RefillStock implements Action {
 
 
 class DealThree implements Action {
-  stock: Pile;
-  waste: Pile;
+  stock: Stock;
+  waste: Waste;
   old_deal3v: number;
   old_deal3t: number;
   num_moved: number;
@@ -86,8 +84,8 @@ class DealThree implements Action {
 
 
 class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
-  _stock: Pile;
-  _piles: Pile[];
+  _stock: Stock;
+  _piles: AnyPile[];
   constructor(stock, piles) {
     this._stock = stock;
     this._piles = piles.length > stock.cards.length ? piles.slice(0, stock.cards.length) : piles;
@@ -103,9 +101,9 @@ class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
 
 class Move implements Action {
   card: Card;
-  source: Pile;
-  destination: Pile;
-  revealed_card: Pile;
+  source: AnyPile;
+  destination: AnyPile;
+  revealed_card: Card;
   constructor(card, destination) {
     this.card = card;
     this.source = card.pile;
@@ -133,8 +131,8 @@ class Move implements Action {
 class RemovePair implements Action {
   c1: Card;
   c2: Card;
-  p1: Pile;
-  p2: Pile;
+  p1: AnyPile;
+  p2: AnyPile;
   constructor(card1, card2) {
     this.c1 = card1;
     this.p1 = card1.pile;

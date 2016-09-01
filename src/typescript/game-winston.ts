@@ -29,7 +29,7 @@ class WinstonGame extends Game {
 gGameClasses["winston"] = WinstonGame;
 
 
-class WinstonStock extends _Stock {
+class WinstonStock extends Stock {
   deal() {
     const pred = p => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
     return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;

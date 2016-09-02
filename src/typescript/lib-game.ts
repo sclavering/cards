@@ -8,7 +8,7 @@ type AutoplayPredicate = (c: Card) => boolean;
 
 // The base-type for all games
 class Game {
-  public static id: string;
+  public id: string;
 
   protected pile_details: {
     [pile_collection_name: string]: [number, typeof AnyPile, number | number[], number | number[]];
@@ -398,7 +398,6 @@ class GameType {
 
   constructor(id: string, game_class: typeof Game) {
     this.id = id;
-    game_class.id = id; // main.js still uses this
     this.game_class = game_class;
     this.pastGames = [];
     this.futureGames = [];
@@ -426,6 +425,7 @@ class GameType {
 
     if(!this.shared_layout) this.shared_layout = this.game_class.create_layout();
     const game = gCurrentGame = this.currentGame = new this.game_class();
+    game.id = this.id;
     game.begin(this.shared_layout, cardsOrder || null);
     game.show();
     const act = game.autoplay();

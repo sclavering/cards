@@ -10,7 +10,9 @@ type AutoplayPredicate = (c: Card) => boolean;
 class Game {
   public static id: string;
 
-  protected pile_details: any;
+  protected pile_details: {
+    [pile_collection_name: string]: [number, typeof AnyPile, number | number[], number | number[]];
+  };
   all_cards: Card[];
   foundation_cluster_count: number;
   protected show_hints_to_empty_piles: boolean;

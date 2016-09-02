@@ -31,7 +31,7 @@ class Golf2Game extends Golf1Game {
   constructor() {
     super();
     this.all_cards = make_cards(2);
-    this.pile_details.piles[3] = 9; // 8 cards per pile
+    this.pile_details["piles"][3] = 9; // 8 cards per pile
   }
 };
 gGameClasses["golf2"] = Golf2Game;

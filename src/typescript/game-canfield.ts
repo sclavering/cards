@@ -60,7 +60,7 @@ class CanfieldDrawThreeGame extends CanfieldGame {
   }
   constructor() {
     super();
-    this.pile_details.stocks[1] = StockDeal3OrRefill;
+    this.pile_details["stocks"][1] = StockDeal3OrRefill;
   }
 };
 gGameClasses["canfield3"] = CanfieldDrawThreeGame;

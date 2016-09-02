@@ -6,6 +6,7 @@ class Layout {
   views: View[];
   views_by_letter: { [key: string]: View[] };
 
+  private _attached_game: Game;
   private viewsNeedingUpdateOnResize: View[];
   private _node: HTMLElement;
   private _ex0: number;
@@ -169,7 +170,8 @@ class Layout {
     window.onresize = null;
   }
 
-  attach_piles_to_views(pile_arrays_by_letter: { [letter: string]: AnyPile[] }): void {
+  attach_game(game: Game, pile_arrays_by_letter: { [letter: string]: AnyPile[] }): void {
+    this._attached_game = game;
     for(let k in pile_arrays_by_letter) if(!this.views_by_letter[k]) throw new Error("missing view-letter: " + k);
     for(let k in this.views_by_letter) if(!pile_arrays_by_letter[k]) throw new Error("missing pile-letter: " + k);
     for(let k in pile_arrays_by_letter) {
@@ -262,7 +264,7 @@ class Layout {
     if(!cseq) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
-    for(let target of gCurrentGame.dragDropTargets) {
+    for(let target of this._attached_game.dragDropTargets) {
       if(target === cseq.source) continue;
       let tr = target.view.pixel_rect();
       // skip if we don't overlap the target at all
@@ -298,7 +300,7 @@ class Layout {
   _oncontextmenu(ev: MouseEvent): boolean {
     const cseq = this._target_cseq(ev);
     interrupt();
-    if(cseq) doo(gCurrentGame.foundation_action_for(cseq));
+    if(cseq) doo(this._attached_game.foundation_action_for(cseq));
     this._reset_handlers();
     ev.preventDefault();
     return false;

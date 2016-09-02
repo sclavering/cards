@@ -28,7 +28,7 @@ class Game {
   stock: Stock;
   wastes: Waste[];
   waste: Waste;
-  pile_arrays_by_letter: { [key: string]: AnyPile[] };
+  private _pile_arrays_by_letter: { [key: string]: AnyPile[] };
   _foundation_clusters: AnyPile[][];
   all_piles: AnyPile[];
   dragDropTargets: AnyPile[];
@@ -114,7 +114,7 @@ class Game {
   }
 
   show(): void {
-    this.layout.attach_piles_to_views(this.pile_arrays_by_letter);
+    this.layout.attach_game(this, this._pile_arrays_by_letter);
     this.layout.show();
     ui.set_score_visibility(this.hasScoring);
     ui.update_score_and_moves(this.score, this.actionPtr);
@@ -127,10 +127,10 @@ class Game {
   _create_piles(): void {
     const details = this.pile_details;
     this.all_piles = [];
-    this.pile_arrays_by_letter = {};
+    this._pile_arrays_by_letter = {};
     for(let k in details) {
       let [num, PileClass, face_down, face_up] = details[k];
-      let collection: AnyPile[] = this.pile_arrays_by_letter[k[0]] = [];
+      let collection: AnyPile[] = this._pile_arrays_by_letter[k[0]] = [];
       this[k] = collection;
       for(let i = 0; i !== num; ++i) {
         let p = new PileClass();

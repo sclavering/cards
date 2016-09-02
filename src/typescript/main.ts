@@ -55,7 +55,7 @@ function playGame(game_id: string): void {
   gCurrentGameType = gGameTypes[game_id];
   gCurrentGameType.switchTo();
 
-  updateUI();
+  ui.update_undo_redo();
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
   g_floating_pile.hide();
 }
@@ -98,7 +98,7 @@ function hideGameChooser(): void {
 function newGame(): void {
   interrupt();
   gCurrentGameType.newGame();
-  updateUI();
+  ui.update_undo_redo();
 }
 
 
@@ -108,7 +108,7 @@ function restartGame(): void {
   // xxx should disable the Restart button instead really
   if(!gCurrentGame.canUndo) return;
   gCurrentGameType.restart();
-  updateUI();
+  ui.update_undo_redo();
 }
 
 
@@ -116,10 +116,7 @@ function restartGame(): void {
 function doo(action: Action, was_dragging?: boolean): void {
   if(!action) return;
   interrupt(was_dragging);
-  // enable undo + disable redo (but avoid doing so unnecessarily)
-  if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.removeAttribute("disabled");
-  if(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
-
+  ui.update_undo_redo();
   if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
   const animation_details = gCurrentGame.doo(action);
   if(animation_details) g_animations.run(animation_details, done);
@@ -152,30 +149,21 @@ function undo(): void {
   const could_redo = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames;
   if(gCurrentGame.canUndo) gCurrentGame.undo();
   else gCurrentGameType.restorePastGame();
-  if(!gCurrentGame.canUndo && !gCurrentGameType.havePastGames) ui.btnUndo.setAttribute("disabled","true");
-  if(!could_redo) ui.btnRedo.removeAttribute("disabled");
+  ui.update_undo_redo();
 }
 
 
 function redo(): void {
   interrupt();
-  const could_undo = gCurrentGame.canUndo || gCurrentGameType.havePastGames;
   if(gCurrentGame.canRedo) gCurrentGame.redo();
   else gCurrentGameType.restoreFutureGame();
-  if(!could_undo) ui.btnUndo.removeAttribute("disabled");
-  if(!gCurrentGame.canRedo && !gCurrentGameType.haveFutureGames) ui.btnRedo.setAttribute("disabled","true");
+  ui.update_undo_redo();
 }
 
 
 function hint(): void {
   interrupt();
   gCurrentGame.hint();
-}
-
-
-function updateUI(): void {
-  ui.btnUndo.setAttribute("disabled", !(gCurrentGame.canUndo || gCurrentGameType.havePastGames));
-  ui.btnRedo.setAttribute("disabled", !(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames));
 }
 
 
@@ -191,14 +179,14 @@ class ui {
   private static _score_panel: HTMLElement;
   private static _score_display: HTMLElement;
   private static _move_display: HTMLElement;
+  private static _undo_button: HTMLElement;
+  private static _redo_button: HTMLElement;
   private static _msg1: HTMLElement;
   private static _msg2: HTMLElement;
   private static _message_box: HTMLElement;
   private static _message_showing: boolean = false;
   private static _message_callback: () => void = null;
 
-  public static btnUndo: HTMLElement;
-  public static btnRedo: HTMLElement;
   public static gameStack: HTMLElement;
   public static gameChooser: HTMLElement;
   public static cardImages: HTMLImageElement;
@@ -209,12 +197,12 @@ class ui {
     this._score_panel = document.getElementById("score-panel");
     this._score_display = document.getElementById("score-display");
     this._move_display = document.getElementById("moves-display");
+    this._undo_button = document.getElementById("btn-undo");
+    this._redo_button = document.getElementById("btn-redo");
     this._msg1 = document.getElementById("message1");
     this._msg2 = document.getElementById("message2");
     this._message_box = document.getElementById("message");
 
-    this.btnUndo = document.getElementById("btn-undo");
-    this.btnRedo = document.getElementById("btn-redo");
     this.gameStack = document.getElementById("games");
     this.gameChooser = document.getElementById("game-chooser");
     this.cardImages = document.getElementById("cardsimg") as HTMLImageElement;
@@ -232,6 +220,11 @@ class ui {
   static update_score_and_moves(score: number, moves: number): void {
     this._score_display.textContent = score.toString();
     this._move_display.textContent = moves.toString();
+  }
+
+  static update_undo_redo(): void {
+    ui._undo_button.setAttribute("disabled", !(gCurrentGame.canUndo || gCurrentGameType.havePastGames));
+    ui._redo_button.setAttribute("disabled", !(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames));
   }
 
   static show_message(text1: string, text2: string, callback?: () => void): void {

@@ -62,7 +62,7 @@ body {
   margin-top: 0.1em;
 }
 
-#sidebarmenu a[disabled=true] {
+#sidebarmenu a.disabled {
   color: #808080;
 }
 

@@ -223,8 +223,8 @@ class ui {
   }
 
   static update_undo_redo(): void {
-    ui._undo_button.setAttribute("disabled", !(gCurrentGame.canUndo || gCurrentGameType.havePastGames));
-    ui._redo_button.setAttribute("disabled", !(gCurrentGame.canRedo || gCurrentGameType.haveFutureGames));
+    ui._undo_button.className = gCurrentGame.canUndo || gCurrentGameType.havePastGames ? "" : "disabled";
+    ui._redo_button.className = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames ? "" : "disabled";
   }
 
   static show_message(text1: string, text2: string, callback?: () => void): void {

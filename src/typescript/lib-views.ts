@@ -47,7 +47,7 @@ class _View {
   _context: CanvasRenderingContext2D;
   _counter: HTMLElement;
   needs_update_on_resize: boolean;
-  pile: any; // xxx should be AnyPile
+  pile: AnyPile;
 
   // Note: these are only set on _FanView
   public update_canvas_width_on_resize?: boolean;
@@ -157,7 +157,7 @@ class _View {
 class View extends _View {
   update_with(cs: Card[]): void {
     this.draw_into(this._context, cs, !cs.length);
-    if(this._counter) this._counter.textContent = this.pile.counter;
+    if(this._counter) this._counter.textContent = this.pile.counter.toString();
   }
 
   draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
@@ -207,7 +207,7 @@ class _FanView extends _View {
   update_with(cs: Card[]): void {
     this.recalculate_offsets(cs.length);
     this.draw_into(this._context, cs, !cs.length || this._always_draw_background);
-    if(this._counter) this._counter.textContent = this.pile.counter;
+    if(this._counter) this._counter.textContent = this.pile.counter.toString();
   }
 
   // Update the view's offsets to allow the specified number of cards to fit in the space.  Only implemented in _FlexFanView.
@@ -373,7 +373,8 @@ class _SlideView extends _FlexFanView {
 class _Deal3WasteView extends _SelectiveFanView {
   protected visible_cards_of(cards: Card[]): Card[] {
     if(!cards.length) return [];
-    const first = this.pile.deal3t - this.pile.deal3v;
+    const waste = this.pile as Waste;
+    const first = waste.deal3t - waste.deal3v;
     if(cards.length <= first) return cards.slice(-1);
     return cards.slice(first);
   }
@@ -445,19 +446,18 @@ class PyramidView extends View {
     wrapper.appendChild(this._canvas);
   }
   update_with(cs: Card[]): void {
-    if(this._draw_covered_cards_face_down &&
-        ((this.pile.leftChild && this.pile.leftChild.hasCards) || (this.pile.rightChild && this.pile.rightChild.hasCards))
-    ) {
+    const pile = this.pile as BasePyramidPile;
+    if(this._draw_covered_cards_face_down && ((pile.leftChild && pile.leftChild.hasCards) || (pile.rightChild && pile.rightChild.hasCards))) {
       clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
       draw_card_by_name(this._context, 0, 0, "");
     } else {
       super.update_with(cs);
     }
     // We want empty piles to be hidden, so mouse clicks go to any pile that was overlapped instead.  But not for piles at the root of a pyramid (where we draw the empty-pile graphic instead).
-    if(this.pile.leftParent || this.pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
+    if(pile.leftParent || pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
     if(this._draw_covered_cards_face_down) {
-      if(this.pile.leftParent) this.pile.leftParent.view.update();
-      if(this.pile.rightParent) this.pile.rightParent.view.update();
+      if(pile.leftParent) pile.leftParent.view.update();
+      if(pile.rightParent) pile.rightParent.view.update();
     }
   }
 };
@@ -525,7 +525,8 @@ class StockView extends View {
     this.init_counter();
   }
   cseq_at_coords(x: number, y: number): CardSequence {
-    return CardSequence.from_card(this.pile.lastCard || this.pile.magic_stock_stub_card || null);
+    const stock = this.pile as Stock;
+    return CardSequence.from_card(stock.lastCard || stock.magic_stock_stub_card || null);
   }
 };
 

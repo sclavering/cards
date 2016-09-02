@@ -30,13 +30,19 @@ class MazeGame extends Game {
   }
 
   public is_won(): boolean {
-    const first = this.piles.find((x: AnyPile) => x.hasCards);
-    let p: AnyPile = first;
-    do {
-      let next = p.following().find((x: AnyPile) => x.hasCards);
-      if(!maze_allows_adjacent(p.firstCard, next.firstCard)) return false;
-      p = next;
-    } while(p !== first);
+    let first: Card = null;
+    let prev: Card = null;
+    for(let p of this.piles) {
+      const c = p.firstCard;
+      if(!c) continue;
+      if(!first) {
+        first = prev = c;
+        continue;
+      }
+      if(!maze_allows_adjacent(prev, c)) return false;
+      prev = c;
+    }
+    if(!maze_allows_adjacent(prev, first)) return false;
     return true;
   }
 };

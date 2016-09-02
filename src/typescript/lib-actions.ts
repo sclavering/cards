@@ -151,6 +151,6 @@ class ErrorMsg {
     this._msg2 = msg2;
   }
   show() {
-    showMessage(this._msg1, this._msg2);
+    ui.show_message(this._msg1, this._msg2);
   }
 };

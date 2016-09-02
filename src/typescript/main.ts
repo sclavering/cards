@@ -6,28 +6,9 @@ const gGameClasses: { [game_id: string]: typeof Game } = {};
 
 const gGameTypes: { [game_id: string]: GameType } = {};
 
-const ui_ids = {
-  btnUndo: "btn-undo",
-  btnRedo: "btn-redo",
-  messageBox: "message",
-  messageLine1: "message1",
-  messageLine2: "message2",
-  scorePanel: "score-panel",
-  scoreDisplay: "score-display",
-  movesDisplay: "moves-display",
-  gameStack: "games",
-  gameChooser: "game-chooser",
-  gameName: "game-name",
-  gameNameSub: "game-name-sub",
-  cardImages: "cardsimg",
-};
-
-// It's really a mapping full of HTMLElements.
-const ui: any = {};
-
 
 window.onload = function() {
-  for(let k in ui_ids) ui[k] = document.getElementById(ui_ids[k]);
+  ui.init();
   document.addEventListener('keypress', keyPressHandler, false);
   g_floating_pile.init();
   for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
@@ -69,8 +50,7 @@ function playGame(game_id: string): void {
 
   const full_name = document.getElementById("choosegame-" + game_id).textContent;
   const parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
-  ui.gameName.textContent = parts ? parts[1] : full_name;
-  ui.gameNameSub.textContent = parts ? parts[2] : '';
+  ui.show_game_name(parts ? parts[1] : full_name, parts ? parts[2] : "");
 
   gCurrentGameType = gGameTypes[game_id];
   gCurrentGameType.switchTo();
@@ -102,7 +82,7 @@ function onGameSelected(ev: Event): boolean {
 
 function showGameChooser(ev: Event): void {
   interrupt();
-  ui.gameChooser.style.display = 'block';
+  setVisibility(ui.gameChooser, true);
   window.onclick = hideGameChooser;
   // So the event doesn't trigger the .onclick handler we just installed
   ev.stopPropagation();
@@ -110,7 +90,7 @@ function showGameChooser(ev: Event): void {
 
 
 function hideGameChooser(): void {
-  ui.gameChooser.style.display = 'none';
+  setVisibility(ui.gameChooser, false);
   window.onclick = null;
 }
 
@@ -154,17 +134,14 @@ function done(): void {
   if(act) {
     doo(act);
   } else {
-    if(gCurrentGame.is_won()) showGameWon();
+    if(gCurrentGame.is_won()) ui.show_message("Congratulations – you've won!", "Click to play again", newGame);
   }
 }
 
 
 function interrupt(was_dragging?: boolean): void {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
-  if(gMessageBoxIsShowing) {
-    doneShowingMessage();
-    return;
-  }
+  if(ui.hide_message()) return;
   if(!was_dragging && gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
   g_animations.cancel();
 }
@@ -202,35 +179,83 @@ function updateUI(): void {
 }
 
 
-function showGameWon(): void {
-  showMessage("Congratulations – you've won!", "Click to play again", newGame);
-}
-
-
-var gMessageBoxIsShowing = false;
-var gMessageCallback: () => void = null;
-
-function showMessage(msgText1: string, msgText2: string, fun?: () => void): void {
-  gMessageCallback = fun;
-  ui.messageLine1.textContent = msgText1;
-  ui.messageLine2.textContent = msgText2;
-  ui.messageBox.style.display = 'block';
-  gMessageBoxIsShowing = true;
-  // the setTimeout is to flush any mouse event that led to the showMessage() call
-  setTimeout(function() { window.onclick = doneShowingMessage; }, 0);
-}
-
-function doneShowingMessage(): void {
-  window.onclick = null;
-  ui.messageBox.style.display = 'none';
-  gMessageBoxIsShowing = false;
-  const f = gMessageCallback;
-  gMessageCallback = null;
-  if(f) f();
-}
-
-
 function setVisibility(el: HTMLElement, visible: boolean): void {
-  if(visible) el.style.display = '';
-  else el.style.display = 'none';
+  if(visible) el.style.display = "block";
+  else el.style.display = "none";
+}
+
+
+class ui {
+  private static _game_name: HTMLElement;
+  private static _game_name_sub: HTMLElement;
+  private static _score_panel: HTMLElement;
+  private static _score_display: HTMLElement;
+  private static _move_display: HTMLElement;
+  private static _msg1: HTMLElement;
+  private static _msg2: HTMLElement;
+  private static _message_box: HTMLElement;
+  private static _message_showing: boolean = false;
+  private static _message_callback: () => void = null;
+
+  public static btnUndo: HTMLElement;
+  public static btnRedo: HTMLElement;
+  public static gameStack: HTMLElement;
+  public static gameChooser: HTMLElement;
+  public static cardImages: HTMLImageElement;
+
+  static init() {
+    this._game_name = document.getElementById("game-name");
+    this._game_name_sub = document.getElementById("game-name-sub");
+    this._score_panel = document.getElementById("score-panel");
+    this._score_display = document.getElementById("score-display");
+    this._move_display = document.getElementById("moves-display");
+    this._msg1 = document.getElementById("message1");
+    this._msg2 = document.getElementById("message2");
+    this._message_box = document.getElementById("message");
+
+    this.btnUndo = document.getElementById("btn-undo");
+    this.btnRedo = document.getElementById("btn-redo");
+    this.gameStack = document.getElementById("games");
+    this.gameChooser = document.getElementById("game-chooser");
+    this.cardImages = document.getElementById("cardsimg") as HTMLImageElement;
+  }
+
+  static show_game_name(name: string, sub: string) {
+    this._game_name.textContent = name;
+    this._game_name_sub.textContent = sub;
+  }
+
+  static set_score_visibility(show: boolean): void {
+    setVisibility(this._score_panel, show);
+  }
+
+  static update_score_and_moves(score: number, moves: number): void {
+    this._score_display.textContent = score.toString();
+    this._move_display.textContent = moves.toString();
+  }
+
+  static show_message(text1: string, text2: string, callback?: () => void): void {
+    this._message_callback = callback;
+    this._msg1.textContent = text1;
+    this._msg2.textContent = text2;
+    setVisibility(ui._message_box, true);
+    this._message_showing = true;
+    // the setTimeout is to flush any mouse event that led to the show_message() call
+    setTimeout(function() { window.onclick = () => ui._hide_message(); }, 0);
+  }
+
+  static hide_message(): boolean {
+    if(!this._message_showing) return false;
+    ui._hide_message();
+    return true;
+  }
+
+  private static _hide_message(): void {
+    window.onclick = null;
+    setVisibility(ui._message_box, false);
+    this._message_showing = false;
+    const f = this._message_callback;
+    this._message_callback = null;
+    if(f) f();
+  }
 }

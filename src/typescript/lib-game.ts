@@ -79,7 +79,7 @@ class Game {
     // Subclasses should overwrite this if desired.
     this.hasScoring = false;
 
-    // Should not be directly set in subclasses.  Code that does set it should also adjust ui.scoreDisplay.textContent
+    // Should not be directly set in subclasses.
     this.score = 0;
 
     // Piles in arrays by type, and the first piles of some such types.
@@ -116,9 +116,8 @@ class Game {
   show(): void {
     this.layout.attach_piles_to_views(this.pile_arrays_by_letter);
     this.layout.show();
-    setVisibility(ui.scorePanel, this.hasScoring);
-    ui.scoreDisplay.textContent = this.score;
-    ui.movesDisplay.textContent = this.actionPtr;
+    ui.set_score_visibility(this.hasScoring);
+    ui.update_score_and_moves(this.score, this.actionPtr);
   }
 
   hide(): void {
@@ -162,8 +161,8 @@ class Game {
     this.layout = shared_layout;
 
     this.actionList = [];
-    ui.scoreDisplay.textContent = this.score = 0;
-    ui.movesDisplay.textContent = this.actionPtr;
+    this.score = 0;
+    ui.update_score_and_moves(this.score, this.actionPtr);
     this._create_piles();
     if(!this.all_cards) this.all_cards = make_cards(1);
     this.init();
@@ -262,8 +261,7 @@ class Game {
   }
 
   private _on_do_or_undo(): void {
-    ui.scoreDisplay.textContent = this.score;
-    ui.movesDisplay.textContent = this.actionPtr;
+    ui.update_score_and_moves(this.score, this.actionPtr);
     this._hints = null;
     this.canUndo = this.actionPtr !== 0;
     this.canRedo = this.actionPtr !== this.actionList.length;

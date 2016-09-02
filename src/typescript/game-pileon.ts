@@ -4,10 +4,9 @@ class _PileOnGame extends Game {
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = card.pile.surrounding();
+    // The first matters for PileUp, but is redundant in PileOn.
     return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add_card(card))
-        // Redundant with the above for Pile On, but not for Pile Up.
-        || ps.find((p: AnyPile) => p.hasCards && p.may_add_card(card))
-        || findEmpty(ps);
+        || this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.

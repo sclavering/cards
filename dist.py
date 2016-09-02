@@ -2,7 +2,7 @@
 
 # The purpose of this script is to merge the .css and (generated) .js code into the .html for easier distribution.  Having them all in one file ensures that you always get matching versions, whereas with separate files you would have to take measures to avoid the browser's cache giving you non-matching ones.
 
-import os, sys
+import os, sys, shutil
 
 path = os.path.dirname(os.path.abspath(sys.argv[0])) + '/'
 
@@ -21,6 +21,4 @@ out_html = in_html.replace(external_css, inline_css).replace(external_js, inline
 out_html_f = open(path + 'dist/cards.html', 'w')
 out_html_f.write(out_html)
 
-import shutil
 shutil.copy(path + "src/cards.png", path + "dist/")
-shutil.copy(path + "src/help.html", path + "dist/")

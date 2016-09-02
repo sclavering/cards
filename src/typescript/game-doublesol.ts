@@ -7,6 +7,7 @@ class DoubleSolGame extends Game {
 
   constructor() {
     super();
+    this.helpId = "klondike";
     this.all_cards = make_cards(2);
     this.pile_details = {
       stocks: [1, StockDealToWasteOrRefill, 0, 0],

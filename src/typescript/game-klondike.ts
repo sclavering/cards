@@ -1,6 +1,7 @@
 class _Klondike extends Game {
   constructor() {
     super();
+    this.helpId = "klondike";
     this.hasScoring = true;
   }
 
@@ -41,7 +42,6 @@ class KlondikeGame extends _Klondike {
   }
   constructor() {
     super();
-    this.helpId = "klondike";
     this.pile_details = {
       stocks: [1, StockDealToWasteOrRefill, 0, 0],
       wastes: [1, Waste, 0, 0],

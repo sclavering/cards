@@ -48,9 +48,7 @@ function keyPressHandler(ev: KeyboardEvent): void {
 function playGame(game_id: string): void {
   if(gCurrentGameType) gCurrentGameType.switchFrom();
 
-  const full_name = document.getElementById("choosegame-" + game_id).textContent;
-  const parts = full_name.match(/^([^)]+)\(([^)]+)\)/);
-  ui.show_game_name(parts ? parts[1] : full_name, parts ? parts[2] : "");
+  ui.show_game_name(document.getElementById("choosegame-" + game_id).textContent);
 
   gCurrentGameType = gGameTypes[game_id];
   gCurrentGameType.switchTo();
@@ -58,17 +56,6 @@ function playGame(game_id: string): void {
   ui.update_undo_redo();
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
   g_floating_pile.hide();
-}
-
-
-function help(): void {
-  const helpid = gCurrentGame.helpId || gCurrentGame.id;
-  // position the help window roughly centered on the Cards window
-  const w = 450, h = 350;
-  const t = Math.floor(screenY + (outerHeight - h) / 3);
-  const l = Math.floor(screenX + (outerWidth - w) / 2);
-  const featureStr = "dialog=no,width=" + w + ",height=" + h + ",top=" + t + ",left=" + l;
-  window.open("help.html#" + helpid, null, featureStr);
 }
 
 
@@ -175,7 +162,6 @@ function setVisibility(el: HTMLElement, visible: boolean): void {
 
 class ui {
   private static _game_name: HTMLElement;
-  private static _game_name_sub: HTMLElement;
   private static _score_panel: HTMLElement;
   private static _score_display: HTMLElement;
   private static _move_display: HTMLElement;
@@ -183,9 +169,10 @@ class ui {
   private static _redo_button: HTMLElement;
   private static _msg1: HTMLElement;
   private static _msg2: HTMLElement;
-  private static _message_box: HTMLElement;
+  private static _messageui: HTMLElement;
   private static _message_showing: boolean = false;
   private static _message_callback: () => void = null;
+  private static _helpui: HTMLElement;
 
   public static gameStack: HTMLElement;
   public static gameChooser: HTMLElement;
@@ -193,7 +180,6 @@ class ui {
 
   static init() {
     this._game_name = document.getElementById("game-name");
-    this._game_name_sub = document.getElementById("game-name-sub");
     this._score_panel = document.getElementById("score-panel");
     this._score_display = document.getElementById("score-display");
     this._move_display = document.getElementById("moves-display");
@@ -201,16 +187,16 @@ class ui {
     this._redo_button = document.getElementById("btn-redo");
     this._msg1 = document.getElementById("message1");
     this._msg2 = document.getElementById("message2");
-    this._message_box = document.getElementById("message");
+    this._messageui = document.getElementById("messageui");
+    this._helpui = document.getElementById("helpui");
 
     this.gameStack = document.getElementById("games");
     this.gameChooser = document.getElementById("game-chooser");
     this.cardImages = document.getElementById("cardsimg") as HTMLImageElement;
   }
 
-  static show_game_name(name: string, sub: string) {
+  static show_game_name(name: string) {
     this._game_name.textContent = name;
-    this._game_name_sub.textContent = sub;
   }
 
   static set_score_visibility(show: boolean): void {
@@ -231,7 +217,7 @@ class ui {
     this._message_callback = callback;
     this._msg1.textContent = text1;
     this._msg2.textContent = text2;
-    setVisibility(ui._message_box, true);
+    setVisibility(ui._messageui, true);
     this._message_showing = true;
     // the setTimeout is to flush any mouse event that led to the show_message() call
     setTimeout(function() { window.onclick = () => ui._hide_message(); }, 0);
@@ -245,10 +231,24 @@ class ui {
 
   private static _hide_message(): void {
     window.onclick = null;
-    setVisibility(ui._message_box, false);
+    setVisibility(ui._messageui, false);
     this._message_showing = false;
     const f = this._message_callback;
     this._message_callback = null;
     if(f) f();
+  }
+
+  static show_help(ev: Event): void {
+    ev.preventDefault();
+    ev.stopPropagation(); // So we don't trigger the .onclick we're about to set.
+    const section = document.getElementById("help-" + (gCurrentGame.helpId || gCurrentGame.id));
+    setVisibility(section, true);
+    setVisibility(this._helpui, true);
+    section.onclick = ev => ev.stopPropagation();
+    window.onclick = _ => {
+      setVisibility(section, false);
+      setVisibility(this._helpui, false);
+      window.onclick = null;
+    };
   }
 }

@@ -151,6 +151,11 @@ class _View {
   cseq_at_coords(x: number, y: number): CardSequence {
     throw "not implemented";
   }
+
+  public handle_click_at(x: number, y: number): Action {
+    const cseq = this.cseq_at_coords(x, y);
+    return cseq ? this.pile.action_for_click(cseq) : null;
+  }
 };
 
 // A view where only the top card is ever visible (used for foundations).
@@ -524,9 +529,9 @@ class StockView extends View {
     super();
     this.init_counter();
   }
-  cseq_at_coords(x: number, y: number): CardSequence {
-    const stock = this.pile as Stock;
-    return CardSequence.from_card(stock.lastCard || stock.magic_stock_stub_card || null);
+  public handle_click_at(x: number, y: number): Action {
+    // We must override this to support RefillStock actions when clicking on an empty stock.
+    return (this.pile as Stock).deal();
   }
 };
 

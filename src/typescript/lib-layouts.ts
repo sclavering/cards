@@ -289,9 +289,9 @@ class Layout {
   _onclick(ev: MouseEvent): void {
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
     if(ev.button || ev.ctrlKey) return;
-    const cseq = this._target_cseq(ev);
+    const [view, x, y] = this._target_view_and_coords(ev);
     interrupt();
-    if(cseq) doo(cseq.source.action_for_click(cseq));
+    if(view) doo(view.handle_click_at(x, y));
     this._reset_handlers();
   }
 
@@ -328,10 +328,15 @@ class Layout {
   }
 
   _target_cseq(event_or_touch: MouseEvent | Touch): CardSequence {
+    const [view, x, y] = this._target_view_and_coords(event_or_touch);
+    return view ? view.cseq_at_coords(x, y) : null;
+  }
+
+  _target_view_and_coords(event_or_touch: MouseEvent | Touch): [View, number, number] {
     const id = this._target_view_id(event_or_touch.target as HTMLElement);
-    if(!id) return;
+    if(!id) return [null, 0, 0];
     const view = this.views[parseInt(id)], rect = view.pixel_rect();
-    return view.cseq_at_coords(event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top);
+    return [view, event_or_touch.pageX - rect.left, event_or_touch.pageY - rect.top];
   }
 
   _target_view_id(el: HTMLElement): string {

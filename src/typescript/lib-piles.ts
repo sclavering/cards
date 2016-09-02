@@ -149,15 +149,10 @@ class AnyPile {
 
 
 abstract class Stock extends AnyPile {
-  magic_stock_stub_card: any;
-
   constructor() {
     super();
     this.is_stock = true;
     this.is_drop_target = false;
-
-    // The Layout mouse-handling code wants a Card as the target of the event. So we provide a stub object that just lets it get from there to the pile to call .action_for_click().
-    this.magic_stock_stub_card = { pile: this };
   }
   may_take_card(): boolean {
     return false;
@@ -165,23 +160,19 @@ abstract class Stock extends AnyPile {
   may_add_card(): boolean {
     return false;
   }
-
   deal_card_to(destination: AnyPile): void {
     const card = this.lastCard;
     card.faceUp = true;
     destination.add_cards(card);
   }
-
   undeal_card_from(source: AnyPile): void {
     const card = source.lastCard;
     card.faceUp = false;
     this.add_cards(card);
   }
-
   action_for_click(cseq: CardSequence): Action {
     return this.deal();
   }
-
   abstract deal(): Action;
 };
 

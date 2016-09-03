@@ -222,7 +222,7 @@ class Layout {
     const ex = ev.pageX, ey = ev.pageY;
     const ex0 = this._ex0, ey0 = this._ey0;
     if(ex > ex0 - 5 && ex < ex0 + 5 && ey > ey0 - 5 && ey < ey0 + 5) return;
-    g_floating_pile.start_animation_or_drag(this._cseq_for_dragging.first);
+    g_floating_pile.start_animation_or_drag(this._cseq_for_dragging);
     const rect = g_floating_pile.bounding_rect();
     this._tx = ex0 - rect.left;
     this._ty = ey0 - rect.top;

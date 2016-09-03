@@ -104,7 +104,7 @@ class Move implements Action {
     this.revealed_card = new_source_top_card && !new_source_top_card.faceUp ? new_source_top_card : null;
   }
   perform(): AnimationDetails {
-    const rv = prepare_move_animation(this.card, this.destination);
+    const rv = prepare_move_animation(CardSequence.from_card(this.card), this.destination);
     this.destination.add_cards(this.card, true); // doesn't update view
     if(this.revealed_card) this.revealed_card.setFaceUp(true);
     return rv;

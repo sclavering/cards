@@ -1,23 +1,22 @@
-function prepare_freecell_move_animation(card: Card, dest: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
-  const src = card.pile;
+function prepare_freecell_move_animation(cseq: CardSequence, dest: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
   const num_movable_via_cells = cells.length + 1;
   const steps: AnimationSteps = [];
 
-  const src_cards = src.cards.slice(0, card.index);
-  const moving_cards = src.cards.slice(card.index);
+  const src_cards = cseq.source.cards.slice(0, cseq.index);
+  const moving_cards = cseq.cards;
   const dest_cards = dest.cards.slice(); // This will get captured in closures, and dest.cards gets mutated by the actual card transfer just after this function returns.
   if(moving_cards.length <= num_movable_via_cells) {
-    _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, dest_cards, cells);
+    _freecell_animate_simple(steps, cseq.source, dest, src_cards, moving_cards, dest_cards, cells);
   } else if(moving_cards.length <= num_movable_via_cells + spaces.length) {
-    _freecell_animate_simple(steps, src, dest, src_cards, moving_cards, dest_cards, cells.concat(spaces));
+    _freecell_animate_simple(steps, cseq.source, dest, src_cards, moving_cards, dest_cards, cells.concat(spaces));
   } else if(moving_cards.length <= num_movable_via_cells * (spaces.length + 1)) {
-    _freecell_animate_medium(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces);
+    _freecell_animate_medium(steps, cseq.source, dest, src_cards, moving_cards, dest_cards, cells, spaces);
   } else {
     // We know that moving_cards.length <= num_movable_via_cells * (sum(1, 2, ... spaces.length) + 1)
-    _freecell_animate_complex(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces);
+    _freecell_animate_complex(steps, cseq.source, dest, src_cards, moving_cards, dest_cards, cells, spaces);
   }
 
-  return { steps: steps, piles_to_update: [].concat(src, dest, cells, spaces) };
+  return { steps: steps, piles_to_update: [].concat(cseq.source, dest, cells, spaces) };
 }
 
 function _freecell_evil_get_card_absolute_coords(pile: AnyPile, num_in_pile: number, card_index: number) {

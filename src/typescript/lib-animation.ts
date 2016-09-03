@@ -48,9 +48,9 @@ class g_animations {
 const k_animation_delay = 20;
 const k_animation_repack_delay = 100;
 
-function prepare_move_animation(card: Card, destination: AnyPile): AnimationDetails {
+function prepare_move_animation(cseq: CardSequence, destination: AnyPile): AnimationDetails {
   // xxx It's slightly icky that this line has immediate effect, rather than just preparing stuff to run later.
-  g_floating_pile.start_animation_or_drag(card);
+  g_floating_pile.start_animation_or_drag(cseq);
   const final_offset = destination.view.get_next_card_xy();
 
   // final coords (relative to ui.gameStack)
@@ -67,7 +67,7 @@ function prepare_move_animation(card: Card, destination: AnyPile): AnimationDeta
       g_floating_pile._canvas.style.transition = "";
     }]
   ];
-  return { steps: steps, piles_to_update: [card.pile, destination] };
+  return { steps: steps, piles_to_update: [cseq.source, destination] };
 }
 
 
@@ -110,18 +110,17 @@ class g_floating_pile {
     this._prev_card = null;
   }
 
-  static start_animation_or_drag(card: Card): void {
+  static start_animation_or_drag(cseq: CardSequence): void {
     // If we're already dragging a card and are about to animate its drop onto a pile, we want the animation to run from the current location, not from the original pile.
-    if(this._prev_card === card) return;
-    this._prev_card = card;
+    if(this._prev_card === cseq.first) return;
+    this._prev_card = cseq.first;
 
-    const pile = card.pile, view = pile.view;
-    const cards_taken = pile.cards.slice(card.index);
-    view.draw_into(this._context, cards_taken, false);
-    const coords = view.coords_of_card(card);
+    const view = cseq.source.view;
+    view.draw_into(this._context, cseq.cards, false);
+    const coords = view.coords_of_card(cseq.first);
     const r = view.pixel_rect();
     this.set_position(r.left + coords.x, r.top + coords.y);
-    const cards_remaining = pile.cards.slice(0, card.index);
+    const cards_remaining = cseq.source.cards.slice(0, cseq.index);
     view.update_with(cards_remaining);
   }
 

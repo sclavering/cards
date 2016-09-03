@@ -32,7 +32,7 @@ class FreeCellMoveAction {
   private source: AnyPile;
   private destination: AnyPile;
   constructor(card: Card, destination: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
-    this._anim = prepare_freecell_move_animation(card, destination, cells, spaces);
+    this._anim = prepare_freecell_move_animation(CardSequence.from_card(card), destination, cells, spaces);
     this.card = card;
     this.source = card.pile;
     this.destination = destination;

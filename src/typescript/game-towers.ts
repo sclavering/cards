@@ -25,7 +25,7 @@ gGameClasses["towers"] = TowersGame;
 
 class TowersPile extends _FreeCellPile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_running_flush(cseq.first);
+    return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean | 0 {
     if(!(this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13)) return false;

@@ -273,27 +273,12 @@ class Reserve extends AnyPile {
 };
 
 
-function may_take_descending_alt_colour(card: Card): boolean {
-  if(!card.faceUp) return false;
-  const cs = card.pile.cards, num = cs.length;
-  for(let i = card.index; i !== num - 1; ++i) if(!is_next_and_alt_colour(cs[i + 1], cs[i])) return false;
-  return true;
+function may_take_descending_alt_colour(cseq: CardSequence): boolean {
+  return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_alt_colour);
 }
 
-function may_take_descending_run(card: Card): boolean {
-  if(!card.faceUp) return false;
-  const cs = card.pile.cards, num = cs.length;
-  for(let i = card.index, j = i + 1; j !== num; ++i, ++j)
-    if(cs[i].number !== cs[j].number + 1) return false;
-  return true;
-}
-
-function may_take_running_flush(card: Card): boolean {
-  if(!card.faceUp) return false;
-  const cs = card.pile.cards, num = cs.length;
-  for(let i = card.index, j = i + 1; j !== num; ++i, ++j)
-    if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].number + 1) return false;
-  return true;
+function may_take_descending_same_suit(cseq: CardSequence): boolean {
+  return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_same_suit);
 }
 
 function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
@@ -338,7 +323,7 @@ abstract class _FreeCellPile extends _Pile {
 
 class GypsyPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_descending_alt_colour(cseq.first);
+    return may_take_descending_alt_colour(cseq);
   }
   may_add(cseq: CardSequence): boolean {
     return may_add_to_gypsy_pile(cseq.first, this);

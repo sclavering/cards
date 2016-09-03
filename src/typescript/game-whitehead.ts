@@ -34,7 +34,7 @@ gGameClasses["whitehead"] = WhiteheadGame;
 
 class WhiteheadPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_running_flush(cseq.first);
+    return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
     const last = this.lastCard;

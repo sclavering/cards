@@ -51,7 +51,7 @@ gGameClasses["freecell"] = FreeCellGame;
 
 class FreeCellPile extends _FreeCellPile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_descending_alt_colour(cseq.first);
+    return may_take_descending_alt_colour(cseq);
   }
   may_add(cseq: CardSequence): boolean | 0 {
     const card = cseq.first;

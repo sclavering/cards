@@ -183,7 +183,7 @@ gGameClasses["doublesimon"] = DoubleSimonGame;
 
 class SpiderPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_running_flush(cseq.first);
+    return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
     return !this.hasCards || this.lastCard.number === cseq.first.number + 1;
@@ -203,7 +203,7 @@ class DivorcePile extends _Pile {
 
 class BlackWidowPile extends SpiderPile {
   may_take(cseq: CardSequence): boolean {
-    return may_take_descending_run(cseq.first);
+    return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down);
   }
   hint_sources(): CardSequence[] {
     const sources: CardSequence[] = [];

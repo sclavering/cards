@@ -117,12 +117,21 @@ function is_up_or_down_mod13(a: Card, b: Card): boolean {
   return is_next_mod13(a, b) || is_next_mod13(b, a);
 };
 
-function is_next_down_mod13_same_suit(a: Card, b: Card): boolean {
-  return is_next_mod13(b, a) && a.suit === b.suit;
+
+function is_next_down(a: Card, b: Card): boolean {
+  return a.number === b.number + 1;
+};
+
+function is_next_down_alt_colour(a: Card, b: Card): boolean {
+  return a.number === b.number + 1 && a.colour !== b.colour;
 };
 
 function is_next_down_same_suit(a: Card, b: Card): boolean {
   return a.number === b.number + 1 && a.suit === b.suit;
+};
+
+function is_next_down_mod13_same_suit(a: Card, b: Card): boolean {
+  return is_next_mod13(b, a) && a.suit === b.suit;
 };
 
 

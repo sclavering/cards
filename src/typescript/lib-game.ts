@@ -6,7 +6,7 @@ interface PileClassConstructor {
   new(): AnyPile;
 }
 
-type AutoplayPredicate = (c: Card) => boolean;
+type AutoplayPredicate = (cseq: CardSequence) => boolean;
 
 
 // The base-type for all games
@@ -279,9 +279,9 @@ class Game {
   // Used to implement .autoplay() for many games.
   protected autoplay_using_predicate(predicate: AutoplayPredicate): Action {
     for(let p of this.hint_and_autoplay_source_piles) {
-      let c = p.lastCard;
-      if(!c || !predicate(c)) continue;
-      let act = this.foundation_action_for(CardSequence.from_card(c));
+      let cseq = CardSequence.from_card(p.lastCard);
+      if(!cseq || !predicate(cseq)) continue;
+      let act = this.foundation_action_for(cseq);
       if(act) return act;
     }
     return null;

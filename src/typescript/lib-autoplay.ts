@@ -33,7 +33,7 @@ function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: 
       else max_by_suit[suit] = Math.min(max_by_suit[suit], suit_nums[suit] + 1);
     }
   }
-  return card => card.number <= max_by_suit[card.suit];
+  return cseq => cseq.first.number <= max_by_suit[cseq.first.suit];
 };
 
 
@@ -44,7 +44,7 @@ function autoplay_any_where_all_lower_of_same_suit_are_on_foundations(foundation
     if(counts[suit] < 2) nums[suit] = 1;
     else ++nums[suit];
   }
-  return card => card.number <= nums[card.suit];
+  return cseq => cseq.first.number <= nums[cseq.first.suit];
 };
 
 

@@ -49,7 +49,7 @@ class RegimentGame extends Game {
     for_each_top_card(this.king_foundations, c => king_nums[c.suit] = c.number);
     const autoplayable_suits: LookupBySuit<boolean> = { S: false, H: false, D: false, C: false };
     for(let k in autoplayable_suits) if(ace_nums[k] > 0 && king_nums[k] < 14 && ace_nums[k] >= king_nums[k]) autoplayable_suits[k] = true;
-    return this.autoplay_using_predicate(card => autoplayable_suits[card.suit]);
+    return this.autoplay_using_predicate(cseq => autoplayable_suits[cseq.first.suit]);
   }
 };
 gGameClasses["regiment"] = RegimentGame;

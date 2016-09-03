@@ -26,7 +26,7 @@ class WhiteheadGame extends Game {
       let c = f.lastCard;
       if(c) nums[suitmap[c.suit]] = c.number + 1;
     }
-    return this.autoplay_using_predicate(card => card.number <= nums[card.suit]);
+    return this.autoplay_using_predicate(cseq => cseq.first.number <= nums[cseq.first.suit]);
   }
 };
 gGameClasses["whitehead"] = WhiteheadGame;

@@ -279,7 +279,7 @@ class Game {
   // Used to implement .autoplay() for many games.
   protected autoplay_using_predicate(predicate: AutoplayPredicate): Action {
     for(let p of this.hint_and_autoplay_source_piles) {
-      let cseq = CardSequence.from_card(p.lastCard);
+      let cseq = p.cseq_at_negative(-1);
       if(!cseq || !predicate(cseq)) continue;
       let act = this.foundation_action_for(cseq);
       if(act) return act;

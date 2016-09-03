@@ -170,7 +170,7 @@ class View extends _View {
   }
 
   cseq_at_coords(x: number, y: number): CardSequence {
-    return CardSequence.from_card(this.pile.lastCard);
+    return this.pile.cseq_at_negative(-1);
   }
 };
 
@@ -361,7 +361,7 @@ class _SlideView extends _FlexFanView {
   }
   cseq_at_coords(x: number, y: number): CardSequence {
     // This implementation is sufficient for all the games it's currently used in.
-    return CardSequence.from_card(this.pile.lastCard);
+    return this.pile.cseq_at_negative(-1);
   }
 };
 

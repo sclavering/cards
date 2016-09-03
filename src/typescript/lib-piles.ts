@@ -141,6 +141,15 @@ abstract class AnyPile {
     return [];
   }
 
+  cseq_at(index: number): CardSequence {
+    if(index < 0 || index >= this.cards.length) return null;
+    return CardSequence.from_card(this.cards[index]);
+  }
+
+  cseq_at_negative(index: number): CardSequence {
+    return this.cseq_at(this.cards.length + index);
+  }
+
   all_cseqs(): CardSequence[] {
     return this.cards.map(c => CardSequence.from_card(c));
   }

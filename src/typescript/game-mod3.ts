@@ -94,7 +94,7 @@ abstract class Mod3Foundation extends _Foundation {
     return first ? first.number === this._base_num : false;
   }
   hint_sources(): CardSequence[] {
-    const cseq = CardSequence.from_index(this, 0);
+    const cseq = this.cseq_at(0);
     return cseq && !this.contains_appropriate_cards() ? [cseq] : [];
   }
 };

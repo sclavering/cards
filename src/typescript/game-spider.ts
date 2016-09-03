@@ -11,10 +11,8 @@ class _SpiderRelatedGame extends Game {
   autoplay() {
     const f = this.foundation;
     for(let p of this.piles) {
-      let n = p.cards.length - 13;
-      if(n < 0) continue;
-      let c = p.cards[n], cseq = CardSequence.from_card(c);
-      if(p.may_take(cseq) && f.may_add(cseq)) return new Move(c, f);
+      let cseq = p.cseq_at_negative(-13);
+      if(cseq && p.may_take(cseq) && f.may_add(cseq)) return new Move(cseq.first, f);
     }
     return null;
   }

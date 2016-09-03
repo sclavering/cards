@@ -172,9 +172,4 @@ class CardSequence {
   static from_card(card: Card): CardSequence {
     return card ? new CardSequence(card.pile, card.index) : null;
   }
-
-  static from_index(source: AnyPile, index: number): CardSequence {
-    if(index < 0 || index >= source.cards.length) return null;
-    return this.from_card(source.cards[index]);
-  }
 };

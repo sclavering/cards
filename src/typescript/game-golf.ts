@@ -14,12 +14,12 @@ class Golf1Game extends Game {
     };
   }
 
-  public best_action_for(cseq: CardSequence): Action {
+  best_action_for(cseq: CardSequence): Action {
     const f = this.foundation;
     return cseq.source.may_take(cseq) && f.may_add(cseq) ? new Move(cseq.first, f) : null;
   }
 
-  public is_won(): boolean {
+  is_won(): boolean {
     for(let p of this.piles) if(p.cards.length) return false;
     return true;
   }

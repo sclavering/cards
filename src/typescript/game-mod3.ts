@@ -20,7 +20,7 @@ class Mod3Game extends Game {
     };
   }
 
-  init() {
+  protected init() {
     this.foundations = [].concat(this.f_foundations2, this.g_foundations3, this.h_foundations4);
     this.rows = [this.f_foundations2, this.g_foundations3, this.h_foundations4];
     // Ordinarily this excludes .foundations
@@ -49,7 +49,7 @@ class Mod3Game extends Game {
   }
 
   // The general idea here is that if both of a given number+suit are in place, it's okay to autoplay the next number (since when its twin comes up, it can go up too).  e.g. if both 6H are up, 9H can be autoplayed.  And spaces can only be filled if it won't potentially get in the way of using a different 2/3/4 to fill that space (i.e. only when there's no cards non-base_num cards in the way).
-  _autoplayable_numbers_for_row(row: Mod3Foundation[]): LookupBySuit<number> {
+  private _autoplayable_numbers_for_row(row: Mod3Foundation[]): LookupBySuit<number> {
     const rv: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };
     const seen: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };
     let seen_invalid_cards = false;
@@ -65,7 +65,7 @@ class Mod3Game extends Game {
     return rv;
   }
 
-  public is_won(): boolean {
+  is_won(): boolean {
     if(this.stock.hasCards) return false;
     for(let p of this.piles) if(p.cards.length) return false;
     return true;

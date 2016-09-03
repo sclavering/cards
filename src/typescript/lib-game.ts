@@ -127,7 +127,7 @@ class Game {
     this.layout.hide();
   }
 
-  _create_piles(): void {
+  private _create_piles(): void {
     const details = this.pile_details;
     this.all_piles = [];
     this._pile_arrays_by_letter = {};
@@ -185,25 +185,25 @@ class Game {
   }
 
   // For subclasses to optionally implement.  Typically used to add extra properties to piles.
-  init(): void {
+  protected init(): void {
   }
 
   // Deal the provided pre-shuffled cards for a new game.  Many subclasses will find this version sufficient.
-  deal(cards: Card[]): void {
+  protected deal(cards: Card[]): void {
     let ix = 0;
-    for(let p of this.all_piles) ix = this._deal_cards(cards, ix, p, p.num_to_deal_face_down, p.num_to_deal_face_up);
-    if(ix < cards.length) ix = this._deal_cards(cards, ix, this.stock, cards.length, 0);
+    for(let p of this.all_piles) ix = this.deal_cards(cards, ix, p, p.num_to_deal_face_down, p.num_to_deal_face_up);
+    if(ix < cards.length) ix = this.deal_cards(cards, ix, this.stock, cards.length, 0);
   }
 
   // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
-  protected _deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
+  protected deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
     for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
     pile.add_cards_from_array(cs, true);
     return ix + cs.length;
   }
 
-  protected _deal_cards_with_nulls_for_spaces(cards: Card[]): void {
+  protected deal_cards_with_nulls_for_spaces(cards: Card[]): void {
     cards.forEach((c, ix) => {
       if(!c) return;
       c.faceUp = true;
@@ -220,7 +220,7 @@ class Game {
   // === Winning ==========================================
 
   // Most subclasses will find this sufficient.
-  public is_won(): boolean {
+  is_won(): boolean {
     const expected_foundation_length = this.all_cards.length / this.foundations.length;
     for(let f of this.foundations) if(f.cards.length !== expected_foundation_length) return false;
     return true;
@@ -236,7 +236,7 @@ class Game {
 
   // === Move tracking and Undoing ========================
 
-  public doo(action: Action): AnimationDetails | void {
+  doo(action: Action): AnimationDetails | void {
     if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
     this.actionList[this.actionPtr++] = action;
     action.score = this.getScoreFor(action);
@@ -246,7 +246,7 @@ class Game {
     return animation_details;
   }
 
-  public undo(): void {
+  undo(): void {
     --this.actionPtr;
     const action = this.actionList[this.actionPtr];
     this.score -= action.score;
@@ -254,7 +254,7 @@ class Game {
     this._on_do_or_undo();
   }
 
-  public redo(): void {
+  redo(): void {
     const action = this.actionList[this.actionPtr];
     ++this.actionPtr;
     this.score += action.score;
@@ -289,7 +289,7 @@ class Game {
 
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
-  public foundation_action_for(cseq: CardSequence): Action {
+  foundation_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
     if(!cseq.source.may_take(cseq)) return null;
     const f = this.foundation_destination_for(cseq);
@@ -310,7 +310,7 @@ class Game {
 
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
-  public best_action_for(cseq: CardSequence): Action {
+  best_action_for(cseq: CardSequence): Action {
     if(!cseq.source.may_take(cseq)) return null;
     const target = this.best_destination_for(cseq);
     return target ? new Move(cseq.first, target) : null;
@@ -350,7 +350,7 @@ class Game {
   // === Hints ============================================
   // Generally nothing here needs overriding by subclasses.
 
-  public hint(): void {
+  hint(): void {
     if(!this._hints) {
       this._hints = this.get_hints();
       this._next_hint_index = 0;
@@ -367,7 +367,7 @@ class Game {
     return rv;
   }
 
-  protected _add_hints_for(cseq: CardSequence, hints: Hint[]): void {
+  private _add_hints_for(cseq: CardSequence, hints: Hint[]): void {
     const ds: AnyPile[] = [];
     for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_maybe_from_self(cseq)) ds.push(p);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) ds.push(f);
@@ -378,7 +378,7 @@ class Game {
   // === Preferred foundations ============================
   // When a game has multiple foundations of the same suit (e.g. Gypsy), it looks nicer if they are grouped together.  Games can opt in to automoves doing such grouping, which works by dividing the foundations into "clusters", and then using the first cluster that is empty or has matching suits.  (This only works so long as the user doesn't move aces to other foundations for themself, but handling that would complicate it significantly.)
 
-  _get_foundation_clusters(cards: Card[], foundations: AnyPile[]): AnyPile[][] {
+  private _get_foundation_clusters(cards: Card[], foundations: AnyPile[]): AnyPile[][] {
     if(!this.foundation_cluster_count) return null;
     const cluster_size = this.foundations.length / this.foundation_cluster_count;
     const rv: AnyPile[][] = [];

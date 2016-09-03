@@ -17,7 +17,7 @@ class RegimentGame extends Game {
     };
   }
 
-  init() {
+  protected init() {
     this.foundations = [].concat(this.ace_foundations, this.king_foundations);
     const rs = this.reserves as RegimentReserve[];
     for(let i = 0; i !== 8; i++) rs[i].regiment_column = i;

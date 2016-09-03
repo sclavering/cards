@@ -10,7 +10,7 @@ class _PileOnGame extends Game {
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.
-  public is_won(): boolean {
+  is_won(): boolean {
     for(let p of this.piles)
       if(p.cards.length && !(p.cards.length === this._pileon_depth && all_same_number(p.cards)))
         return false;

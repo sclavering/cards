@@ -12,13 +12,13 @@ class AcesUpGame extends Game {
     };
   }
 
-  init() {
+  protected init() {
     const ps = this.piles;
     ps[0].prev = ps[3];
     ps[3].next = ps[0];
   }
 
-  best_destination_for(cseq: CardSequence): AnyPile {
+  protected best_destination_for(cseq: CardSequence): AnyPile {
     const f = this.foundation;
     if(f.may_add(cseq)) return f;
     return findEmpty(cseq.source.following());
@@ -26,7 +26,7 @@ class AcesUpGame extends Game {
 
   // no autoplay for this game
 
-  public is_won(): boolean {
+  is_won(): boolean {
     if(this.stock.cards.length) return false;
     for(let p of this.piles) if(p.cards.length !== 1) return false;
     return true;

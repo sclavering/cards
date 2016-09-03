@@ -13,7 +13,7 @@ class FreeCellGame extends FreeCellRelatedGame {
   }
 
   /* Uncomment some of this code to set up the cards for easy testing of freecell animations.
-  deal() {
+  protected deal(cards: Card[]): void {
     // Move the 6H onto the 7C to test a medium move.
     // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 3, 5);
     // Move the 8H onto the 9C to test a no-cells complex move.
@@ -24,16 +24,16 @@ class FreeCellGame extends FreeCellRelatedGame {
     // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 2, 4);
   }
 
-  _deal_for_animation_testing(card_indexes_list, num_cells_to_block, num_piles_to_block) {
-    for(let [i, ixs] of card_indexes_list.entries()) {
+  private _deal_for_animation_testing(card_indexes_list: number[][], num_cells_to_block: number, num_piles_to_block: number): void {
+    card_indexes_list.forEach((ixs, i) => {
       let cs = ixs.map(ix => this.all_cards[ix]);
-      this._deal_cards(cs, 0, this.piles[i], 0, cs.length);
-    }
+      this.deal_cards(cs, 0, this.piles[i], 0, cs.length);
+    });
     const remaining = this.all_cards.filter(c => !c.pile);
     let to_block = this.cells.slice(0, num_cells_to_block);
     if(num_piles_to_block) to_block = to_block.concat(this.piles.slice(-num_piles_to_block));
-    for(let p of to_block) this._deal_cards([remaining.pop()], 0, p, 0, 1);
-    this._deal_cards(remaining, 0, this.piles.slice(-1)[0], 0, remaining.length);
+    for(let p of to_block) this.deal_cards([remaining.pop()], 0, p, 0, 1);
+    this.deal_cards(remaining, 0, this.piles.slice(-1)[0], 0, remaining.length);
   }
   // */
 

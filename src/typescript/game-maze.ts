@@ -13,15 +13,15 @@ class MazeGame extends Game {
     this.show_hints_to_empty_piles = true;
   }
 
-  init() {
+  protected init() {
     // prev/next are not usually circular
     const ps = this.piles;
     ps[53].next = ps[0];
     ps[0].prev = ps[53];
   }
 
-  deal(cards: Card[]): void {
-    this._deal_cards_with_nulls_for_spaces(cards);
+  protected deal(cards: Card[]): void {
+    this.deal_cards_with_nulls_for_spaces(cards);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
@@ -29,7 +29,7 @@ class MazeGame extends Game {
     return null;
   }
 
-  public is_won(): boolean {
+  is_won(): boolean {
     let first: Card = null;
     let prev: Card = null;
     for(let p of this.piles) {

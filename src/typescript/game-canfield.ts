@@ -24,15 +24,15 @@ class CanfieldGame extends Game {
     this._reserveFaceUp = 1;
   }
 
-  deal(cards: Card[]): void {
+  protected deal(cards: Card[]): void {
     const num = cards[0].number;
     for(let f of this.foundations) (f as CanfieldFoundation).canfield_foundation_base_num = num;
 
     let ix = 0;
-    ix = this._deal_cards(cards, ix, this.foundations[0], 0, 1);
-    ix = this._deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
-    for(let p of this.piles) ix = this._deal_cards(cards, ix, p, 0, 1);
-    this._deal_cards(cards, ix, this.stock, 52, 0);
+    ix = this.deal_cards(cards, ix, this.foundations[0], 0, 1);
+    ix = this.deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
+    for(let p of this.piles) ix = this.deal_cards(cards, ix, p, 0, 1);
+    this.deal_cards(cards, ix, this.stock, 52, 0);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

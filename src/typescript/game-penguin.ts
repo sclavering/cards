@@ -12,13 +12,13 @@ class PenguinGame extends Game {
     };
   }
 
-  deal(cards: Card[]): void {
+  protected deal(cards: Card[]): void {
     const aces = cards.filter(c => c.number === 1);
     const others = cards.filter(c => c.number !== 1);
-    this._deal_cards(aces, 0, this.piles[0], 0, 1);
-    for(let i = 0; i < 3; ++i) this._deal_cards(aces, i + 1, this.foundations[i], 0, 1);
+    this.deal_cards(aces, 0, this.piles[0], 0, 1);
+    for(let i = 0; i < 3; ++i) this.deal_cards(aces, i + 1, this.foundations[i], 0, 1);
     let ix = 0;
-    for(let i = 0; i < 7; ++i) ix = this._deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
+    for(let i = 0; i < 7; ++i) ix = this.deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

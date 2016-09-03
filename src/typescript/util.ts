@@ -16,9 +16,3 @@ function includes_pile_starting_with_suit(ps: AnyPile[], suit: string): boolean 
   for(let p of ps) if(p.hasCards && p.cards[0].suit === suit) return true;
   return false;
 }
-
-function check_consecutive_cards(cseq: CardSequence, predicate: (a: Card, b: Card) => boolean): boolean {
-  const cs = cseq.cards, max = cs.length - 1;
-  for(let i = 0; i !== max; ++i) if(!predicate(cs[i + 1], cs[i])) return false;
-  return true;
-}

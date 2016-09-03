@@ -117,6 +117,21 @@ function is_up_or_down_mod13(a: Card, b: Card): boolean {
   return is_next_mod13(a, b) || is_next_mod13(b, a);
 };
 
+function is_next_down_mod13_same_suit(a: Card, b: Card): boolean {
+  return is_next_mod13(b, a) && a.suit === b.suit;
+};
+
+function is_next_down_same_suit(a: Card, b: Card): boolean {
+  return a.number === b.number + 1 && a.suit === b.suit;
+};
+
+
+function check_consecutive_cards(cseq: CardSequence, predicate: (a: Card, b: Card) => boolean): boolean {
+  const cs = cseq.cards, max = cs.length - 1;
+  for(let i = 0; i !== max; ++i) if(!predicate(cs[i], cs[i + 1])) return false;
+  return true;
+};
+
 
 // Represents one or more cards that are being moved, or are under consideration for moving.
 class CardSequence {

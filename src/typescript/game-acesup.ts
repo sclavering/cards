@@ -22,7 +22,7 @@ class AcesUpGame extends Game {
     const card = cseq.first;
     const f = this.foundation;
     if(f.may_add_card(card)) return f;
-    return findEmpty(card.pile.following());
+    return findEmpty(cseq.source.following());
   }
 
   // no autoplay for this game

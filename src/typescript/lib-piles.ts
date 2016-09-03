@@ -142,7 +142,7 @@ class AnyPile {
 
   // Return an array of cards to consider moving when computing hints.
   hint_sources(): Card[] {
-    for(let c of this.cards) if(c.pile.may_take_card(c)) return [c];
+    for(let c of this.cards) if(this.may_take_card(c)) return [c];
     return [];
   }
 };

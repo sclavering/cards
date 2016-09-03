@@ -5,7 +5,7 @@ class _PileOnGame extends Game {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
     // The first matters for PileUp, but is redundant in PileOn.
-    return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add_card(card))
+    return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add(cseq))
         || this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 
@@ -94,7 +94,8 @@ class _PileOnPile extends _Pile {
   }
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     const last = this.lastCard;
     if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
     const numCards = card.pile.cards.length - card.index;

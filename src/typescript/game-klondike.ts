@@ -25,7 +25,7 @@ class _Klondike extends Game {
     // then award those points event when moving it directly to the foundations.
     if(s.is_waste && d.is_foundation) {
       for(let p of this.piles)
-        if(p.may_add_card(c))
+        if(p.may_add(CardSequence.from_card(c)))
           return 15;
       return 10;
     }

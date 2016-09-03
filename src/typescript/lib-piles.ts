@@ -68,11 +68,11 @@ abstract class AnyPile {
 
   // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
   // Games like FreeCell (where moving multiple cards actually means many single-card moves) return 0 to mean that a move is legal but there aren't enough cells/spaces to perform it.
-  abstract may_add_card(card: Card): boolean | 0;
+  abstract may_add(cseq: CardSequence): boolean | 0;
 
-  // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take() and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
+  // In generic code for hints etc it's easy to end up calling cseq.source.may_add(cseq), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take() and .may_add() will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
   may_add_maybe_from_self(cseq: CardSequence): boolean | 0 {
-    return cseq.source === this ? false : this.may_add_card(cseq.first);
+    return cseq.source === this ? false : this.may_add(cseq);
   }
 
   // ErrorMsg is used for the FreeCell legal-but-not-enough-spaces case.
@@ -152,7 +152,7 @@ abstract class Stock extends AnyPile {
   may_take(cseq: CardSequence): boolean {
     return false;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     return false;
   }
   deal_card_to(destination: AnyPile): void {
@@ -234,7 +234,7 @@ class Waste extends AnyPile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     return false;
   }
 };
@@ -248,8 +248,8 @@ class Cell extends AnyPile {
   may_take(cseq: CardSequence): boolean {
     return true;
   }
-  may_add_card(card: Card): boolean {
-    return !this.hasCards && card.isLast;
+  may_add(cseq: CardSequence): boolean {
+    return !this.hasCards && cseq.is_single;
   }
 };
 
@@ -263,7 +263,7 @@ class Reserve extends AnyPile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     return false;
   }
 };
@@ -309,8 +309,8 @@ class AcesUpPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
-    return card.isLast && !this.hasCards;
+  may_add(cseq: CardSequence): boolean {
+    return cseq.is_single && !this.hasCards;
   }
 };
 
@@ -318,13 +318,12 @@ class FanPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
-    return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
+  may_add(cseq: CardSequence): boolean {
+    return this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
   }
 };
 
 abstract class _FreeCellPile extends _Pile {
-  // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const may = this.may_add_maybe_from_self(cseq);
@@ -337,8 +336,8 @@ class GypsyPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_alt_colour(cseq.first);
   }
-  may_add_card(card: Card): boolean {
-    return may_add_to_gypsy_pile(card, this);
+  may_add(cseq: CardSequence): boolean {
+    return may_add_to_gypsy_pile(cseq.first, this);
   }
 };
 
@@ -346,8 +345,8 @@ class KlondikePile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
-    return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : card.number === 13;
+  may_add(cseq: CardSequence): boolean {
+    return this.hasCards ? is_next_and_alt_colour(cseq.first, this.lastCard) : cseq.first.number === 13;
   }
 };
 
@@ -355,8 +354,8 @@ class WaspPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
-    return !this.hasCards || is_next_in_suit(card, this.lastCard);
+  may_add(cseq: CardSequence): boolean {
+    return !this.hasCards || is_next_in_suit(cseq.first, this.lastCard);
   }
   hint_sources(): Card[] {
     return this.cards.filter(c => c.faceUp);
@@ -375,8 +374,8 @@ class KlondikeFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
-    return card.isLast && (this.hasCards ? is_next_in_suit(this.lastCard, card) : card.number === 1);
+  may_add(cseq: CardSequence): boolean {
+    return cseq.is_single && (this.hasCards ? is_next_in_suit(this.lastCard, cseq.first) : cseq.first.number === 1);
   }
 };
 
@@ -384,7 +383,7 @@ class UpDownMod13Foundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }
-  may_add_card(card: Card): boolean {
-    return is_up_or_down_mod13(card, this.lastCard);
+  may_add(cseq: CardSequence): boolean {
+    return is_up_or_down_mod13(cseq.first, this.lastCard);
   }
 };

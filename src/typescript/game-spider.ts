@@ -13,8 +13,8 @@ class _SpiderRelatedGame extends Game {
     for(let p of this.piles) {
       let n = p.cards.length - 13;
       if(n < 0) continue;
-      let c = p.cards[n];
-      if(c.pile.may_take(CardSequence.from_card(c)) && f.may_add_card(c)) return new Move(c, f);
+      let c = p.cards[n], cseq = CardSequence.from_card(c);
+      if(p.may_take(cseq) && f.may_add(cseq)) return new Move(c, f);
     }
     return null;
   }
@@ -185,8 +185,8 @@ class SpiderPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_running_flush(cseq.first);
   }
-  may_add_card(card: Card): boolean {
-    return !this.hasCards || this.lastCard.number === card.number + 1;
+  may_add(cseq: CardSequence): boolean {
+    return !this.hasCards || this.lastCard.number === cseq.first.number + 1;
   }
 };
 
@@ -195,8 +195,8 @@ class DivorcePile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp && check_consecutive_cards(cseq.first, is_next_in_suit_mod13);
   }
-  may_add_card(card: Card): boolean {
-    return !this.hasCards || is_next_mod13(card, this.lastCard);
+  may_add(cseq: CardSequence): boolean {
+    return !this.hasCards || is_next_mod13(cseq.first, this.lastCard);
   }
 };
 
@@ -226,7 +226,7 @@ class SpiderFoundation extends _Foundation {
   may_take(cseq: CardSequence) {
     return false;
   }
-  may_add_card(card: Card): boolean {
-    return card.number === 13 && check_count_and_consecutive_cards(card, 13, is_next_in_suit);
+  may_add(cseq: CardSequence): boolean {
+    return cseq.first.number === 13 && check_count_and_consecutive_cards(cseq.first, 13, is_next_in_suit);
   }
 };

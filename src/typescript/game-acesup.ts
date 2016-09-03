@@ -19,9 +19,8 @@ class AcesUpGame extends Game {
   }
 
   best_destination_for(cseq: CardSequence): AnyPile {
-    const card = cseq.first;
     const f = this.foundation;
-    if(f.may_add_card(card)) return f;
+    if(f.may_add(cseq)) return f;
     return findEmpty(cseq.source.following());
   }
 
@@ -40,10 +39,11 @@ class AcesUpFoundation extends _Foundation {
   may_take(cseq: CardSequence) {
     return false;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     const compare = (c: Card, d: Card) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
-    if(compare(card, card.pile.secondToLastCard)) return true;
-    for(let p of card.pile.following()) if(compare(card, p.lastCard)) return true;
+    if(compare(card, cseq.source.secondToLastCard)) return true;
+    for(let p of cseq.source.following()) if(compare(card, p.lastCard)) return true;
     return false;
   }
 };

@@ -30,10 +30,11 @@ class FortyThievesPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_running_flush(cseq.first);
   }
-  may_add_card(card: Card): boolean | 0 {
+  may_add(cseq: CardSequence): boolean | 0 {
+    const card = cseq.first;
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
-    if(card.isLast) return true;
+    if(cseq.is_single) return true;
     let num_can_move = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, card.pile);
     if(num_can_move) num_can_move = num_can_move * (num_can_move + 1) / 2;
     ++num_can_move;

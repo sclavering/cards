@@ -84,8 +84,8 @@ class CanfieldPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
-  may_add_card(card: Card): boolean {
-    return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
+  may_add(cseq: CardSequence): boolean {
+    return !this.hasCards || is_next_and_alt_colour_mod13(cseq.first, this.lastCard);
   }
 };
 
@@ -96,8 +96,8 @@ class CanfieldFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
-    if(!card.isLast) return false;
-    return this.hasCards ? is_next_in_suit_mod13(this.lastCard, card) : card.number === this.canfield_foundation_base_num;
+  may_add(cseq: CardSequence): boolean {
+    if(!cseq.is_single) return false;
+    return this.hasCards ? is_next_in_suit_mod13(this.lastCard, cseq.first) : cseq.first.number === this.canfield_foundation_base_num;
   }
 };

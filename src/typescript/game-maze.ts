@@ -25,7 +25,7 @@ class MazeGame extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    for(let p of cseq.source.following()) if(p.may_add_card(cseq.first)) return p;
+    for(let p of cseq.source.following()) if(p.may_add(cseq)) return p;
     return null;
   }
 
@@ -53,10 +53,10 @@ class MazePile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return true;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     if(this.hasCards) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;
-    return (prev && maze_allows_adjacent(prev, card)) || (next && maze_allows_adjacent(card, next));
+    return (prev && maze_allows_adjacent(prev, cseq.first)) || (next && maze_allows_adjacent(cseq.first, next));
   }
 };
 

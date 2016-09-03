@@ -83,7 +83,8 @@ abstract class Mod3Foundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     const last = this.lastCard;
     if(!this.hasCards) return card.number === this._base_num;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;

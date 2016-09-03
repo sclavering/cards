@@ -41,9 +41,9 @@ class WinstonPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_alt_colour(cseq.first);
   }
-  may_add_card(card: Card): boolean {
-    if(card.pile.is_reserve) return false;
-    return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : true;
+  may_add(cseq: CardSequence): boolean {
+    if(cseq.source.is_reserve) return false;
+    return this.hasCards ? is_next_and_alt_colour(cseq.first, this.lastCard) : true;
   }
 };
 

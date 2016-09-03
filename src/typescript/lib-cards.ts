@@ -137,6 +137,10 @@ class CardSequence {
     return this.first.isLast;
   }
 
+  public get count(): number {
+    return this.source.cards.length - this.index;
+  }
+
   static from_card(card: Card): CardSequence {
     return card ? new CardSequence(card.pile, card.index) : null;
   }

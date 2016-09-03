@@ -33,7 +33,8 @@ class UnionSquarePile extends _Pile {
     return cseq.is_single;
   }
   // Piles are built up or down in suit, but only one direction at once.
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     const cs = this.cards, num = cs.length, last = this.lastCard;
     if(!last) return true;
     if(last.suit !== card.suit) return false;
@@ -50,7 +51,8 @@ class UnionSquareFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.lastCard, pos = this.cards.length;
     if(last.suit !== card.suit) return false;

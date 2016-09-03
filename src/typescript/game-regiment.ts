@@ -73,7 +73,8 @@ class RegimentPile extends _Pile {
     return cseq.is_single && cseq.first.faceUp;
   }
 
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     // piles are built up or down (or both) within suit
     const l = this.lastCard;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
@@ -102,7 +103,8 @@ class RegimentAceFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(this.lastCard, card);
   }
@@ -112,7 +114,8 @@ class RegimentKingFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
+    const card = cseq.first;
     if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
   }

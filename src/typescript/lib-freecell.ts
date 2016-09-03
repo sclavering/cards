@@ -5,7 +5,7 @@ class FreeCellRelatedGame extends Game {
     if(!card.pile.may_take(cseq)) return null;
     const dest = this.best_destination_for(cseq);
     if(!dest) return null;
-    if(card.isLast) return new Move(card, dest);
+    if(cseq.is_single) return new Move(card, dest);
     const spaces = this.piles.filter(p => p !== dest && !p.hasCards);
     const cells = this.cells.filter(c => !c.hasCards);
     return new FreeCellMoveAction(card, dest, cells, spaces);

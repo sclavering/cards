@@ -74,7 +74,7 @@ class TriPeaksGame extends BasePyramidGame {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    return this.foundation.may_add_card(cseq.first) ? this.foundation : null;
+    return this.foundation.may_add(cseq) ? this.foundation : null;
   }
 
   public is_won(): boolean {
@@ -126,7 +126,7 @@ class BasePyramidPile extends _Pile {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     return false;
   }
 };
@@ -148,7 +148,7 @@ class PyramidFoundation extends _Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     return false;
   }
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {

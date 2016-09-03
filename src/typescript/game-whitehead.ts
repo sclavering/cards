@@ -36,8 +36,8 @@ class WhiteheadPile extends _Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_running_flush(cseq.first);
   }
-  may_add_card(card: Card): boolean {
+  may_add(cseq: CardSequence): boolean {
     const last = this.lastCard;
-    return last ? is_next_and_same_colour(card, last) : true;
+    return last ? is_next_and_same_colour(cseq.first, last) : true;
   }
 };

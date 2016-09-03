@@ -27,9 +27,8 @@ class TowersPile extends _FreeCellPile {
   may_take(cseq: CardSequence): boolean {
     return may_take_running_flush(cseq.first);
   }
-  may_add_card(card: Card): boolean | 0 {
-    if(!(this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13)) return false;
-    const num_to_move = card.pile.cards.length - card.index;
-    return num_to_move <= 1 + (this.owning_game as FreeCellRelatedGame).empty_cell_count() ? true : 0;
+  may_add(cseq: CardSequence): boolean | 0 {
+    if(!(this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13)) return false;
+    return cseq.count <= 1 + (this.owning_game as FreeCellRelatedGame).empty_cell_count() ? true : 0;
   }
 };

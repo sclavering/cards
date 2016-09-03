@@ -117,7 +117,7 @@ class g_floating_pile {
 
     const view = cseq.source.view;
     view.draw_into(this._context, cseq.cards, false);
-    const coords = view.coords_of_card(cseq.first);
+    const coords = view.coords_of_card(cseq);
     const r = view.pixel_rect();
     this.set_position(r.left + coords.x, r.top + coords.y);
     const cards_remaining = cseq.source.cards.slice(0, cseq.index);

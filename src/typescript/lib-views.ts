@@ -108,7 +108,7 @@ abstract class _View {
 
   abstract draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void;
 
-  coords_of_card(card: Card): ViewCoord {
+  coords_of_card(cseq: CardSequence): ViewCoord {
     return { x: 0, y: 0 };
   }
 
@@ -221,8 +221,8 @@ class _FanView extends _View {
     for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], xo * i, yo * i);
   }
 
-  coords_of_card(card: Card): ViewCoord {
-    return { x: card.index * this._fan_x_offset, y: card.index * this._fan_y_offset };
+  coords_of_card(cseq: CardSequence): ViewCoord {
+    return { x: cseq.index * this._fan_x_offset, y: cseq.index * this._fan_y_offset };
   }
 
   draw_hint_destination(cards: Card[]): void {
@@ -285,8 +285,8 @@ abstract class _SelectiveFanView extends _FixedFanView {
     return super.update_with(this.visible_cards_of(cs));
   }
 
-  coords_of_card(card: Card): ViewCoord {
-    const offset = this.visible_cards_of(this.pile.cards).indexOf(card);
+  coords_of_card(cseq: CardSequence): ViewCoord {
+    const offset = this.visible_cards_of(this.pile.cards).indexOf(cseq.first);
     return { x: offset * this._fan_x_offset, y: offset * this._fan_y_offset };
   }
 

@@ -279,7 +279,7 @@ function may_take_descending_alt_colour(card: Card): boolean {
 function may_take_descending_run(card: Card): boolean {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
-  for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
+  for(let i = card.index, j = i + 1; j !== num; ++i, ++j)
     if(cs[i].number !== cs[j].number + 1) return false;
   return true;
 }
@@ -287,7 +287,7 @@ function may_take_descending_run(card: Card): boolean {
 function may_take_running_flush(card: Card): boolean {
   if(!card.faceUp) return false;
   const cs = card.pile.cards, num = cs.length;
-  for(var i = card.index, j = i + 1; j !== num; ++i, ++j) 
+  for(let i = card.index, j = i + 1; j !== num; ++i, ++j)
     if(cs[i].suit !== cs[j].suit || cs[i].number !== cs[j].number + 1) return false;
   return true;
 }

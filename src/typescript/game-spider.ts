@@ -193,7 +193,7 @@ class SpiderPile extends _Pile {
 
 class DivorcePile extends _Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp && check_consecutive_cards(cseq.first, is_next_in_suit_mod13);
+    return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_in_suit_mod13);
   }
   may_add(cseq: CardSequence): boolean {
     return !this.hasCards || is_next_mod13(cseq.first, this.lastCard);
@@ -225,6 +225,6 @@ class SpiderFoundation extends _Foundation {
     return false;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.first.number === 13 && check_count_and_consecutive_cards(cseq.first, 13, is_next_in_suit);
+    return cseq.first.number === 13 && check_count_and_consecutive_cards(cseq, 13, is_next_in_suit);
   }
 };

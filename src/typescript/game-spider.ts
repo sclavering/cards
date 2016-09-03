@@ -225,6 +225,6 @@ class SpiderFoundation extends _Foundation {
     return false;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.first.number === 13 && check_count_and_consecutive_cards(cseq, 13, is_next_in_suit);
+    return cseq.first.number === 13 && cseq.count === 13 && check_consecutive_cards(cseq, is_next_in_suit);
   }
 };

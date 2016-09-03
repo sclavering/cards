@@ -77,9 +77,6 @@ class Card {
     this.pile = null; // the pile the card is in
     this.index = -1;  // the position within the pile
   }
-  get isLast(): boolean {
-    return this.index === this.pile.cards.length - 1;
-  }
   setFaceUp(val: boolean): void {
     this.faceUp = val;
     const p = this.pile;
@@ -134,7 +131,7 @@ class CardSequence {
   }
 
   public get is_single(): boolean {
-    return this.first.isLast;
+    return this.count === 1;
   }
 
   public get count(): number {

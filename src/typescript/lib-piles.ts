@@ -1,4 +1,4 @@
-class AnyPile {
+abstract class AnyPile {
   public view: View;
   public owning_game: Game;
 
@@ -64,15 +64,11 @@ class AnyPile {
     return cs.length > 1 ? cs[cs.length - 2] : null;
   }
 
-  may_take_card(card: Card): boolean {
-    throw "may_take_card not implemented!";
-  }
+  abstract may_take_card(card: Card): boolean;
 
   // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
   // Games like FreeCell (where moving multiple cards actually means many single-card moves) return 0 to mean that a move is legal but there aren't enough cells/spaces to perform it.
-  may_add_card(card: Card): boolean | 0 {
-    throw "may_add_card not implemented!";
-  }
+  abstract may_add_card(card: Card): boolean | 0;
 
   // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take_card and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
   may_add_card_maybe_to_self(card: Card): boolean | 0 {
@@ -303,7 +299,7 @@ function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
 }
 
 
-class _Pile extends AnyPile {
+abstract class _Pile extends AnyPile {
   constructor() {
     super();
     this.is_pile = true;
@@ -328,7 +324,7 @@ class FanPile extends _Pile {
   }
 };
 
-class _FreeCellPile extends _Pile {
+abstract class _FreeCellPile extends _Pile {
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
@@ -369,7 +365,7 @@ class WaspPile extends _Pile {
 };
 
 
-class _Foundation extends AnyPile {
+abstract class _Foundation extends AnyPile {
   constructor() {
     super();
     this.is_foundation = true;

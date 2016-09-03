@@ -2,6 +2,9 @@ interface Hint {
   hint_source_card: Card;
   hint_destinations: AnyPile[];
 }
+interface PileClassConstructor {
+  new(): AnyPile;
+}
 
 type AutoplayPredicate = (c: Card) => boolean;
 
@@ -11,7 +14,7 @@ class Game {
   public id: string;
 
   protected pile_details: {
-    [pile_collection_name: string]: [number, typeof AnyPile, number | number[], number | number[]];
+    [pile_collection_name: string]: [number, PileClassConstructor, number | number[], number | number[]];
   };
   all_cards: Card[];
   foundation_cluster_count: number;

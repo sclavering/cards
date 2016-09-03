@@ -41,7 +41,7 @@ function initCardImageOffsets(): void {
 
 
 // Base class for pile views.
-class _View {
+abstract class _View {
   _canvas: HTMLCanvasElement;
   _root_node: Node;
   _context: CanvasRenderingContext2D;
@@ -97,9 +97,7 @@ class _View {
   }
 
   // Show the supplied array of cards (which may be a prefix of pile's cards, during animation or dragging).
-  update_with(cards: Card[]): void {
-    throw "not implemented";
-  }
+  abstract update_with(cards: Card[]): void;
 
   protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
     this._context.strokeStyle = "white";
@@ -108,9 +106,7 @@ class _View {
     this._context.stroke();
   }
 
-  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
-    throw "not implemented";
-  }
+  abstract draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void;
 
   coords_of_card(card: Card): ViewCoord {
     return { x: 0, y: 0 };
@@ -129,9 +125,7 @@ class _View {
 
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
   // This method should render them into a temporary canvas, and then call ._draw_hint_destination(), which will render them ghosted out over the existing cards.
-  draw_hint_destination(cards: Card[]): void {
-    throw "not implemented";
-  }
+  abstract draw_hint_destination(cards: Card[]): void;
 
   _draw_hint_destination(ctx: CanvasRenderingContext2D, x: number, y: number): void {
     const canvas = ctx.canvas;
@@ -148,9 +142,7 @@ class _View {
   }
 
   // Return a CardSequence (or null) for the card at the specified coords within the View's Pile.
-  cseq_at_coords(x: number, y: number): CardSequence {
-    throw "not implemented";
-  }
+  abstract cseq_at_coords(x: number, y: number): CardSequence;
 
   public handle_click_at(x: number, y: number): Action {
     const cseq = this.cseq_at_coords(x, y);
@@ -286,10 +278,8 @@ class _FixedFanView extends _FanView {
   }
 };
 
-class _SelectiveFanView extends _FixedFanView {
-  protected visible_cards_of(cards: Card[]): Card[] {
-    throw "not implemented";
-  }
+abstract class _SelectiveFanView extends _FixedFanView {
+  protected abstract visible_cards_of(cards: Card[]): Card[];
 
   update_with(cs: Card[]): void {
     return super.update_with(this.visible_cards_of(cs));

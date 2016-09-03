@@ -304,7 +304,7 @@ class Game {
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.hasCards || f.cards[0].suit === cseq.first.suit))
           return findEmpty(fs);
-    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(cseq.first)) return f;
+    for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) return f;
     return null;
   }
 
@@ -328,7 +328,7 @@ class Game {
     const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
     let maybe: AnyPile = null;
     for(let p of ps) {
-      if(!p.may_add_card_maybe_to_self(cseq.first)) continue;
+      if(!p.may_add_maybe_from_self(cseq)) continue;
       if(p.cards.length) return p;
       if(!maybe) maybe = p;
     }
@@ -337,7 +337,7 @@ class Game {
 
   protected best_destination_for__nearest_legal_pile(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.surrounding() : this.piles;
-    for(let p of ps) if(p.may_add_card_maybe_to_self(cseq.first)) return p;
+    for(let p of ps) if(p.may_add_maybe_from_self(cseq)) return p;
     return null;
   }
 
@@ -368,9 +368,10 @@ class Game {
   }
 
   protected _add_hints_for(card: Card, hints: Hint[]): void {
+    const cseq = CardSequence.from_card(card);
     const ds: AnyPile[] = [];
-    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_card_maybe_to_self(card)) ds.push(p);
-    for(let f of this.foundations) if(f.may_add_card_maybe_to_self(card)) ds.push(f);
+    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_maybe_from_self(cseq)) ds.push(p);
+    for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) ds.push(f);
     if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
   }
 

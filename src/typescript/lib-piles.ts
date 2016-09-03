@@ -71,14 +71,13 @@ abstract class AnyPile {
   abstract may_add_card(card: Card): boolean | 0;
 
   // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take() and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
-  may_add_card_maybe_to_self(card: Card): boolean | 0 {
-    return card.pile === this ? false : this.may_add_card(card);
+  may_add_maybe_from_self(cseq: CardSequence): boolean | 0 {
+    return cseq.source === this ? false : this.may_add_card(cseq.first);
   }
 
   // ErrorMsg is used for the FreeCell legal-but-not-enough-spaces case.
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
-    const card = cseq.first;
-    return this.may_add_card_maybe_to_self(card) ? new Move(card, this) : null;
+    return this.may_add_maybe_from_self(cseq) ? new Move(cseq.first, this) : null;
   }
 
   surrounding(): AnyPile[] {
@@ -328,7 +327,7 @@ abstract class _FreeCellPile extends _Pile {
   // may_add_card returns 0 to mean "legal, but not enough cells+spaces to do the move"
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
-    const may = this.may_add_card_maybe_to_self(card);
+    const may = this.may_add_maybe_from_self(cseq);
     if(may) return new Move(card, this);
     return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;
   }

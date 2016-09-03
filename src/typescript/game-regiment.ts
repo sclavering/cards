@@ -31,9 +31,9 @@ class RegimentGame extends Game {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const ps = cseq.source.is_pile ? cseq.source.following() : this.piles, num = ps.length;
-    for(let p of ps) if(p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
+    for(let p of ps) if(p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
 
-    if(cseq.source.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_card_maybe_to_self(cseq.first)) return p;
+    if(cseq.source.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
     return null;
   }
 

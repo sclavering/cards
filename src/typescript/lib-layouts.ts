@@ -205,7 +205,7 @@ class Layout {
 
   _start_drag(event_or_touch: MouseEvent | Touch): boolean {
     const cseq = this._target_cseq(event_or_touch);
-    if(!cseq || !cseq.source.may_take_card(cseq.first)) return false;
+    if(!cseq || !cseq.source.may_take(cseq)) return false;
     interrupt();
     this._cseq_for_dragging = cseq;
     this._ex0 = event_or_touch.pageX;

@@ -2,7 +2,7 @@
 class FreeCellRelatedGame extends Game {
   best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
-    if(!card.pile.may_take_card(card)) return null;
+    if(!card.pile.may_take(cseq)) return null;
     const dest = this.best_destination_for(cseq);
     if(!dest) return null;
     if(card.isLast) return new Move(card, dest);

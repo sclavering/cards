@@ -50,7 +50,7 @@ gGameClasses["maze"] = MazeGame;
 
 
 class MazePile extends _Pile {
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     return true;
   }
   may_add_card(card: Card): boolean {

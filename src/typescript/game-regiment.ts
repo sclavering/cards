@@ -69,8 +69,8 @@ class RegimentPile extends _Pile {
     this.regiment_reserve = null;
   }
 
-  may_take_card(card: Card): boolean {
-    return card.isLast && card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single && cseq.first.faceUp;
   }
 
   may_add_card(card: Card): boolean {
@@ -99,8 +99,8 @@ class RegimentPile extends _Pile {
 };
 
 class RegimentAceFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
@@ -109,8 +109,8 @@ class RegimentAceFoundation extends _Foundation {
 };
 
 class RegimentKingFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);

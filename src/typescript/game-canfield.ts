@@ -81,8 +81,8 @@ gGameClasses["demon"] = DemonGame;
 
 
 class CanfieldPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return !this.hasCards || is_next_and_alt_colour_mod13(card, this.lastCard);
@@ -93,8 +93,8 @@ class CanfieldPile extends _Pile {
 class CanfieldFoundation extends _Foundation {
   canfield_foundation_base_num: number;
 
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     if(!card.isLast) return false;

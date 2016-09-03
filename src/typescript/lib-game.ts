@@ -291,7 +291,7 @@ class Game {
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
   public foundation_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
-    if(!cseq.source.may_take_card(card)) return null;
+    if(!cseq.source.may_take(cseq)) return null;
     const f = this.foundation_destination_for(cseq);
     return f ? new Move(card, f) : null;
   }
@@ -311,7 +311,7 @@ class Game {
   // Called when a user left-clicks on a card (that has already been determined to be movable).  Should return an Action (or null).
   // Subclasses may override this, but typically it's easier to implement .best_destination_for() instead.
   public best_action_for(cseq: CardSequence): Action {
-    if(!cseq.source.may_take_card(cseq.first)) return null;
+    if(!cseq.source.may_take(cseq)) return null;
     const target = this.best_destination_for(cseq);
     return target ? new Move(cseq.first, target) : null;
   }
@@ -343,7 +343,7 @@ class Game {
 
   protected best_destination_for__nearest_legal_pile_or_cell(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile(cseq);
-    return p || (cseq.first.isLast ? findEmpty(this.cells) : null);;
+    return p || (cseq.is_single ? findEmpty(this.cells) : null);;
   }
 
 

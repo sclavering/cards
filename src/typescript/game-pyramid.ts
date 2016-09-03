@@ -32,7 +32,7 @@ class PyramidGame extends BasePyramidGame {
 
   public best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
-    return card.number === 13 && card.pile.may_take_card(card) ? new RemovePair(card, null) : null;
+    return card.number === 13 && card.pile.may_take(cseq) ? new RemovePair(card, null) : null;
   }
 
   // This game has no autoplay
@@ -122,7 +122,7 @@ class BasePyramidPile extends _Pile {
     this.leftChild = null;
     this.rightChild = null;
   }
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     const lc = this.leftChild, rc = this.rightChild;
     return !lc || (!lc.hasCards && !rc.hasCards);
   }
@@ -145,7 +145,7 @@ class PyramidPile extends BasePyramidPile {
 };
 
 class PyramidFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     return false;
   }
   may_add_card(card: Card): boolean {

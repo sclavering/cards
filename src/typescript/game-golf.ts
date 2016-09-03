@@ -16,7 +16,7 @@ class Golf1Game extends Game {
 
   public best_action_for(cseq: CardSequence): Action {
     const f = this.foundation;
-    return cseq.source.may_take_card(cseq.first) && f.may_add_card(cseq.first) ? new Move(cseq.first, f) : null;
+    return cseq.source.may_take(cseq) && f.may_add_card(cseq.first) ? new Move(cseq.first, f) : null;
   }
 
   public is_won(): boolean {
@@ -38,8 +38,8 @@ gGameClasses["golf2"] = Golf2Game;
 
 
 class GolfPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.isLast && card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single && cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return false;

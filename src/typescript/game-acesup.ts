@@ -37,7 +37,7 @@ gGameClasses["acesup"] = AcesUpGame;
 
 
 class AcesUpFoundation extends _Foundation {
-  may_take_card() {
+  may_take(cseq: CardSequence) {
     return false;
   }
   may_add_card(card: Card): boolean {

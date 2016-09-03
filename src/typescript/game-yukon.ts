@@ -42,8 +42,8 @@ class SanibelGame extends _YukonRelatedGame {
 gGameClasses["sanibel"] = SanibelGame;
 
 class YukonPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return may_add_to_gypsy_pile(card, this);

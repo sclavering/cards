@@ -89,8 +89,8 @@ class _PileOnPile extends _Pile {
     this._depth = NaN;
     this._is_pileup = false;
   }
-  may_take_card(card: Card): boolean {
-    return all_same_number(this.cards.slice(card.index));
+  may_take(cseq: CardSequence): boolean {
+    return all_same_number(this.cards.slice(cseq.index));
   }
   // May put a card/group in a space, or on another card of the same number.
   // No more than 4 cards may ever be in any single pile.

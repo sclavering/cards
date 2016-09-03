@@ -30,8 +30,8 @@ gGameClasses["doublesol"] = DoubleSolGame;
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K
 class DoubleSolFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     if(!card.isLast) return false;

@@ -133,6 +133,10 @@ class CardSequence {
     this.first = source.cards[index];
   }
 
+  public get is_single(): boolean {
+    return this.first.isLast;
+  }
+
   static from_card(card: Card): CardSequence {
     return card ? new CardSequence(card.pile, card.index) : null;
   }

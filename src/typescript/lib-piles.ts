@@ -64,13 +64,13 @@ abstract class AnyPile {
     return cs.length > 1 ? cs[cs.length - 2] : null;
   }
 
-  abstract may_take_card(card: Card): boolean;
+  abstract may_take(cseq: CardSequence): boolean;
 
   // Implementations may assume the card is not from this pile (i.e. card.pile !== this).
   // Games like FreeCell (where moving multiple cards actually means many single-card moves) return 0 to mean that a move is legal but there aren't enough cells/spaces to perform it.
   abstract may_add_card(card: Card): boolean | 0;
 
-  // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take_card and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
+  // In generic code for hints etc it's easy to end up calling card.pile.may_add_card(card), i.e. trying to move a card onto the pile it's already on.  For most games this doesn't matter, since the combination of .may_take() and .may_add_card will already prohibit such moves, but in Russian Solitaire and Yukon this isn't true (because you can move any face-up card).  So generic code should call this rather than the above.
   may_add_card_maybe_to_self(card: Card): boolean | 0 {
     return card.pile === this ? false : this.may_add_card(card);
   }
@@ -138,7 +138,7 @@ abstract class AnyPile {
 
   // Return an array of cards to consider moving when computing hints.
   hint_sources(): Card[] {
-    for(let c of this.cards) if(this.may_take_card(c)) return [c];
+    for(let c of this.cards) if(this.may_take(CardSequence.from_card(c))) return [c];
     return [];
   }
 };
@@ -150,10 +150,10 @@ abstract class Stock extends AnyPile {
     this.is_stock = true;
     this.is_drop_target = false;
   }
-  may_take_card(): boolean {
+  may_take(cseq: CardSequence): boolean {
     return false;
   }
-  may_add_card(): boolean {
+  may_add_card(card: Card): boolean {
     return false;
   }
   deal_card_to(destination: AnyPile): void {
@@ -232,8 +232,8 @@ class Waste extends AnyPile {
     this.deal3v = 0; // The number of cards that should have been visible after the last deal.
     this.deal3t = 0; // The number of cards on this pile after the last deal.
   }
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     return false;
@@ -246,7 +246,7 @@ class Cell extends AnyPile {
     super();
     this.is_cell = true;
   }
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     return true;
   }
   may_add_card(card: Card): boolean {
@@ -261,8 +261,8 @@ class Reserve extends AnyPile {
     this.is_reserve = true;
     this.is_drop_target = false;
   }
-  may_take_card(card: Card): boolean {
-    return card.isLast && card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single && cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return false;
@@ -307,8 +307,8 @@ abstract class _Pile extends AnyPile {
 };
 
 class AcesUpPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.isLast && card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single && cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return card.isLast && !this.hasCards;
@@ -316,8 +316,8 @@ class AcesUpPile extends _Pile {
 };
 
 class FanPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.isLast && card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single && cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return this.hasCards ? is_next_in_suit(card, this.lastCard) : card.number === 13;
@@ -335,8 +335,8 @@ abstract class _FreeCellPile extends _Pile {
 };
 
 class GypsyPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return may_take_descending_alt_colour(card);
+  may_take(cseq: CardSequence): boolean {
+    return may_take_descending_alt_colour(cseq.first);
   }
   may_add_card(card: Card): boolean {
     return may_add_to_gypsy_pile(card, this);
@@ -344,8 +344,8 @@ class GypsyPile extends _Pile {
 };
 
 class KlondikePile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return this.hasCards ? is_next_and_alt_colour(card, this.lastCard) : card.number === 13;
@@ -353,8 +353,8 @@ class KlondikePile extends _Pile {
 };
 
 class WaspPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.faceUp;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.first.faceUp;
   }
   may_add_card(card: Card): boolean {
     return !this.hasCards || is_next_in_suit(card, this.lastCard);
@@ -373,8 +373,8 @@ abstract class _Foundation extends AnyPile {
 };
 
 class KlondikeFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     return card.isLast && (this.hasCards ? is_next_in_suit(this.lastCard, card) : card.number === 1);
@@ -382,7 +382,7 @@ class KlondikeFoundation extends _Foundation {
 };
 
 class UpDownMod13Foundation extends _Foundation {
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     return false;
   }
   may_add_card(card: Card): boolean {

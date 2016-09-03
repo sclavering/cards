@@ -80,8 +80,8 @@ abstract class Mod3Foundation extends _Foundation {
     super();
     this._base_num = base_num;
   }
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   may_add_card(card: Card): boolean {
     const last = this.lastCard;

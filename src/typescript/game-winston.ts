@@ -38,8 +38,8 @@ class WinstonStock extends Stock {
 
 
 class WinstonPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return may_take_descending_alt_colour(card);
+  may_take(cseq: CardSequence): boolean {
+    return may_take_descending_alt_colour(cseq.first);
   }
   may_add_card(card: Card): boolean {
     if(card.pile.is_reserve) return false;

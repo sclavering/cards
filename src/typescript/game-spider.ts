@@ -14,7 +14,7 @@ class _SpiderRelatedGame extends Game {
       let n = p.cards.length - 13;
       if(n < 0) continue;
       let c = p.cards[n];
-      if(c.pile.may_take_card(c) && f.may_add_card(c)) return new Move(c, f);
+      if(c.pile.may_take(CardSequence.from_card(c)) && f.may_add_card(c)) return new Move(c, f);
     }
     return null;
   }
@@ -182,8 +182,8 @@ gGameClasses["doublesimon"] = DoubleSimonGame;
 
 
 class SpiderPile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return may_take_running_flush(card);
+  may_take(cseq: CardSequence): boolean {
+    return may_take_running_flush(cseq.first);
   }
   may_add_card(card: Card): boolean {
     return !this.hasCards || this.lastCard.number === card.number + 1;
@@ -192,8 +192,8 @@ class SpiderPile extends _Pile {
 
 
 class DivorcePile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.faceUp && check_consecutive_cards(card, is_next_in_suit_mod13);
+  may_take(cseq: CardSequence): boolean {
+    return cseq.first.faceUp && check_consecutive_cards(cseq.first, is_next_in_suit_mod13);
   }
   may_add_card(card: Card): boolean {
     return !this.hasCards || is_next_mod13(card, this.lastCard);
@@ -202,8 +202,8 @@ class DivorcePile extends _Pile {
 
 
 class BlackWidowPile extends SpiderPile {
-  may_take_card(card: Card): boolean {
-    return may_take_descending_run(card);
+  may_take(cseq: CardSequence): boolean {
+    return may_take_descending_run(cseq.first);
   }
   hint_sources() {
     const sources: Card[] = [];
@@ -223,7 +223,7 @@ class BlackWidowPile extends SpiderPile {
 
 
 class SpiderFoundation extends _Foundation {
-  may_take_card() {
+  may_take(cseq: CardSequence) {
     return false;
   }
   may_add_card(card: Card): boolean {

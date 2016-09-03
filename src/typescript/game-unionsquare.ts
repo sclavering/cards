@@ -29,8 +29,8 @@ gGameClasses["unionsquare"] = UnionSquareGame;
 
 
 class UnionSquarePile extends _Pile {
-  may_take_card(card: Card): boolean {
-    return card.isLast;
+  may_take(cseq: CardSequence): boolean {
+    return cseq.is_single;
   }
   // Piles are built up or down in suit, but only one direction at once.
   may_add_card(card: Card): boolean {
@@ -47,7 +47,7 @@ class UnionSquarePile extends _Pile {
 
 // Built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right from the a->k, so that it's clear what card should be played next.
 class UnionSquareFoundation extends _Foundation {
-  may_take_card(card: Card): boolean {
+  may_take(cseq: CardSequence): boolean {
     return false;
   }
   may_add_card(card: Card): boolean {

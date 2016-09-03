@@ -39,7 +39,7 @@ class FreeCellGame extends FreeCellRelatedGame {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
-    return p || (cseq.first.isLast ? findEmpty(this.cells) : null);
+    return p || (cseq.is_single ? findEmpty(this.cells) : null);
   }
 
   autoplay() {
@@ -50,8 +50,8 @@ gGameClasses["freecell"] = FreeCellGame;
 
 
 class FreeCellPile extends _FreeCellPile {
-  may_take_card(card: Card): boolean {
-    return may_take_descending_alt_colour(card);
+  may_take(cseq: CardSequence): boolean {
+    return may_take_descending_alt_colour(cseq.first);
   }
   may_add_card(card: Card): boolean | 0 {
     if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;

@@ -35,10 +35,9 @@ class FortyThievesPile extends _Pile {
     if(this.hasCards && !is_next_in_suit(card, this.lastCard)) return false;
     // Check there are enough spaces to perform the move
     if(cseq.is_single) return true;
-    let num_can_move = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, card.pile);
+    let num_can_move = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, cseq.source);
     if(num_can_move) num_can_move = num_can_move * (num_can_move + 1) / 2;
     ++num_can_move;
-    const num_to_move = card.pile.cards.length - card.index;
-    return num_to_move <= num_can_move ? true : 0;
+    return cseq.count <= num_can_move ? true : 0;
   }
 };

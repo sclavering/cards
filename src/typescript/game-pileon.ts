@@ -98,8 +98,7 @@ class _PileOnPile extends _Pile {
     const card = cseq.first;
     const last = this.lastCard;
     if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
-    const numCards = card.pile.cards.length - card.index;
-    return this.cards.length + numCards <= this._depth;
+    return this.cards.length + cseq.count <= this._depth;
   }
 };
 

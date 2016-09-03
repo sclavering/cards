@@ -17,7 +17,7 @@ function prepare_freecell_move_animation(card: Card, dest: AnyPile, cells: AnyPi
     _freecell_animate_complex(steps, src, dest, src_cards, moving_cards, dest_cards, cells, spaces);
   }
 
-  return { steps: steps, piles_to_update: [].concat(card.pile, dest, cells, spaces) };
+  return { steps: steps, piles_to_update: [].concat(src, dest, cells, spaces) };
 }
 
 function _freecell_evil_get_card_absolute_coords(pile: AnyPile, num_in_pile: number, card_index: number) {

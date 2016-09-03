@@ -80,8 +80,8 @@ class RegimentPile extends _Pile {
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
-    if(!card.pile.is_reserve) return false;
-    const source = card.pile as RegimentReserve;
+    if(!cseq.source.is_reserve) return false;
+    const source = cseq.source as RegimentReserve;
 
     const reserve = this.regiment_reserve;
     if(reserve === source) return true;

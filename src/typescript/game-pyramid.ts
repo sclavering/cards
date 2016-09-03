@@ -32,7 +32,7 @@ class PyramidGame extends BasePyramidGame {
 
   public best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
-    return card.number === 13 && card.pile.may_take(cseq) ? new RemovePair(card, null) : null;
+    return card.number === 13 && cseq.source.may_take(cseq) ? new RemovePair(card, null) : null;
   }
 
   // This game has no autoplay

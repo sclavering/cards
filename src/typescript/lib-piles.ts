@@ -135,10 +135,14 @@ abstract class AnyPile {
     return cseq ? this.owning_game.best_action_for(cseq) : null;
   }
 
-  // Return an array of cards to consider moving when computing hints.
-  hint_sources(): Card[] {
-    for(let c of this.cards) if(this.may_take(CardSequence.from_card(c))) return [c];
+  // Return an array of candidates to consider moving when computing hints.
+  hint_sources(): CardSequence[] {
+    for(let cseq of this.all_cseqs()) if(this.may_take(cseq)) return [cseq];
     return [];
+  }
+
+  all_cseqs(): CardSequence[] {
+    return this.cards.map(c => CardSequence.from_card(c));
   }
 };
 
@@ -357,8 +361,8 @@ class WaspPile extends _Pile {
   may_add(cseq: CardSequence): boolean {
     return !this.hasCards || is_next_in_suit(cseq.first, this.lastCard);
   }
-  hint_sources(): Card[] {
-    return this.cards.filter(c => c.faceUp);
+  hint_sources(): CardSequence[] {
+    return this.all_cseqs().filter(cseq => cseq.first.faceUp);
   }
 };
 

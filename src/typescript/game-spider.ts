@@ -205,19 +205,17 @@ class BlackWidowPile extends SpiderPile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_run(cseq.first);
   }
-  hint_sources() {
-    const sources: Card[] = [];
-    const cs = this.cards;
-    for(var j = cs.length; j;) {
-      let card = cs[--j];
-      if(!card.faceUp) break;
-      let prv = j >= 1 ? this.cards[j - 1] : null;
-      if(prv && prv.faceUp && prv.number === card.number + 1 && prv.suit === card.suit) continue;
-      sources.push(card);
-      if(!prv || prv.number !== card.number + 1) break;
+  hint_sources(): CardSequence[] {
+    const sources: CardSequence[] = [];
+    let prev_suit: Suit = null;
+    // Sure, this is O(N^2), but the N is so low it's irrelevant.
+    for(let cseq of this.all_cseqs()) {
+      if(!this.may_take(cseq)) continue;
+      if(cseq.first.suit === prev_suit) continue;
+      sources.push(cseq);
+      prev_suit = cseq.first.suit;
     }
-    // longer-run hints are probably better, so show those first
-    return sources.reverse();
+    return sources;
   }
 };
 

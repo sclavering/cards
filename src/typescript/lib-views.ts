@@ -112,14 +112,14 @@ abstract class _View {
     return { x: 0, y: 0 };
   }
 
-  show_hint_source(card: Card): void {
-    const rect = this.get_hint_source_rect(card);
+  show_hint_source(cseq: CardSequence): void {
+    const rect = this.get_hint_source_rect(cseq);
     this._context.fillStyle = "darkgrey";
     this._context.globalAlpha = 0.3;
     this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
   }
 
-  protected get_hint_source_rect(card: Card): ViewRect {
+  protected get_hint_source_rect(cseq: CardSequence): ViewRect {
     return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
   }
 
@@ -232,10 +232,10 @@ class _FanView extends _View {
     this._draw_hint_destination(tmp, rect.x, rect.y);
   }
 
-  protected get_hint_source_rect(card: Card): ViewRect {
-    const offset = card.index, size = this.pile.cards.length - 1 - card.index;
+  protected get_hint_source_rect(cseq: CardSequence): ViewRect {
+    const size = this.pile.cards.length - 1 - cseq.index;
     const xo = this._fan_x_offset, yo = this._fan_y_offset;
-    return { x: offset * xo, y: offset * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
+    return { x: cseq.index * xo, y: cseq.index * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
   }
 
   get_next_card_xy(): ViewCoord {
@@ -294,9 +294,9 @@ abstract class _SelectiveFanView extends _FixedFanView {
     return CardSequence.from_card(this.get_target_card_at_relative_coords_from_list(x, y, this.visible_cards_of(this.pile.cards)))
   }
 
-  protected get_hint_source_rect(card: Card): ViewRect {
+  protected get_hint_source_rect(cseq: CardSequence): ViewRect {
     // Only the top card will ever be the source of a hint.
-    const num = this.visible_cards_of(this.pile.cards).indexOf(card);
+    const num = this.visible_cards_of(this.pile.cards).indexOf(cseq.first);
     return { x: num * this._fan_x_offset, y: num * this._fan_y_offset, w: gCardWidth, h: gCardHeight };
   }
 

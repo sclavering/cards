@@ -123,11 +123,13 @@ class CardSequence {
   source: AnyPile;
   index: number;
   first: Card;
+  _cards: Card[];
 
   constructor(source: AnyPile, index: number) {
     this.source = source;
     this.index = index;
     this.first = source.cards[index];
+    this._cards = null;
   }
 
   public get is_single(): boolean {
@@ -138,7 +140,17 @@ class CardSequence {
     return this.source.cards.length - this.index;
   }
 
+  public get cards(): Card[] {
+    if(!this._cards) this._cards = this.source.cards.slice(this.index);
+    return this._cards;
+  }
+
   static from_card(card: Card): CardSequence {
     return card ? new CardSequence(card.pile, card.index) : null;
+  }
+
+  static from_index(source: AnyPile, index: number): CardSequence {
+    if(index < 0 || index >= source.cards.length) return null;
+    return this.from_card(source.cards[index]);
   }
 };

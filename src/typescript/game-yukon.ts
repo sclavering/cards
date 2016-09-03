@@ -48,7 +48,7 @@ class YukonPile extends _Pile {
   may_add(cseq: CardSequence): boolean {
     return may_add_to_gypsy_pile(cseq.first, this);
   }
-  hint_sources() {
-    return this.cards.filter(c => c.faceUp);
+  hint_sources(): CardSequence[] {
+    return this.all_cseqs().filter(cseq => cseq.first.faceUp);
   }
 };

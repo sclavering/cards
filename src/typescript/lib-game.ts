@@ -1,5 +1,5 @@
 interface Hint {
-  hint_source_card: Card;
+  hint_source: CardSequence;
   hint_destinations: AnyPile[];
 }
 interface PileClassConstructor {
@@ -358,21 +358,20 @@ class Game {
     if(this._hints.length === 0) return;
     const hint = this._hints[this._next_hint_index];
     this._next_hint_index = (this._next_hint_index + 1) % this._hints.length;
-    show_hints(hint.hint_source_card, hint.hint_destinations);
+    show_hints(hint.hint_source, hint.hint_destinations);
   }
 
   protected get_hints(): Hint[] {
     const rv: Hint[] = [];
-    for(let p of this.hint_and_autoplay_source_piles) for(let source of p.hint_sources()) this._add_hints_for(source, rv);
+    for(let p of this.hint_and_autoplay_source_piles) for(let cseq of p.hint_sources()) this._add_hints_for(cseq, rv);
     return rv;
   }
 
-  protected _add_hints_for(card: Card, hints: Hint[]): void {
-    const cseq = CardSequence.from_card(card);
+  protected _add_hints_for(cseq: CardSequence, hints: Hint[]): void {
     const ds: AnyPile[] = [];
     for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_maybe_from_self(cseq)) ds.push(p);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) ds.push(f);
-    if(ds.length) hints.push({ hint_source_card: card, hint_destinations: ds });
+    if(ds.length) hints.push({ hint_source: cseq, hint_destinations: ds });
   }
 
 

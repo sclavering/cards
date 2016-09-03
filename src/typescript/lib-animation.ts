@@ -71,14 +71,12 @@ function prepare_move_animation(card: Card, destination: AnyPile): AnimationDeta
 }
 
 
-function show_hints(card: Card, destinations: AnyPile[]): void {
-  const view = card.pile.view;
-  view.show_hint_source(card);
-  const hint_cards = card.pile.cards.slice(card.index);
+function show_hints(cseq: CardSequence, destinations: AnyPile[]): void {
+  cseq.source.view.show_hint_source(cseq);
   g_animations.run({
-    piles_to_update: destinations.concat(card.pile),
+    piles_to_update: destinations.concat(cseq.source),
     steps: [
-      [300, () => { for(let d of destinations) d.view.draw_hint_destination(hint_cards); }],
+      [300, () => { for(let d of destinations) d.view.draw_hint_destination(cseq.cards); }],
       [1700, () => null], // so hint stays visible a while
     ],
   });

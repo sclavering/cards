@@ -25,23 +25,11 @@ class FreeCellRelatedGame extends Game {
 };
 
 
-class FreeCellMoveAction {
-  private _anim: AnimationDetails;
-  private cseq: CardSequence;
-  private destination: AnyPile;
+class FreeCellMoveAction extends GenericAction {
   constructor(cseq: CardSequence, destination: AnyPile, cells: AnyPile[], spaces: AnyPile[]) {
-    this._anim = prepare_freecell_move_animation(cseq, destination, cells, spaces);
-    this.cseq = cseq;
-    this.destination = destination;
-  }
-  perform(): AnimationDetails {
-    transfer_cards(this.cseq.source, this.cseq.cards, this.destination, true); // Don't update views.
-    return this._anim;
-  }
-  undo(): void {
-    transfer_cards(this.destination, this.cseq.cards, this.cseq.source);
-  }
-  redo(): void {
-    transfer_cards(this.cseq.source, this.cseq.cards, this.destination);
+    super(prepare_freecell_move_animation(cseq, destination, cells, spaces), [
+      { pile: cseq.source, pre: cseq.source.cards, post: cseq.source.cards.slice(0, cseq.index) },
+      { pile: destination, pre: destination.cards, post: destination.cards.concat(cseq.cards) },
+    ]);
   }
 };

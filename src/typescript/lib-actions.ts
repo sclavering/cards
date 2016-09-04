@@ -15,34 +15,47 @@ interface Action {
 }
 
 
-class DealToPile implements Action {
-  private _from: Stock;
-  private _to: AnyPile;
-  constructor(from: Stock, to: AnyPile) {
-    this._from = from;
-    this._to = to;
+interface GenericActionChange { pile: AnyPile, pre: Card[], post: Card[] };
+
+abstract class GenericAction implements Action {
+  private _anim: AnimationDetails | null;
+  private _changes: GenericActionChange[];
+  constructor(anim: AnimationDetails, changes: GenericActionChange[]) {
+    this._anim = anim;
+    this._changes = changes;
   }
-  perform(): void {
-    this._from.deal_card_to(this._to);
+  perform(): AnimationDetails | null {
+    this._do(!!this._anim);
+    return this._anim;
+  }
+  redo(): void {
+    this._do(false);
+  }
+  _do(animating: boolean): void {
+    for(let change of this._changes) change.pile.replace_cards(change.post, animating);
   }
   undo(): void {
-    this._from.undeal_card_from(this._to);
+    for(let change of this._changes) change.pile.replace_cards(change.pre);
+  }
+}
+
+
+class DealToPile extends GenericAction {
+  constructor(from: Stock, to: AnyPile) {
+    super(null, [
+      { pile: from, pre: from.cards, post: from.cards.slice(0, -1) },
+      { pile: to, pre: to.cards, post: to.cards.concat(from.cards.slice(-1)) },
+    ]);
   }
 };
 
 
-class RefillStock implements Action {
-  private _stock: Stock;
-  private _waste: Waste;
-  constructor(from: Stock, to: Waste) {
-    this._stock = from;
-    this._waste = to;
-  }
-  perform(): void {
-    while(this._waste.hasCards) this._stock.undeal_card_from(this._waste);
-  }
-  undo(): void {
-    while(this._stock.hasCards) this._stock.deal_card_to(this._waste);
+class RefillStock extends GenericAction {
+  constructor(stock: Stock, waste: Waste) {
+    super(null, [
+      { pile: stock, pre: stock.cards, post: waste.cards.slice().reverse() },
+      { pile: waste, pre: waste.cards, post: [] },
+    ]);
   }
 };
 
@@ -90,50 +103,34 @@ class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
 };
 
 
-class Move implements Action {
+class Move extends GenericAction {
   // These are all public for Klondike scoring purposes.
   public cseq: CardSequence;
   public destination: AnyPile;
-  public revealed_card: Card;
+  public revealed_card: boolean;
   constructor(cseq: CardSequence, destination: AnyPile) {
+    const rem = cseq.source.cards.slice(0, cseq.index);
+    const revealed_card = rem.length ? !rem[rem.length - 1].faceUp : false;
+    if(revealed_card) rem[rem.length - 1] = Cards.face_up_of(rem[rem.length - 1]);
+    super(prepare_move_animation(cseq, destination), [
+      { pile: cseq.source, pre: cseq.source.cards, post: rem },
+      { pile: destination, pre: destination.cards, post: destination.cards.concat(cseq.cards) },
+    ]);
     this.cseq = cseq;
     this.destination = destination;
-    const new_source_top_card = this.cseq.source.cards[cseq.index - 1] || null;
-    this.revealed_card = new_source_top_card && !new_source_top_card.faceUp ? new_source_top_card : null;
-  }
-  perform(): AnimationDetails {
-    const rv = prepare_move_animation(this.cseq, this.destination);
-    transfer_cards(this.cseq.source, this.cseq.cards, this.destination, true);
-    if(this.revealed_card) this.cseq.source.reveal_top_card();
-    return rv;
-  }
-  undo(): void {
-    if(this.revealed_card) this.cseq.source.unreveal_top_card();
-    transfer_cards(this.destination, this.cseq.cards, this.cseq.source);
-  }
-  redo(): void {
-    transfer_cards(this.cseq.source, this.cseq.cards, this.destination);
-    if(this.revealed_card) this.cseq.source.reveal_top_card();
+    this.revealed_card = revealed_card;
   }
 };
 
 
-class RemovePair implements Action {
-  private _cseq1: CardSequence;
-  private _cseq2: CardSequence;
-  constructor(cseq1: CardSequence, cseq2: CardSequence) {
-    this._cseq1 = cseq1;
-    this._cseq2 = cseq2;
-  }
-  perform(): void {
-    const f = this._cseq1.source.owning_game.foundation;
-    transfer_cards(this._cseq1.source, this._cseq1.cards, f);
-    if(this._cseq2) transfer_cards(this._cseq2.source, this._cseq2.cards, f);
-  }
-  undo(): void {
-    const f = this._cseq1.source.owning_game.foundation;
-    if(this._cseq2) transfer_cards(f, this._cseq2.cards, this._cseq2.source);
-    transfer_cards(f, this._cseq1.cards, this._cseq1.source);
+class RemovePair extends GenericAction {
+  constructor(cseq1: CardSequence, cseq2: CardSequence | null) {
+    const f = cseq1.source.owning_game.foundation;
+    const changes: GenericActionChange[] = [];
+    changes.push({ pile: cseq1.source, pre: cseq1.source.cards, post: cseq1.source.cards.slice(0, -1) });
+    if(cseq2) changes.push({ pile: cseq2.source, pre: cseq2.source.cards, post: cseq2.source.cards.slice(0, -1) });
+    changes.push({ pile: f, pre: f.cards, post: f.cards.concat(cseq1.cards, cseq2 ? cseq2.cards : []) });
+    super(null, changes);
   }
 };
 

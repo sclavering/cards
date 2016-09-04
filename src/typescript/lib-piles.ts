@@ -90,6 +90,11 @@ abstract class AnyPile {
     return this._following = ps;
   }
 
+  replace_cards(cards: Card[], do_not_update_view?: boolean): void {
+    this.cards = cards;
+    if(!do_not_update_view) this.view.update();
+  }
+
   add_cards_from_array(cards: Card[], do_not_update_view?: boolean): void {
     this.cards = this.cards.concat(cards);
     if(!do_not_update_view) this.view.update();

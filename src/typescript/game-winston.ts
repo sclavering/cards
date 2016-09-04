@@ -1,6 +1,6 @@
 class WinstonGame extends Game {
   static create_layout() {
-    return new Layout("#<   s r   f f f f f f f f   >.#<   p p p p p p p p p p   >.", { s: StockView, r: WinstonReserveView, p: FanDownView, f: View });
+    return new Layout("#<   s r   f f f f f f f f   >.#<   p p p p p p p p p p   >.", { r: WinstonReserveView });
   }
 
   constructor() {

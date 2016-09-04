@@ -1,6 +1,6 @@
 class PenguinGame extends Game {
   static create_layout() {
-    return new Layout("#<   c c c c c c c  [ffff]   ><   p p p p p p p>.", { p: FanDownView, f: View, c: View });
+    return new Layout("#<   c c c c c c c  [ffff]   ><   p p p p p p p>.");
   }
 
   constructor() {

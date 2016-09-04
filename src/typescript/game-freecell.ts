@@ -1,6 +1,6 @@
 class FreeCellGame extends FreeCellRelatedGame {
   static create_layout() {
-    return new Layout("#<  c c c c    f f f f  >.#<  p p p p p p p p  >.", { p: FanDownView, f: View, c: View });
+    return new Layout("#<  c c c c    f f f f  >.#<  p p p p p p p p  >.");
   }
 
   constructor() {

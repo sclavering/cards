@@ -1,6 +1,6 @@
 class RussianSolGame extends Game {
   static create_layout() {
-    return new Layout("#<   p p p p p p p  [ffff]   >.", { p: FanDownView, f: View });
+    return new Layout("#<   p p p p p p p  [ffff]   >.");
   }
 
   constructor() {

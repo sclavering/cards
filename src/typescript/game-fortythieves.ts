@@ -1,6 +1,6 @@
 class FortyThievesGame extends FreeCellRelatedGame {
   static create_layout() {
-    return new Layout("#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.", { s: StockView, w: FanRightView, p: FanDownView, f: View });
+    return new Layout("#<   f f f f f f f f   ><   s [w]{colspan=13}>.#<   p p p p p p p p p p   >.", { w: FanRightView });
   }
 
   constructor() {

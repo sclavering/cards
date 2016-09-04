@@ -171,7 +171,7 @@ class Game {
     this._create_piles();
     if(!this.all_cards) this.all_cards = make_cards(1);
     this.init();
-    this._foundation_clusters = this._get_foundation_clusters(this.all_cards, this.foundations);
+    this._foundation_clusters = this._get_foundation_clusters(this.foundations);
     this.all_cards.forEach((c, ix) => { if(c) c.__all_cards_index = ix; });
     let cs: Card[];
     // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for "Restart" to work properly (since it works by starting a new game with the same deal-order, and the new game instance has its own separate card objects).
@@ -383,7 +383,7 @@ class Game {
   // === Preferred foundations ============================
   // When a game has multiple foundations of the same suit (e.g. Gypsy), it looks nicer if they are grouped together.  Games can opt in to automoves doing such grouping, which works by dividing the foundations into "clusters", and then using the first cluster that is empty or has matching suits.  (This only works so long as the user doesn't move aces to other foundations for themself, but handling that would complicate it significantly.)
 
-  private _get_foundation_clusters(cards: Card[], foundations: AnyPile[]): AnyPile[][] {
+  private _get_foundation_clusters(foundations: AnyPile[]): AnyPile[][] {
     if(!this.foundation_cluster_count) return null;
     const cluster_size = this.foundations.length / this.foundation_cluster_count;
     const rv: AnyPile[][] = [];

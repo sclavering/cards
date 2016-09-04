@@ -248,19 +248,20 @@ class _FanView extends _View {
   }
 
   cseq_at_coords(x: number, y: number): CardSequence {
-    return CardSequence.from_card(this.get_target_card_at_relative_coords_from_list(x, y, this.pile.cards));
+    return this.pile.cseq_at(this.index_of_card_at_coords(x, y, this.pile.cards.length));
   }
 
-  // handles only purely-horizontal or purely-vertical fans
-  protected get_target_card_at_relative_coords_from_list(x: number, y: number, cards: Card[]): Card {
-    if(this._fan_x_offset) return this._get_target_card_at_relative_coords_from_list2(x, this._fan_x_offset, gCardWidth, cards);
-    return this._get_target_card_at_relative_coords_from_list2(y, this._fan_y_offset, gCardHeight, cards);
+  // Returns -1 for no-card.
+  protected index_of_card_at_coords(x: number, y: number, num_cards: number): number {
+    // Handles only purely-horizontal or purely-vertical fans, which is sufficient for now.
+    if(this._fan_x_offset) return this._get_index_of_card_at_coord(x, this._fan_x_offset, gCardWidth, num_cards);
+    return this._get_index_of_card_at_coord(y, this._fan_y_offset, gCardHeight, num_cards);
   }
 
-  private _get_target_card_at_relative_coords_from_list2(pos: number, offset: number, cardsize: number, cards: Card[]): Card {
-    const ix = Math.floor(pos / offset);
-    if(cards[ix]) return cards[ix];
-    return pos < (cards.length - 1) * offset + cardsize ? cards[cards.length - 1] : null;
+  private _get_index_of_card_at_coord(coord: number, offset: number, card_size: number, num_cards: number): number | null {
+    const ix = Math.floor(coord / offset);
+    if(ix < num_cards) return ix;
+    return coord < (num_cards - 1) * offset + card_size ? num_cards - 1 : -1;
   }
 };
 
@@ -291,7 +292,13 @@ abstract class _SelectiveFanView extends _FixedFanView {
   }
 
   cseq_at_coords(x: number, y: number): CardSequence {
-    return CardSequence.from_card(this.get_target_card_at_relative_coords_from_list(x, y, this.visible_cards_of(this.pile.cards)))
+    // Making this implementation fully generally would be somewhat hard, and completely pointless, as the only cases that matter are those where no cards can be removed (_SpiderFoundationView) and those where only the top card can be removed (most others).  In the latter case the logical top card is always the top visible card, so we can cheat a lot.
+    const visible = this.visible_cards_of(this.pile.cards);
+    const target_visible_ix = this.index_of_card_at_coords(x, y, visible.length);
+    if(target_visible_ix !== visible.length - 1) return null;
+    // This check is just paranoia - it'd apply to _SpiderFoundationView, but .may_take() would return false anyway.
+    if(visible[target_visible_ix] !== this.pile.lastCard) return null;
+    return this.pile.cseq_at_negative(-1);
   }
 
   protected get_hint_source_rect(cseq: CardSequence): ViewRect {

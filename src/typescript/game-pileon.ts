@@ -82,12 +82,12 @@ gGameClasses["doublepileup"] = DoublePileUpGame;
 
 
 class _PileOnPile extends _Pile {
-  protected _depth: number;
-  protected _is_pileup: boolean;
-  constructor() {
+  private _depth: number;
+  private _is_pileup: boolean;
+  constructor(depth: number, is_pileup: boolean) {
     super();
-    this._depth = NaN;
-    this._is_pileup = false;
+    this._depth = depth;
+    this._is_pileup = is_pileup;
   }
   may_take(cseq: CardSequence): boolean {
     return all_same_number(this.cards.slice(cseq.index));
@@ -104,31 +104,25 @@ class _PileOnPile extends _Pile {
 
 class PileOnPile4 extends _PileOnPile {
   constructor() {
-    super()
-    this._depth = 4;
+    super(4, false);
   }
 };
 
 class PileOnPile8 extends _PileOnPile {
   constructor() {
-    super()
-    this._depth = 8;
+    super(8, false);
   }
 };
 
 class PileUpPile4 extends _PileOnPile {
   constructor() {
-    super()
-    this._depth = 4;
-    this._is_pileup = true;
+    super(4, true);
   }
 };
 
 class PileUpPile8 extends _PileOnPile {
   constructor() {
-    super()
-    this._depth = 8;
-    this._is_pileup = true;
+    super(8, true);
   }
 };
 

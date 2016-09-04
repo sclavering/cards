@@ -40,7 +40,7 @@ class RegimentGame extends Game {
   autoplay(): Action {
     for(let pile of this.piles as RegimentPile[])
       if(!pile.hasCards && this.reserves[pile.regiment_column].hasCards)
-        return new Move(this.reserves[pile.regiment_column].lastCard, pile);
+        return new Move(this.reserves[pile.regiment_column].cseq_at_negative(-1), pile);
 
     // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
     const ace_nums: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };

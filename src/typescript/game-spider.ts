@@ -12,7 +12,7 @@ class _SpiderRelatedGame extends Game {
     const f = this.foundation;
     for(let p of this.piles) {
       let cseq = p.cseq_at_negative(-13);
-      if(cseq && p.may_take(cseq) && f.may_add(cseq)) return new Move(cseq.first, f);
+      if(cseq && p.may_take(cseq) && f.may_add(cseq)) return new Move(cseq, f);
     }
     return null;
   }

@@ -92,53 +92,48 @@ class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
 
 class Move implements Action {
   // These are all public for Klondike scoring purposes.
-  public card: Card;
-  public source: AnyPile;
+  public cseq: CardSequence;
   public destination: AnyPile;
   public revealed_card: Card;
-  constructor(card: Card, destination: AnyPile) {
-    this.card = card;
-    this.source = card.pile;
+  constructor(cseq: CardSequence, destination: AnyPile) {
+    this.cseq = cseq;
     this.destination = destination;
-    const new_source_top_card = this.source.cards[card.index - 1] || null;
+    const new_source_top_card = this.cseq.source.cards[cseq.index - 1] || null;
     this.revealed_card = new_source_top_card && !new_source_top_card.faceUp ? new_source_top_card : null;
   }
   perform(): AnimationDetails {
-    const rv = prepare_move_animation(CardSequence.from_card(this.card), this.destination);
-    this.destination.add_cards(this.card, true); // doesn't update view
-    if(this.revealed_card) this.revealed_card.setFaceUp(true);
+    const rv = prepare_move_animation(this.cseq, this.destination);
+    transfer_cards(this.cseq.source, this.cseq.cards, this.destination, true);
+    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, true);
     return rv;
   }
   undo(): void {
-    if(this.revealed_card) this.revealed_card.setFaceUp(false);
-    this.source.add_cards(this.card);
+    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, false);
+    transfer_cards(this.destination, this.cseq.cards, this.cseq.source);
   }
   redo(): void {
-    this.destination.add_cards(this.card);
-    if(this.revealed_card) this.revealed_card.setFaceUp(true);
+    transfer_cards(this.cseq.source, this.cseq.cards, this.destination);
+    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, true);
   }
 };
 
 
 class RemovePair implements Action {
-  private _c1: Card;
-  private _c2: Card;
-  private _p1: AnyPile;
-  private _p2: AnyPile;
-  constructor(card1: Card, card2: Card) {
-    this._c1 = card1;
-    this._p1 = card1.pile;
-    this._c2 = card2;
-    this._p2 = card2 && card2.pile;
+  private _cseq1: CardSequence;
+  private _cseq2: CardSequence;
+  constructor(cseq1: CardSequence, cseq2: CardSequence) {
+    this._cseq1 = cseq1;
+    this._cseq2 = cseq2;
   }
   perform(): void {
-    const f = this._p1.owning_game.foundation;
-    f.add_cards(this._c1);
-    if(this._c2) f.add_cards(this._c2);
+    const f = this._cseq1.source.owning_game.foundation;
+    transfer_cards(this._cseq1.source, this._cseq1.cards, f);
+    if(this._cseq2) transfer_cards(this._cseq2.source, this._cseq2.cards, f);
   }
   undo(): void {
-    if(this._c2) this._p2.add_cards(this._c2);
-    this._p1.add_cards(this._c1);
+    const f = this._cseq1.source.owning_game.foundation;
+    if(this._cseq2) transfer_cards(f, this._cseq2.cards, this._cseq2.source);
+    transfer_cards(f, this._cseq1.cards, this._cseq1.source);
   }
 };
 

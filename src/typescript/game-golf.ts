@@ -16,7 +16,7 @@ class Golf1Game extends Game {
 
   best_action_for(cseq: CardSequence): Action {
     const f = this.foundation;
-    return cseq.source.may_take(cseq) && f.may_add(cseq) ? new Move(cseq.first, f) : null;
+    return cseq.source.may_take(cseq) && f.may_add(cseq) ? new Move(cseq, f) : null;
   }
 
   is_won(): boolean {

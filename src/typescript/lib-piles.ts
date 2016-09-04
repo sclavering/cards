@@ -61,7 +61,7 @@ abstract class AnyPile {
 
   // ErrorMsg is used for the FreeCell legal-but-not-enough-spaces case.
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
-    return this.may_add_maybe_from_self(cseq) ? new Move(cseq.first, this) : null;
+    return this.may_add_maybe_from_self(cseq) ? new Move(cseq, this) : null;
   }
 
   surrounding(): AnyPile[] {
@@ -91,27 +91,18 @@ abstract class AnyPile {
   }
 
   add_cards_from_array(cards: Card[], do_not_update_view?: boolean): void {
-    const cs = this.cards, num = cards.length;
-    for(let i = 0, j = cs.length; i !== num; ++i, ++j) {
-      let c = cards[i];
-      c.index = j;
-      c.pile = this;
-      cs[j] = c;
-    }
+    this.cards = this.cards.concat(cards);
     if(!do_not_update_view) this.view.update();
   }
 
-  // Add the passed card and all other cards of higher .index from the same pile.
-  add_cards(card: Card, do_not_update_view?: boolean): void {
-    const p = card.pile, pcs = p.cards, ix = card.index;
-    this.add_cards_from_array(pcs.slice(ix), do_not_update_view);
-    p.remove_cards_after(ix, do_not_update_view);
+  remove_cards(num_to_remove: number, do_not_update_view?: boolean): void {
+    this.cards = this.cards.slice(0, this.cards.length - num_to_remove);
+    if(!do_not_update_view) this.view.update();
   }
 
-  // Should generally not be called except by pile impls.
-  remove_cards_after(index: number, do_not_update_view: boolean): void {
-    this.cards = this.cards.slice(0, index);
-    if(!do_not_update_view) this.view.update();
+  set_card_face_up(card: Card, val: boolean): void {
+    card.faceUp = val;
+    this.view.update();
   }
 
   // Should return an Action appropriate for the CardSequence being clicked on.
@@ -127,7 +118,7 @@ abstract class AnyPile {
 
   cseq_at(index: number): CardSequence {
     if(index < 0 || index >= this.cards.length) return null;
-    return CardSequence.from_card(this.cards[index]);
+    return new CardSequence(this, index);
   }
 
   cseq_at_negative(index: number): CardSequence {
@@ -135,7 +126,7 @@ abstract class AnyPile {
   }
 
   all_cseqs(): CardSequence[] {
-    return this.cards.map(c => CardSequence.from_card(c));
+    return this.cards.map((_, ix) => new CardSequence(this, ix));
   }
 };
 
@@ -150,12 +141,12 @@ abstract class Stock extends AnyPile {
   deal_card_to(destination: AnyPile): void {
     const card = this.lastCard;
     card.faceUp = true;
-    destination.add_cards(card);
+    transfer_cards(this, [card], destination);
   }
   undeal_card_from(source: AnyPile): void {
     const card = source.lastCard;
     card.faceUp = false;
-    this.add_cards(card);
+    transfer_cards(source, [card], this);
   }
   action_for_click(cseq: CardSequence): Action {
     return this.deal();
@@ -286,9 +277,8 @@ class FanPile extends Pile {
 
 abstract class _FreeCellPile extends Pile {
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
-    const card = cseq.first;
     const may = this.may_add_maybe_from_self(cseq);
-    if(may) return new Move(card, this);
+    if(may) return new Move(cseq, this);
     return may === 0 ? new ErrorMsg("There are not enough free cells and/or spaces to do that.", "Click to continue playing") : null;
   }
 };
@@ -344,3 +334,9 @@ class UpDownMod13Foundation extends Foundation {
     return is_up_or_down_mod13(cseq.first, this.lastCard);
   }
 };
+
+
+function transfer_cards(source: AnyPile, cards: Card[], destination: AnyPile, do_not_update_view?: boolean): void {
+  destination.add_cards_from_array(cards, do_not_update_view || false);
+  source.remove_cards(cards.length, do_not_update_view || false);
+}

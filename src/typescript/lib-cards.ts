@@ -62,8 +62,6 @@ class Card {
   displayStr: string;
   number: number;
   faceUp: boolean;
-  pile: AnyPile;
-  index: number;
   __all_cards_index: number; // used by Game
 
   constructor(number: number, suit: Suit) {
@@ -72,15 +70,7 @@ class Card {
     this.suit = suit;
     this.displayStr = suit + number;
     this.number = number;
-
     this.faceUp = false;
-    this.pile = null; // the pile the card is in
-    this.index = -1;  // the position within the pile
-  }
-  setFaceUp(val: boolean): void {
-    this.faceUp = val;
-    const p = this.pile;
-    if(p) p.view.update();
   }
 };
 
@@ -144,32 +134,21 @@ function check_consecutive_cards(cseq: CardSequence, predicate: (a: Card, b: Car
 
 // Represents one or more cards that are being moved, or are under consideration for moving.
 class CardSequence {
-  source: AnyPile;
-  index: number;
-  first: Card;
-  _cards: Card[];
+  public source: AnyPile;
+  public index: number;
+  public first: Card;
+  public cards: Card[];
+  public count: number;
 
   constructor(source: AnyPile, index: number) {
     this.source = source;
     this.index = index;
     this.first = source.cards[index];
-    this._cards = null;
+    this.cards = source.cards.slice(index);
+    this.count = this.cards.length;
   }
 
   public get is_single(): boolean {
     return this.count === 1;
-  }
-
-  public get count(): number {
-    return this.source.cards.length - this.index;
-  }
-
-  public get cards(): Card[] {
-    if(!this._cards) this._cards = this.source.cards.slice(this.index);
-    return this._cards;
-  }
-
-  static from_card(card: Card): CardSequence {
-    return card ? new CardSequence(card.pile, card.index) : null;
   }
 };

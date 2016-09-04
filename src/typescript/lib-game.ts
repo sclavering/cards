@@ -292,10 +292,9 @@ class Game {
   // Called when right-clicking a card, this should try to return an Action for moving that card to a foundation (if possible), or null otherwise.
   // Subclasses may override this, but typically it's easier to implement .foundation_destination_for() instead.
   foundation_action_for(cseq: CardSequence): Action {
-    const card = cseq.first;
     if(!cseq.source.may_take(cseq)) return null;
     const f = this.foundation_destination_for(cseq);
-    return f ? new Move(card, f) : null;
+    return f ? new Move(cseq, f) : null;
   }
 
   // Given a CardSequence that has already been determined to be movable, return a foundation pile it can be legally moved to, or null.
@@ -315,7 +314,7 @@ class Game {
   best_action_for(cseq: CardSequence): Action {
     if(!cseq.source.may_take(cseq)) return null;
     const target = this.best_destination_for(cseq);
-    return target ? new Move(cseq.first, target) : null;
+    return target ? new Move(cseq, target) : null;
   }
 
   // Given a CardSequence, return the preferred legal destination pile to move it to, or null.

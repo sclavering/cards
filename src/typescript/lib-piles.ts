@@ -1,28 +1,29 @@
 abstract class AnyPile {
   public view: View;
   public owning_game: Game;
+  public cards: Card[];
 
-  cards: Card[];
-  prev: AnyPile;
-  next: AnyPile;
-  index: number;
-  num_to_deal_face_down: number;
-  num_to_deal_face_up: number;
+  // Previous and next pile of the same type.  Game._create_piles() forms these into doubly-linked non-circular lists.
+  public prev: AnyPile;
+  public next: AnyPile;
+
+  // The index at which this pile appears in its game's .piles or .foundations or whatever.
+  public index: number;
+
+  // These are set by the game, and used when dealing the cards at the start of the game.
+  public num_to_deal_face_down: number;
+  public num_to_deal_face_up: number;
 
   protected _surrounding: AnyPile[];
   protected _following: AnyPile[];
 
   constructor() {
     this.cards = [];
-    // Previous and next pile of the same type.  Game._create_piles() forms these into doubly-linked non-circular lists.
     this.prev = null;
     this.next = null;
-    // The index at which this pile appears in its game's .piles or .foundations or whatever.
     this.index = -1;
     this._surrounding = null;
     this._following = null;
-
-    // These are set by the game, and used when dealing the cards at the start of the game.
     this.num_to_deal_face_down = 0;
     this.num_to_deal_face_up = 0;
   }

@@ -35,7 +35,7 @@ class AcesUpGame extends Game {
 gGameClasses["acesup"] = AcesUpGame;
 
 
-class AcesUpFoundation extends _Foundation {
+class AcesUpFoundation extends Foundation {
   may_take(cseq: CardSequence) {
     return false;
   }

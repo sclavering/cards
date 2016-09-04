@@ -30,7 +30,7 @@ class RegimentGame extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    const ps = cseq.source instanceof _Pile ? cseq.source.following() : this.piles;
+    const ps = cseq.source instanceof Pile ? cseq.source.following() : this.piles;
     for(let p of ps) if(p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
 
     if(cseq.source instanceof Reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
@@ -60,7 +60,7 @@ class RegimentReserve extends Reserve {
 }
 
 
-class RegimentPile extends _Pile {
+class RegimentPile extends Pile {
   public regiment_column: number;
   public regiment_reserve: RegimentReserve;
 
@@ -99,7 +99,7 @@ class RegimentPile extends _Pile {
   }
 };
 
-class RegimentAceFoundation extends _Foundation {
+class RegimentAceFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
@@ -110,7 +110,7 @@ class RegimentAceFoundation extends _Foundation {
   }
 };
 
-class RegimentKingFoundation extends _Foundation {
+class RegimentKingFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }

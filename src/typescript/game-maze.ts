@@ -49,7 +49,7 @@ class MazeGame extends Game {
 gGameClasses["maze"] = MazeGame;
 
 
-class MazePile extends _Pile {
+class MazePile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return true;
   }

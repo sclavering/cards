@@ -275,10 +275,10 @@ function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
 }
 
 
-abstract class _Pile extends AnyPile {
+abstract class Pile extends AnyPile {
 };
 
-class AcesUpPile extends _Pile {
+class AcesUpPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }
@@ -287,7 +287,7 @@ class AcesUpPile extends _Pile {
   }
 };
 
-class FanPile extends _Pile {
+class FanPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }
@@ -296,7 +296,7 @@ class FanPile extends _Pile {
   }
 };
 
-abstract class _FreeCellPile extends _Pile {
+abstract class _FreeCellPile extends Pile {
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const may = this.may_add_maybe_from_self(cseq);
@@ -305,7 +305,7 @@ abstract class _FreeCellPile extends _Pile {
   }
 };
 
-class GypsyPile extends _Pile {
+class GypsyPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_alt_colour(cseq);
   }
@@ -314,7 +314,7 @@ class GypsyPile extends _Pile {
   }
 };
 
-class KlondikePile extends _Pile {
+class KlondikePile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
@@ -323,7 +323,7 @@ class KlondikePile extends _Pile {
   }
 };
 
-class WaspPile extends _Pile {
+class WaspPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
@@ -336,10 +336,10 @@ class WaspPile extends _Pile {
 };
 
 
-abstract class _Foundation extends AnyPile {
+abstract class Foundation extends AnyPile {
 };
 
-class KlondikeFoundation extends _Foundation {
+class KlondikeFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
@@ -348,7 +348,7 @@ class KlondikeFoundation extends _Foundation {
   }
 };
 
-class UpDownMod13Foundation extends _Foundation {
+class UpDownMod13Foundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }

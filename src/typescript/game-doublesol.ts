@@ -29,7 +29,7 @@ gGameClasses["doublesol"] = DoubleSolGame;
 
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K
-class DoubleSolFoundation extends _Foundation {
+class DoubleSolFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }

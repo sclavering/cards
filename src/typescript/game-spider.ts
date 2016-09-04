@@ -179,7 +179,7 @@ gGameClasses["doublesimon"] = DoubleSimonGame;
 
 
 
-class SpiderPile extends _Pile {
+class SpiderPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_same_suit(cseq);
   }
@@ -189,7 +189,7 @@ class SpiderPile extends _Pile {
 };
 
 
-class DivorcePile extends _Pile {
+class DivorcePile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_mod13_same_suit);
   }
@@ -218,7 +218,7 @@ class BlackWidowPile extends SpiderPile {
 };
 
 
-class SpiderFoundation extends _Foundation {
+class SpiderFoundation extends Foundation {
   may_take(cseq: CardSequence) {
     return false;
   }

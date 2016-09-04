@@ -80,7 +80,7 @@ class DemonGame extends CanfieldGame {
 gGameClasses["demon"] = DemonGame;
 
 
-class CanfieldPile extends _Pile {
+class CanfieldPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.first.faceUp;
   }
@@ -90,7 +90,7 @@ class CanfieldPile extends _Pile {
 };
 
 
-class CanfieldFoundation extends _Foundation {
+class CanfieldFoundation extends Foundation {
   canfield_foundation_base_num: number;
 
   may_take(cseq: CardSequence): boolean {

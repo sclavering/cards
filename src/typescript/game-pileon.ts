@@ -81,7 +81,7 @@ class DoublePileUpGame extends _PileOnGame {
 gGameClasses["doublepileup"] = DoublePileUpGame;
 
 
-class _PileOnPile extends _Pile {
+class _PileOnPile extends Pile {
   private _depth: number;
   private _is_pileup: boolean;
   constructor(depth: number, is_pileup: boolean) {

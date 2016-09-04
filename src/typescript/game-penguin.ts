@@ -32,7 +32,7 @@ class PenguinGame extends Game {
 gGameClasses["penguin"] = PenguinGame;
 
 
-class PenguinPile extends _Pile {
+class PenguinPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_same_suit(cseq);
   }

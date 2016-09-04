@@ -23,14 +23,14 @@ class _Klondike extends Game {
     const c = act.card, s = act.source, d = act.destination;
     // If a card on the waste *could* be moved down to the playing piles (for 5 points)
     // then award those points event when moving it directly to the foundations.
-    if(s instanceof Waste && d instanceof _Foundation) {
+    if(s instanceof Waste && d instanceof Foundation) {
       for(let p of this.piles)
         if(p.may_add(CardSequence.from_card(c)))
           return 15;
       return 10;
     }
-    if(d instanceof _Foundation) return s instanceof _Foundation ? 0 : 10;
-    if(s instanceof _Foundation) return -15;
+    if(d instanceof Foundation) return s instanceof Foundation ? 0 : 10;
+    if(s instanceof Foundation) return -15;
     return s instanceof Waste ? 5 : 0;
   }
 };

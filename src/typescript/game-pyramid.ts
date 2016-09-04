@@ -108,7 +108,7 @@ class TriPeaksGame extends BasePyramidGame {
 gGameClasses["tripeaks"] = TriPeaksGame;
 
 
-class BasePyramidPile extends _Pile {
+class BasePyramidPile extends Pile {
   public isPeak: boolean;
   public leftParent: BasePyramidPile;
   public rightParent: BasePyramidPile;
@@ -144,7 +144,7 @@ class PyramidPile extends BasePyramidPile {
   }
 };
 
-class PyramidFoundation extends _Foundation {
+class PyramidFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }

@@ -36,7 +36,7 @@ class Mod3Game extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    return this.foundation_destination_for(cseq) || findEmpty(cseq.source instanceof _Pile ? cseq.source.surrounding() : this.piles);
+    return this.foundation_destination_for(cseq) || findEmpty(cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles);
   }
 
   autoplay() {
@@ -74,7 +74,7 @@ class Mod3Game extends Game {
 gGameClasses["mod3"] = Mod3Game;
 
 
-abstract class Mod3Foundation extends _Foundation {
+abstract class Mod3Foundation extends Foundation {
   public _base_num: number;
   constructor(base_num: number) {
     super();

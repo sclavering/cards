@@ -28,7 +28,7 @@ class UnionSquareGame extends Game {
 gGameClasses["unionsquare"] = UnionSquareGame;
 
 
-class UnionSquarePile extends _Pile {
+class UnionSquarePile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
@@ -47,7 +47,7 @@ class UnionSquarePile extends _Pile {
 
 
 // Built A,2,3..Q,K,K,Q,J..2,A in suit.  the k->a are offset to the right from the a->k, so that it's clear what card should be played next.
-class UnionSquareFoundation extends _Foundation {
+class UnionSquareFoundation extends Foundation {
   may_take(cseq: CardSequence): boolean {
     return false;
   }

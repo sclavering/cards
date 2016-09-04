@@ -325,7 +325,7 @@ class Game {
   // Commonly-useful implementations of .best_destination_for(cseq)
 
   protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
-    const ps = cseq.source instanceof _Pile ? cseq.source.surrounding() : this.piles;
+    const ps = cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles;
     let maybe: AnyPile = null;
     for(let p of ps) {
       if(!p.may_add_maybe_from_self(cseq)) continue;
@@ -336,7 +336,7 @@ class Game {
   }
 
   protected best_destination_for__nearest_legal_pile(cseq: CardSequence): AnyPile {
-    const ps = cseq.source instanceof _Pile ? cseq.source.surrounding() : this.piles;
+    const ps = cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles;
     for(let p of ps) if(p.may_add_maybe_from_self(cseq)) return p;
     return null;
   }

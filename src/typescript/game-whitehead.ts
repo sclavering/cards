@@ -32,7 +32,7 @@ class WhiteheadGame extends Game {
 gGameClasses["whitehead"] = WhiteheadGame;
 
 
-class WhiteheadPile extends _Pile {
+class WhiteheadPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_same_suit(cseq);
   }

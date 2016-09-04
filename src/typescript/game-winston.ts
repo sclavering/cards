@@ -37,7 +37,7 @@ class WinstonStock extends Stock {
 };
 
 
-class WinstonPile extends _Pile {
+class WinstonPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_alt_colour(cseq);
   }

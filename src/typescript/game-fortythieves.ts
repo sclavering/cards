@@ -26,7 +26,7 @@ class FortyThievesGame extends FreeCellRelatedGame {
 gGameClasses["fortythieves"] = FortyThievesGame;
 
 
-class FortyThievesPile extends _Pile {
+class FortyThievesPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return may_take_descending_same_suit(cseq);
   }

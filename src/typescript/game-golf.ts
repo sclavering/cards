@@ -37,7 +37,7 @@ class Golf2Game extends Golf1Game {
 gGameClasses["golf2"] = Golf2Game;
 
 
-class GolfPile extends _Pile {
+class GolfPile extends Pile {
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }

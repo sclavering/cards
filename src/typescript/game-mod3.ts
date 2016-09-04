@@ -36,7 +36,7 @@ class Mod3Game extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    return this.foundation_destination_for(cseq) || findEmpty(cseq.source.is_pile ? cseq.source.surrounding() : this.piles);
+    return this.foundation_destination_for(cseq) || findEmpty(cseq.source instanceof _Pile ? cseq.source.surrounding() : this.piles);
   }
 
   autoplay() {
@@ -44,7 +44,7 @@ class Mod3Game extends Game {
     return this.autoplay_using_predicate(
       cseq => cseq.first.number <= autoplayable_numbers_by_row[(cseq.first.number - 2) % 3][cseq.first.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
-        && !(cseq.source.is_foundation && (cseq.source as Mod3Foundation).contains_appropriate_cards())
+        && !(cseq.source instanceof Mod3Foundation && cseq.source.contains_appropriate_cards())
     );
   }
 

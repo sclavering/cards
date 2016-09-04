@@ -42,7 +42,7 @@ class WinstonPile extends _Pile {
     return may_take_descending_alt_colour(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    if(cseq.source.is_reserve) return false;
+    if(cseq.source instanceof Reserve) return false;
     return this.hasCards ? is_next_and_alt_colour(cseq.first, this.lastCard) : true;
   }
 };

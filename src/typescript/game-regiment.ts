@@ -30,10 +30,10 @@ class RegimentGame extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    const ps = cseq.source.is_pile ? cseq.source.following() : this.piles, num = ps.length;
+    const ps = cseq.source instanceof _Pile ? cseq.source.following() : this.piles;
     for(let p of ps) if(p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
 
-    if(cseq.source.is_reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
+    if(cseq.source instanceof Reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
     return null;
   }
 
@@ -80,7 +80,7 @@ class RegimentPile extends _Pile {
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
-    if(!cseq.source.is_reserve) return false;
+    if(!(cseq.source instanceof Reserve)) return false;
     const source = cseq.source as RegimentReserve;
 
     const reserve = this.regiment_reserve;

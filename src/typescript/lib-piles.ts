@@ -6,12 +6,6 @@ abstract class AnyPile {
   prev: AnyPile;
   next: AnyPile;
   index: number;
-  is_foundation: boolean;
-  is_cell: boolean;
-  is_reserve: boolean;
-  is_stock: boolean;
-  is_waste: boolean;
-  is_pile: boolean;
   is_drop_target: boolean;
   num_to_deal_face_down: number;
   num_to_deal_face_up: number;
@@ -28,14 +22,6 @@ abstract class AnyPile {
     this.index = -1;
     this._surrounding = null;
     this._following = null;
-
-    // Exactly one of these will be set true by a subclass.
-    this.is_foundation = false;
-    this.is_cell = false;
-    this.is_reserve = false;
-    this.is_stock = false;
-    this.is_waste = false;
-    this.is_pile = false;
 
     this.is_drop_target = true;
 
@@ -159,7 +145,6 @@ abstract class AnyPile {
 abstract class Stock extends AnyPile {
   constructor() {
     super();
-    this.is_stock = true;
     this.is_drop_target = false;
   }
   may_take(cseq: CardSequence): boolean {
@@ -237,7 +222,6 @@ class Waste extends AnyPile {
 
   constructor() {
     super();
-    this.is_waste = true;
     this.is_drop_target = false;
 
     // Things to make draw3 waste piles work
@@ -254,10 +238,6 @@ class Waste extends AnyPile {
 
 
 class Cell extends AnyPile {
-  constructor() {
-    super();
-    this.is_cell = true;
-  }
   may_take(cseq: CardSequence): boolean {
     return true;
   }
@@ -270,7 +250,6 @@ class Cell extends AnyPile {
 class Reserve extends AnyPile {
   constructor() {
     super();
-    this.is_reserve = true;
     this.is_drop_target = false;
   }
   may_take(cseq: CardSequence): boolean {
@@ -297,10 +276,6 @@ function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
 
 
 abstract class _Pile extends AnyPile {
-  constructor() {
-    super();
-    this.is_pile = true;
-  }
 };
 
 class AcesUpPile extends _Pile {
@@ -362,10 +337,6 @@ class WaspPile extends _Pile {
 
 
 abstract class _Foundation extends AnyPile {
-  constructor() {
-    super();
-    this.is_foundation = true;
-  }
 };
 
 class KlondikeFoundation extends _Foundation {

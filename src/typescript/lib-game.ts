@@ -194,13 +194,13 @@ class Game {
   protected deal(cards: Card[]): void {
     let ix = 0;
     for(let p of this.all_piles) ix = this.deal_cards(cards, ix, p, p.num_to_deal_face_down, p.num_to_deal_face_up);
-    if(ix < cards.length) ix = this.deal_cards(cards, ix, this.stock, cards.length, 0);
+    if(ix < cards.length) ix = this.deal_cards(cards, ix, this.stock, 0, cards.length);
   }
 
   // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
   protected deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
-    for(let i = num_face_down; i < cs.length; ++i) cs[i].faceUp = true;
+    for(let i = 0; i < num_face_down; ++i) cs[i].faceUp = false;
     pile.add_cards_from_array(cs, true);
     return ix + cs.length;
   }
@@ -208,7 +208,6 @@ class Game {
   protected deal_cards_with_nulls_for_spaces(cards: Card[]): void {
     cards.forEach((c, ix) => {
       if(!c) return;
-      c.faceUp = true;
       this.piles[ix].add_cards_from_array([c], true);
     });
   }

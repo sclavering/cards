@@ -139,14 +139,10 @@ abstract class Stock extends AnyPile {
     return false;
   }
   deal_card_to(destination: AnyPile): void {
-    const card = this.lastCard;
-    card.faceUp = true;
-    transfer_cards(this, [card], destination);
+    transfer_cards(this, [this.lastCard], destination);
   }
   undeal_card_from(source: AnyPile): void {
-    const card = source.lastCard;
-    card.faceUp = false;
-    transfer_cards(source, [card], this);
+    transfer_cards(source, [source.lastCard], this);
   }
   action_for_click(cseq: CardSequence): Action {
     return this.deal();

@@ -54,8 +54,8 @@ class TriPeaksGame extends BasePyramidGame {
     super();
     this.pile_details = {
       stocks: [1, StockDealToFoundation, 0, 0],
-      piles: [28, BasePyramidPile, 0, 0],
-      foundations: [1, UpDownMod13Foundation, 0, 0],
+      piles: [28, BasePyramidPile, 0, 1],
+      foundations: [1, UpDownMod13Foundation, 0, 1],
     };
     this.hasScoring = true;
   }
@@ -64,13 +64,6 @@ class TriPeaksGame extends BasePyramidGame {
     this.init_pyramid_links([3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26]);
     const ps = this.piles as BasePyramidPile[];
     for(let i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
-  }
-
-  protected deal(cards: Card[]): void {
-    let ix = 0;
-    for(let p of this.piles) ix = this.deal_cards(cards, ix, p, 0, 1);
-    ix = this.deal_cards(cards, ix, this.foundation, 0, 1);
-    ix = this.deal_cards(cards, ix, this.stock, 52, 0);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

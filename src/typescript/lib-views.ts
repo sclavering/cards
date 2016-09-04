@@ -526,6 +526,12 @@ class StockView extends View {
     super();
     this.init_counter();
   }
+  // Stock piles hold their cards face-up (for convenience), and we just draw them face down.
+  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
+    clear_and_resize_canvas(ctx, gCardWidth, gCardHeight);
+    if(draw_background) this.draw_background_into(ctx);
+    if(cards.length) draw_card_by_name(ctx, 0, 0, "");
+  }
   public handle_click_at(x: number, y: number): Action {
     // We must override this to support RefillStock actions when clicking on an empty stock.
     return (this.pile as Stock).deal();

@@ -70,7 +70,7 @@ class Card {
     this.suit = suit;
     this.displayStr = suit + number;
     this.number = number;
-    this.faceUp = false;
+    this.faceUp = true;
   }
 };
 

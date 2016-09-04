@@ -12,79 +12,89 @@ type AutoplayPredicate = (cseq: CardSequence) => boolean;
 // The base-type for all games
 class Game {
   public id: string;
+  public helpId: string;
 
+  // A Layout (or subclass) instance.  The actual instance is shared with other games of the same type.
+  layout: Layout;
+
+  // Subclasses should set this, which describes the piles to create.  It is mapping of:
+  //     pile_kind (string) -> tuple of [
+  //         num_piles_of_kind : int,
+  //         PileClass : class,
+  //         num_to_deal_face_down : int | int[],
+  //         num_to_deal_face_up : int | int[],
+  //     ]
+  // e.g.:
+  //     this.pile_details = {
+  //       stocks: [1, StockDeal3OrRefill, 0, 0],
+  //       wastes: [1, Waste, 0, 0],
+  //       piles: [7, KlondikePile, [0,1,2,3,4,5,6], 1],
+  //       foundations: [4, KlondikeFoundation, 0, 0],
+  //     };
+  // The keys usually refer to an existing AnyPile-array collections in Game, but *can* be custom ones.  The first letter of the key is used to match AnyPile objects to their View in the Layout.
   protected pile_details: {
     [pile_collection_name: string]: [number, PileClassConstructor, number | number[], number | number[]];
   };
+
+  // Once a game is running, this is an array of the all the card objects used by the game.
+  // Subclasses should set this in their constructor.
   all_cards: Card[];
+
+  // Part of the preferred-foundation system feature.  Subclasses may set it to the number of suits to use to opt in.  (It's opt-in because of edge cases like Mod3).
   foundation_cluster_count: number;
+
+  // In most games, a hint where the destination is an empty pile is not worth showing (because it's obvious that the move is possible, and it gets in the way of showing more interesting hints).
   protected show_hints_to_empty_piles: boolean;
-  hasScoring: boolean;
+
+  // Subclasses should set this if desired.
+  protected hasScoring: boolean;
+
+  // Should not be directly set in subclasses.
   score: number;
-  piles: AnyPile[];
-  cells: AnyPile[];
-  foundations: AnyPile[];
-  foundation: AnyPile;
-  reserves: AnyPile[];
-  reserve: AnyPile;
-  stocks: Stock[];
-  stock: Stock;
-  wastes: Waste[];
-  waste: Waste;
-  private _pile_arrays_by_letter: { [key: string]: AnyPile[] };
-  _foundation_clusters: AnyPile[][];
+
+  // Piles in arrays by type, and the first piles of some such types.
+  public piles: AnyPile[];
+  public cells: AnyPile[];
+  public foundations: AnyPile[];
+  public foundation: AnyPile;
+  public reserves: AnyPile[];
+  public reserve: AnyPile;
+  public stocks: Stock[];
+  public stock: Stock;
+  public wastes: Waste[];
+  public waste: Waste;
+
   all_piles: AnyPile[];
   hint_and_autoplay_source_piles: AnyPile[];
-  actionList: Action[];
-  actionPtr: number;
-  canUndo: boolean;
-  canRedo: boolean;
+
+  private _pile_arrays_by_letter: { [key: string]: AnyPile[] };
+  private _foundation_clusters: AnyPile[][];
+
+  // Undo/Redo state
+  protected actionList: Action[];
+  protected actionPtr: number;
+  public canUndo: boolean;
+  public canRedo: boolean;
+
+  // Hint state
   private _hints: Hint[];
   private _next_hint_index: number;
-  helpId: string;
-  layout: Layout;
-  order_cards_dealt: number[];
 
-  // All subclasses must implement this and have it return a Layout instance.  It's called on the "class" itself, not the instance.
+  public order_cards_dealt: number[];
+
+
   static create_layout(): Layout {
     throw new Error("not implemented");
   }
 
   constructor() {
-    // Subclasses should set this, which describes the piles to create.  It is mapping of:
-    //     pile_kind (string) -> tuple of [
-    //         num_piles_of_kind : int,
-    //         PileClass : class,
-    //         num_to_deal_face_down : int | int[],
-    //         num_to_deal_face_up : int | int[],
-    //     ]
-    // e.g.:
-    //     this.pile_details = {
-    //       stocks: [1, StockDeal3OrRefill, 0, 0],
-    //       wastes: [1, Waste, 0, 0],
-    //       piles: [7, KlondikePile, [0,1,2,3,4,5,6], 1],
-    //       foundations: [4, KlondikeFoundation, 0, 0],
-    //     };
-    // The keys usually refer to an existing AnyPile-array collections in Game, but *can* be custom ones.  The first letter of the key is used to match AnyPile objects to their View in the Layout.
     this.pile_details = null;
-
-    // Once a game is running, this is an array of the all the card objects used by the game.
-    // Subclasses should set this in their constructor.
     this.all_cards = null;
-
-    // Part of the preferred-foundation system feature.  Subclasses may set it to the number of suits to use to opt in.  (It's opt-in because of edge cases like Mod3).
     this.foundation_cluster_count = null;
-
-    // In most games, a hint where the destination is an empty pile is not worth showing (because it's obvious that the move is possible, and it gets in the way of showing more interesting hints).
     this.show_hints_to_empty_piles = false;
-
-    // Subclasses should overwrite this if desired.
     this.hasScoring = false;
-
-    // Should not be directly set in subclasses.
     this.score = 0;
 
-    // Piles in arrays by type, and the first piles of some such types.
     this.piles = [];
     this.cells = [];
     this.foundations = [];
@@ -96,19 +106,16 @@ class Game {
     this.wastes = [];
     this.waste = null;
 
-    // Undo/Redo state
     this.actionList = [];
     this.actionPtr = 0;
     this.canUndo = false;
     this.canRedo = false;
 
-    // Hint state
-    this._hints = null; // Array of { hint_source_card: Card, hint_destinations: [Pile] } structs, or null.
+    this._hints = null;
     this._next_hint_index = 0;
 
     this.helpId = null;
 
-    // A Layout (or subclass) instance.  The actual instance is shared with other games of the same type.
     this.layout = null;
   }
 

@@ -326,26 +326,30 @@ class Game {
 
   // Commonly-useful implementations of .best_destination_for(cseq)
 
-  protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
+
+  protected best_destination_for__nearest_legal_using_ranking(cseq: CardSequence, ranking_func: (p: AnyPile) => 0 | 1 | 2): AnyPile {
+    let maybe: [AnyPile, AnyPile] = [null, null];
     const ps = cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles;
-    let maybe: AnyPile = null;
     for(let p of ps) {
       if(!p.may_add_maybe_from_self(cseq)) continue;
-      if(p.cards.length) return p;
-      if(!maybe) maybe = p;
+      let rank = ranking_func(p);
+      if(rank === 2) return p;
+      if(!maybe[rank]) maybe[rank] = p;
     }
-    return maybe;
+    return maybe[1] || maybe[0];
+  }
+
+  protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.hasCards ? 2 : 0);
   }
 
   protected best_destination_for__nearest_legal_pile(cseq: CardSequence): AnyPile {
-    const ps = cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles;
-    for(let p of ps) if(p.may_add_maybe_from_self(cseq)) return p;
-    return null;
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, _ => 2);
   }
 
   protected best_destination_for__nearest_legal_pile_or_cell(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile(cseq);
-    return p || (cseq.is_single ? findEmpty(this.cells) : null);;
+    return p || (cseq.is_single ? findEmpty(this.cells) : null);
   }
 
 

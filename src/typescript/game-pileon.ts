@@ -2,11 +2,8 @@ class _PileOnGame extends Game {
   protected _pileon_depth: number;
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    const card = cseq.first;
-    const ps = cseq.source.surrounding();
-    // The first matters for PileUp, but is redundant in PileOn.
-    return find_pile_by_top_card(ps, top => top.number === card.number && !!top.pile.may_add(cseq))
-        || this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
+    const num = cseq.first.number;
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.hasCards ? (p.lastCard.number === num ? 2 : 1) : 0);
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.

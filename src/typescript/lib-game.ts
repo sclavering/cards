@@ -34,7 +34,6 @@ class Game {
   private _pile_arrays_by_letter: { [key: string]: AnyPile[] };
   _foundation_clusters: AnyPile[][];
   all_piles: AnyPile[];
-  dragDropTargets: AnyPile[];
   hint_and_autoplay_source_piles: AnyPile[];
   actionList: Action[];
   actionPtr: number;
@@ -97,9 +96,6 @@ class Game {
     this.wastes = [];
     this.waste = null;
 
-    // An array of piles on which cards can be dropped.
-    this.dragDropTargets = null;
-
     // Undo/Redo state
     this.actionList = [];
     this.actionPtr = 0;
@@ -150,7 +146,6 @@ class Game {
       }
     }
 
-    this.dragDropTargets = this.all_piles.filter(p => p.is_drop_target);
     this.foundations.forEach((f, ix) => f.index = ix);
     this.waste = this.wastes[0] || null;
     this.foundation = this.foundations[0] || null

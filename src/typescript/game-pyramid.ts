@@ -158,10 +158,6 @@ class PyramidFoundation extends Foundation {
 };
 
 class PyramidWaste extends Waste {
-  constructor() {
-    super();
-    this.is_drop_target = true;
-  }
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const card = cseq.first;
     const c = this.lastCard;

@@ -264,7 +264,7 @@ class Layout {
     if(!cseq) return false;
     const fr = g_floating_pile.bounding_rect();
     // try dropping cards on each possible target
-    for(let target of this._attached_game.dragDropTargets) {
+    for(let target of this._attached_game.all_piles) {
       if(target === cseq.source) continue;
       let tr = target.view.pixel_rect();
       // skip if we don't overlap the target at all

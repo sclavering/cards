@@ -6,7 +6,6 @@ abstract class AnyPile {
   prev: AnyPile;
   next: AnyPile;
   index: number;
-  is_drop_target: boolean;
   num_to_deal_face_down: number;
   num_to_deal_face_up: number;
 
@@ -22,8 +21,6 @@ abstract class AnyPile {
     this.index = -1;
     this._surrounding = null;
     this._following = null;
-
-    this.is_drop_target = true;
 
     // These are set by the game, and used when dealing the cards at the start of the game.
     this.num_to_deal_face_down = 0;
@@ -143,10 +140,6 @@ abstract class AnyPile {
 
 
 abstract class Stock extends AnyPile {
-  constructor() {
-    super();
-    this.is_drop_target = false;
-  }
   may_take(cseq: CardSequence): boolean {
     return false;
   }
@@ -222,8 +215,6 @@ class Waste extends AnyPile {
 
   constructor() {
     super();
-    this.is_drop_target = false;
-
     // Things to make draw3 waste piles work
     this.deal3v = 0; // The number of cards that should have been visible after the last deal.
     this.deal3t = 0; // The number of cards on this pile after the last deal.
@@ -248,10 +239,6 @@ class Cell extends AnyPile {
 
 
 class Reserve extends AnyPile {
-  constructor() {
-    super();
-    this.is_drop_target = false;
-  }
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single && cseq.first.faceUp;
   }

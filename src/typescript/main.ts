@@ -8,6 +8,7 @@ const gGameTypes: { [game_id: string]: GameType } = {};
 
 
 window.onload = function() {
+  Cards.init();
   ui.init();
   document.addEventListener('keypress', keyPressHandler, false);
   g_floating_pile.init();

@@ -104,16 +104,16 @@ class Move implements Action {
   perform(): AnimationDetails {
     const rv = prepare_move_animation(this.cseq, this.destination);
     transfer_cards(this.cseq.source, this.cseq.cards, this.destination, true);
-    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, true);
+    if(this.revealed_card) this.cseq.source.reveal_top_card();
     return rv;
   }
   undo(): void {
-    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, false);
+    if(this.revealed_card) this.cseq.source.unreveal_top_card();
     transfer_cards(this.destination, this.cseq.cards, this.cseq.source);
   }
   redo(): void {
     transfer_cards(this.cseq.source, this.cseq.cards, this.destination);
-    if(this.revealed_card) this.cseq.source.set_card_face_up(this.revealed_card, true);
+    if(this.revealed_card) this.cseq.source.reveal_top_card();
   }
 };
 

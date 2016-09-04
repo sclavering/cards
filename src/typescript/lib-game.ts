@@ -39,6 +39,7 @@ class Game {
   // Once a game is running, this is an array of the all the card objects used by the game.
   // Subclasses should set this in their constructor.
   all_cards: Card[];
+  public cards_as_dealt: Card[];
 
   // Part of the preferred-foundation system feature.  Subclasses may set it to the number of suits to use to opt in.  (It's opt-in because of edge cases like Mod3).
   foundation_cluster_count: number;
@@ -79,8 +80,6 @@ class Game {
   // Hint state
   private _hints: Hint[];
   private _next_hint_index: number;
-
-  public order_cards_dealt: number[];
 
 
   static create_layout(): Layout {
@@ -162,7 +161,7 @@ class Game {
   }
 
   // The actual entry-point to starting a game instance.
-  begin(shared_layout: Layout, optional_order_to_deal?: number[]): void {
+  begin(shared_layout: Layout, optional_cards_to_deal?: Card[]): void {
     this.layout = shared_layout;
 
     this.actionList = [];
@@ -172,18 +171,13 @@ class Game {
     if(!this.all_cards) this.all_cards = make_cards(1);
     this.init();
     this._foundation_clusters = this._get_foundation_clusters(this.foundations);
-    this.all_cards.forEach((c, ix) => { if(c) c.__all_cards_index = ix; });
-    let cs: Card[];
-    // Storing .order_cards_dealt as an array of indexes rather than cards is necessary for "Restart" to work properly (since it works by starting a new game with the same deal-order, and the new game instance has its own separate card objects).
-    if(optional_order_to_deal) {
-      cs = optional_order_to_deal.map(ix => this.all_cards[ix] || null);
-      this.order_cards_dealt = optional_order_to_deal;
+    if(optional_cards_to_deal) {
+      this.cards_as_dealt = optional_cards_to_deal;
     } else {
-      cs = this.all_cards.slice();
-      do { shuffle_in_place(cs) } while(this.is_shuffle_impossible(cs));
-      this.order_cards_dealt = cs.map((c: Card) => c ? c.__all_cards_index : null);
+      this.cards_as_dealt = this.all_cards.slice();
+      do { shuffle_in_place(this.cards_as_dealt) } while(this.is_shuffle_impossible(this.cards_as_dealt));
     }
-    this.deal(cs);
+    this.deal(this.cards_as_dealt);
   }
 
   // For subclasses to optionally implement.  Typically used to add extra properties to piles.
@@ -200,7 +194,7 @@ class Game {
   // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
   protected deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
     const cs = cards.slice(ix, ix + num_face_down + num_face_up);
-    for(let i = 0; i < num_face_down; ++i) cs[i].faceUp = false;
+    for(let i = 0; i < num_face_down; ++i) cs[i] = Cards.face_down_of(cs[i]);
     pile.add_cards_from_array(cs, true);
     return ix + cs.length;
   }
@@ -423,7 +417,7 @@ class GameType {
     this.currentGame.hide();
   }
 
-  newGame(cardsOrder?: number[]): void {
+  newGame(cardsOrder?: Card[]): void {
     if(this.currentGame) {
       if(this.pastGames.length === 2) this.pastGames.shift();
       this.pastGames.push(this.currentGame);
@@ -440,7 +434,7 @@ class GameType {
   }
 
   restart(): void {
-    this.newGame(this.currentGame.order_cards_dealt);
+    this.newGame(this.currentGame.cards_as_dealt);
   }
 
   restorePastGame(): void {

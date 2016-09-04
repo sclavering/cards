@@ -100,8 +100,15 @@ abstract class AnyPile {
     if(!do_not_update_view) this.view.update();
   }
 
-  set_card_face_up(card: Card, val: boolean): void {
-    card.faceUp = val;
+  reveal_top_card(): void {
+    const cs = this.cards = this.cards.slice();
+    cs[cs.length - 1] = Cards.face_up_of(cs[cs.length - 1]);
+    this.view.update();
+  }
+
+  unreveal_top_card(): void {
+    const cs = this.cards = this.cards.slice();
+    cs[cs.length - 1] = Cards.face_down_of(cs[cs.length - 1]);
     this.view.update();
   }
 

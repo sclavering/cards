@@ -51,26 +51,57 @@ function make_cards(repeat: number, suits?: string, numbers?: number[]): Card[] 
   for(let suit of suits)
     for(let i = 0; i < repeat; ++i)
       for(let num of numbers)
-        rv.push(new Card(num, suit as Suit));
+        rv.push(Cards.get(num + suit));
   return rv;
 }
 
+class Cards {
+  private static _cache: { [name: string]: Card };
 
+  static init(): void {
+    this._cache = {};
+    for(let suit of ["S", "H", "D", "C"]) {
+      for(let num = 1; num <= 13; ++num) {
+        let up = this._cache[num + suit] = new Card(num, suit as Suit, true);
+        let down = new Card(num, suit as Suit, false);
+        up._alt_face = down;
+        down._alt_face = up;
+      }
+    }
+  }
+
+  // Names are like "11S"
+  static get(name: string): Card {
+    return this._cache[name];
+  }
+
+  static face_up_of(card: Card) {
+    return card.faceUp ? card : card._alt_face;
+  }
+
+  static face_down_of(card: Card) {
+    return card.faceUp ? card._alt_face : card;
+  }
+};
+
+
+// Instances are treated as immutable.
 class Card {
   colour: Colour;
   suit: Suit;
   displayStr: string;
   number: number;
   faceUp: boolean;
-  __all_cards_index: number; // used by Game
+  // Points to a card of the same number/suit with .faceUp flipped
+  _alt_face: Card;
 
-  constructor(number: number, suit: Suit) {
+  constructor(number: number, suit: Suit, face_up: boolean) {
     const suit_to_colour: LookupBySuit<Colour> = { S: "B", H: "R", D: "R", C: "B" };
     this.colour = suit_to_colour[suit];
     this.suit = suit;
     this.displayStr = suit + number;
     this.number = number;
-    this.faceUp = true;
+    this.faceUp = face_up;
   }
 };
 

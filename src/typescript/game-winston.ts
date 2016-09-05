@@ -26,12 +26,12 @@ class WinstonGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two_for_two_decks(this.foundations));
   }
 };
-gGameClasses["winston"] = WinstonGame;
+g_game_classes["winston"] = WinstonGame;
 
 
 class WinstonStock extends Stock {
   deal(): Action {
-    const pred = (p: AnyPile) => p.cards.length ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
+    const pred = (p: AnyPile) => p.cards.length ? !(p.cards[0].face_up && p.cards[0].number === 13) : true;
     return this.cards.length ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
   }
 };
@@ -43,7 +43,7 @@ class WinstonPile extends Pile {
   }
   may_add(cseq: CardSequence): boolean {
     if(cseq.source instanceof Reserve) return false;
-    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.lastCard) : true;
+    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.last_card) : true;
   }
 };
 

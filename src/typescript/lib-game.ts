@@ -12,7 +12,7 @@ type AutoplayPredicate = (cseq: CardSequence) => boolean;
 // The base-type for all games
 class Game {
   public id: string;
-  public helpId: string;
+  public help_id: string;
 
   // A Layout (or subclass) instance.  The actual instance is shared with other games of the same type.
   layout: Layout;
@@ -48,7 +48,7 @@ class Game {
   protected show_hints_to_empty_piles: boolean;
 
   // Subclasses should set this if desired.
-  protected hasScoring: boolean;
+  protected has_scoring: boolean;
 
   // Should not be directly set in subclasses.
   score: number;
@@ -72,10 +72,10 @@ class Game {
   private _foundation_clusters: AnyPile[][];
 
   // Undo/Redo state
-  protected actionList: Action[];
-  protected actionPtr: number;
-  public canUndo: boolean;
-  public canRedo: boolean;
+  protected action_list: Action[];
+  protected action_index: number;
+  public can_undo: boolean;
+  public can_redo: boolean;
 
   // Hint state
   private _hints: Hint[];
@@ -91,7 +91,7 @@ class Game {
     this.all_cards = null;
     this.foundation_cluster_count = null;
     this.show_hints_to_empty_piles = false;
-    this.hasScoring = false;
+    this.has_scoring = false;
     this.score = 0;
 
     this.piles = [];
@@ -105,15 +105,15 @@ class Game {
     this.wastes = [];
     this.waste = null;
 
-    this.actionList = [];
-    this.actionPtr = 0;
-    this.canUndo = false;
-    this.canRedo = false;
+    this.action_list = [];
+    this.action_index = 0;
+    this.can_undo = false;
+    this.can_redo = false;
 
     this._hints = null;
     this._next_hint_index = 0;
 
-    this.helpId = null;
+    this.help_id = null;
 
     this.layout = null;
   }
@@ -121,8 +121,8 @@ class Game {
   show(): void {
     this.layout.attach_game(this, this._pile_arrays_by_letter);
     this.layout.show();
-    ui.set_score_visibility(this.hasScoring);
-    ui.update_score_and_moves(this.score, this.actionPtr);
+    ui.set_score_visibility(this.has_scoring);
+    ui.update_score_and_moves(this.score, this.action_index);
   }
 
   hide(): void {
@@ -164,9 +164,9 @@ class Game {
   begin(shared_layout: Layout, optional_cards_to_deal?: Card[]): void {
     this.layout = shared_layout;
 
-    this.actionList = [];
+    this.action_list = [];
     this.score = 0;
-    ui.update_score_and_moves(this.score, this.actionPtr);
+    ui.update_score_and_moves(this.score, this.action_index);
     this._create_piles();
     if(!this.all_cards) this.all_cards = make_cards(1);
     this.init();
@@ -216,7 +216,7 @@ class Game {
 
   // === Scoring ==========================================
 
-  protected getScoreFor(action: Action): number {
+  protected score_for(action: Action): number {
     return 0;
   }
 
@@ -224,9 +224,9 @@ class Game {
   // === Move tracking and Undoing ========================
 
   doo(action: Action): AnimationDetails | void {
-    if(this.canRedo) this.actionList = this.actionList.slice(0, this.actionPtr); // clear Redo history
-    this.actionList[this.actionPtr++] = action;
-    action.score = this.getScoreFor(action);
+    if(this.can_redo) this.action_list = this.action_list.slice(0, this.action_index); // clear Redo history
+    this.action_list[this.action_index++] = action;
+    action.score = this.score_for(action);
     const animation_details = action.perform() || null;
     this.score += action.score;
     this._on_do_or_undo();
@@ -234,16 +234,16 @@ class Game {
   }
 
   undo(): void {
-    --this.actionPtr;
-    const action = this.actionList[this.actionPtr];
+    --this.action_index;
+    const action = this.action_list[this.action_index];
     this.score -= action.score;
     action.undo();
     this._on_do_or_undo();
   }
 
   redo(): void {
-    const action = this.actionList[this.actionPtr];
-    ++this.actionPtr;
+    const action = this.action_list[this.action_index];
+    ++this.action_index;
     this.score += action.score;
     if(action.redo) action.redo();
     else action.perform();
@@ -251,10 +251,10 @@ class Game {
   }
 
   private _on_do_or_undo(): void {
-    ui.update_score_and_moves(this.score, this.actionPtr);
+    ui.update_score_and_moves(this.score, this.action_index);
     this._hints = null;
-    this.canUndo = this.actionPtr !== 0;
-    this.canRedo = this.actionPtr !== this.actionList.length;
+    this.can_undo = this.action_index !== 0;
+    this.can_redo = this.action_index !== this.action_list.length;
   }
 
   // Subclasses may override this.
@@ -289,7 +289,7 @@ class Game {
     if(this._foundation_clusters && cseq.first.number === 1)
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.cards.length || f.cards[0].suit === cseq.first.suit))
-          return findEmpty(fs);
+          return find_empty(fs);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) return f;
     return null;
   }
@@ -333,7 +333,7 @@ class Game {
 
   protected best_destination_for__nearest_legal_pile_or_cell(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile(cseq);
-    return p || (cseq.is_single ? findEmpty(this.cells) : null);
+    return p || (cseq.is_single ? find_empty(this.cells) : null);
   }
 
 
@@ -382,75 +382,75 @@ class Game {
 class GameType {
   id: string;
   private game_class: typeof Game;
-  private pastGames: Game[];
-  private futureGames: Game[];
-  public havePastGames: boolean;
-  public haveFutureGames: boolean;
-  private currentGame: Game;
+  private _past_games: Game[];
+  private _future_games: Game[];
+  public have_past_games: boolean;
+  public have_future_games: boolean;
+  private current_game: Game;
   private shared_layout: Layout;
 
   constructor(id: string, game_class: typeof Game) {
     this.id = id;
     this.game_class = game_class;
-    this.pastGames = [];
-    this.futureGames = [];
-    this.havePastGames = false;
-    this.haveFutureGames = false;
-    this.currentGame = null;
+    this._past_games = [];
+    this._future_games = [];
+    this.have_past_games = false;
+    this.have_future_games = false;
+    this.current_game = null;
   }
 
-  switchTo(): void {
-    if(!this.currentGame) this.newGame();
-    else gCurrentGame = this.currentGame;
-    gCurrentGame.show();
+  switch_to(): void {
+    if(!this.current_game) this.new_game();
+    else g_current_game = this.current_game;
+    g_current_game.show();
   }
 
-  switchFrom(): void {
-    this.currentGame.hide();
+  switch_from(): void {
+    this.current_game.hide();
   }
 
-  newGame(cardsOrder?: Card[]): void {
-    if(this.currentGame) {
-      if(this.pastGames.length === 2) this.pastGames.shift();
-      this.pastGames.push(this.currentGame);
-      this.havePastGames = true;
+  new_game(preshuffled_cards?: Card[]): void {
+    if(this.current_game) {
+      if(this._past_games.length === 2) this._past_games.shift();
+      this._past_games.push(this.current_game);
+      this.have_past_games = true;
     }
 
     if(!this.shared_layout) this.shared_layout = this.game_class.create_layout();
-    const game = gCurrentGame = this.currentGame = new this.game_class();
+    const game = g_current_game = this.current_game = new this.game_class();
     game.id = this.id;
-    game.begin(this.shared_layout, cardsOrder || null);
+    game.begin(this.shared_layout, preshuffled_cards || null);
     game.show();
     const act = game.autoplay();
     if(act) doo(act);
   }
 
   restart(): void {
-    this.newGame(this.currentGame.cards_as_dealt);
+    this.new_game(this.current_game.cards_as_dealt);
   }
 
-  restorePastGame(): void {
-    if(!this.havePastGames) return;
-    if(this.futureGames.length === 2) this.futureGames.shift();
-    this.futureGames.push(this.currentGame);
-    this.haveFutureGames = true;
-    gCurrentGame = this.currentGame = this.pastGames.pop();
-    this.havePastGames = this.pastGames.length!=0;
-    gCurrentGame.show();
+  restore_past_game(): void {
+    if(!this.have_past_games) return;
+    if(this._future_games.length === 2) this._future_games.shift();
+    this._future_games.push(this.current_game);
+    this.have_future_games = true;
+    g_current_game = this.current_game = this._past_games.pop();
+    this.have_past_games = this._past_games.length!=0;
+    g_current_game.show();
   }
 
-  restoreFutureGame(): void {
-    if(!this.haveFutureGames) return;
-    if(this.pastGames.length === 2) this.pastGames.shift();
-    this.pastGames.push(this.currentGame);
-    this.havePastGames = true;
-    gCurrentGame = this.currentGame = this.futureGames.pop();
-    this.haveFutureGames = this.futureGames.length!=0;
-    gCurrentGame.show();
+  restore_future_game(): void {
+    if(!this.have_future_games) return;
+    if(this._past_games.length === 2) this._past_games.shift();
+    this._past_games.push(this.current_game);
+    this.have_past_games = true;
+    g_current_game = this.current_game = this._future_games.pop();
+    this.have_future_games = this._future_games.length!=0;
+    g_current_game.show();
   }
 
-  clearFutureGames(): void {
-    this.futureGames = [];
-    this.haveFutureGames = false;
+  clear_future_games(): void {
+    this._future_games = [];
+    this.have_future_games = false;
   }
 };

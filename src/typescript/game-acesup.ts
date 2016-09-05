@@ -21,7 +21,7 @@ class AcesUpGame extends Game {
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const f = this.foundation;
     if(f.may_add(cseq)) return f;
-    return findEmpty(cseq.source.following());
+    return find_empty(cseq.source.following());
   }
 
   // no autoplay for this game
@@ -32,7 +32,7 @@ class AcesUpGame extends Game {
     return true;
   }
 };
-gGameClasses["acesup"] = AcesUpGame;
+g_game_classes["acesup"] = AcesUpGame;
 
 
 class AcesUpFoundation extends Foundation {
@@ -43,7 +43,7 @@ class AcesUpFoundation extends Foundation {
     const card = cseq.first;
     const compare = (c: Card, d: Card) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
     if(compare(card, cseq.source.secondToLastCard)) return true;
-    for(let p of cseq.source.following()) if(compare(card, p.lastCard)) return true;
+    for(let p of cseq.source.following()) if(compare(card, p.last_card)) return true;
     return false;
   }
 };

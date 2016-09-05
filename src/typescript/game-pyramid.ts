@@ -3,10 +3,10 @@ class BasePyramidGame extends Game {
     const ps = this.piles as BasePyramidPile[];
     left_child_indexes.forEach((lk, i) => {
       const p = ps[i], l = ps[lk], r = ps[lk + 1];
-      p.leftChild = l;
-      l.rightParent = p;
-      p.rightChild = r;
-      r.leftParent = p;
+      p.left_child = l;
+      l.right_parent = p;
+      p.right_child = r;
+      r.left_parent = p;
     });
   }
 }
@@ -42,7 +42,7 @@ class PyramidGame extends BasePyramidGame {
     return !this.piles[0].cards.length;
   }
 };
-gGameClasses["pyramid"] = PyramidGame;
+g_game_classes["pyramid"] = PyramidGame;
 
 
 class TriPeaksGame extends BasePyramidGame {
@@ -57,13 +57,13 @@ class TriPeaksGame extends BasePyramidGame {
       piles: [28, BasePyramidPile, 0, 1],
       foundations: [1, UpDownMod13Foundation, 0, 1],
     };
-    this.hasScoring = true;
+    this.has_scoring = true;
   }
 
   protected init() {
     this.init_pyramid_links([3,5,7,9,10,12,13,15,16,18,19,20,21,22,23,24,25,26]);
     const ps = this.piles as BasePyramidPile[];
-    for(let i = 0; i !== 28; ++i) ps[i].isPeak = i < 3;
+    for(let i = 0; i !== 28; ++i) ps[i].is_peak = i < 3;
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
@@ -76,20 +76,20 @@ class TriPeaksGame extends BasePyramidGame {
     return true;
   }
 
-  protected getScoreFor(action: Action): number {
+  protected score_for(action: Action): number {
     if(action instanceof DealToPile) {
-      (action as Action).streakLength = 0;
+      (action as Action).streak_length = 0;
       return -5;
     }
 
-    const acts = this.actionList, ptr = this.actionPtr;
+    const acts = this.action_list, ptr = this.action_index;
     const prev = ptr > 1 ? acts[ptr - 2] : null;
 
     // it's a Move
-    let score = action.streakLength = prev ? prev.streakLength + 1 : 1;
+    let score = action.streak_length = prev ? prev.streak_length + 1 : 1;
 
     // Bonuses for removing a peak card
-    if(((action as Move).cseq.source as BasePyramidPile).isPeak) {
+    if(((action as Move).cseq.source as BasePyramidPile).is_peak) {
       const ps = this.piles;
       const num_on_peaks = ps[0].cards.length + ps[1].cards.length + ps[2].cards.length;
       score += num_on_peaks === 1 ? 30 : 15;
@@ -98,25 +98,25 @@ class TriPeaksGame extends BasePyramidGame {
     return score;
   }
 };
-gGameClasses["tripeaks"] = TriPeaksGame;
+g_game_classes["tripeaks"] = TriPeaksGame;
 
 
 class BasePyramidPile extends Pile {
-  public isPeak: boolean;
-  public leftParent: BasePyramidPile;
-  public rightParent: BasePyramidPile;
-  public leftChild: BasePyramidPile;
-  public rightChild: BasePyramidPile;
+  public is_peak: boolean;
+  public left_parent: BasePyramidPile;
+  public right_parent: BasePyramidPile;
+  public left_child: BasePyramidPile;
+  public right_child: BasePyramidPile;
   constructor() {
     super();
     // set in games' init()s
-    this.leftParent = null;
-    this.rightParent = null;
-    this.leftChild = null;
-    this.rightChild = null;
+    this.left_parent = null;
+    this.right_parent = null;
+    this.left_child = null;
+    this.right_child = null;
   }
   may_take(cseq: CardSequence): boolean {
-    const lc = this.leftChild, rc = this.rightChild;
+    const lc = this.left_child, rc = this.right_child;
     return !lc || (!lc.cards.length && !rc.cards.length);
   }
   may_add(cseq: CardSequence): boolean {
@@ -131,9 +131,9 @@ class PyramidPile extends BasePyramidPile {
   }
   private _can_remove_pair(cseq: CardSequence, our_card: CardSequence): boolean {
     if(cseq.first.number + our_card.first.number !== 13) return false;
-    if(!this.leftChild) return true; // Cards on the bottom row is always free.
-    return (!this.leftChild.cards.length || this.leftChild === cseq.source)
-        && (!this.rightChild.cards.length || this.rightChild === cseq.source);
+    if(!this.left_child) return true; // Cards on the bottom row is always free.
+    return (!this.left_child.cards.length || this.left_child === cseq.source)
+        && (!this.right_child.cards.length || this.right_child === cseq.source);
   }
 };
 

@@ -11,7 +11,7 @@ class CanfieldGame extends Game {
 
   constructor() {
     super();
-    this.helpId = "canfield";
+    this.help_id = "canfield";
     // Note: subclasses modify this.
     this.pile_details = {
       stocks: [1, StockDealToWasteOrRefill, 0, 0],
@@ -45,13 +45,13 @@ class CanfieldGame extends Game {
     // Remap numbers so that we can just use less-than on them.
     const _effective_num = (num: number) => num >= base_num ? num : num + 13;
     const max_nums: LookupBySuit<number> = { S: base_num, H: base_num, D: base_num, C: base_num };
-    for(let f of this.foundations) if(f.cards.length) max_nums[f.firstCard.suit] = _effective_num(f.lastCard.number);
+    for(let f of this.foundations) if(f.cards.length) max_nums[f.first_card.suit] = _effective_num(f.last_card.number);
     // As in Klondike, if all the black "threes" are up, you can autoplay red "fours", and you can always autoplay "twos".  It's just that the "aces" is instead base_num, etc.
     const autoplayable: LookupByColour<number> = { R: Math.min(max_nums.S, max_nums.C) + 1, B: Math.min(max_nums.H, max_nums.D) + 1 };
     return this.autoplay_using_predicate(cseq => _effective_num(cseq.first.number) <= autoplayable[cseq.first.colour]);
   }
 };
-gGameClasses["canfield"] = CanfieldGame;
+g_game_classes["canfield"] = CanfieldGame;
 
 
 class CanfieldDrawThreeGame extends CanfieldGame {
@@ -65,7 +65,7 @@ class CanfieldDrawThreeGame extends CanfieldGame {
     this.pile_details["stocks"][1] = StockDealThreeOrRefill;
   }
 };
-gGameClasses["canfield3"] = CanfieldDrawThreeGame;
+g_game_classes["canfield3"] = CanfieldDrawThreeGame;
 
 
 class DemonGame extends CanfieldGame {
@@ -79,15 +79,15 @@ class DemonGame extends CanfieldGame {
     this._reserveFaceUp = 13;
   }
 };
-gGameClasses["demon"] = DemonGame;
+g_game_classes["demon"] = DemonGame;
 
 
 class CanfieldPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp;
+    return cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.cards.length || is_next_and_alt_colour_mod13(cseq.first, this.lastCard);
+    return !this.cards.length || is_next_and_alt_colour_mod13(cseq.first, this.last_card);
   }
 };
 
@@ -100,6 +100,6 @@ class CanfieldFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     if(!cseq.is_single) return false;
-    return this.cards.length ? is_next_in_suit_mod13(this.lastCard, cseq.first) : cseq.first.number === this.canfield_foundation_base_num;
+    return this.cards.length ? is_next_in_suit_mod13(this.last_card, cseq.first) : cseq.first.number === this.canfield_foundation_base_num;
   }
 };

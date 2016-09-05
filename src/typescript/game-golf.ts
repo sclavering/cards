@@ -5,7 +5,7 @@ class Golf1Game extends Game {
 
   constructor() {
     super();
-    this.helpId = "golf";
+    this.help_id = "golf";
     // Note: Golf2Game modifies this.
     this.pile_details = {
       stocks: [1, StockDealToFoundation, 0, 0],
@@ -24,7 +24,7 @@ class Golf1Game extends Game {
     return true;
   }
 };
-gGameClasses["golf1"] = Golf1Game;
+g_game_classes["golf1"] = Golf1Game;
 
 
 class Golf2Game extends Golf1Game {
@@ -34,12 +34,12 @@ class Golf2Game extends Golf1Game {
     this.pile_details["piles"][3] = 9; // 8 cards per pile
   }
 };
-gGameClasses["golf2"] = Golf2Game;
+g_game_classes["golf2"] = Golf2Game;
 
 
 class GolfPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.faceUp;
+    return cseq.is_single && cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
     return false;

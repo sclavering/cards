@@ -23,7 +23,7 @@ function _freecell_evil_get_card_absolute_coords(pile: AnyPile, num_in_pile: num
   // xxx Making this work for all possible View subclasses (rather than those actually used in relevant games) would require more work, and this will do for now.
   const view = pile.view;
   let y_offset = 0;
-  if(view instanceof _FlexFanView) y_offset = view.calculate_new_offset(gVFanOffset, view.canvas_height - gCardHeight, num_in_pile);
+  if(view instanceof _FlexFanView) y_offset = view.calculate_new_offset(g_v_fan_offset, view.canvas_height - g_card_height, num_in_pile);
   const r = view.pixel_rect();
   return [r.left, r.top + y_offset * card_index];
 }

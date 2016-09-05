@@ -29,7 +29,7 @@ class PenguinGame extends Game {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses["penguin"] = PenguinGame;
+g_game_classes["penguin"] = PenguinGame;
 
 
 class PenguinPile extends Pile {
@@ -37,6 +37,6 @@ class PenguinPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : cseq.first.number === 13;
   }
 };

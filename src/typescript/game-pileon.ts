@@ -3,7 +3,7 @@ class _PileOnGame extends Game {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const num = cseq.first.number;
-    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? (p.lastCard.number === num ? 2 : 1) : 0);
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? (p.last_card.number === num ? 2 : 1) : 0);
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.
@@ -28,7 +28,7 @@ class PileOnGame extends _PileOnGame {
     this._pileon_depth = 4;
   }
 };
-gGameClasses["pileon"] = PileOnGame;
+g_game_classes["pileon"] = PileOnGame;
 
 
 class DoublePileOnGame extends _PileOnGame {
@@ -44,7 +44,7 @@ class DoublePileOnGame extends _PileOnGame {
     this._pileon_depth = 8;
   }
 };
-gGameClasses["doublepileon"] = DoublePileOnGame;
+g_game_classes["doublepileon"] = DoublePileOnGame;
 
 
 class PileUpGame extends _PileOnGame {
@@ -59,7 +59,7 @@ class PileUpGame extends _PileOnGame {
     this._pileon_depth = 4;
   }
 };
-gGameClasses["pileup"] = PileUpGame;
+g_game_classes["pileup"] = PileUpGame;
 
 
 class DoublePileUpGame extends _PileOnGame {
@@ -75,7 +75,7 @@ class DoublePileUpGame extends _PileOnGame {
     this._pileon_depth = 8;
   }
 };
-gGameClasses["doublepileup"] = DoublePileUpGame;
+g_game_classes["doublepileup"] = DoublePileUpGame;
 
 
 class _PileOnPile extends Pile {
@@ -93,7 +93,7 @@ class _PileOnPile extends Pile {
   // No more than 4 cards may ever be in any single pile.
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    const last = this.lastCard;
+    const last = this.last_card;
     if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
     return this.cards.length + cseq.count <= this._depth;
   }

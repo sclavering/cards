@@ -16,20 +16,20 @@ class WhiteheadGame extends Game {
   protected best_destination_for(cseq: CardSequence): AnyPile {
     return find_pile_by_top_card(this.piles, top => is_next_in_suit(cseq.first, top))
         || find_pile_by_top_card(this.piles, top => is_next_and_same_colour(cseq.first, top))
-        || findEmpty(this.piles);
+        || find_empty(this.piles);
   }
 
   autoplay() {
     const nums: LookupBySuit<number> = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
     const suitmap: LookupBySuit<Suit> = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
     for(let f of this.foundations) {
-      let c = f.lastCard;
+      let c = f.last_card;
       if(c) nums[suitmap[c.suit]] = c.number + 1;
     }
     return this.autoplay_using_predicate(cseq => cseq.first.number <= nums[cseq.first.suit]);
   }
 };
-gGameClasses["whitehead"] = WhiteheadGame;
+g_game_classes["whitehead"] = WhiteheadGame;
 
 
 class WhiteheadPile extends Pile {
@@ -37,7 +37,7 @@ class WhiteheadPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    const last = this.lastCard;
+    const last = this.last_card;
     return last ? is_next_and_same_colour(cseq.first, last) : true;
   }
 };

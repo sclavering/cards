@@ -6,9 +6,9 @@ class FanLayout extends Layout {
   }
   // No other layout has a grid of flexible views
   update_flexible_views_sizes(views: View[], width: number, height: number): void {
-    const kSpaceBetweenPiles = 4 * gSpacerSize;
+    const space_between_piles = 4 * g_spacer_size;
     // 5 units per each of the columns, plus 2 to the left of everything, and 3 to the right.
-    const unitwidth = (width - kSpaceBetweenPiles) / (5 * this._num_grid_columns + 2 + 2);
+    const unitwidth = (width - space_between_piles) / (5 * this._num_grid_columns + 2 + 2);
     // div.thinspacer in the previous <td>
     (views[0]._canvas.parentNode.previousSibling.firstChild as HTMLElement).style.width = (2 * unitwidth) + "px";
     for(let v of views) v.canvas_width = unitwidth * 5;
@@ -49,7 +49,7 @@ class FanGame extends Game {
     return this.autoplay_using_predicate(_ => true);
   }
 };
-gGameClasses["fan"] = FanGame;
+g_game_classes["fan"] = FanGame;
 
 
 class DoubleFanGame extends Game {
@@ -75,4 +75,4 @@ class DoubleFanGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
   }
 };
-gGameClasses["doublefan"] = DoubleFanGame;
+g_game_classes["doublefan"] = DoubleFanGame;

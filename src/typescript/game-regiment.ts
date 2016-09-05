@@ -52,7 +52,7 @@ class RegimentGame extends Game {
     return this.autoplay_using_predicate(cseq => autoplayable_suits[cseq.first.suit]);
   }
 };
-gGameClasses["regiment"] = RegimentGame;
+g_game_classes["regiment"] = RegimentGame;
 
 
 class RegimentReserve extends Reserve {
@@ -70,13 +70,13 @@ class RegimentPile extends Pile {
   }
 
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.faceUp;
+    return cseq.is_single && cseq.first.face_up;
   }
 
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     // piles are built up or down (or both) within suit
-    const l = this.lastCard;
+    const l = this.last_card;
     if(l) return card.suit === l.suit && (l.number === card.number + 1 || l.number === card.number - 1);
 
     // empty piles must be filled from the closest reserve pile
@@ -88,14 +88,14 @@ class RegimentPile extends Pile {
 
     if(reserve.cards.length) return false;
 
-    var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.cards.length && prev !== source) prev = prev.prev, prevDist++;
-    var next = reserve.next, nextDist = 1;
-    while(next && !next.cards.length && next !== source) next = next.next, nextDist++;
+    var prev = reserve.prev, prev_dist = 1;
+    while(prev && !prev.cards.length && prev !== source) prev = prev.prev, prev_dist++;
+    var next = reserve.next, next_dist = 1;
+    while(next && !next.cards.length && next !== source) next = next.next, next_dist++;
 
     // if trying to move from a reserve to the right
-    if(source.regiment_column > this.regiment_column) return next === source && (!prev || prevDist >= nextDist);
-    return prev === source && (!next || nextDist >= prevDist);
+    if(source.regiment_column > this.regiment_column) return next === source && (!prev || prev_dist >= next_dist);
+    return prev === source && (!next || next_dist >= prev_dist);
   }
 };
 
@@ -106,7 +106,7 @@ class RegimentAceFoundation extends Foundation {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     if(!this.cards.length) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
-    return is_next_in_suit(this.lastCard, card);
+    return is_next_in_suit(this.last_card, card);
   }
 };
 
@@ -117,6 +117,6 @@ class RegimentKingFoundation extends Foundation {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     if(!this.cards.length) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
-    return is_next_in_suit(card, this.lastCard);
+    return is_next_in_suit(card, this.last_card);
   }
 };

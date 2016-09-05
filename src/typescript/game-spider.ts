@@ -5,7 +5,7 @@ class _SpiderRelatedGame extends Game {
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
-    return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || findEmpty(ps);
+    return find_pile_by_top_card(ps, top => is_next_in_suit(card, top)) || find_pile_by_top_card(ps, top => is_next(card, top)) || find_empty(ps);
   }
 
   autoplay() {
@@ -29,7 +29,7 @@ class _SpiderLayoutGame extends _SpiderRelatedGame {
 class _StandardSpider extends _SpiderLayoutGame {
   constructor() {
     super();
-    this.helpId = "spider";
+    this.help_id = "spider";
     this.pile_details = {
       stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
       piles: [10, SpiderPile, [5,5,5,5,4,4,4,4,4,4], 1],
@@ -44,7 +44,7 @@ class Spider1Game extends _StandardSpider {
     this.all_cards = make_cards(8, "S");
   }
 };
-gGameClasses["spider1"] = Spider1Game;
+g_game_classes["spider1"] = Spider1Game;
 
 class Spider2Game extends _StandardSpider {
   constructor() {
@@ -52,7 +52,7 @@ class Spider2Game extends _StandardSpider {
     this.all_cards = make_cards(4, "SH");
   }
 };
-gGameClasses["spider2"] = Spider2Game;
+g_game_classes["spider2"] = Spider2Game;
 
 class Spider4Game extends _StandardSpider {
   constructor() {
@@ -60,12 +60,12 @@ class Spider4Game extends _StandardSpider {
     this.all_cards = make_cards(2);
   }
 };
-gGameClasses["spider4"] = Spider4Game;
+g_game_classes["spider4"] = Spider4Game;
 
 class BlackWidowGame extends _SpiderLayoutGame {
   constructor() {
     super();
-    this.helpId = null;
+    this.help_id = null;
     this.all_cards = make_cards(2);
     this.pile_details = {
       stocks: [1, StockDealToPilesIfNoneAreEmpty, 0, 0],
@@ -74,7 +74,7 @@ class BlackWidowGame extends _SpiderLayoutGame {
     };
   }
 };
-gGameClasses["blackwidow"] = BlackWidowGame;
+g_game_classes["blackwidow"] = BlackWidowGame;
 
 class DivorceGame extends _SpiderLayoutGame {
   constructor() {
@@ -91,10 +91,10 @@ class DivorceGame extends _SpiderLayoutGame {
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const card = cseq.first;
     const ps = cseq.source.surrounding();
-    return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || findEmpty(ps);
+    return find_pile_by_top_card(ps, top => is_next_in_suit_mod13(card, top)) || find_pile_by_top_card(ps, top => is_next_mod13(card, top)) || find_empty(ps);
   }
 };
-gGameClasses["divorce"] = DivorceGame;
+g_game_classes["divorce"] = DivorceGame;
 
 
 
@@ -114,7 +114,7 @@ class WaspGame extends _SpiderRelatedGame {
     return this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
   }
 };
-gGameClasses["wasp"] = WaspGame;
+g_game_classes["wasp"] = WaspGame;
 
 
 
@@ -124,14 +124,14 @@ class SimonGame extends _SpiderRelatedGame {
   }
   constructor() {
     super();
-    this.helpId = "simon";
+    this.help_id = "simon";
     this.pile_details = {
       piles: [10, SpiderPile, 0, [8,8,8,7,6,5,4,3,2,1]],
       foundations: [1, SpiderFoundation, 0, 0],
     };
   }
 };
-gGameClasses["simon4"] = SimonGame;
+g_game_classes["simon4"] = SimonGame;
 
 class SimplerSimonGame extends SimonGame {
   constructor() {
@@ -142,7 +142,7 @@ class SimplerSimonGame extends SimonGame {
     };
   }
 };
-gGameClasses["simplersimon"] = SimplerSimonGame;
+g_game_classes["simplersimon"] = SimplerSimonGame;
 
 class Simon1Game extends SimonGame {
   constructor() {
@@ -150,7 +150,7 @@ class Simon1Game extends SimonGame {
     this.all_cards = make_cards(4, "S");
   }
 };
-gGameClasses["simon1"] = Simon1Game;
+g_game_classes["simon1"] = Simon1Game;
 
 class Simon2Game extends SimonGame {
   constructor() {
@@ -158,7 +158,7 @@ class Simon2Game extends SimonGame {
     this.all_cards = make_cards(2, "SH");
   }
 };
-gGameClasses["simon2"] = Simon2Game;
+g_game_classes["simon2"] = Simon2Game;
 
 class DoubleSimonGame extends SimonGame {
   static create_layout() {
@@ -167,7 +167,7 @@ class DoubleSimonGame extends SimonGame {
 
   constructor() {
     super();
-    this.helpId = "simon";
+    this.help_id = "simon";
     this.all_cards = make_cards(2);
     this.pile_details = {
       piles: [12, SpiderPile, 0, [16, 16, 14, 14, 12, 10, 8, 6, 4, 2, 1, 1]],
@@ -175,7 +175,7 @@ class DoubleSimonGame extends SimonGame {
     };
   }
 };
-gGameClasses["doublesimon"] = DoubleSimonGame;
+g_game_classes["doublesimon"] = DoubleSimonGame;
 
 
 
@@ -184,24 +184,24 @@ class SpiderPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.cards.length || this.lastCard.number === cseq.first.number + 1;
+    return !this.cards.length || this.last_card.number === cseq.first.number + 1;
   }
 };
 
 
 class DivorcePile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_mod13_same_suit);
+    return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_mod13_same_suit);
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.cards.length || is_next_mod13(cseq.first, this.lastCard);
+    return !this.cards.length || is_next_mod13(cseq.first, this.last_card);
   }
 };
 
 
 class BlackWidowPile extends SpiderPile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down);
+    return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down);
   }
   hint_sources(): CardSequence[] {
     const sources: CardSequence[] = [];

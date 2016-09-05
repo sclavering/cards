@@ -53,7 +53,7 @@ function prepare_move_animation(cseq: CardSequence, destination: AnyPile): Anima
   g_floating_pile.start_animation_or_drag(cseq);
   const final_offset = destination.view.get_next_card_xy();
 
-  // final coords (relative to ui.gameStack)
+  // final coords (relative to ui.game_stack)
   const r = destination.view.pixel_rect();
   const x1 = r.left + final_offset.x, y1 = r.top + final_offset.y;
   const r0 = g_floating_pile.bounding_rect();

@@ -33,10 +33,10 @@ abstract class AnyPile {
     return this.cards.length;
   }
 
-  get firstCard(): Card {
+  get first_card(): Card {
     return this.cards.length ? this.cards[0] : null;
   }
-  get lastCard(): Card {
+  get last_card(): Card {
     const cs = this.cards, l = cs.length;
     return l ? cs[l - 1] : null;
   }
@@ -203,7 +203,7 @@ class Cell extends AnyPile {
 
 class Reserve extends AnyPile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.faceUp;
+    return cseq.is_single && cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
     return false;
@@ -212,15 +212,15 @@ class Reserve extends AnyPile {
 
 
 function may_take_descending_alt_colour(cseq: CardSequence): boolean {
-  return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_alt_colour);
+  return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_alt_colour);
 }
 
 function may_take_descending_same_suit(cseq: CardSequence): boolean {
-  return cseq.first.faceUp && check_consecutive_cards(cseq, is_next_down_same_suit);
+  return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_same_suit);
 }
 
 function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
-  const last = self.lastCard;
+  const last = self.last_card;
   return !last || (last.colour !== card.colour && last.number === card.number + 1);
 }
 
@@ -230,7 +230,7 @@ abstract class Pile extends AnyPile {
 
 class AcesUpPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.faceUp;
+    return cseq.is_single && cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
     return cseq.is_single && !this.cards.length;
@@ -239,10 +239,10 @@ class AcesUpPile extends Pile {
 
 class FanPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.faceUp;
+    return cseq.is_single && cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : cseq.first.number === 13;
   }
 };
 
@@ -265,22 +265,22 @@ class GypsyPile extends Pile {
 
 class KlondikePile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp;
+    return cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.last_card) : cseq.first.number === 13;
   }
 };
 
 class WaspPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp;
+    return cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.cards.length || is_next_in_suit(cseq.first, this.lastCard);
+    return !this.cards.length || is_next_in_suit(cseq.first, this.last_card);
   }
   hint_sources(): CardSequence[] {
-    return this.all_cseqs().filter(cseq => cseq.first.faceUp);
+    return this.all_cseqs().filter(cseq => cseq.first.face_up);
   }
 };
 
@@ -293,7 +293,7 @@ class KlondikeFoundation extends Foundation {
     return cseq.is_single;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.is_single && (this.cards.length ? is_next_in_suit(this.lastCard, cseq.first) : cseq.first.number === 1);
+    return cseq.is_single && (this.cards.length ? is_next_in_suit(this.last_card, cseq.first) : cseq.first.number === 1);
   }
 };
 
@@ -302,6 +302,6 @@ class UpDownMod13Foundation extends Foundation {
     return false;
   }
   may_add(cseq: CardSequence): boolean {
-    return is_up_or_down_mod13(cseq.first, this.lastCard);
+    return is_up_or_down_mod13(cseq.first, this.last_card);
   }
 };

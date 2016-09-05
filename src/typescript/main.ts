@@ -1,25 +1,25 @@
-var gCurrentGame: Game = null;
-var gCurrentGameType: GameType = null;
+var g_current_game: Game = null;
+var g_current_game_type: GameType = null;
 
 // This is filled in by game-*.js
-const gGameClasses: { [game_id: string]: typeof Game } = {};
+const g_game_classes: { [game_id: string]: typeof Game } = {};
 
-const gGameTypes: { [game_id: string]: GameType } = {};
+const g_game_types: { [game_id: string]: GameType } = {};
 
 
 window.onload = function() {
   Cards.init();
   ui.init();
-  document.addEventListener('keypress', keyPressHandler, false);
+  document.addEventListener('keypress', key_press_handler, false);
   g_floating_pile.init();
-  for(let k in gGameClasses) gGameTypes[k] = new GameType(k, gGameClasses[k]);
+  for(let k in g_game_classes) g_game_types[k] = new GameType(k, g_game_classes[k]);
   // without the setTimeout the game often ends up with one pile incorrectly laid out
   // (typically a fan down that ends up fanning upwards)
-  setTimeout(playGame, 0, "klondike1");
+  setTimeout(play_game, 0, "klondike1");
 };
 
 
-function keyPressHandler(ev: KeyboardEvent): void {
+function key_press_handler(ev: KeyboardEvent): void {
   if(ev.ctrlKey || ev.metaKey) return; // don't interfere with browser shortcuts
   switch(ev.charCode) {
     case 104: // h
@@ -27,10 +27,10 @@ function keyPressHandler(ev: KeyboardEvent): void {
       hint();
       break;
     case 110: // n
-      newGame();
+      new_game();
       break;
     case 114: // r
-      restartGame();
+      restart_game();
       break;
     case 117: // u
     case 122: // z
@@ -46,13 +46,13 @@ function keyPressHandler(ev: KeyboardEvent): void {
 }
 
 
-function playGame(game_id: string): void {
-  if(gCurrentGameType) gCurrentGameType.switchFrom();
+function play_game(game_id: string): void {
+  if(g_current_game_type) g_current_game_type.switch_from();
 
   ui.show_game_name(document.getElementById("choosegame-" + game_id).textContent);
 
-  gCurrentGameType = gGameTypes[game_id];
-  gCurrentGameType.switchTo();
+  g_current_game_type = g_game_types[game_id];
+  g_current_game_type.switch_to();
 
   ui.update_undo_redo();
   // Mostly this will be triggered by something else, but when the app is first loading, it's not.
@@ -60,42 +60,42 @@ function playGame(game_id: string): void {
 }
 
 
-function onGameSelected(ev: Event): boolean {
-  hideGameChooser();
+function on_game_selected(ev: Event): boolean {
+  hide_game_chooser();
   const m = (ev.target as Element).id.match(/^choosegame-(.*)$/);
-  if(m) playGame(m[1]);
+  if(m) play_game(m[1]);
   return false;
 }
 
 
-function showGameChooser(ev: Event): void {
+function show_game_chooser(ev: Event): void {
   interrupt();
-  setVisibility(ui.gameChooser, true);
-  window.onclick = hideGameChooser;
+  set_visibility(ui.game_chooser, true);
+  window.onclick = hide_game_chooser;
   // So the event doesn't trigger the .onclick handler we just installed
   ev.stopPropagation();
 }
 
 
-function hideGameChooser(): void {
-  setVisibility(ui.gameChooser, false);
+function hide_game_chooser(): void {
+  set_visibility(ui.game_chooser, false);
   window.onclick = null;
 }
 
 
-function newGame(): void {
+function new_game(): void {
   interrupt();
-  gCurrentGameType.newGame();
+  g_current_game_type.new_game();
   ui.update_undo_redo();
 }
 
 
-function restartGame(): void {
+function restart_game(): void {
   interrupt();
   // don't restart if nothing has been done yet
   // xxx should disable the Restart button instead really
-  if(!gCurrentGame.canUndo) return;
-  gCurrentGameType.restart();
+  if(!g_current_game.can_undo) return;
+  g_current_game_type.restart();
   ui.update_undo_redo();
 }
 
@@ -105,8 +105,8 @@ function doo(action: Action, was_dragging?: boolean): void {
   if(!action) return;
   interrupt(was_dragging);
   ui.update_undo_redo();
-  if(gCurrentGameType.haveFutureGames) gCurrentGameType.clearFutureGames();
-  const animation_details = gCurrentGame.doo(action);
+  if(g_current_game_type.have_future_games) g_current_game_type.clear_future_games();
+  const animation_details = g_current_game.doo(action);
   if(animation_details) g_animations.run(animation_details, done);
   else done();
   // Typically g_floating_pile would get hidden after an animation completes.  But for e.g. Pyramid's drag-to-form-pairs ui, that doesn't happen (because there's no animation), so we must clean it up here instead.
@@ -115,11 +115,11 @@ function doo(action: Action, was_dragging?: boolean): void {
 
 
 function done(): void {
-  const act = gCurrentGame.autoplay();
+  const act = g_current_game.autoplay();
   if(act) {
     doo(act);
   } else {
-    if(gCurrentGame.is_won()) ui.show_message("Congratulations – you've won!", "Click to play again", newGame);
+    if(g_current_game.is_won()) ui.show_message("Congratulations – you've won!", "Click to play again", new_game);
   }
 }
 
@@ -127,35 +127,35 @@ function done(): void {
 function interrupt(was_dragging?: boolean): void {
   // Ensure we hide the "You've won" message if user presses one of our keyboard shortcuts while it's showing
   if(ui.hide_message()) return;
-  if(!was_dragging && gCurrentGame && gCurrentGame.layout) gCurrentGame.layout.cancel_drag();
+  if(!was_dragging && g_current_game && g_current_game.layout) g_current_game.layout.cancel_drag();
   g_animations.cancel();
 }
 
 
 function undo(): void {
   interrupt();
-  const could_redo = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames;
-  if(gCurrentGame.canUndo) gCurrentGame.undo();
-  else gCurrentGameType.restorePastGame();
+  const could_redo = g_current_game.can_redo || g_current_game_type.have_future_games;
+  if(g_current_game.can_undo) g_current_game.undo();
+  else g_current_game_type.restore_past_game();
   ui.update_undo_redo();
 }
 
 
 function redo(): void {
   interrupt();
-  if(gCurrentGame.canRedo) gCurrentGame.redo();
-  else gCurrentGameType.restoreFutureGame();
+  if(g_current_game.can_redo) g_current_game.redo();
+  else g_current_game_type.restore_future_game();
   ui.update_undo_redo();
 }
 
 
 function hint(): void {
   interrupt();
-  gCurrentGame.hint();
+  g_current_game.hint();
 }
 
 
-function setVisibility(el: HTMLElement, visible: boolean): void {
+function set_visibility(el: HTMLElement, visible: boolean): void {
   if(visible) el.style.display = "block";
   else el.style.display = "none";
 }
@@ -175,9 +175,9 @@ class ui {
   private static _message_callback: () => void = null;
   private static _helpui: HTMLElement;
 
-  public static gameStack: HTMLElement;
-  public static gameChooser: HTMLElement;
-  public static cardImages: HTMLImageElement;
+  public static game_stack: HTMLElement;
+  public static game_chooser: HTMLElement;
+  public static card_images: HTMLImageElement;
 
   static init() {
     this._game_name = document.getElementById("game-name");
@@ -191,9 +191,9 @@ class ui {
     this._messageui = document.getElementById("messageui");
     this._helpui = document.getElementById("helpui");
 
-    this.gameStack = document.getElementById("games");
-    this.gameChooser = document.getElementById("game-chooser");
-    this.cardImages = document.getElementById("cardsimg") as HTMLImageElement;
+    this.game_stack = document.getElementById("games");
+    this.game_chooser = document.getElementById("game-chooser");
+    this.card_images = document.getElementById("cardsimg") as HTMLImageElement;
   }
 
   static show_game_name(name: string) {
@@ -201,7 +201,7 @@ class ui {
   }
 
   static set_score_visibility(show: boolean): void {
-    setVisibility(this._score_panel, show);
+    set_visibility(this._score_panel, show);
   }
 
   static update_score_and_moves(score: number, moves: number): void {
@@ -210,15 +210,15 @@ class ui {
   }
 
   static update_undo_redo(): void {
-    ui._undo_button.className = gCurrentGame.canUndo || gCurrentGameType.havePastGames ? "" : "disabled";
-    ui._redo_button.className = gCurrentGame.canRedo || gCurrentGameType.haveFutureGames ? "" : "disabled";
+    ui._undo_button.className = g_current_game.can_undo || g_current_game_type.have_past_games ? "" : "disabled";
+    ui._redo_button.className = g_current_game.can_redo || g_current_game_type.have_future_games ? "" : "disabled";
   }
 
   static show_message(text1: string, text2: string, callback?: () => void): void {
     this._message_callback = callback;
     this._msg1.textContent = text1;
     this._msg2.textContent = text2;
-    setVisibility(ui._messageui, true);
+    set_visibility(ui._messageui, true);
     this._message_showing = true;
     // the setTimeout is to flush any mouse event that led to the show_message() call
     setTimeout(function() { window.onclick = () => ui._hide_message(); }, 0);
@@ -232,7 +232,7 @@ class ui {
 
   private static _hide_message(): void {
     window.onclick = null;
-    setVisibility(ui._messageui, false);
+    set_visibility(ui._messageui, false);
     this._message_showing = false;
     const f = this._message_callback;
     this._message_callback = null;
@@ -242,14 +242,14 @@ class ui {
   static show_help(ev: Event): void {
     ev.preventDefault();
     ev.stopPropagation(); // So we don't trigger the .onclick we're about to set.
-    const section = document.getElementById("help-" + (gCurrentGame.helpId || gCurrentGame.id));
-    setVisibility(section, true);
-    setVisibility(this._helpui, true);
+    const section = document.getElementById("help-" + (g_current_game.help_id || g_current_game.id));
+    set_visibility(section, true);
+    set_visibility(this._helpui, true);
     section.onclick = ev => ev.stopPropagation();
     window.onclick = _ => {
-      setVisibility(section, false);
-      setVisibility(this._helpui, false);
+      set_visibility(section, false);
+      set_visibility(this._helpui, false);
       window.onclick = null;
     };
   }
-}
+};

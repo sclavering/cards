@@ -36,7 +36,7 @@ class Mod3Game extends Game {
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    return this.foundation_destination_for(cseq) || findEmpty(cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles);
+    return this.foundation_destination_for(cseq) || find_empty(cseq.source instanceof Pile ? cseq.source.surrounding() : this.piles);
   }
 
   autoplay() {
@@ -54,7 +54,7 @@ class Mod3Game extends Game {
     const seen: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 };
     let seen_invalid_cards = false;
     for(let f of row) {
-      let c = f.lastCard;
+      let c = f.last_card;
       if(!c) continue;
       if(!f.contains_appropriate_cards()) seen_invalid_cards = true;
       else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], c.number) + 3;
@@ -71,7 +71,7 @@ class Mod3Game extends Game {
     return true;
   }
 };
-gGameClasses["mod3"] = Mod3Game;
+g_game_classes["mod3"] = Mod3Game;
 
 
 abstract class Mod3Foundation extends Foundation {
@@ -85,12 +85,12 @@ abstract class Mod3Foundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    const last = this.lastCard;
+    const last = this.last_card;
     if(!this.cards.length) return card.number === this._base_num;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
   }
   contains_appropriate_cards() {
-    const first = this.firstCard;
+    const first = this.first_card;
     return first ? first.number === this._base_num : false;
   }
   hint_sources(): CardSequence[] {

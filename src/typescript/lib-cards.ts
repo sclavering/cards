@@ -76,11 +76,11 @@ class Cards {
   }
 
   static face_up_of(card: Card) {
-    return card.faceUp ? card : card._alt_face;
+    return card.face_up ? card : card._alt_face;
   }
 
   static face_down_of(card: Card) {
-    return card.faceUp ? card._alt_face : card;
+    return card.face_up ? card._alt_face : card;
   }
 };
 
@@ -89,19 +89,19 @@ class Cards {
 class Card {
   colour: Colour;
   suit: Suit;
-  displayStr: string;
+  display_str: string;
   number: number;
-  faceUp: boolean;
-  // Points to a card of the same number/suit with .faceUp flipped
+  face_up: boolean;
+  // Points to a card of the same number/suit with .face_up flipped
   _alt_face: Card;
 
   constructor(number: number, suit: Suit, face_up: boolean) {
     const suit_to_colour: LookupBySuit<Colour> = { S: "B", H: "R", D: "R", C: "B" };
     this.colour = suit_to_colour[suit];
     this.suit = suit;
-    this.displayStr = suit + number;
+    this.display_str = suit + number;
     this.number = number;
-    this.faceUp = face_up;
+    this.face_up = face_up;
   }
 };
 

@@ -21,7 +21,7 @@ class YukonGame extends _YukonRelatedGame {
     };
   }
 };
-gGameClasses["yukon"] = YukonGame;
+g_game_classes["yukon"] = YukonGame;
 
 class SanibelGame extends _YukonRelatedGame {
   static create_layout() {
@@ -39,16 +39,16 @@ class SanibelGame extends _YukonRelatedGame {
     this.foundation_cluster_count = 4;
   }
 };
-gGameClasses["sanibel"] = SanibelGame;
+g_game_classes["sanibel"] = SanibelGame;
 
 class YukonPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.faceUp;
+    return cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
     return may_add_to_gypsy_pile(cseq.first, this);
   }
   hint_sources(): CardSequence[] {
-    return this.all_cseqs().filter(cseq => cseq.first.faceUp);
+    return this.all_cseqs().filter(cseq => cseq.first.face_up);
   }
 };

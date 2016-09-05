@@ -23,7 +23,7 @@ class FortyThievesGame extends FreeCellRelatedGame {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_same_suit_are_on_foundations(this.foundations));
   }
 };
-gGameClasses["fortythieves"] = FortyThievesGame;
+g_game_classes["fortythieves"] = FortyThievesGame;
 
 
 class FortyThievesPile extends Pile {
@@ -32,7 +32,7 @@ class FortyThievesPile extends Pile {
   }
   may_add(cseq: CardSequence): boolean | 0 {
     const card = cseq.first;
-    if(this.cards.length && !is_next_in_suit(card, this.lastCard)) return false;
+    if(this.cards.length && !is_next_in_suit(card, this.last_card)) return false;
     // Check there are enough spaces to perform the move
     if(cseq.is_single) return true;
     let num_can_move = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, cseq.source);

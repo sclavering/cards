@@ -22,10 +22,10 @@
   <p id="moves-panel">Moves: <span id="moves-display"></span></p>
   <br>
   <br>
-  <a href="#" id="game-type-menu" onclick="showGameChooser(event); return false">Choose Game</a>
+  <a href="#" id="game-type-menu" onclick="show_game_chooser(event); return false">Choose Game</a>
   <br>
-  <a href="#" onclick="newGame(); return false">New</a>
-  <a href="#" onclick="restartGame(); return false">Restart</a>
+  <a href="#" onclick="new_game(); return false">New</a>
+  <a href="#" onclick="restart_game(); return false">Restart</a>
   <a href="#" id="btn-undo" onclick="undo(); return false">Undo</a>
   <a href="#" id="btn-redo" onclick="redo(); return false">Redo</a>
   <a href="#" id="btn-hint" onclick="hint(); return false">Hint</a>
@@ -39,7 +39,7 @@
   </div>
 </div>
 
-<div id="game-chooser" class="overlay-outer" onclick="return onGameSelected(event)"><div class="overlay-inner">
+<div id="game-chooser" class="overlay-outer" onclick="return on_game_selected(event)"><div class="overlay-inner">
   <h2>Which game do you want to play?</h2>
   <div>
     <h6>Klondike Variants</h6>

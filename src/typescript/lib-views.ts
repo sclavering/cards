@@ -7,35 +7,35 @@ interface ViewRect extends ViewCoord {
   h: number;
 }
 
-var gVFanOffset = 25; // num pixels between top edges of two cards in a vertical fan
-var gHFanOffset = 15; // num pixels between left edges of two cards in a horizontal fan
-var gVSlideOffset = 1; // like above, for "slide" piles (compact stacks)
-var gHSlideOffset = 2;
-var gCardHeight = 123;
-var gCardWidth = 79;
-var gSpacerSize = 10;
+const g_v_fan_offset = 25; // num pixels between top edges of two cards in a vertical fan
+const g_h_fan_offset = 15; // num pixels between left edges of two cards in a horizontal fan
+const g_v_slide_offset = 1; // like above, for "slide" piles (compact stacks)
+const g_h_slide_offset = 2;
+const g_card_height = 123;
+const g_card_width = 79;
+const g_spacer_size = 10;
 
 
-var gCardImageOffsets: { [_: string]: number } = null;
+var g_card_image_offsets: { [_: string]: number } = null;
 
-function drawCard(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
-  draw_card_by_name(canvascx, x, y, card.faceUp ? card.displayStr : "");
+function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
+  draw_card_by_name(canvascx, x, y, card.face_up ? card.display_str : "");
 }
 
 function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: number, name: string): void {
-  if(!gCardImageOffsets) initCardImageOffsets();
-  const src_y = gCardImageOffsets[name] * gCardHeight;
+  if(!g_card_image_offsets) init_card_image_offsets();
+  const src_y = g_card_image_offsets[name] * g_card_height;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  canvascx.drawImage(ui.cardImages, 0, src_y, gCardWidth, gCardHeight, x, y, gCardWidth, gCardHeight);
+  canvascx.drawImage(ui.card_images, 0, src_y, g_card_width, g_card_height, x, y, g_card_width, g_card_height);
 }
 
-function initCardImageOffsets(): void {
-  gCardImageOffsets = {};
+function init_card_image_offsets(): void {
+  g_card_image_offsets = {};
   const suit_order_in_image: LookupBySuit<number> = { S: 0, H: 1, D: 2, C: 3 };
   for(let s in suit_order_in_image)
     for(let i = 1; i !== 14; ++i)
-      gCardImageOffsets[s + i] = suit_order_in_image[s] * 13 + i - 1;
-  gCardImageOffsets[""] = 4 * 13; // The face-down card image is last.
+      g_card_image_offsets[s + i] = suit_order_in_image[s] * 13 + i - 1;
+  g_card_image_offsets[""] = 4 * 13; // The face-down card image is last.
 }
 
 
@@ -120,7 +120,7 @@ abstract class _View {
   }
 
   protected get_hint_source_rect(cseq: CardSequence): ViewRect {
-    return { x: 0, y: 0, w: gCardWidth, h: gCardHeight };
+    return { x: 0, y: 0, w: g_card_width, h: g_card_height };
   }
 
   // Receives an array of cards that are currently in another pile but which the hint suggests moving to this pile.
@@ -158,13 +158,13 @@ class View extends _View {
   }
 
   draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
-    clear_and_resize_canvas(ctx, gCardWidth, gCardHeight);
+    clear_and_resize_canvas(ctx, g_card_width, g_card_height);
     if(draw_background) this.draw_background_into(ctx);
-    if(cards.length) drawCard(ctx, cards[cards.length - 1], 0, 0);
+    if(cards.length) draw_card(ctx, cards[cards.length - 1], 0, 0);
   }
 
   draw_hint_destination(cards: Card[]): void {
-    const tmp = gTemporaryCanvasContext.get();
+    const tmp = g_temporary_canvas_context.get();
     this.draw_into(tmp, cards, false);
     this._draw_hint_destination(tmp, 0, 0);
   }
@@ -189,8 +189,8 @@ class _FanView extends _View {
   constructor() {
     super();
 
-    this.canvas_width = gCardWidth;
-    this.canvas_height = gCardHeight;
+    this.canvas_width = g_card_width;
+    this.canvas_height = g_card_height;
 
     // Should the Layout update .canvas_width and/or .canvas_height when the window is resized?
     this.update_canvas_width_on_resize = false;
@@ -214,11 +214,11 @@ class _FanView extends _View {
   draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean, use_minimum_size?: boolean): void {
     // The complexity around width/height is to make hint-destinations display correctly.  We need the pile's own <canvas> to use all the available space so that if we later paint a hint destination into it, it's big enough to show (and doesn't get clipped at the bottom/right edge of the final card).  But we need the <canvas> used for the hint-destination cards to be conservatively sized so that when we composite it into the main canvas, we don't end up with a big translucent white box extending beyond the cards.
     const num = cards.length, xo = this._fan_x_offset, yo = this._fan_y_offset;
-    const width = use_minimum_size ? (num - 1) * xo + gCardWidth : this.canvas_width;
-    const height = use_minimum_size ? (num - 1) * yo + gCardHeight : this.canvas_height;
+    const width = use_minimum_size ? (num - 1) * xo + g_card_width : this.canvas_width;
+    const height = use_minimum_size ? (num - 1) * yo + g_card_height : this.canvas_height;
     clear_and_resize_canvas(ctx, width, height);
     if(draw_background) this.draw_background_into(ctx);
-    for(let i = 0; i !== num; ++i) drawCard(ctx, cards[i], xo * i, yo * i);
+    for(let i = 0; i !== num; ++i) draw_card(ctx, cards[i], xo * i, yo * i);
   }
 
   coords_of_card(cseq: CardSequence): ViewCoord {
@@ -227,7 +227,7 @@ class _FanView extends _View {
 
   draw_hint_destination(cards: Card[]): void {
     const rect = this.get_next_card_xy();
-    const tmp = gTemporaryCanvasContext.get();
+    const tmp = g_temporary_canvas_context.get();
     this.draw_into(tmp, cards, false, true);
     this._draw_hint_destination(tmp, rect.x, rect.y);
   }
@@ -235,7 +235,7 @@ class _FanView extends _View {
   protected get_hint_source_rect(cseq: CardSequence): ViewRect {
     const size = this.pile.cards.length - 1 - cseq.index;
     const xo = this._fan_x_offset, yo = this._fan_y_offset;
-    return { x: cseq.index * xo, y: cseq.index * yo, w: size * xo + gCardWidth, h: size * yo + gCardHeight };
+    return { x: cseq.index * xo, y: cseq.index * yo, w: size * xo + g_card_width, h: size * yo + g_card_height };
   }
 
   get_next_card_xy(): ViewCoord {
@@ -254,8 +254,8 @@ class _FanView extends _View {
   // Returns -1 for no-card.
   protected index_of_card_at_coords(x: number, y: number, num_cards: number): number {
     // Handles only purely-horizontal or purely-vertical fans, which is sufficient for now.
-    if(this._fan_x_offset) return this._get_index_of_card_at_coord(x, this._fan_x_offset, gCardWidth, num_cards);
-    return this._get_index_of_card_at_coord(y, this._fan_y_offset, gCardHeight, num_cards);
+    if(this._fan_x_offset) return this._get_index_of_card_at_coord(x, this._fan_x_offset, g_card_width, num_cards);
+    return this._get_index_of_card_at_coord(y, this._fan_y_offset, g_card_height, num_cards);
   }
 
   private _get_index_of_card_at_coord(coord: number, offset: number, card_size: number, num_cards: number): number | null {
@@ -270,11 +270,11 @@ class _FixedFanView extends _FanView {
     super();
     this._always_draw_background = true;
     if(options.horizontal) {
-      this.canvas_width = gCardWidth + (options.capacity - 1) * gHFanOffset;
-      this._fan_x_offset = gHFanOffset;
+      this.canvas_width = g_card_width + (options.capacity - 1) * g_h_fan_offset;
+      this._fan_x_offset = g_h_fan_offset;
     } else {
-      this.canvas_height = gCardHeight + (options.capacity - 1) * gVFanOffset;
-      this._fan_y_offset = gVFanOffset;
+      this.canvas_height = g_card_height + (options.capacity - 1) * g_v_fan_offset;
+      this._fan_y_offset = g_v_fan_offset;
     }
   }
 };
@@ -297,14 +297,14 @@ abstract class _SelectiveFanView extends _FixedFanView {
     const target_visible_ix = this.index_of_card_at_coords(x, y, visible.length);
     if(target_visible_ix !== visible.length - 1) return null;
     // This check is just paranoia - it'd apply to _SpiderFoundationView, but .may_take() would return false anyway.
-    if(visible[target_visible_ix] !== this.pile.lastCard) return null;
+    if(visible[target_visible_ix] !== this.pile.last_card) return null;
     return this.pile.cseq_at_negative(-1);
   }
 
   protected get_hint_source_rect(cseq: CardSequence): ViewRect {
     // Only the top card will ever be the source of a hint.
     const num = this.visible_cards_of(this.pile.cards).indexOf(cseq.first);
-    return { x: num * this._fan_x_offset, y: num * this._fan_y_offset, w: gCardWidth, h: gCardHeight };
+    return { x: num * this._fan_x_offset, y: num * this._fan_y_offset, w: g_card_width, h: g_card_height };
   }
 
   // Subclasses will need to override .get_next_card_offset(), except for waste-pile views, where it's irrelevant.
@@ -324,8 +324,8 @@ class _FlexFanView extends _FanView {
 
   protected recalculate_offsets(num: number): void {
     const xo = this._fan_x_default_offset, yo = this._fan_y_default_offset;
-    if(xo) this._fan_x_offset = this.calculate_new_offset(xo, this.canvas_width - gCardWidth, num);
-    if(yo) this._fan_y_offset = this.calculate_new_offset(yo, this.canvas_height - gCardHeight, num);
+    if(xo) this._fan_x_offset = this.calculate_new_offset(xo, this.canvas_width - g_card_width, num);
+    if(yo) this._fan_y_offset = this.calculate_new_offset(yo, this.canvas_height - g_card_height, num);
   }
 
   // prepare_freecell_move_animation() needs this
@@ -336,7 +336,7 @@ class _FlexFanView extends _FanView {
   }
 
   protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
-    super.draw_background_into(ctx, gCardWidth, gCardHeight);
+    super.draw_background_into(ctx, g_card_width, g_card_height);
   }
 };
 
@@ -344,7 +344,7 @@ class FanDownView extends _FlexFanView {
   constructor() {
     super();
     this.update_canvas_height_on_resize = true;
-    this._fan_y_default_offset = gVFanOffset;
+    this._fan_y_default_offset = g_v_fan_offset;
   }
 };
 
@@ -352,18 +352,18 @@ class FanRightView extends _FlexFanView {
   constructor() {
     super();
     this.update_canvas_width_on_resize = true;
-    this._fan_x_default_offset = gHFanOffset;
+    this._fan_x_default_offset = g_h_fan_offset;
   }
 };
 
 class _SlideView extends _FlexFanView {
   constructor(options: { slide_capacity: number }) {
     super();
-    this._fan_x_default_offset = gHSlideOffset;
-    this._fan_y_default_offset = gVSlideOffset;
+    this._fan_x_default_offset = g_h_slide_offset;
+    this._fan_y_default_offset = g_v_slide_offset;
     if(options && options.slide_capacity) {
-      this.canvas_width = gCardWidth + (options.slide_capacity - 1) * gHSlideOffset;
-      this.canvas_height = gCardHeight + (options.slide_capacity - 1) * gVSlideOffset;
+      this.canvas_width = g_card_width + (options.slide_capacity - 1) * g_h_slide_offset;
+      this.canvas_height = g_card_height + (options.slide_capacity - 1) * g_v_slide_offset;
     }
   }
   cseq_at_coords(x: number, y: number): CardSequence {
@@ -448,17 +448,17 @@ class PyramidView extends View {
   }
   update_with(cs: Card[]): void {
     const pile = this.pile as BasePyramidPile;
-    if(this._draw_covered_cards_face_down && ((pile.leftChild && pile.leftChild.cards.length) || (pile.rightChild && pile.rightChild.cards.length))) {
-      clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
+    if(this._draw_covered_cards_face_down && ((pile.left_child && pile.left_child.cards.length) || (pile.right_child && pile.right_child.cards.length))) {
+      clear_and_resize_canvas(this._context, g_card_width, g_card_height);
       draw_card_by_name(this._context, 0, 0, "");
     } else {
       super.update_with(cs);
     }
     // We want empty piles to be hidden, so mouse clicks go to any pile that was overlapped instead.  But not for piles at the root of a pyramid (where we draw the empty-pile graphic instead).
-    if(pile.leftParent || pile.rightParent) this._canvas.style.display = cs.length ? "block" : "none";
+    if(pile.left_parent || pile.right_parent) this._canvas.style.display = cs.length ? "block" : "none";
     if(this._draw_covered_cards_face_down) {
-      if(pile.leftParent) pile.leftParent.view.update();
-      if(pile.rightParent) pile.rightParent.view.update();
+      if(pile.left_parent) pile.left_parent.view.update();
+      if(pile.right_parent) pile.right_parent.view.update();
     }
   }
 };
@@ -527,7 +527,7 @@ class StockView extends View {
   }
   // Stock piles hold their cards face-up (for convenience), and we just draw them face down.
   draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
-    clear_and_resize_canvas(ctx, gCardWidth, gCardHeight);
+    clear_and_resize_canvas(ctx, g_card_width, g_card_height);
     if(draw_background) this.draw_background_into(ctx);
     if(cards.length) draw_card_by_name(ctx, 0, 0, "");
   }
@@ -538,7 +538,7 @@ class StockView extends View {
 };
 
 
-class gTemporaryCanvasContext {
+class g_temporary_canvas_context {
   static _context: CanvasRenderingContext2D;
   static get() {
     return this._context || (this._context = document.createElement("canvas").getContext("2d"));

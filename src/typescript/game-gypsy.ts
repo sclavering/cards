@@ -5,7 +5,7 @@ class _GypsyGame extends Game {
 
   constructor() {
     super();
-    this.helpId = "gypsy";
+    this.help_id = "gypsy";
     this.pile_details = {
       stocks: [1, StockDealToPiles, 0, 0],
       piles: [8, GypsyPile, 2, 1],
@@ -30,7 +30,7 @@ class Gypsy2Game extends _GypsyGame {
     this.foundation_cluster_count = 2;
   }
 };
-gGameClasses["gypsy2"] = Gypsy2Game;
+g_game_classes["gypsy2"] = Gypsy2Game;
 
 class Gypsy4Game extends _GypsyGame {
   constructor() {
@@ -39,4 +39,4 @@ class Gypsy4Game extends _GypsyGame {
     this.foundation_cluster_count = 4;
   }
 };
-gGameClasses["gypsy4"] = Gypsy4Game;
+g_game_classes["gypsy4"] = Gypsy4Game;

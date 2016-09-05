@@ -1,8 +1,8 @@
 class _Klondike extends Game {
   constructor() {
     super();
-    this.helpId = "klondike";
-    this.hasScoring = true;
+    this.help_id = "klondike";
+    this.has_scoring = true;
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
@@ -13,7 +13,7 @@ class _Klondike extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 
-  protected getScoreFor(act: Action): number {
+  protected score_for(act: Action): number {
     if(act instanceof RefillStock) return -100;
     if(act instanceof Move) return this._get_score(act) + (act.revealed_card ? 5 : 0);
     return 0;
@@ -50,7 +50,7 @@ class KlondikeGame extends _Klondike {
     };
   }
 };
-gGameClasses["klondike1"] = KlondikeGame;
+g_game_classes["klondike1"] = KlondikeGame;
 
 
 class KlondikeDrawThreeGame extends _Klondike {
@@ -67,7 +67,7 @@ class KlondikeDrawThreeGame extends _Klondike {
     };
   }
 };
-gGameClasses["klondike3"] = KlondikeDrawThreeGame;
+g_game_classes["klondike3"] = KlondikeDrawThreeGame;
 
 
 class DoubleKlondikeGame extends _Klondike {
@@ -90,4 +90,4 @@ class DoubleKlondikeGame extends _Klondike {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations(this.foundations));
   }
 };
-gGameClasses["doubleklondike"] = DoubleKlondikeGame;
+g_game_classes["doubleklondike"] = DoubleKlondikeGame;

@@ -7,7 +7,7 @@ class DoubleSolGame extends Game {
 
   constructor() {
     super();
-    this.helpId = "klondike";
+    this.help_id = "klondike";
     this.all_cards = make_cards(2);
     this.pile_details = {
       stocks: [1, StockDealToWasteOrRefill, 0, 0],
@@ -25,7 +25,7 @@ class DoubleSolGame extends Game {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 };
-gGameClasses["doublesol"] = DoubleSolGame;
+g_game_classes["doublesol"] = DoubleSolGame;
 
 
 // Built A,A,2,2,3,3,...,Q,Q,K,K

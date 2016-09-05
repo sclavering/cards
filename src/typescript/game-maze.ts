@@ -33,7 +33,7 @@ class MazeGame extends Game {
     let first: Card = null;
     let prev: Card = null;
     for(let p of this.piles) {
-      const c = p.firstCard;
+      const c = p.first_card;
       if(!c) continue;
       if(!first) {
         first = prev = c;
@@ -46,7 +46,7 @@ class MazeGame extends Game {
     return true;
   }
 };
-gGameClasses["maze"] = MazeGame;
+g_game_classes["maze"] = MazeGame;
 
 
 class MazePile extends Pile {
@@ -55,7 +55,7 @@ class MazePile extends Pile {
   }
   may_add(cseq: CardSequence): boolean {
     if(this.cards.length) return false;
-    const prev = this.prev.lastCard, next = this.next.lastCard;
+    const prev = this.prev.last_card, next = this.next.last_card;
     return (prev && maze_allows_adjacent(prev, cseq.first)) || (next && maze_allows_adjacent(cseq.first, next));
   }
 };

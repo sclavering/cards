@@ -37,14 +37,14 @@ class FreeCellGame extends FreeCellRelatedGame {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const p = this.best_destination_for__nearest_legal_pile_preferring_nonempty(cseq);
-    return p || (cseq.is_single ? findEmpty(this.cells) : null);
+    return p || (cseq.is_single ? find_empty(this.cells) : null);
   }
 
   autoplay() {
     return this.autoplay_using_predicate(autoplay_any_where_all_lower_of_other_colour_are_on_foundations_and_also_any_two(this.foundations));
   }
 };
-gGameClasses["freecell"] = FreeCellGame;
+g_game_classes["freecell"] = FreeCellGame;
 
 
 class FreeCellPile extends _FreeCellPile {
@@ -53,7 +53,7 @@ class FreeCellPile extends _FreeCellPile {
   }
   may_add(cseq: CardSequence): boolean | 0 {
     const card = cseq.first;
-    if(this.cards.length && !is_next_and_alt_colour(card, this.lastCard)) return false;
+    if(this.cards.length && !is_next_and_alt_colour(card, this.last_card)) return false;
     // Check there are enough cells+spaces to perform the move
     if(cseq.is_single) return true;
     let spaces = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, cseq.source);

@@ -7,7 +7,7 @@ class Layout {
   views_by_letter: { [key: string]: View[] };
 
   private _attached_game: Game;
-  private viewsNeedingUpdateOnResize: View[];
+  private _views_needing_update_on_resize: View[];
   private _node: HTMLElement;
   private _ex0: number;
   private _ey0: number;
@@ -60,22 +60,28 @@ class Layout {
 
     const views = this.views;
 
-    const container = this._node = createDIV("gamelayout game");
-    ui.gameStack.appendChild(container);
+    function create_div(class_name: string): HTMLElement {
+      const el = document.createElement("div");
+      el.className = class_name;
+      return el;
+    };
+
+    const container = this._node = create_div("gamelayout game");
+    ui.game_stack.appendChild(container);
     container.style.top = container.style.left = "0px"; // to make explicit sizing work
 
     let box: HTMLElement = container;
     const stack: HTMLElement[] = [];
 
-    function pushBox(tag: string, className: string) {
+    function push_el(tag: string, className: string) {
       stack.push(box);
       const el: HTMLElement = document.createElement(tag);
       el.className = className;
-      boxOrTd().appendChild(el);
+      box_or_td().appendChild(el);
       box = el;
     }
 
-    function boxOrTd() {
+    function box_or_td() {
       if(box.localName !== "tr") return box;
       const td = document.createElement('td');
       box.appendChild(td);
@@ -88,28 +94,28 @@ class Layout {
       switch(ch) {
       // boxes
         case "#":
-          pushBox('table', 'gamelayout-table');
+          push_el('table', 'gamelayout-table');
           break;
         case "<":
-          pushBox('tr', 'gamelayout-fixedheightrow');
+          push_el('tr', 'gamelayout-fixedheightrow');
           break;
         case "(":
-          pushBox('div', 'shortcolumn');
+          push_el('div', 'shortcolumn');
           break;
         case "[":
-          pushBox('div', 'longcolumn-outer');
-          pushBox('div', 'longcolumn-inner');
+          push_el('div', 'longcolumn-outer');
+          push_el('div', 'longcolumn-inner');
           stack.pop(); // div.longcolumn-outer doesn't belong there
           break;
         case " ":
-          boxOrTd();
+          box_or_td();
           break;
         case ">":
           // Set <td> widths, but only on the first row (so that subsequent rows can omit trailing empties).
           if(!box.previousSibling) {
             const empties = [].filter.call(box.childNodes, (x: Node) => !x.hasChildNodes());
-            const cellWidth = (100 / empties.length) + '%';
-            for(let td of empties) td.style.width = cellWidth;
+            const cell_width = (100 / empties.length) + '%';
+            for(let td of empties) td.style.width = cell_width;
           }
           // fall through
         case ")":
@@ -119,13 +125,13 @@ class Layout {
           break;
       // spacers
         case "_":
-          boxOrTd().appendChild(createDIV("thinspacer"));
+          box_or_td().appendChild(create_div("thinspacer"));
           break;
         case "-":
-          boxOrTd().appendChild(createDIV("horizontal-halfpilespacer"));
+          box_or_td().appendChild(create_div("horizontal-halfpilespacer"));
           break;
         case "=":
-          boxOrTd().appendChild(createDIV("horizontal-pilespacer"));
+          box_or_td().appendChild(create_div("horizontal-pilespacer"));
           break;
       // "{attr=val}", applies to most-recent pile or box
         case "{": {
@@ -145,28 +151,28 @@ class Layout {
           views.push(view);
           if(!this.views_by_letter[ch]) this.views_by_letter[ch] = [];
           this.views_by_letter[ch].push(view);
-          view.insert_into(boxOrTd());
+          view.insert_into(box_or_td());
           break;
         }
       }
     }
     // sanity check
     if(box !== container) throw "Layout.init(): layout had unclosed box";
-    this.viewsNeedingUpdateOnResize = this.views.filter(v => v.needs_update_on_resize);
+    this._views_needing_update_on_resize = this.views.filter(v => v.needs_update_on_resize);
 
     this.views.forEach((v, ix) => v.mark_canvas_for_event_handling("data-cardgames-view-id", ix.toString()));
   }
 
   show(): void {
     if(!this._node) throw "layout not init()'d";
-    setVisibility(this._node, true);
+    set_visibility(this._node, true);
     this._reset_handlers();
     this._on_window_resize();
     window.onresize = this._bound_on_window_resize;
   }
 
   hide(): void {
-    setVisibility(this._node, false);
+    set_visibility(this._node, false);
     window.onresize = null;
   }
 
@@ -353,10 +359,10 @@ class Layout {
 
   _on_window_resize(): void {
     g_animations.cancel();
-    const rect = ui.gameStack.getBoundingClientRect();
+    const rect = ui.game_stack.getBoundingClientRect();
     const width = rect.right - rect.left;
     const height = rect.bottom - rect.top;
-    const vs = this.viewsNeedingUpdateOnResize;
+    const vs = this._views_needing_update_on_resize;
     this.update_flexible_views_sizes(vs, width, height);
     for(let v of vs) v.update();
   }
@@ -368,11 +374,4 @@ class Layout {
       if(v.update_canvas_width_on_resize) v.canvas_width = width - r.left;
     }
   }
-};
-
-
-function createDIV(class_name: string): HTMLElement {
-  const el = document.createElement("div");
-  el.className = class_name;
-  return el;
 };

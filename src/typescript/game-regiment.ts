@@ -31,15 +31,15 @@ class RegimentGame extends Game {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const ps = cseq.source instanceof Pile ? cseq.source.following() : this.piles;
-    for(let p of ps) if(p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
+    for(let p of ps) if(p.cards.length && p.may_add_maybe_from_self(cseq)) return p;
 
-    if(cseq.source instanceof Reserve) for(let p of this.piles) if(!p.hasCards && p.may_add_maybe_from_self(cseq)) return p;
+    if(cseq.source instanceof Reserve) for(let p of this.piles) if(!p.cards.length && p.may_add_maybe_from_self(cseq)) return p;
     return null;
   }
 
   autoplay(): Action {
     for(let pile of this.piles as RegimentPile[])
-      if(!pile.hasCards && this.reserves[pile.regiment_column].hasCards)
+      if(!pile.cards.length && this.reserves[pile.regiment_column].cards.length)
         return new Move(this.reserves[pile.regiment_column].cseq_at_negative(-1), pile);
 
     // If the ace- and king-foundation for a suit have reached the same number it's fine to autoplay anything to both of them.  Otherwise nothing is autoplayable.  (The edge case, where e.g. the ace-foundation is up to a 10 and the king-foundation down to a jack, is not autoplayable because e.g. the user might want to move the 10 across in order to put up the other 9.)
@@ -86,12 +86,12 @@ class RegimentPile extends Pile {
     const reserve = this.regiment_reserve;
     if(reserve === source) return true;
 
-    if(reserve.hasCards) return false;
+    if(reserve.cards.length) return false;
 
     var prev = reserve.prev, prevDist = 1;
-    while(prev && !prev.hasCards && prev !== source) prev = prev.prev, prevDist++;
+    while(prev && !prev.cards.length && prev !== source) prev = prev.prev, prevDist++;
     var next = reserve.next, nextDist = 1;
-    while(next && !next.hasCards && next !== source) next = next.next, nextDist++;
+    while(next && !next.cards.length && next !== source) next = next.next, nextDist++;
 
     // if trying to move from a reserve to the right
     if(source.regiment_column > this.regiment_column) return next === source && (!prev || prevDist >= nextDist);
@@ -105,7 +105,7 @@ class RegimentAceFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.hasCards) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(this.lastCard, card);
   }
 };
@@ -116,7 +116,7 @@ class RegimentKingFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.hasCards) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card.number === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
     return is_next_in_suit(card, this.lastCard);
   }
 };

@@ -3,7 +3,7 @@ class _PileOnGame extends Game {
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
     const num = cseq.first.number;
-    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.hasCards ? (p.lastCard.number === num ? 2 : 1) : 0);
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? (p.lastCard.number === num ? 2 : 1) : 0);
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.

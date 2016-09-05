@@ -54,7 +54,7 @@ class MazePile extends Pile {
     return true;
   }
   may_add(cseq: CardSequence): boolean {
-    if(this.hasCards) return false;
+    if(this.cards.length) return false;
     const prev = this.prev.lastCard, next = this.next.lastCard;
     return (prev && maze_allows_adjacent(prev, cseq.first)) || (next && maze_allows_adjacent(cseq.first, next));
   }

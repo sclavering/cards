@@ -66,7 +66,7 @@ class Mod3Game extends Game {
   }
 
   is_won(): boolean {
-    if(this.stock.hasCards) return false;
+    if(this.stock.cards.length) return false;
     for(let p of this.piles) if(p.cards.length) return false;
     return true;
   }
@@ -86,7 +86,7 @@ abstract class Mod3Foundation extends Foundation {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     const last = this.lastCard;
-    if(!this.hasCards) return card.number === this._base_num;
+    if(!this.cards.length) return card.number === this._base_num;
     return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
   }
   contains_appropriate_cards() {

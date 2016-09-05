@@ -448,7 +448,7 @@ class PyramidView extends View {
   }
   update_with(cs: Card[]): void {
     const pile = this.pile as BasePyramidPile;
-    if(this._draw_covered_cards_face_down && ((pile.leftChild && pile.leftChild.hasCards) || (pile.rightChild && pile.rightChild.hasCards))) {
+    if(this._draw_covered_cards_face_down && ((pile.leftChild && pile.leftChild.cards.length) || (pile.rightChild && pile.rightChild.cards.length))) {
       clear_and_resize_canvas(this._context, gCardWidth, gCardHeight);
       draw_card_by_name(this._context, 0, 0, "");
     } else {

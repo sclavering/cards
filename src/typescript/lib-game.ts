@@ -288,7 +288,7 @@ class Game {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
     if(this._foundation_clusters && cseq.first.number === 1)
       for(let fs of this._foundation_clusters)
-        if(fs.every(f => !f.hasCards || f.cards[0].suit === cseq.first.suit))
+        if(fs.every(f => !f.cards.length || f.cards[0].suit === cseq.first.suit))
           return findEmpty(fs);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) return f;
     return null;
@@ -324,7 +324,7 @@ class Game {
   }
 
   protected best_destination_for__nearest_legal_pile_preferring_nonempty(cseq: CardSequence): AnyPile {
-    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.hasCards ? 2 : 0);
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? 2 : 0);
   }
 
   protected best_destination_for__nearest_legal_pile(cseq: CardSequence): AnyPile {
@@ -359,7 +359,7 @@ class Game {
 
   private _add_hints_for(cseq: CardSequence, hints: Hint[]): void {
     const ds: AnyPile[] = [];
-    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.hasCards) && p.may_add_maybe_from_self(cseq)) ds.push(p);
+    for(let p of this.piles) if((this.show_hints_to_empty_piles || p.cards.length) && p.may_add_maybe_from_self(cseq)) ds.push(p);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) ds.push(f);
     if(ds.length) hints.push({ hint_source: cseq, hint_destinations: ds });
   }

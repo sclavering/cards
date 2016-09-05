@@ -31,8 +31,8 @@ gGameClasses["winston"] = WinstonGame;
 
 class WinstonStock extends Stock {
   deal(): Action {
-    const pred = (p: AnyPile) => p.hasCards ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
+    const pred = (p: AnyPile) => p.cards.length ? !(p.cards[0].faceUp && p.cards[0].number === 13) : true;
+    return this.cards.length ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
   }
 };
 
@@ -43,7 +43,7 @@ class WinstonPile extends Pile {
   }
   may_add(cseq: CardSequence): boolean {
     if(cseq.source instanceof Reserve) return false;
-    return this.hasCards ? is_next_and_alt_colour(cseq.first, this.lastCard) : true;
+    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.lastCard) : true;
   }
 };
 

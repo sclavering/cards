@@ -33,9 +33,6 @@ abstract class AnyPile {
     return this.cards.length;
   }
 
-  get hasCards(): boolean {
-    return this.cards.length !== 0;
-  }
   get firstCard(): Card {
     return this.cards.length ? this.cards[0] : null;
   }
@@ -131,31 +128,31 @@ abstract class Stock extends AnyPile {
 
 class StockDealToWaste extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealToPile(this, this.owning_game.waste) : null;
+    return this.cards.length ? new DealToPile(this, this.owning_game.waste) : null;
   }
 };
 
 class StockDealToWasteOrRefill extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealToPile(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
+    return this.cards.length ? new DealToPile(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 class StockDealThreeOrRefill extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealThree(this, this.owning_game.waste as DealThreeWaste) : new RefillStock(this, this.owning_game.waste);
+    return this.cards.length ? new DealThree(this, this.owning_game.waste as DealThreeWaste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
 class StockDealToFoundation extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealToPile(this, this.owning_game.foundation) : null;
+    return this.cards.length ? new DealToPile(this, this.owning_game.foundation) : null;
   }
 };
 
 class StockDealToPiles extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles) : null;
+    return this.cards.length ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles) : null;
   }
   get counter(): number {
     return Math.ceil(this.cards.length / this.owning_game.piles.length);
@@ -164,14 +161,14 @@ class StockDealToPiles extends Stock {
 
 class StockDealToPilesIfNoneAreEmpty extends StockDealToPiles {
   deal(): Action {
-    if(!this.hasCards || this.owning_game.piles.some(p => !p.hasCards)) return null;
+    if(!this.cards.length || this.owning_game.piles.some(p => !p.cards.length)) return null;
     return new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles);
   }
 };
 
 class StockDealToNonemptyPiles extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(p => p.hasCards)) : null;
+    return this.cards.length ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(p => p.cards.length)) : null;
   }
 };
 
@@ -199,7 +196,7 @@ class Cell extends AnyPile {
     return true;
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.hasCards && cseq.is_single;
+    return !this.cards.length && cseq.is_single;
   }
 };
 
@@ -236,7 +233,7 @@ class AcesUpPile extends Pile {
     return cseq.is_single && cseq.first.faceUp;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.is_single && !this.hasCards;
+    return cseq.is_single && !this.cards.length;
   }
 };
 
@@ -245,7 +242,7 @@ class FanPile extends Pile {
     return cseq.is_single && cseq.first.faceUp;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
   }
 };
 
@@ -271,7 +268,7 @@ class KlondikePile extends Pile {
     return cseq.first.faceUp;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.hasCards ? is_next_and_alt_colour(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.lastCard) : cseq.first.number === 13;
   }
 };
 
@@ -280,7 +277,7 @@ class WaspPile extends Pile {
     return cseq.first.faceUp;
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.hasCards || is_next_in_suit(cseq.first, this.lastCard);
+    return !this.cards.length || is_next_in_suit(cseq.first, this.lastCard);
   }
   hint_sources(): CardSequence[] {
     return this.all_cseqs().filter(cseq => cseq.first.faceUp);
@@ -296,7 +293,7 @@ class KlondikeFoundation extends Foundation {
     return cseq.is_single;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.is_single && (this.hasCards ? is_next_in_suit(this.lastCard, cseq.first) : cseq.first.number === 1);
+    return cseq.is_single && (this.cards.length ? is_next_in_suit(this.lastCard, cseq.first) : cseq.first.number === 1);
   }
 };
 

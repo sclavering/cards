@@ -28,7 +28,7 @@ class TowersPile extends _FreeCellPile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean | 0 {
-    if(!(this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13)) return false;
+    if(!(this.cards.length ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13)) return false;
     return cseq.count <= 1 + (this.owning_game as FreeCellRelatedGame).empty_cell_count() ? true : 0;
   }
 };

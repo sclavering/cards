@@ -39,7 +39,7 @@ class PyramidGame extends BasePyramidGame {
 
   is_won(): boolean {
     // Won once the tip of the pyramid has been removed.
-    return !this.piles[0].hasCards;
+    return !this.piles[0].cards.length;
   }
 };
 gGameClasses["pyramid"] = PyramidGame;
@@ -72,7 +72,7 @@ class TriPeaksGame extends BasePyramidGame {
 
   is_won(): boolean {
     // won when the the peaks are empty
-    for(var i = 0; i !== 3; i++) if(this.piles[i].hasCards) return false;
+    for(var i = 0; i !== 3; i++) if(this.piles[i].cards.length) return false;
     return true;
   }
 
@@ -117,7 +117,7 @@ class BasePyramidPile extends Pile {
   }
   may_take(cseq: CardSequence): boolean {
     const lc = this.leftChild, rc = this.rightChild;
-    return !lc || (!lc.hasCards && !rc.hasCards);
+    return !lc || (!lc.cards.length && !rc.cards.length);
   }
   may_add(cseq: CardSequence): boolean {
     return false;
@@ -132,8 +132,8 @@ class PyramidPile extends BasePyramidPile {
   private _can_remove_pair(cseq: CardSequence, our_card: CardSequence): boolean {
     if(cseq.first.number + our_card.first.number !== 13) return false;
     if(!this.leftChild) return true; // Cards on the bottom row is always free.
-    return (!this.leftChild.hasCards || this.leftChild === cseq.source)
-        && (!this.rightChild.hasCards || this.rightChild === cseq.source);
+    return (!this.leftChild.cards.length || this.leftChild === cseq.source)
+        && (!this.rightChild.cards.length || this.rightChild === cseq.source);
   }
 };
 

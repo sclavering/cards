@@ -53,7 +53,7 @@ class FreeCellPile extends _FreeCellPile {
   }
   may_add(cseq: CardSequence): boolean | 0 {
     const card = cseq.first;
-    if(this.hasCards && !is_next_and_alt_colour(card, this.lastCard)) return false;
+    if(this.cards.length && !is_next_and_alt_colour(card, this.lastCard)) return false;
     // Check there are enough cells+spaces to perform the move
     if(cseq.is_single) return true;
     let spaces = (this.owning_game as FreeCellRelatedGame).empty_pile_count(this, cseq.source);

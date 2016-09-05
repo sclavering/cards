@@ -37,6 +37,6 @@ class PenguinPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    return this.hasCards ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.lastCard) : cseq.first.number === 13;
   }
 };

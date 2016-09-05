@@ -5,21 +5,21 @@ class FreeCellRelatedGame extends Game {
     const dest = this.best_destination_for(cseq);
     if(!dest) return null;
     if(cseq.is_single) return new Move(cseq, dest);
-    const spaces = this.piles.filter(p => p !== dest && !p.hasCards);
-    const cells = this.cells.filter(c => !c.hasCards);
+    const spaces = this.piles.filter(p => p !== dest && !p.cards.length);
+    const cells = this.cells.filter(c => !c.cards.length);
     return new FreeCellMoveAction(cseq, dest, cells, spaces);
   }
 
   empty_cell_count(): number {
     let rv = 0;
-    for(let c of this.cells) if(!c.hasCards) ++rv;
+    for(let c of this.cells) if(!c.cards.length) ++rv;
     return rv;
   }
 
   // Args are piles which should not be counted even if empty (typically the source and destination of a card being moved).
   empty_pile_count(ignore1?: AnyPile, ignore2?: AnyPile): number {
     let rv = 0;
-    for(let p of this.piles) if(p !== ignore1 && p !== ignore2 && !p.hasCards) ++rv;
+    for(let p of this.piles) if(p !== ignore1 && p !== ignore2 && !p.cards.length) ++rv;
     return rv;
   }
 };

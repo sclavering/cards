@@ -21,7 +21,7 @@ class MazeGame extends Game {
   }
 
   protected deal(cards: Card[]): void {
-    this.deal_cards_with_nulls_for_spaces(cards);
+    cards.forEach((c, ix) => { if(c) this.piles[ix].cards = [c]; });
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

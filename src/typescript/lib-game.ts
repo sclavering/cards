@@ -193,17 +193,9 @@ class Game {
 
   // Used in implementing .deal().  It's intentionally tolerant of being asked to deal too many cards, because that makes it easier to specify game layouts (several games have their final pile have fewer cards in it than the others).
   protected deal_cards(cards: Card[], ix: number, pile: AnyPile, num_face_down: number, num_face_up: number): number {
-    const cs = cards.slice(ix, ix + num_face_down + num_face_up);
-    for(let i = 0; i < num_face_down; ++i) cs[i] = Cards.face_down_of(cs[i]);
-    pile.add_cards_from_array(cs, true);
+    let cs = cards.slice(ix, ix + num_face_down + num_face_up);
+    pile.cards = cs.map((c, i) => i < num_face_down ? Cards.face_down_of(c) : c);
     return ix + cs.length;
-  }
-
-  protected deal_cards_with_nulls_for_spaces(cards: Card[]): void {
-    cards.forEach((c, ix) => {
-      if(!c) return;
-      this.piles[ix].add_cards_from_array([c], true);
-    });
   }
 
   // Subclasses may override this to prevent (some) impossible games from being dealt. Cards will be shuffled repeatedly until this returns false.

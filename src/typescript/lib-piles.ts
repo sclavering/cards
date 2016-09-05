@@ -95,11 +95,6 @@ abstract class AnyPile {
     if(!do_not_update_view) this.view.update();
   }
 
-  add_cards_from_array(cards: Card[], do_not_update_view?: boolean): void {
-    this.cards = this.cards.concat(cards);
-    if(!do_not_update_view) this.view.update();
-  }
-
   reveal_top_card(): void {
     const cs = this.cards = this.cards.slice();
     cs[cs.length - 1] = Cards.face_up_of(cs[cs.length - 1]);

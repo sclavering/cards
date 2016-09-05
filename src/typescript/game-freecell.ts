@@ -15,25 +15,23 @@ class FreeCellGame extends FreeCellRelatedGame {
   /* Uncomment some of this code to set up the cards for easy testing of freecell animations.
   protected deal(cards: Card[]): void {
     // Move the 6H onto the 7C to test a medium move.
-    // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 3, 5);
+    // this._deal_for_animation_testing([["", "6H", "5S", "4H", "3S", "2H"], ["7C"]], 3, 4);
     // Move the 8H onto the 9C to test a no-cells complex move.
-    // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 4, 4);
+    // this._deal_for_animation_testing([["", "8H", "7S", "6H", "5S", "4H", "3S", "2H"], ["9C"]], 4, 3);
     // Move the 9S into a space to test a 1-cell complex move.
-    // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 3, 4);
+    // this._deal_for_animation_testing([["", "9S", "8H", "7S", "6H", "5S", "4H", "3S", "2H"]], 3, 4);
     // Move the JS into a space to test another complex move.
-    // this._deal_for_animation_testing([[12, 24, 10, 22, 8, 20, 6, 18, 4, 16, 2, 14]], 2, 4);
+    // this._deal_for_animation_testing([["", "11S", "10H", "9S", "8H", "7S", "6H", "5S", "4H", "3S", "2H"]], 2, 4);
   }
 
-  private _deal_for_animation_testing(card_indexes_list: number[][], num_cells_to_block: number, num_piles_to_block: number): void {
-    card_indexes_list.forEach((ixs, i) => {
-      let cs = ixs.map(ix => this.all_cards[ix]);
-      this.deal_cards(cs, 0, this.piles[i], 0, cs.length);
+  private _deal_for_animation_testing(card_namess: string[][], num_cells_to_block: number, num_piles_to_block: number): void {
+    const blocker_card = Cards.face_down_of(Cards.get("13S")); // Arbitrary choice.
+    const blocker_cards = [blocker_card];
+    card_namess.forEach((names, i) => {
+      this.deal_cards(names.map(name => name ? Cards.get(name) : blocker_card), 0, this.piles[i], 0, names.length);
     });
-    const remaining = this.all_cards.filter(c => !c.pile);
-    let to_block = this.cells.slice(0, num_cells_to_block);
-    if(num_piles_to_block) to_block = to_block.concat(this.piles.slice(-num_piles_to_block));
-    for(let p of to_block) this.deal_cards([remaining.pop()], 0, p, 0, 1);
-    this.deal_cards(remaining, 0, this.piles.slice(-1)[0], 0, remaining.length);
+    for(let c of this.cells.slice(-num_cells_to_block)) c.replace_cards(blocker_cards, true);
+    for(let p of this.piles.slice(-num_piles_to_block)) p.replace_cards(blocker_cards, true);
   }
   // */
 

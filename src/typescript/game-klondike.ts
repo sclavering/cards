@@ -55,13 +55,13 @@ gGameClasses["klondike1"] = KlondikeGame;
 
 class KlondikeDrawThreeGame extends _Klondike {
   static create_layout() {
-    return new Layout("#<    s w  f f f f    >.#<   p p p p p p p   >.", { w: Deal3HWasteView });
+    return new Layout("#<    s w  f f f f    >.#<   p p p p p p p   >.", { w: DealThreeWasteHorizontalView });
   }
   constructor() {
     super();
     this.pile_details = {
-      stocks: [1, StockDeal3OrRefill, 0, 0],
-      wastes: [1, Waste, 0, 0],
+      stocks: [1, StockDealThreeOrRefill, 0, 0],
+      wastes: [1, DealThreeWaste, 0, 0],
       piles: [7, KlondikePile, [0,1,2,3,4,5,6], 1],
       foundations: [4, KlondikeFoundation, 0, 0],
     };

@@ -372,24 +372,24 @@ class _SlideView extends _FlexFanView {
   }
 };
 
-class _Deal3WasteView extends _SelectiveFanView {
+abstract class DealThreeWasteView extends _SelectiveFanView {
   protected visible_cards_of(cards: Card[]): Card[] {
     if(!cards.length) return [];
-    const waste = this.pile as Waste;
-    const first = waste.deal3t - waste.deal3v;
+    const waste = this.pile as DealThreeWaste;
+    const first = waste.num_total_after_last_deal - waste.num_visible_after_last_deal;
     if(cards.length <= first) return cards.slice(-1);
     return cards.slice(first);
   }
 };
 
-class Deal3HWasteView extends _Deal3WasteView {
+class DealThreeWasteHorizontalView extends DealThreeWasteView {
   constructor() {
     super({ capacity: 3, horizontal: true });
     this.init_counter();
   }
 };
 
-class Deal3VWasteView extends _Deal3WasteView {
+class DealThreeWasteVerticalView extends DealThreeWasteView {
   constructor() {
     super({ capacity: 3, horizontal: false });
     this.init_counter();

@@ -174,9 +174,9 @@ class StockDealToWasteOrRefill extends Stock {
   }
 };
 
-class StockDeal3OrRefill extends Stock {
+class StockDealThreeOrRefill extends Stock {
   deal(): Action {
-    return this.hasCards ? new DealThree(this, this.owning_game.waste) : new RefillStock(this, this.owning_game.waste);
+    return this.hasCards ? new DealThree(this, this.owning_game.waste as DealThreeWaste) : new RefillStock(this, this.owning_game.waste);
   }
 };
 
@@ -210,20 +210,21 @@ class StockDealToNonemptyPiles extends Stock {
 
 
 class Waste extends AnyPile {
-  deal3v: number;
-  deal3t: number;
-
-  constructor() {
-    super();
-    // Things to make draw3 waste piles work
-    this.deal3v = 0; // The number of cards that should have been visible after the last deal.
-    this.deal3t = 0; // The number of cards on this pile after the last deal.
-  }
   may_take(cseq: CardSequence): boolean {
     return cseq.is_single;
   }
   may_add(cseq: CardSequence): boolean {
     return false;
+  }
+};
+
+class DealThreeWaste extends Waste {
+  num_visible_after_last_deal: number;
+  num_total_after_last_deal: number;
+  constructor() {
+    super();
+    this.num_visible_after_last_deal = 0;
+    this.num_total_after_last_deal = 0;
   }
 };
 

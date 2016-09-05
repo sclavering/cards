@@ -62,26 +62,26 @@ class RefillStock extends GenericAction {
 
 class DealThree implements Action {
   private _stock: Stock;
-  private _waste: Waste;
-  private _old_deal3v: number;
-  private _old_deal3t: number;
+  private _waste: DealThreeWaste;
+  private _old_num_visible_after_last_deal: number;
+  private _old_num_total_after_last_deal: number;
   private num_moved: number;
-  constructor(from: Stock, to: Waste) {
+  constructor(from: Stock, to: DealThreeWaste) {
     this._stock = from;
     this._waste = to;
   }
   perform(): void {
-    this._old_deal3v = this._waste.deal3v;
-    this._old_deal3t = this._waste.deal3t;
+    this._old_num_visible_after_last_deal = this._waste.num_visible_after_last_deal;
+    this._old_num_total_after_last_deal = this._waste.num_total_after_last_deal;
     const cs = this._stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
-    this.num_moved = this._waste.deal3v = num;
-    this._waste.deal3t = this._waste.cards.length + num;
+    this.num_moved = this._waste.num_visible_after_last_deal = num;
+    this._waste.num_total_after_last_deal = this._waste.cards.length + num;
     for(var i = 0; i !== num; ++i) this._stock.deal_card_to(this._waste);
   }
   undo(): void {
     const num = this.num_moved;
-    this._waste.deal3v = this._old_deal3v;
-    this._waste.deal3t = this._old_deal3t;
+    this._waste.num_visible_after_last_deal = this._old_num_visible_after_last_deal;
+    this._waste.num_total_after_last_deal = this._old_num_total_after_last_deal;
     for(var i = 0; i !== num; ++i) this._stock.undeal_card_from(this._waste);
   }
 };

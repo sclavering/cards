@@ -57,11 +57,12 @@ gGameClasses["canfield"] = CanfieldGame;
 class CanfieldDrawThreeGame extends CanfieldGame {
   static create_layout() {
     // Waste view is different.
-    return new Layout(canfield_layout, { f: CountedView, r: CountedView, w: Deal3VWasteView });
+    return new Layout(canfield_layout, { f: CountedView, r: CountedView, w: DealThreeWasteVerticalView });
   }
   constructor() {
     super();
-    this.pile_details["stocks"][1] = StockDeal3OrRefill;
+    this.pile_details["wastes"][1] = DealThreeWaste;
+    this.pile_details["stocks"][1] = StockDealThreeOrRefill;
   }
 };
 gGameClasses["canfield3"] = CanfieldDrawThreeGame;

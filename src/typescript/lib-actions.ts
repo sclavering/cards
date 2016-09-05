@@ -87,18 +87,14 @@ class DealThree implements Action {
 };
 
 
-class DealToAsManyOfSpecifiedPilesAsPossible implements Action {
-  private _stock: Stock;
-  private _piles: AnyPile[];
+class DealToAsManyOfSpecifiedPilesAsPossible extends GenericAction {
   constructor(stock: Stock, piles: AnyPile[]) {
-    this._stock = stock;
-    this._piles = piles.length > stock.cards.length ? piles.slice(0, stock.cards.length) : piles;
-  }
-  perform(): void {
-    for(let p of this._piles) this._stock.deal_card_to(p);
-  }
-  undo(): void {
-    for(let p of this._piles.slice().reverse()) this._stock.undeal_card_from(p);
+    if(piles.length > stock.cards.length) piles = piles.slice(0, stock.cards.length);
+    const changes = [
+      { pile: stock as AnyPile, pre: stock.cards, post: stock.cards.slice(0, -piles.length) },
+    ];
+    piles.forEach((p, ix) => changes.push({ pile: p, pre: p.cards, post: p.cards.concat(stock.cards[stock.cards.length - 1 - ix]) }));
+    super(null, changes);
   }
 };
 

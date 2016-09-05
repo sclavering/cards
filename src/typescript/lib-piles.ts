@@ -95,18 +95,6 @@ abstract class AnyPile {
     if(!do_not_update_view) this.view.update();
   }
 
-  reveal_top_card(): void {
-    const cs = this.cards = this.cards.slice();
-    cs[cs.length - 1] = Cards.face_up_of(cs[cs.length - 1]);
-    this.view.update();
-  }
-
-  unreveal_top_card(): void {
-    const cs = this.cards = this.cards.slice();
-    cs[cs.length - 1] = Cards.face_down_of(cs[cs.length - 1]);
-    this.view.update();
-  }
-
   // Should return an Action appropriate for the CardSequence being clicked on.
   action_for_click(cseq: CardSequence): Action {
     return cseq ? this.owning_game.best_action_for(cseq) : null;

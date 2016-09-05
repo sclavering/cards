@@ -375,8 +375,7 @@ class _SlideView extends _FlexFanView {
 abstract class DealThreeWasteView extends _SelectiveFanView {
   protected visible_cards_of(cards: Card[]): Card[] {
     if(!cards.length) return [];
-    const waste = this.pile as DealThreeWaste;
-    const first = waste.num_total_after_last_deal - waste.num_visible_after_last_deal;
+    const first = (this.pile as DealThreeWaste).first_visible_index;
     if(cards.length <= first) return cards.slice(-1);
     return cards.slice(first);
   }

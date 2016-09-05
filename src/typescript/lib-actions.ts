@@ -31,7 +31,7 @@ abstract class GenericAction implements Action {
   redo(): void {
     this._do(false);
   }
-  _do(animating: boolean): void {
+  protected _do(animating: boolean): void {
     for(let change of this._changes) change.pile.replace_cards(change.post, animating);
   }
   undo(): void {
@@ -60,29 +60,29 @@ class RefillStock extends GenericAction {
 };
 
 
-class DealThree implements Action {
-  private _stock: Stock;
+class DealThree extends GenericAction {
   private _waste: DealThreeWaste;
-  private _old_num_visible_after_last_deal: number;
-  private _old_num_total_after_last_deal: number;
-  private num_moved: number;
-  constructor(from: Stock, to: DealThreeWaste) {
-    this._stock = from;
-    this._waste = to;
+  private _old_first_visible_index: number;
+  private _new_first_visible_index: number;
+  constructor(stock: Stock, waste: DealThreeWaste) {
+    const old_first_visible_index = waste.first_visible_index;
+    const new_first_visible_index = waste.cards.length;
+    const to_move = stock.cards.slice(-3).reverse();
+    super(null, [
+      { pile: stock, pre: stock.cards, post: stock.cards.slice(0, -to_move.length) },
+      { pile: waste, pre: waste.cards, post: waste.cards.concat(to_move) },
+    ]);
+    this._waste = waste;
+    this._old_first_visible_index = old_first_visible_index;
+    this._new_first_visible_index = new_first_visible_index;
   }
-  perform(): void {
-    this._old_num_visible_after_last_deal = this._waste.num_visible_after_last_deal;
-    this._old_num_total_after_last_deal = this._waste.num_total_after_last_deal;
-    const cs = this._stock.cards, num = Math.min(cs.length, 3), ix = cs.length - num;
-    this.num_moved = this._waste.num_visible_after_last_deal = num;
-    this._waste.num_total_after_last_deal = this._waste.cards.length + num;
-    for(var i = 0; i !== num; ++i) this._stock.deal_card_to(this._waste);
+  _do(animating: boolean): void {
+    this._waste.first_visible_index = this._new_first_visible_index;
+    super._do(animating);
   }
   undo(): void {
-    const num = this.num_moved;
-    this._waste.num_visible_after_last_deal = this._old_num_visible_after_last_deal;
-    this._waste.num_total_after_last_deal = this._old_num_total_after_last_deal;
-    for(var i = 0; i !== num; ++i) this._stock.undeal_card_from(this._waste);
+    this._waste.first_visible_index = this._old_first_visible_index;
+    super.undo();
   }
 };
 

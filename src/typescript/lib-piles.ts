@@ -100,11 +100,6 @@ abstract class AnyPile {
     if(!do_not_update_view) this.view.update();
   }
 
-  remove_cards(num_to_remove: number, do_not_update_view?: boolean): void {
-    this.cards = this.cards.slice(0, this.cards.length - num_to_remove);
-    if(!do_not_update_view) this.view.update();
-  }
-
   reveal_top_card(): void {
     const cs = this.cards = this.cards.slice();
     cs[cs.length - 1] = Cards.face_up_of(cs[cs.length - 1]);
@@ -149,12 +144,6 @@ abstract class Stock extends AnyPile {
   }
   may_add(cseq: CardSequence): boolean {
     return false;
-  }
-  deal_card_to(destination: AnyPile): void {
-    transfer_cards(this, [this.lastCard], destination);
-  }
-  undeal_card_from(source: AnyPile): void {
-    transfer_cards(source, [source.lastCard], this);
   }
   action_for_click(cseq: CardSequence): Action {
     return this.deal();
@@ -219,12 +208,10 @@ class Waste extends AnyPile {
 };
 
 class DealThreeWaste extends Waste {
-  num_visible_after_last_deal: number;
-  num_total_after_last_deal: number;
+  first_visible_index: number;
   constructor() {
     super();
-    this.num_visible_after_last_deal = 0;
-    this.num_total_after_last_deal = 0;
+    this.first_visible_index = 0;
   }
 };
 
@@ -343,9 +330,3 @@ class UpDownMod13Foundation extends Foundation {
     return is_up_or_down_mod13(cseq.first, this.lastCard);
   }
 };
-
-
-function transfer_cards(source: AnyPile, cards: Card[], destination: AnyPile, do_not_update_view?: boolean): void {
-  destination.add_cards_from_array(cards, do_not_update_view || false);
-  source.remove_cards(cards.length, do_not_update_view || false);
-}

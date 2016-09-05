@@ -40,10 +40,10 @@ class AcesUpFoundation extends Foundation {
     return false;
   }
   may_add(cseq: CardSequence): boolean {
-    const card = cseq.first;
     const compare = (c: Card, d: Card) => d ? c.suit === d.suit && c.number !== 1 && (c.number < d.number || d.number === 1) : false;
-    if(compare(card, cseq.source.secondToLastCard)) return true;
-    for(let p of cseq.source.following()) if(compare(card, p.last_card)) return true;
+    const second_to_last_card = cseq.source.cards.length > 1 ? cseq.source.cards[cseq.index - 1] : null
+    if(compare(cseq.first, second_to_last_card)) return true;
+    for(let p of cseq.source.following()) if(compare(cseq.first, p.last_card)) return true;
     return false;
   }
 };

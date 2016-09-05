@@ -40,10 +40,6 @@ abstract class AnyPile {
     const cs = this.cards, l = cs.length;
     return l ? cs[l - 1] : null;
   }
-  get secondToLastCard(): Card {
-    const cs = this.cards;
-    return cs.length > 1 ? cs[cs.length - 2] : null;
-  }
 
   abstract may_take(cseq: CardSequence): boolean;
 

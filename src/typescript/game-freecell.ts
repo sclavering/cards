@@ -30,8 +30,8 @@ class FreeCellGame extends FreeCellRelatedGame {
     card_namess.forEach((names, i) => {
       this.deal_cards(names.map(name => name ? Cards.get(name) : blocker_card), 0, this.piles[i], 0, names.length);
     });
-    for(let c of this.cells.slice(-num_cells_to_block)) c.replace_cards(blocker_cards, true);
-    for(let p of this.piles.slice(-num_piles_to_block)) p.replace_cards(blocker_cards, true);
+    for(let c of this.cells.slice(-num_cells_to_block)) c.cards = blocker_cards;
+    for(let p of this.piles.slice(-num_piles_to_block)) p.cards = blocker_cards;
   }
   // */
 

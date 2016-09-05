@@ -32,12 +32,18 @@ abstract class GenericAction implements Action {
     this._do(false);
   }
   protected _do(animating: boolean): void {
-    for(let change of this._changes) change.pile.replace_cards(change.post, animating);
+    for(let change of this._changes) {
+      change.pile.cards = change.post;
+      if(!animating) change.pile.view.update();
+    }
   }
   undo(): void {
-    for(let change of this._changes) change.pile.replace_cards(change.pre);
+    for(let change of this._changes) {
+      change.pile.cards = change.pre;
+      change.pile.view.update();
+    }
   }
-}
+};
 
 
 class DealToPile extends GenericAction {

@@ -90,11 +90,6 @@ abstract class AnyPile {
     return this._following = ps;
   }
 
-  replace_cards(cards: Card[], do_not_update_view?: boolean): void {
-    this.cards = cards;
-    if(!do_not_update_view) this.view.update();
-  }
-
   // Should return an Action appropriate for the CardSequence being clicked on.
   action_for_click(cseq: CardSequence): Action {
     return cseq ? this.owning_game.best_action_for(cseq) : null;

@@ -15,10 +15,10 @@ class PenguinGame extends Game {
   protected deal(cards: Card[]): void {
     const aces = cards.filter(c => c.number === 1);
     const others = cards.filter(c => c.number !== 1);
-    this.deal_cards(aces, 0, this.piles[0], 0, 1);
-    for(let i = 0; i < 3; ++i) this.deal_cards(aces, i + 1, this.foundations[i], 0, 1);
+    others.unshift(aces.pop());
+    for(let i = 0; i < 3; ++i) this.deal_cards(aces, i, this.foundations[i], 0, 1);
     let ix = 0;
-    for(let i = 0; i < 7; ++i) ix = this.deal_cards(others, ix, this.piles[i], 0, i ? 7 : 6);
+    for(let p of this.piles) ix = this.deal_cards(others, ix, p, 0, 7);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

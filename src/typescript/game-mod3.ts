@@ -27,11 +27,9 @@ class Mod3Game extends Game {
     this.hint_and_autoplay_source_piles = [].concat(this.foundations, this.piles);
   }
 
-  // games that start with no cards in the correct place on the foundations are impossible
-  protected is_shuffle_impossible(cards: Card[]): boolean {
-    for(let i = 0; i < 8; ++i)
-      if(cards[i].number === 2 || cards[i + 8].number === 3 || cards[i + 16].number === 4)
-        return false;
+  // Games that start with no cards in the correct place on the foundations are impossible
+  protected is_shuffle_impossible(): boolean {
+    for(let f of this.foundations) if((f as Mod3Foundation).contains_appropriate_cards()) return false;
     return true;
   }
 

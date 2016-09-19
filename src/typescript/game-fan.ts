@@ -29,10 +29,11 @@ class FanGame extends Game {
     };
   }
 
-  protected is_shuffle_impossible(cards: Card[]): boolean {
-    for(let i = 0; i < 51; i += 3) {
+  protected is_shuffle_impossible(): boolean {
+    for(let p of this.piles) {
+      if(p.cards.length < 3) continue;
       // These will form a pile c,d,e with c at the bottom.
-      let c = cards[i], d = cards[i + 1], e = cards[i + 2];
+      let c = p.cards[0], d = p.cards[1], e = p.cards[2];
       // A pile such as 4C,9C,8C is impossible.
       if(c.suit === d.suit && is_next_in_suit(e, d) && c.number < e.number) return true;
       // A pile such as JH,5H,10H is impossible.

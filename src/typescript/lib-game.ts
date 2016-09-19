@@ -173,11 +173,14 @@ class Game {
     this._foundation_clusters = this._get_foundation_clusters(this.foundations);
     if(optional_cards_to_deal) {
       this.cards_as_dealt = optional_cards_to_deal;
+      this.deal(this.cards_as_dealt);
     } else {
       this.cards_as_dealt = this.all_cards.slice();
-      do { shuffle_in_place(this.cards_as_dealt) } while(this.is_shuffle_impossible(this.cards_as_dealt));
+      do {
+        shuffle_in_place(this.cards_as_dealt);
+        this.deal(this.cards_as_dealt);
+      } while(this.is_shuffle_impossible());
     }
-    this.deal(this.cards_as_dealt);
   }
 
   // For subclasses to optionally implement.  Typically used to add extra properties to piles.
@@ -198,8 +201,8 @@ class Game {
     return ix + cs.length;
   }
 
-  // Subclasses may override this to prevent (some) impossible games from being dealt. Cards will be shuffled repeatedly until this returns false.
-  protected is_shuffle_impossible(shuffled_cards: Card[]): boolean {
+  // Subclasses may override this to prevent (some) impossible games from being dealt.  Cards will be repeatedly shuffled and dealt until this returns false.
+  protected is_shuffle_impossible(): boolean {
     return false;
   }
 

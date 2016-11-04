@@ -136,7 +136,7 @@ class Game {
     for(let k in details) {
       let [num, PileClass, face_down, face_up] = details[k];
       let collection: AnyPile[] = this._pile_arrays_by_letter[k[0]] = [];
-      this[k] = collection;
+      (this as any)[k] = collection;
       for(let i = 0; i !== num; ++i) {
         let p = new PileClass();
         p.owning_game = this;

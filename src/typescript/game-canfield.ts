@@ -33,7 +33,7 @@ class CanfieldGame extends Game {
     ix = this.deal_cards(cards, ix, this.reserve, this._reserveFaceDown, this._reserveFaceUp);
     for(let p of this.piles) ix = this.deal_cards(cards, ix, p, 0, 1);
     const remainder = cards.length - 1 - this.piles.length - this._reserveFaceDown - this._reserveFaceUp;
-    this.deal_cards(cards, ix, this.stock, remainder, 0);
+    this.deal_cards(cards, ix, this.stock, 0, remainder);
   }
 
   protected best_destination_for(cseq: CardSequence): AnyPile {

@@ -414,6 +414,59 @@ class RegimentSlideView extends _SlideView {
   }
 };
 
+class RegimentPileView extends RegimentSlideView {
+  draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean, use_minimum_size?: boolean): void {
+    super.draw_into(ctx, cards, draw_background, use_minimum_size);
+    if(cards.length <= 1) return;
+
+    let prev: Card | null = null;
+    let up = false, down = false;
+    for(let c of cards) {
+      if(prev && is_next(prev, c)) up = true;
+      if(prev && is_next(c, prev)) down = true;
+      prev = c;
+    }
+
+    const x_mid = ctx.canvas.width - 10;
+    // This is quite high so that even when a pile has >13 cards in, the arrow remains over the face of the top card, rather than the edges of the cards beneath it (where it would be much harder to see).
+    const y_top = 9;
+    const head_half_w = 6;
+    const head_h = 7;
+    const connector_half_w = 2;
+    const connector_half_h = 3;
+    const y_mid = y_top + head_h + connector_half_h; 
+    ctx.beginPath();
+    ctx.moveTo(x_mid - connector_half_w, y_mid);
+    if(up) {
+      ctx.lineTo(x_mid - connector_half_w, y_mid - connector_half_h);
+      ctx.lineTo(x_mid - head_half_w, y_mid - connector_half_h);
+      ctx.lineTo(x_mid, y_mid - connector_half_h - head_h);
+      ctx.lineTo(x_mid + head_half_w, y_mid - connector_half_h);
+      ctx.lineTo(x_mid + connector_half_w, y_mid - connector_half_h);
+    } else {
+      ctx.lineTo(x_mid - connector_half_w, y_mid - connector_half_h - head_h);
+      ctx.lineTo(x_mid + connector_half_w, y_mid - connector_half_h - head_h);
+    }
+    if(down) {
+      ctx.lineTo(x_mid + connector_half_w, y_mid + connector_half_h);
+      ctx.lineTo(x_mid + head_half_w, y_mid + connector_half_h);
+      ctx.lineTo(x_mid, y_mid + connector_half_h + head_h);
+      ctx.lineTo(x_mid - head_half_w, y_mid + connector_half_h);
+      ctx.lineTo(x_mid - connector_half_w, y_mid + connector_half_h);
+    } else {
+      ctx.lineTo(x_mid + connector_half_w, y_mid + connector_half_h + head_h);
+      ctx.lineTo(x_mid - connector_half_w, y_mid + connector_half_h + head_h);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.fill();
+  }
+};
+
 class Mod3SlideView extends _SlideView {
   constructor() {
     super({ slide_capacity: 4 });

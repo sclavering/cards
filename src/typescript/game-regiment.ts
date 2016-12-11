@@ -3,7 +3,7 @@ class RegimentGame extends Game {
   private king_foundations: RegimentKingFoundation[];
 
   static create_layout() {
-    return new Layout("#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.", { p: RegimentSlideView, r: RegimentSlideView, a: RegimentSlideView, k: RegimentSlideView });
+    return new Layout("#<    a a a a   k k k k    >.#<   p p p p p p p p   ><   r r r r r r r r><   p p p p p p p p>.", { p: RegimentPileView, r: RegimentSlideView, a: RegimentSlideView, k: RegimentSlideView });
   }
 
   constructor() {

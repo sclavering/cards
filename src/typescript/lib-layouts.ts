@@ -331,7 +331,8 @@ class Layout {
   }
 
   _current_touch_of(ev: TouchEvent): Touch {
-    for(let t of ev.changedTouches) if(t.identifier === this._current_touch_id) return t;
+    const changedTouches = ev.changedTouches, len = changedTouches.length;
+    for(let i = 0; i !== len; ++i) if(changedTouches[i].identifier === this._current_touch_id) return changedTouches[i];
     return null;
   }
 

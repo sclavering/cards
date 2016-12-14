@@ -291,7 +291,7 @@ class Game {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
     if(this._foundation_clusters && card_number(cseq.first) === 1)
       for(let fs of this._foundation_clusters)
-        if(fs.every(f => !f.cards.length || f.cards[0].suit === cseq.first.suit))
+        if(fs.every(f => !f.cards.length || f.cards[0].suit === card_suit(cseq.first)))
           return find_empty(fs);
     for(let f of this.foundations) if(f.may_add_maybe_from_self(cseq)) return f;
     return null;

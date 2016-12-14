@@ -85,7 +85,7 @@ abstract class Mod3Foundation extends Foundation {
     const card = cseq.first;
     const last = this.last_card;
     if(!this.cards.length) return card_number(card) === this._base_num;
-    return this.contains_appropriate_cards() && card.suit === last.suit && card_number(card) === card_number(last) + 3;
+    return this.contains_appropriate_cards() && card_suit(card) === card_suit(last) && card_number(card) === card_number(last) + 3;
   }
   contains_appropriate_cards() {
     const first = this.first_card;

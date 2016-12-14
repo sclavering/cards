@@ -37,7 +37,7 @@ class UnionSquarePile extends Pile {
     const card = cseq.first;
     const cs = this.cards, num = cs.length, last = this.last_card;
     if(!last) return true;
-    if(last.suit !== card.suit) return false;
+    if(card_suit(last) !== card_suit(card)) return false;
     if(num === 1) return card_number(card) === card_number(last) + 1 || card_number(card) === card_number(last) - 1;
     return card_number(cs[0]) === card_number(cs[1]) + 1 // going down?
         ? card_number(card) === card_number(last) - 1
@@ -53,9 +53,9 @@ class UnionSquareFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card_suit(card));
     const last = this.last_card, pos = this.cards.length;
-    if(last.suit !== card.suit) return false;
+    if(card_suit(last) !== card_suit(card)) return false;
     if(pos < 13) return card_number(card) === card_number(last) + 1;
     if(pos > 13) return card_number(card) === card_number(last) - 1;
     return card_number(card) === 13;

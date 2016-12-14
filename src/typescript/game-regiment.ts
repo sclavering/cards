@@ -77,7 +77,7 @@ class RegimentPile extends Pile {
     const card = cseq.first;
     // piles are built up or down (or both) within suit
     const l = this.last_card;
-    if(l) return card.suit === l.suit && (card_number(l) === card_number(card) + 1 || card_number(l) === card_number(card) - 1);
+    if(l) return card_suit(card) === card_suit(l) && (card_number(l) === card_number(card) + 1 || card_number(l) === card_number(card) - 1);
 
     // empty piles must be filled from the closest reserve pile
     if(!(cseq.source instanceof Reserve)) return false;
@@ -105,7 +105,7 @@ class RegimentAceFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card_suit(card));
     return is_next_in_suit(this.last_card, card);
   }
 };
@@ -116,7 +116,7 @@ class RegimentKingFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.cards.length) return card_number(card) === 13 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card_number(card) === 13 && !includes_pile_starting_with_suit(this.following(), card_suit(card));
     return is_next_in_suit(card, this.last_card);
   }
 };

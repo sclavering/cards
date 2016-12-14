@@ -209,9 +209,9 @@ class BlackWidowPile extends SpiderPile {
     // Sure, this is O(N^2), but the N is so low it's irrelevant.
     for(let cseq of this.all_cseqs()) {
       if(!this.may_take(cseq)) continue;
-      if(cseq.first.suit === prev_suit) continue;
+      if(card_suit(cseq.first) === prev_suit) continue;
       sources.push(cseq);
-      prev_suit = cseq.first.suit;
+      prev_suit = card_suit(cseq.first);
     }
     return sources;
   }

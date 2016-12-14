@@ -35,9 +35,9 @@ class FanGame extends Game {
       // These will form a pile c,d,e with c at the bottom.
       let c = p.cards[0], d = p.cards[1], e = p.cards[2];
       // A pile such as 4C,9C,8C is impossible.
-      if(c.suit === d.suit && is_next_in_suit(e, d) && card_number(c) < card_number(e)) return true;
+      if(card_suit(c) === card_suit(d) && is_next_in_suit(e, d) && card_number(c) < card_number(e)) return true;
       // A pile such as JH,5H,10H is impossible.
-      if(c.suit === d.suit && is_next_in_suit(e, c) && card_number(d) < card_number(e)) return true;
+      if(card_suit(c) === card_suit(d) && is_next_in_suit(e, c) && card_number(d) < card_number(e)) return true;
     }
     return false;
   }

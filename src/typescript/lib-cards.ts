@@ -4,17 +4,20 @@ enum Suit {
   D = 3,
   C = 4,
 };
-type Colour = "R" | "B";
+
+enum Colour {
+  R = 5,
+  B = 6,
+};
 
 // xxx Is there a better way of doing these?
 interface LookupBySuit<SomeType> {
-  // This is :number because :Suit isn't allowed by TypeScript.
+  // tsc 2.0 doesn't allow using :Suit here.
   [suit: number]: SomeType;
 };
 interface LookupByColour<SomeType> {
-  R: SomeType;
-  B: SomeType;
-  [colour: string]: SomeType;
+  // tsc 2.0 doesn't allow using :Colour here.
+  [colour: number]: SomeType;
 };
 
 
@@ -97,7 +100,7 @@ class Card {
   _alt_face: Card;
 
   constructor(number: number, suit: Suit, face_up: boolean) {
-    const suit_to_colour: LookupBySuit<Colour> = { [Suit.S]: "B", [Suit.H]: "R", [Suit.D]: "R", [Suit.C]: "B" };
+    const suit_to_colour: LookupBySuit<Colour> = { [Suit.S]: Colour.B, [Suit.H]: Colour.R, [Suit.D]: Colour.R, [Suit.C]: Colour.B };
     this.colour = suit_to_colour[suit];
     this.suit = suit;
     this.display_str = Suit[suit] + number;

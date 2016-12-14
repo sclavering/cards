@@ -17,14 +17,14 @@ function autoplay_any_where_all_lower_of_other_colour_are_on_foundations(foundat
 };
 
 function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: boolean, have_two_decks: boolean): AutoplayPredicate {
-  const colour_nums: LookupByColour<number> = { R: 1000, B: 1000 }; // colour -> smallest num of that colour on the top of an f
-  const colour_counts: LookupByColour<number> = { R: 0, B: 0 }; // num of fs of a given colour
+  const colour_nums: LookupByColour<number> = { [Colour.R]: 1000, [Colour.B]: 1000 }; // colour -> smallest num of that colour on the top of an f
+  const colour_counts: LookupByColour<number> = { [Colour.R]: 0, [Colour.B]: 0 }; // num of fs of a given colour
   for_each_top_card(fs, c => {
     ++colour_counts[c.colour];
     if(c.number < colour_nums[c.colour]) colour_nums[c.colour] = c.number;
   });
-  const max_red = colour_counts.B >= fs.length / 2 ? colour_nums.B + 1 : (always_allow_twos ? 2 : 1);
-  const max_black = colour_counts.R >= fs.length / 2 ? colour_nums.R + 1 : (always_allow_twos ? 2 : 1);
+  const max_red = colour_counts[Colour.B] >= fs.length / 2 ? colour_nums[Colour.B] + 1 : (always_allow_twos ? 2 : 1);
+  const max_black = colour_counts[Colour.R] >= fs.length / 2 ? colour_nums[Colour.R] + 1 : (always_allow_twos ? 2 : 1);
   const max_by_suit: LookupBySuit<number> = { [Suit.S]: max_black, [Suit.H]: max_red, [Suit.D]: max_red, [Suit.C]: max_black };
   if(have_two_decks) {
     const [suit_nums, suit_counts] = lowest_numbers_and_counts_by_suit_on_foundations(fs);

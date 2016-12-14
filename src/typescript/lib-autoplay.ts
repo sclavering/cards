@@ -20,8 +20,9 @@ function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: 
   const colour_nums: LookupByColour<number> = { [Colour.R]: 1000, [Colour.B]: 1000 }; // colour -> smallest num of that colour on the top of an f
   const colour_counts: LookupByColour<number> = { [Colour.R]: 0, [Colour.B]: 0 }; // num of fs of a given colour
   for_each_top_card(fs, c => {
-    ++colour_counts[c.colour];
-    if(c.number < colour_nums[c.colour]) colour_nums[c.colour] = c.number;
+    const colour = card_colour(c);
+    ++colour_counts[colour];
+    if(c.number < colour_nums[colour]) colour_nums[colour] = c.number;
   });
   const max_red = colour_counts[Colour.B] >= fs.length / 2 ? colour_nums[Colour.B] + 1 : (always_allow_twos ? 2 : 1);
   const max_black = colour_counts[Colour.R] >= fs.length / 2 ? colour_nums[Colour.R] + 1 : (always_allow_twos ? 2 : 1);

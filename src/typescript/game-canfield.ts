@@ -48,7 +48,7 @@ class CanfieldGame extends Game {
     for(let f of this.foundations) if(f.cards.length) max_nums[f.first_card.suit] = _effective_num(f.last_card.number);
     // As in Klondike, if all the black "threes" are up, you can autoplay red "fours", and you can always autoplay "twos".  It's just that the "aces" is instead base_num, etc.
     const autoplayable: LookupByColour<number> = { [Colour.R]: Math.min(max_nums[Suit.S], max_nums[Suit.C]) + 1, [Colour.B]: Math.min(max_nums[Suit.H], max_nums[Suit.D]) + 1 };
-    return this.autoplay_using_predicate(cseq => _effective_num(cseq.first.number) <= autoplayable[cseq.first.colour]);
+    return this.autoplay_using_predicate(cseq => _effective_num(cseq.first.number) <= autoplayable[card_colour(cseq.first)]);
   }
 };
 g_game_classes["canfield"] = CanfieldGame;

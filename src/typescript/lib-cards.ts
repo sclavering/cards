@@ -91,7 +91,6 @@ class Cards {
 
 // Instances are treated as immutable.
 class Card {
-  colour: Colour;
   suit: Suit;
   display_str: string;
   number: number;
@@ -101,12 +100,16 @@ class Card {
 
   constructor(number: number, suit: Suit, face_up: boolean) {
     const suit_to_colour: LookupBySuit<Colour> = { [Suit.S]: Colour.B, [Suit.H]: Colour.R, [Suit.D]: Colour.R, [Suit.C]: Colour.B };
-    this.colour = suit_to_colour[suit];
     this.suit = suit;
     this.display_str = Suit[suit] + number;
     this.number = number;
     this.face_up = face_up;
   }
+};
+
+
+function card_colour(c: Card) {
+  return c.suit === Suit.S || c.suit === Suit.C ? Colour.B : Colour.R;
 };
 
 

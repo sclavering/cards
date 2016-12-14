@@ -289,7 +289,7 @@ class Game {
   // Subclasses may override this.
   protected foundation_destination_for(cseq: CardSequence): AnyPile {
     // This branch is about putting aces of the same suit together, in games where that's relevant.
-    if(this._foundation_clusters && cseq.first.number === 1)
+    if(this._foundation_clusters && card_number(cseq.first) === 1)
       for(let fs of this._foundation_clusters)
         if(fs.every(f => !f.cards.length || f.cards[0].suit === cseq.first.suit))
           return find_empty(fs);

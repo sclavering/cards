@@ -62,5 +62,5 @@ class MazePile extends Pile {
 
 
 function maze_allows_adjacent(a: Card, b: Card): boolean {
-  return is_next_in_suit(a, b) || (a.number === 12 && b.number === 1);
+  return is_next_in_suit(a, b) || (card_number(a) === 12 && card_number(b) === 1);
 };

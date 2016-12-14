@@ -36,8 +36,8 @@ class DoubleSolFoundation extends Foundation {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     if(!cseq.is_single) return false;
-    if(!this.cards.length) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const expected_number = Math.floor(this.cards.length / 2) + 1;
-    return card.number === expected_number && card.suit === this.cards[0].suit;
+    return card_number(card) === expected_number && card.suit === this.cards[0].suit;
   }
 };

@@ -31,7 +31,7 @@ g_game_classes["winston"] = WinstonGame;
 
 class WinstonStock extends Stock {
   deal(): Action {
-    const pred = (p: AnyPile) => p.cards.length ? !(p.cards[0].face_up && p.cards[0].number === 13) : true;
+    const pred = (p: AnyPile) => p.cards.length ? !(p.cards[0].face_up && card_number(p.cards[0]) === 13) : true;
     return this.cards.length ? new DealToAsManyOfSpecifiedPilesAsPossible(this, this.owning_game.piles.filter(pred)) : null;
   }
 };

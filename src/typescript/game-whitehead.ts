@@ -23,9 +23,9 @@ class WhiteheadGame extends Game {
     const nums: LookupBySuit<number> = { [Suit.S]: 2, [Suit.H]: 2, [Suit.D]: 2, [Suit.C]: 2 }; // can always play an Ace or two
     for(let f of this.foundations) {
       let c = f.last_card;
-      if(c) nums[other_suit_of_same_colour[c.suit]] = c.number + 1;
+      if(c) nums[other_suit_of_same_colour[c.suit]] = card_number(c) + 1;
     }
-    return this.autoplay_using_predicate(cseq => cseq.first.number <= nums[cseq.first.suit]);
+    return this.autoplay_using_predicate(cseq => card_number(cseq.first) <= nums[cseq.first.suit]);
   }
 };
 g_game_classes["whitehead"] = WhiteheadGame;

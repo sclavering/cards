@@ -2,8 +2,8 @@ class _PileOnGame extends Game {
   protected _pileon_depth: number;
 
   protected best_destination_for(cseq: CardSequence): AnyPile {
-    const num = cseq.first.number;
-    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? (p.last_card.number === num ? 2 : 1) : 0);
+    const num = card_number(cseq.first);
+    return this.best_destination_for__nearest_legal_using_ranking(cseq, p => p.cards.length ? (card_number(p.last_card) === num ? 2 : 1) : 0);
   }
 
   // Won when each pile is either empty or holds four cards of the same rank.
@@ -94,7 +94,7 @@ class _PileOnPile extends Pile {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     const last = this.last_card;
-    if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : last.number === card.number)) return false;
+    if(last && !(this._is_pileup ? is_same_number_or_one_different_mod13(last, card) : card_number(last) === card_number(card))) return false;
     return this.cards.length + cseq.count <= this._depth;
   }
 };
@@ -125,15 +125,15 @@ class PileUpPile8 extends _PileOnPile {
 
 
 function all_same_number(cards: Card[]): boolean {
-  const num = cards[0].number;
-  for(let i = 1; i < cards.length; ++i) if(cards[i].number !== num) return false;
+  const num = card_number(cards[0]);
+  for(let i = 1; i < cards.length; ++i) if(card_number(cards[i]) !== num) return false;
   return true;
 };
 
 
 function is_same_number_or_one_different_mod13(a: Card, b: Card): boolean {
-  return a.number === b.number
-    || (a.number === 13 ? 1 : a.number + 1) === b.number
-    || (a.number === 1 ? 13 : a.number - 1) === b.number
+  return card_number(a) === card_number(b)
+    || (card_number(a) === 13 ? 1 : card_number(a) + 1) === card_number(b)
+    || (card_number(a) === 1 ? 13 : card_number(a) - 1) === card_number(b)
   ;
 };

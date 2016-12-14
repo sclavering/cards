@@ -32,7 +32,7 @@ class PyramidGame extends BasePyramidGame {
 
   best_action_for(cseq: CardSequence): Action {
     const card = cseq.first;
-    return card.number === 13 && cseq.source.may_take(cseq) ? new RemovePair(cseq, null) : null;
+    return card_number(card) === 13 && cseq.source.may_take(cseq) ? new RemovePair(cseq, null) : null;
   }
 
   // This game has no autoplay
@@ -130,7 +130,7 @@ class PyramidPile extends BasePyramidPile {
     return our_card && this._can_remove_pair(cseq, our_card) ? new RemovePair(cseq, our_card) : null;
   }
   private _can_remove_pair(cseq: CardSequence, our_card: CardSequence): boolean {
-    if(cseq.first.number + our_card.first.number !== 13) return false;
+    if(card_number(cseq.first) + card_number(our_card.first) !== 13) return false;
     if(!this.left_child) return true; // Cards on the bottom row is always free.
     return (!this.left_child.cards.length || this.left_child === cseq.source)
         && (!this.right_child.cards.length || this.right_child === cseq.source);
@@ -145,13 +145,13 @@ class PyramidFoundation extends Foundation {
     return false;
   }
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
-    return cseq.first.number === 13 ? new RemovePair(cseq, null) : null;
+    return card_number(cseq.first) === 13 ? new RemovePair(cseq, null) : null;
   }
 };
 
 class PyramidWaste extends Waste {
   action_for_drop(cseq: CardSequence): Action | ErrorMsg {
     const last = this.cseq_at_negative(-1);
-    return last && cseq.first.number + last.first.number === 13 ? new RemovePair(cseq, last) : null;
+    return last && card_number(cseq.first) + card_number(last.first) === 13 ? new RemovePair(cseq, last) : null;
   }
 };

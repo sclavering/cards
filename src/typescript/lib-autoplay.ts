@@ -22,7 +22,7 @@ function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: 
   for_each_top_card(fs, c => {
     const colour = card_colour(c);
     ++colour_counts[colour];
-    if(c.number < colour_nums[colour]) colour_nums[colour] = c.number;
+    if(card_number(c) < colour_nums[colour]) colour_nums[colour] = card_number(c);
   });
   const max_red = colour_counts[Colour.B] >= fs.length / 2 ? colour_nums[Colour.B] + 1 : (always_allow_twos ? 2 : 1);
   const max_black = colour_counts[Colour.R] >= fs.length / 2 ? colour_nums[Colour.R] + 1 : (always_allow_twos ? 2 : 1);
@@ -34,7 +34,7 @@ function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: 
       else max_by_suit[suit] = Math.min(max_by_suit[suit], suit_nums[suit] + 1);
     }
   }
-  return cseq => cseq.first.number <= max_by_suit[cseq.first.suit];
+  return cseq => card_number(cseq.first) <= max_by_suit[cseq.first.suit];
 };
 
 
@@ -45,7 +45,7 @@ function autoplay_any_where_all_lower_of_same_suit_are_on_foundations(foundation
     if(counts[suit] < 2) nums[suit] = 1;
     else ++nums[suit];
   }
-  return cseq => cseq.first.number <= nums[cseq.first.suit];
+  return cseq => card_number(cseq.first) <= nums[cseq.first.suit];
 };
 
 
@@ -54,7 +54,7 @@ function lowest_numbers_and_counts_by_suit_on_foundations(fs: AnyPile[]): [Looku
   const counts: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 0, [Suit.D]: 0, [Suit.C]: 0 }; // suit -> num of such on fs
   for_each_top_card(fs, c => {
     ++counts[c.suit];
-    if(c.number < nums[c.suit]) nums[c.suit] = c.number;
+    if(card_number(c) < nums[c.suit]) nums[c.suit] = card_number(c);
   });
   return [nums, counts];
 };

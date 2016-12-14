@@ -184,7 +184,7 @@ class SpiderPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    return !this.cards.length || this.last_card.number === cseq.first.number + 1;
+    return !this.cards.length || card_number(this.last_card) === card_number(cseq.first) + 1;
   }
 };
 
@@ -223,6 +223,6 @@ class SpiderFoundation extends Foundation {
     return false;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.first.number === 13 && cseq.count === 13 && check_consecutive_cards(cseq, is_next_down_same_suit);
+    return card_number(cseq.first) === 13 && cseq.count === 13 && check_consecutive_cards(cseq, is_next_down_same_suit);
   }
 };

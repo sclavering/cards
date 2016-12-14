@@ -217,7 +217,7 @@ function may_take_descending_same_suit(cseq: CardSequence): boolean {
 
 function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
   const last = self.last_card;
-  return !last || (!is_same_colour(last, card) && last.number === card.number + 1);
+  return !last || (!is_same_colour(last, card) && card_number(last) === card_number(card) + 1);
 }
 
 
@@ -238,7 +238,7 @@ class FanPile extends Pile {
     return cseq.is_single && cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : card_number(cseq.first) === 13;
   }
 };
 
@@ -264,7 +264,7 @@ class KlondikePile extends Pile {
     return cseq.first.face_up;
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.last_card) : cseq.first.number === 13;
+    return this.cards.length ? is_next_and_alt_colour(cseq.first, this.last_card) : card_number(cseq.first) === 13;
   }
 };
 
@@ -289,7 +289,7 @@ class KlondikeFoundation extends Foundation {
     return cseq.is_single;
   }
   may_add(cseq: CardSequence): boolean {
-    return cseq.is_single && (this.cards.length ? is_next_in_suit(this.last_card, cseq.first) : cseq.first.number === 1);
+    return cseq.is_single && (this.cards.length ? is_next_in_suit(this.last_card, cseq.first) : card_number(cseq.first) === 1);
   }
 };
 

@@ -38,10 +38,10 @@ class UnionSquarePile extends Pile {
     const cs = this.cards, num = cs.length, last = this.last_card;
     if(!last) return true;
     if(last.suit !== card.suit) return false;
-    if(num === 1) return card.number === last.number + 1 || card.number === last.number - 1;
-    return cs[0].number === cs[1].number + 1 // going down?
-        ? card.number === last.number - 1
-        : card.number === last.number + 1;
+    if(num === 1) return card_number(card) === card_number(last) + 1 || card_number(card) === card_number(last) - 1;
+    return card_number(cs[0]) === card_number(cs[1]) + 1 // going down?
+        ? card_number(card) === card_number(last) - 1
+        : card_number(card) === card_number(last) + 1;
   }
 };
 
@@ -53,11 +53,11 @@ class UnionSquareFoundation extends Foundation {
   }
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
-    if(!this.cards.length) return card.number === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
+    if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card.suit);
     const last = this.last_card, pos = this.cards.length;
     if(last.suit !== card.suit) return false;
-    if(pos < 13) return card.number === last.number + 1;
-    if(pos > 13) return card.number === last.number - 1;
-    return card.number === 13;
+    if(pos < 13) return card_number(card) === card_number(last) + 1;
+    if(pos > 13) return card_number(card) === card_number(last) - 1;
+    return card_number(card) === 13;
   }
 };

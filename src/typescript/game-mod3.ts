@@ -40,7 +40,7 @@ class Mod3Game extends Game {
   autoplay() {
     const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
     return this.autoplay_using_predicate(
-      cseq => cseq.first.number <= autoplayable_numbers_by_row[(cseq.first.number - 2) % 3][cseq.first.suit]
+      cseq => card_number(cseq.first) <= autoplayable_numbers_by_row[(card_number(cseq.first) - 2) % 3][cseq.first.suit]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
         && !(cseq.source instanceof Mod3Foundation && cseq.source.contains_appropriate_cards())
     );
@@ -55,8 +55,8 @@ class Mod3Game extends Game {
       let c = f.last_card;
       if(!c) continue;
       if(!f.contains_appropriate_cards()) seen_invalid_cards = true;
-      else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], c.number) + 3;
-      else seen[c.suit] = c.number;
+      else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], card_number(c)) + 3;
+      else seen[c.suit] = card_number(c);
     }
     const base_num = row[0]._base_num;
     if(!seen_invalid_cards) for(let k in rv) if(rv[k] < base_num) rv[k] = base_num;
@@ -84,12 +84,12 @@ abstract class Mod3Foundation extends Foundation {
   may_add(cseq: CardSequence): boolean {
     const card = cseq.first;
     const last = this.last_card;
-    if(!this.cards.length) return card.number === this._base_num;
-    return this.contains_appropriate_cards() && card.suit === last.suit && card.number === last.number + 3;
+    if(!this.cards.length) return card_number(card) === this._base_num;
+    return this.contains_appropriate_cards() && card.suit === last.suit && card_number(card) === card_number(last) + 3;
   }
   contains_appropriate_cards() {
     const first = this.first_card;
-    return first ? first.number === this._base_num : false;
+    return first ? card_number(first) === this._base_num : false;
   }
   hint_sources(): CardSequence[] {
     const cseq = this.cseq_at(0);

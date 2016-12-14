@@ -13,8 +13,8 @@ class PenguinGame extends Game {
   }
 
   protected deal(cards: Card[]): void {
-    const aces = cards.filter(c => c.number === 1);
-    const others = cards.filter(c => c.number !== 1);
+    const aces = cards.filter(c => card_number(c) === 1);
+    const others = cards.filter(c => card_number(c) !== 1);
     others.unshift(aces.pop());
     for(let i = 0; i < 3; ++i) this.deal_cards(aces, i, this.foundations[i], 0, 1);
     let ix = 0;
@@ -37,6 +37,6 @@ class PenguinPile extends Pile {
     return may_take_descending_same_suit(cseq);
   }
   may_add(cseq: CardSequence): boolean {
-    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : cseq.first.number === 13;
+    return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : card_number(cseq.first) === 13;
   }
 };

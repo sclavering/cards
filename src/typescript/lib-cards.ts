@@ -108,6 +108,10 @@ class Card {
 };
 
 
+function card_number(c: Card) {
+  return c.number;
+};
+
 function card_colour(c: Card) {
   return c.suit === Suit.S || c.suit === Suit.C ? Colour.B : Colour.R;
 };
@@ -119,15 +123,15 @@ function is_same_colour(a: Card, b: Card) {
 
 
 function is_next(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number;
+  return card_number(a) + 1 === card_number(b);
 };
 
 function is_next_mod13(a: Card, b: Card): boolean {
-  return a.number === 13 ? b.number === 1 : a.number + 1 === b.number;
+  return card_number(a) === 13 ? card_number(b) === 1 : card_number(a) + 1 === card_number(b);
 };
 
 function is_next_in_suit(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number && a.suit === b.suit;
+  return card_number(a) + 1 === card_number(b) && a.suit === b.suit;
 };
 
 function is_next_in_suit_mod13(a: Card, b: Card): boolean {
@@ -135,11 +139,11 @@ function is_next_in_suit_mod13(a: Card, b: Card): boolean {
 };
 
 function is_next_and_same_colour(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number && is_same_colour(a, b);
+  return card_number(a) + 1 === card_number(b) && is_same_colour(a, b);
 };
 
 function is_next_and_alt_colour(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number && !is_same_colour(a, b);
+  return card_number(a) + 1 === card_number(b) && !is_same_colour(a, b);
 };
 
 function is_next_and_alt_colour_mod13(a: Card, b: Card): boolean {
@@ -152,15 +156,15 @@ function is_up_or_down_mod13(a: Card, b: Card): boolean {
 
 
 function is_next_down(a: Card, b: Card): boolean {
-  return a.number === b.number + 1;
+  return card_number(a) === card_number(b) + 1;
 };
 
 function is_next_down_alt_colour(a: Card, b: Card): boolean {
-  return a.number === b.number + 1 && !is_same_colour(a, b);
+  return card_number(a) === card_number(b) + 1 && !is_same_colour(a, b);
 };
 
 function is_next_down_same_suit(a: Card, b: Card): boolean {
-  return a.number === b.number + 1 && a.suit === b.suit;
+  return card_number(a) === card_number(b) + 1 && a.suit === b.suit;
 };
 
 function is_next_down_mod13_same_suit(a: Card, b: Card): boolean {

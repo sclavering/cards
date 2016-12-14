@@ -31,10 +31,10 @@ function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: num
 
 function init_card_image_offsets(): void {
   g_card_image_offsets = {};
-  const suit_order_in_image: LookupBySuit<number> = { S: 0, H: 1, D: 2, C: 3 };
+  const suit_order_in_image: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 1, [Suit.D]: 2, [Suit.C]: 3 };
   for(let s in suit_order_in_image)
     for(let i = 1; i !== 14; ++i)
-      g_card_image_offsets[s + i] = suit_order_in_image[s] * 13 + i - 1;
+      g_card_image_offsets[Suit[s] + i] = suit_order_in_image[s] * 13 + i - 1;
   g_card_image_offsets[""] = 4 * 13; // The face-down card image is last.
 }
 

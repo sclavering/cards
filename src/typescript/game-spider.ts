@@ -41,7 +41,7 @@ class _StandardSpider extends _SpiderLayoutGame {
 class Spider1Game extends _StandardSpider {
   constructor() {
     super();
-    this.all_cards = make_cards(8, "S");
+    this.all_cards = make_cards(8, [Suit.S]);
   }
 };
 g_game_classes["spider1"] = Spider1Game;
@@ -49,7 +49,7 @@ g_game_classes["spider1"] = Spider1Game;
 class Spider2Game extends _StandardSpider {
   constructor() {
     super();
-    this.all_cards = make_cards(4, "SH");
+    this.all_cards = make_cards(4, [Suit.S, Suit.H]);
   }
 };
 g_game_classes["spider2"] = Spider2Game;
@@ -147,7 +147,7 @@ g_game_classes["simplersimon"] = SimplerSimonGame;
 class Simon1Game extends SimonGame {
   constructor() {
     super();
-    this.all_cards = make_cards(4, "S");
+    this.all_cards = make_cards(4, [Suit.S]);
   }
 };
 g_game_classes["simon1"] = Simon1Game;
@@ -155,7 +155,7 @@ g_game_classes["simon1"] = Simon1Game;
 class Simon2Game extends SimonGame {
   constructor() {
     super();
-    this.all_cards = make_cards(2, "SH");
+    this.all_cards = make_cards(2, [Suit.S, Suit.H]);
   }
 };
 g_game_classes["simon2"] = Simon2Game;

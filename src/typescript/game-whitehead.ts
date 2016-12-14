@@ -20,11 +20,10 @@ class WhiteheadGame extends Game {
   }
 
   autoplay() {
-    const nums: LookupBySuit<number> = { S: 2, H: 2, D: 2, C: 2 }; // can always play an Ace or two
-    const suitmap: LookupBySuit<Suit> = { S: 'C', H: 'D', D: 'H', C: 'S' }; // other suit of same colour
+    const nums: LookupBySuit<number> = { [Suit.S]: 2, [Suit.H]: 2, [Suit.D]: 2, [Suit.C]: 2 }; // can always play an Ace or two
     for(let f of this.foundations) {
       let c = f.last_card;
-      if(c) nums[suitmap[c.suit]] = c.number + 1;
+      if(c) nums[other_suit_of_same_colour[c.suit]] = c.number + 1;
     }
     return this.autoplay_using_predicate(cseq => cseq.first.number <= nums[cseq.first.suit]);
   }

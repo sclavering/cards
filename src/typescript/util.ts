@@ -12,7 +12,7 @@ function for_each_top_card(piles: AnyPile[], func: (c: Card) => void): void {
   for(let p of piles) if(p.cards.length) func(p.last_card);
 }
 
-function includes_pile_starting_with_suit(ps: AnyPile[], suit: string): boolean {
+function includes_pile_starting_with_suit(ps: AnyPile[], suit: Suit): boolean {
   for(let p of ps) if(p.cards.length && p.cards[0].suit === suit) return true;
   return false;
 }

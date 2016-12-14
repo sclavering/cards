@@ -26,7 +26,7 @@ class _GypsyGame extends Game {
 class Gypsy2Game extends _GypsyGame {
   constructor() {
     super();
-    this.all_cards = make_cards(4, "SH");
+    this.all_cards = make_cards(4, [Suit.S, Suit.H]);
     this.foundation_cluster_count = 2;
   }
 };

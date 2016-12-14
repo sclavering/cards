@@ -25,7 +25,7 @@ function _autoplayable_predicate_for_klondike(fs: AnyPile[], always_allow_twos: 
   });
   const max_red = colour_counts.B >= fs.length / 2 ? colour_nums.B + 1 : (always_allow_twos ? 2 : 1);
   const max_black = colour_counts.R >= fs.length / 2 ? colour_nums.R + 1 : (always_allow_twos ? 2 : 1);
-  const max_by_suit: LookupBySuit<number> = { S: max_black, H: max_red, D: max_red, C: max_black };
+  const max_by_suit: LookupBySuit<number> = { [Suit.S]: max_black, [Suit.H]: max_red, [Suit.D]: max_red, [Suit.C]: max_black };
   if(have_two_decks) {
     const [suit_nums, suit_counts] = lowest_numbers_and_counts_by_suit_on_foundations(fs);
     for(let suit in max_by_suit) {
@@ -49,8 +49,8 @@ function autoplay_any_where_all_lower_of_same_suit_are_on_foundations(foundation
 
 
 function lowest_numbers_and_counts_by_suit_on_foundations(fs: AnyPile[]): [LookupBySuit<number>, LookupBySuit<number>] {
-  const nums: LookupBySuit<number> = { S: 20, H: 20, D: 20, C: 20 }; // suit -> lowest rank seen on fs
-  const counts: LookupBySuit<number> = { S: 0, H: 0, D: 0, C: 0 }; // suit -> num of such on fs
+  const nums: LookupBySuit<number> = { [Suit.S]: 20, [Suit.H]: 20, [Suit.D]: 20, [Suit.C]: 20 }; // suit -> lowest rank seen on fs
+  const counts: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 0, [Suit.D]: 0, [Suit.C]: 0 }; // suit -> num of such on fs
   for_each_top_card(fs, c => {
     ++counts[c.suit];
     if(c.number < nums[c.suit]) nums[c.suit] = c.number;

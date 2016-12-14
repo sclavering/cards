@@ -1,14 +1,15 @@
-type Suit = "S" | "H" | "D" | "C";
+enum Suit {
+  S = 1,
+  H = 2,
+  D = 3,
+  C = 4,
+};
 type Colour = "R" | "B";
 
 // xxx Is there a better way of doing these?
 interface LookupBySuit<SomeType> {
-  S: SomeType;
-  H: SomeType;
-  D: SomeType;
-  C: SomeType;
-  // This is :string because :Suit isn't allowed by TypeScript.
-  [suit: string]: SomeType;
+  // This is :number because :Suit isn't allowed by TypeScript.
+  [suit: number]: SomeType;
 };
 interface LookupByColour<SomeType> {
   R: SomeType;
@@ -43,15 +44,15 @@ function shuffle_in_place(cards: Card[]) {
 }
 
 
-function make_cards(repeat: number, suits?: string, numbers?: number[]): Card[] {
+function make_cards(repeat: number, suits?: Suit[] | null, numbers?: number[]): Card[] {
   if(!repeat) repeat = 1;
-  if(!suits) suits = 'SHDC';
+  if(!suits) suits = [Suit.S, Suit.H, Suit.D, Suit.C];
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
   const rv = new Array();
   for(let suit of suits)
     for(let i = 0; i < repeat; ++i)
       for(let num of numbers)
-        rv.push(Cards.get(num + suit));
+        rv.push(Cards.get(num + Suit[suit]));
   return rv;
 }
 
@@ -60,10 +61,10 @@ class Cards {
 
   static init(): void {
     this._cache = {};
-    for(let suit of ["S", "H", "D", "C"]) {
+    for(let suit of [Suit.S, Suit.H, Suit.D, Suit.C]) {
       for(let num = 1; num <= 13; ++num) {
-        let up = this._cache[num + suit] = new Card(num, suit as Suit, true);
-        let down = new Card(num, suit as Suit, false);
+        let up = this._cache[num + Suit[suit]] = new Card(num, suit, true);
+        let down = new Card(num, suit, false);
         up._alt_face = down;
         down._alt_face = up;
       }
@@ -96,10 +97,10 @@ class Card {
   _alt_face: Card;
 
   constructor(number: number, suit: Suit, face_up: boolean) {
-    const suit_to_colour: LookupBySuit<Colour> = { S: "B", H: "R", D: "R", C: "B" };
+    const suit_to_colour: LookupBySuit<Colour> = { [Suit.S]: "B", [Suit.H]: "R", [Suit.D]: "R", [Suit.C]: "B" };
     this.colour = suit_to_colour[suit];
     this.suit = suit;
-    this.display_str = suit + number;
+    this.display_str = Suit[suit] + number;
     this.number = number;
     this.face_up = face_up;
   }
@@ -182,4 +183,12 @@ class CardSequence {
   public get is_single(): boolean {
     return this.count === 1;
   }
+};
+
+
+const other_suit_of_same_colour: LookupBySuit<Suit> = {
+  [Suit.S]: Suit.C,
+  [Suit.H]: Suit.D,
+  [Suit.D]: Suit.H,
+  [Suit.C]: Suit.S,
 };

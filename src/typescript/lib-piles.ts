@@ -217,7 +217,7 @@ function may_take_descending_same_suit(cseq: CardSequence): boolean {
 
 function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
   const last = self.last_card;
-  return !last || (last.colour !== card.colour && last.number === card.number + 1);
+  return !last || (!is_same_colour(last, card) && last.number === card.number + 1);
 }
 
 

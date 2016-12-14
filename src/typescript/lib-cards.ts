@@ -110,6 +110,11 @@ class Card {
 };
 
 
+function is_same_colour(a: Card, b: Card) {
+  return a.suit === b.suit || a.suit === other_suit_of_same_colour[b.suit];
+};
+
+
 function is_next(a: Card, b: Card): boolean {
   return a.number + 1 === b.number;
 };
@@ -127,15 +132,15 @@ function is_next_in_suit_mod13(a: Card, b: Card): boolean {
 };
 
 function is_next_and_same_colour(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number && a.colour === b.colour;
+  return a.number + 1 === b.number && is_same_colour(a, b);
 };
 
 function is_next_and_alt_colour(a: Card, b: Card): boolean {
-  return a.number + 1 === b.number && a.colour !== b.colour;
+  return a.number + 1 === b.number && !is_same_colour(a, b);
 };
 
 function is_next_and_alt_colour_mod13(a: Card, b: Card): boolean {
-  return a.colour !== b.colour && is_next_mod13(a, b);
+  return !is_same_colour(a, b) && is_next_mod13(a, b);
 };
 
 function is_up_or_down_mod13(a: Card, b: Card): boolean {
@@ -148,7 +153,7 @@ function is_next_down(a: Card, b: Card): boolean {
 };
 
 function is_next_down_alt_colour(a: Card, b: Card): boolean {
-  return a.number === b.number + 1 && a.colour !== b.colour;
+  return a.number === b.number + 1 && !is_same_colour(a, b);
 };
 
 function is_next_down_same_suit(a: Card, b: Card): boolean {

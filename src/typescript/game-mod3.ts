@@ -40,7 +40,7 @@ class Mod3Game extends Game {
   autoplay() {
     const autoplayable_numbers_by_row = this.rows.map(row => this._autoplayable_numbers_for_row(row));
     return this.autoplay_using_predicate(
-      cseq => card_number(cseq.first) <= autoplayable_numbers_by_row[(card_number(cseq.first) - 2) % 3][cseq.first.suit]
+      cseq => card_number(cseq.first) <= autoplayable_numbers_by_row[(card_number(cseq.first) - 2) % 3][card_suit(cseq.first)]
         // This stops us moving 2/3/4s endlessly between two spaces in the same row.
         && !(cseq.source instanceof Mod3Foundation && cseq.source.contains_appropriate_cards())
     );
@@ -54,9 +54,10 @@ class Mod3Game extends Game {
     for(let f of row) {
       let c = f.last_card;
       if(!c) continue;
+      let suit = card_suit(c);
       if(!f.contains_appropriate_cards()) seen_invalid_cards = true;
-      else if(seen[c.suit]) rv[c.suit] = Math.min(seen[c.suit], card_number(c)) + 3;
-      else seen[c.suit] = card_number(c);
+      else if(seen[suit]) rv[suit] = Math.min(seen[suit], card_number(c)) + 3;
+      else seen[suit] = card_number(c);
     }
     const base_num = row[0]._base_num;
     if(!seen_invalid_cards) for(let k in rv) if(rv[k] < base_num) rv[k] = base_num;

@@ -38,6 +38,6 @@ class DoubleSolFoundation extends Foundation {
     if(!cseq.is_single) return false;
     if(!this.cards.length) return card_number(card) === 1 && !includes_pile_starting_with_suit(this.following(), card_suit(card));
     const expected_number = Math.floor(this.cards.length / 2) + 1;
-    return card_number(card) === expected_number && card_suit(card) === this.cards[0].suit;
+    return card_number(card) === expected_number && is_same_suit(card, this.cards[0]);
   }
 };

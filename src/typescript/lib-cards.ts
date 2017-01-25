@@ -121,6 +121,10 @@ function card_colour(c: Card): Colour {
 };
 
 
+function is_same_suit(a: Card, b: Card): boolean {
+  return card_suit(a) === card_suit(b);
+};
+
 function is_same_colour(a: Card, b: Card) {
   return card_suit(a) === card_suit(b) || card_suit(a) === other_suit_of_same_colour[card_suit(b)];
 };

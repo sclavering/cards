@@ -21,8 +21,8 @@ class UnionSquareGame extends Game {
   // Once a foundation has A,2,..,Q, should autoplay K,K,Q,J,..,A.
   autoplay() {
     const autoplayable_suits: LookupBySuit<boolean> = { [Suit.S]: false, [Suit.H]: false, [Suit.D]: false, [Suit.C]: false };
-    for(let f of this.foundations) if(f.cards.length >= 12) autoplayable_suits[f.cards[0].suit] = true;
-    return this.autoplay_using_predicate(cseq => autoplayable_suits[cseq.first.suit]);
+    for(let f of this.foundations) if(f.cards.length >= 12) autoplayable_suits[card_suit(f.cards[0])] = true;
+    return this.autoplay_using_predicate(cseq => autoplayable_suits[card_suit(cseq.first)]);
   }
 };
 g_game_classes["unionsquare"] = UnionSquareGame;

@@ -19,7 +19,7 @@ const g_spacer_size = 10;
 var g_card_image_offsets: { [_: string]: number } = null;
 
 function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
-  draw_card_by_name(canvascx, x, y, card.face_up ? card.display_str : "");
+  draw_card_by_name(canvascx, x, y, is_face_up(card) ? card.display_str : "");
 }
 
 function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: number, name: string): void {

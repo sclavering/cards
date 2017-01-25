@@ -70,7 +70,7 @@ class RegimentPile extends Pile {
   }
 
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.face_up;
+    return cseq.is_single && is_face_up(cseq.first);
   }
 
   may_add(cseq: CardSequence): boolean {

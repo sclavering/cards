@@ -199,7 +199,7 @@ class Cell extends AnyPile {
 
 class Reserve extends AnyPile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.face_up;
+    return cseq.is_single && is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return false;
@@ -208,11 +208,11 @@ class Reserve extends AnyPile {
 
 
 function may_take_descending_alt_colour(cseq: CardSequence): boolean {
-  return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_alt_colour);
+  return is_face_up(cseq.first) && check_consecutive_cards(cseq, is_next_down_alt_colour);
 }
 
 function may_take_descending_same_suit(cseq: CardSequence): boolean {
-  return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_same_suit);
+  return is_face_up(cseq.first) && check_consecutive_cards(cseq, is_next_down_same_suit);
 }
 
 function may_add_to_gypsy_pile(card: Card, self: AnyPile): boolean {
@@ -226,7 +226,7 @@ abstract class Pile extends AnyPile {
 
 class AcesUpPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.face_up;
+    return cseq.is_single && is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return cseq.is_single && !this.cards.length;
@@ -235,7 +235,7 @@ class AcesUpPile extends Pile {
 
 class FanPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.is_single && cseq.first.face_up;
+    return cseq.is_single && is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return this.cards.length ? is_next_in_suit(cseq.first, this.last_card) : card_number(cseq.first) === 13;
@@ -261,7 +261,7 @@ class GypsyPile extends Pile {
 
 class KlondikePile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up;
+    return is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return this.cards.length ? is_next_and_alt_colour(cseq.first, this.last_card) : card_number(cseq.first) === 13;
@@ -270,13 +270,13 @@ class KlondikePile extends Pile {
 
 class WaspPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up;
+    return is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return !this.cards.length || is_next_in_suit(cseq.first, this.last_card);
   }
   hint_sources(): CardSequence[] {
-    return this.all_cseqs().filter(cseq => cseq.first.face_up);
+    return this.all_cseqs().filter(cseq => is_face_up(cseq.first));
   }
 };
 

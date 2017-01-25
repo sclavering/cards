@@ -80,11 +80,11 @@ class Cards {
   }
 
   static face_up_of(card: Card) {
-    return card.face_up ? card : card._alt_face;
+    return is_face_up(card) ? card : card._alt_face;
   }
 
   static face_down_of(card: Card) {
-    return card.face_up ? card._alt_face : card;
+    return is_face_up(card) ? card._alt_face : card;
   }
 };
 
@@ -107,6 +107,10 @@ class Card {
   }
 };
 
+
+function is_face_up(c: Card): boolean {
+  return c.face_up;
+};
 
 function card_number(c: Card): number {
   return c.number;

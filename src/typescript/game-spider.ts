@@ -191,7 +191,7 @@ class SpiderPile extends Pile {
 
 class DivorcePile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down_mod13_same_suit);
+    return is_face_up(cseq.first) && check_consecutive_cards(cseq, is_next_down_mod13_same_suit);
   }
   may_add(cseq: CardSequence): boolean {
     return !this.cards.length || is_next_mod13(cseq.first, this.last_card);
@@ -201,7 +201,7 @@ class DivorcePile extends Pile {
 
 class BlackWidowPile extends SpiderPile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up && check_consecutive_cards(cseq, is_next_down);
+    return is_face_up(cseq.first) && check_consecutive_cards(cseq, is_next_down);
   }
   hint_sources(): CardSequence[] {
     const sources: CardSequence[] = [];

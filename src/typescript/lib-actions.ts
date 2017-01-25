@@ -112,7 +112,7 @@ class Move extends GenericAction {
   public revealed_card: boolean;
   constructor(cseq: CardSequence, destination: AnyPile) {
     const rem = cseq.source.cards.slice(0, cseq.index);
-    const revealed_card = rem.length ? !rem[rem.length - 1].face_up : false;
+    const revealed_card = rem.length ? !is_face_up(rem[rem.length - 1]) : false;
     if(revealed_card) rem[rem.length - 1] = Cards.face_up_of(rem[rem.length - 1]);
     super(prepare_move_animation(cseq, destination), [
       { pile: cseq.source, pre: cseq.source.cards, post: rem },

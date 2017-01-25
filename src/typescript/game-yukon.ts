@@ -43,12 +43,12 @@ g_game_classes["sanibel"] = SanibelGame;
 
 class YukonPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up;
+    return is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return may_add_to_gypsy_pile(cseq.first, this);
   }
   hint_sources(): CardSequence[] {
-    return this.all_cseqs().filter(cseq => cseq.first.face_up);
+    return this.all_cseqs().filter(cseq => is_face_up(cseq.first));
   }
 };

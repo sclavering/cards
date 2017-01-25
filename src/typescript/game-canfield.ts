@@ -84,7 +84,7 @@ g_game_classes["demon"] = DemonGame;
 
 class CanfieldPile extends Pile {
   may_take(cseq: CardSequence): boolean {
-    return cseq.first.face_up;
+    return is_face_up(cseq.first);
   }
   may_add(cseq: CardSequence): boolean {
     return !this.cards.length || is_next_and_alt_colour_mod13(cseq.first, this.last_card);

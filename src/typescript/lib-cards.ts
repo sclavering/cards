@@ -60,6 +60,13 @@ function shuffle_in_place(cards: Card[]) {
 }
 
 
+// Pass a string like "13S" or "5H".  Used in testing.
+function make_card_by_name(name: string): Card {
+  // Typescript 2.0's type-checking stupidly assumes enums are indexed by value (returning names) rather than vice versa.
+  const suit: any = Suit[name.slice(-1) as any];
+  return make_card(+name.slice(0, -1), suit, true);
+};
+
 function make_card(num: number, suit: Suit, face_up: boolean): Card {
   return (num | suit | (face_up ? CARD_FACEUP_BIT : 0)) as any;
 };
@@ -68,31 +75,15 @@ function make_cards(repeat: number, suits?: Suit[] | null, numbers?: number[]): 
   if(!repeat) repeat = 1;
   if(!suits) suits = [Suit.S, Suit.H, Suit.D, Suit.C];
   if(!numbers) numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-  const rv = new Array();
+  const rv: Card[] = [];
   for(let suit of suits)
     for(let i = 0; i < repeat; ++i)
       for(let num of numbers)
-        rv.push(Cards.get(num + Suit[suit]));
+        rv.push(make_card(num, suit, true));
   return rv;
 }
 
 class Cards {
-  private static _cache: { [name: string]: Card };
-
-  static init(): void {
-    this._cache = {};
-    for(let suit of [Suit.S, Suit.H, Suit.D, Suit.C]) {
-      for(let num = 1; num <= 13; ++num) {
-        this._cache[num + Suit[suit]] = make_card(num, suit, true);
-      }
-    }
-  }
-
-  // Names are like "11S"
-  static get(name: string): Card {
-    return this._cache[name];
-  }
-
   static face_up_of(card: Card): Card {
     return is_face_up(card) ? card : this._alt_face(card);
   }

@@ -25,10 +25,10 @@ class FreeCellGame extends FreeCellRelatedGame {
   }
 
   private _deal_for_animation_testing(card_namess: string[][], num_cells_to_block: number, num_piles_to_block: number): void {
-    const blocker_card = Cards.face_down_of(Cards.get("13S")); // Arbitrary choice.
+    const blocker_card = make_card(13, Suit.S, false); // 13S is an arbitrary choice.
     const blocker_cards = [blocker_card];
     card_namess.forEach((names, i) => {
-      this.deal_cards(names.map(name => name ? Cards.get(name) : blocker_card), 0, this.piles[i], 0, names.length);
+      this.deal_cards(names.map(name => name ? make_card_by_name(name) : blocker_card), 0, this.piles[i], 0, names.length);
     });
     for(let c of this.cells.slice(-num_cells_to_block)) c.cards = blocker_cards;
     for(let p of this.piles.slice(-num_piles_to_block)) p.cards = blocker_cards;

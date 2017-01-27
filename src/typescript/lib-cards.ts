@@ -1,13 +1,26 @@
+// Cards are represented as integers, bitwise-OR'ing the suit, number, and a single bit for whether the card is face-up.
+
+// Using this *fake* definition gives us stronger type-checking from tsc.  We use "as any" where we need to deal with the real representation.
+interface Card {
+  __fake_property_so_nothing_else_typechecks_as_Card: any;
+};
+
+const CARD_NUMBER_MASK =    0b1111;
+const CARD_SUIT_MASK =   0b1110000;
+const CARD_FACEUP_BIT = 0b10000000;
+
 enum Suit {
-  S = 1,
-  H = 2,
-  D = 3,
-  C = 4,
+  // << 4, because these are bitwise-OR'd with card numbers.
+  S = 1 << 4,
+  H = 2 << 4,
+  D = 3 << 4,
+  C = 4 << 4,
 };
 
 enum Colour {
-  R = 5,
-  B = 6,
+  // Colour of a card is computed, not stored, so the numeric values don't matter.
+  R,
+  B,
 };
 
 // xxx Is there a better way of doing these?
@@ -47,6 +60,10 @@ function shuffle_in_place(cards: Card[]) {
 }
 
 
+function make_card(num: number, suit: Suit, face_up: boolean): Card {
+  return (num | suit | (face_up ? CARD_FACEUP_BIT : 0)) as any;
+};
+
 function make_cards(repeat: number, suits?: Suit[] | null, numbers?: number[]): Card[] {
   if(!repeat) repeat = 1;
   if(!suits) suits = [Suit.S, Suit.H, Suit.D, Suit.C];
@@ -66,10 +83,7 @@ class Cards {
     this._cache = {};
     for(let suit of [Suit.S, Suit.H, Suit.D, Suit.C]) {
       for(let num = 1; num <= 13; ++num) {
-        let up = this._cache[num + Suit[suit]] = new Card(num, suit, true);
-        let down = new Card(num, suit, false);
-        up._alt_face = down;
-        down._alt_face = up;
+        this._cache[num + Suit[suit]] = make_card(num, suit, true);
       }
     }
   }
@@ -79,45 +93,30 @@ class Cards {
     return this._cache[name];
   }
 
-  static face_up_of(card: Card) {
-    return is_face_up(card) ? card : card._alt_face;
+  static face_up_of(card: Card): Card {
+    return is_face_up(card) ? card : this._alt_face(card);
   }
 
-  static face_down_of(card: Card) {
-    return is_face_up(card) ? card._alt_face : card;
+  static face_down_of(card: Card): Card {
+    return is_face_up(card) ? this._alt_face(card) : card;
   }
-};
 
-
-// Instances are treated as immutable.
-class Card {
-  suit: Suit;
-  display_str: string;
-  number: number;
-  face_up: boolean;
-  // Points to a card of the same number/suit with .face_up flipped
-  _alt_face: Card;
-
-  constructor(number: number, suit: Suit, face_up: boolean) {
-    const suit_to_colour: LookupBySuit<Colour> = { [Suit.S]: Colour.B, [Suit.H]: Colour.R, [Suit.D]: Colour.R, [Suit.C]: Colour.B };
-    this.suit = suit;
-    this.display_str = Suit[suit] + number;
-    this.number = number;
-    this.face_up = face_up;
+  private static _alt_face(card: Card): Card {
+    return ((card as any) ^ CARD_FACEUP_BIT) as any;
   }
 };
 
 
 function is_face_up(c: Card): boolean {
-  return c.face_up;
+  return !!((c as any) & CARD_FACEUP_BIT);
 };
 
 function card_number(c: Card): number {
-  return c.number;
+  return (c as any) & CARD_NUMBER_MASK;
 };
 
 function card_suit(c: Card): Suit {
-  return c.suit;
+  return (c as any) & CARD_SUIT_MASK;
 };
 
 function card_colour(c: Card): Colour {

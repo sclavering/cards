@@ -15,28 +15,31 @@ const g_card_height = 123;
 const g_card_width = 79;
 const g_spacer_size = 10;
 
+const MAGIC_PLACEHOLDER_TO_DRAW_FACEDOWN_CARD: Card = (0 as any);
 
-var g_card_image_offsets: { [_: string]: number } = null;
+
+var g_card_image_offsets: { [card: number]: number } = null;
 
 function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
-  draw_card_by_name(canvascx, x, y, is_face_up(card) ? card.display_str : "");
-}
-
-function draw_card_by_name(canvascx: CanvasRenderingContext2D, x: number, y: number, name: string): void {
   if(!g_card_image_offsets) init_card_image_offsets();
-  const src_y = g_card_image_offsets[name] * g_card_height;
+  // The "as any" is because the Card interface is a lie, and they're really just integers.
+  const src_y = g_card_image_offsets[card as any] * g_card_height;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   canvascx.drawImage(ui.card_images, 0, src_y, g_card_width, g_card_height, x, y, g_card_width, g_card_height);
 }
 
 function init_card_image_offsets(): void {
   g_card_image_offsets = {};
+  const face_down_image_ix = 4 * 13; // The face-down card image is last.
   const suit_order_in_image: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 1, [Suit.D]: 2, [Suit.C]: 3 };
-  for(let s in suit_order_in_image)
-    for(let i = 1; i !== 14; ++i)
-      g_card_image_offsets[Suit[s] + i] = suit_order_in_image[s] * 13 + i - 1;
-  g_card_image_offsets[""] = 4 * 13; // The face-down card image is last.
-}
+  for(let s in suit_order_in_image) {
+    for(let num = 1; num !== 14; ++num) {
+      g_card_image_offsets[make_card(num, +s, true) as any] = suit_order_in_image[s] * 13 + num - 1;
+      g_card_image_offsets[make_card(num, +s, false) as any] = face_down_image_ix;
+    }
+  }
+  g_card_image_offsets[MAGIC_PLACEHOLDER_TO_DRAW_FACEDOWN_CARD as any] = face_down_image_ix;
+};
 
 
 
@@ -503,7 +506,7 @@ class PyramidView extends View {
     const pile = this.pile as BasePyramidPile;
     if(this._draw_covered_cards_face_down && ((pile.left_child && pile.left_child.cards.length) || (pile.right_child && pile.right_child.cards.length))) {
       clear_and_resize_canvas(this._context, g_card_width, g_card_height);
-      draw_card_by_name(this._context, 0, 0, "");
+      draw_card(this._context, MAGIC_PLACEHOLDER_TO_DRAW_FACEDOWN_CARD, 0, 0);
     } else {
       super.update_with(cs);
     }
@@ -582,7 +585,7 @@ class StockView extends View {
   draw_into(ctx: CanvasRenderingContext2D, cards: Card[], draw_background: boolean): void {
     clear_and_resize_canvas(ctx, g_card_width, g_card_height);
     if(draw_background) this.draw_background_into(ctx);
-    if(cards.length) draw_card_by_name(ctx, 0, 0, "");
+    if(cards.length) draw_card(ctx, MAGIC_PLACEHOLDER_TO_DRAW_FACEDOWN_CARD, 0, 0);
   }
   public handle_click_at(x: number, y: number): Action {
     // We must override this to support RefillStock actions when clicking on an empty stock.

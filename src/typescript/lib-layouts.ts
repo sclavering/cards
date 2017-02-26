@@ -196,7 +196,7 @@ class Layout {
   // For right-click handling we just use .oncontextmenu, since e.g. on Mac we want ctrl+click to work too (and Fx 1.5 mac used to do weird things like convert a physical right-click into a left-click with .ctrlKey set, though I've no idea if that behaviour still exists).
 
   _onmousedown(ev: MouseEvent): void {
-    if(ev.button) return;
+    if(ev.button || ev.shiftKey) return;
     if(!this._start_drag(ev)) return;
     window.onmousemove = this._bound_onmousemove;
   }
@@ -295,6 +295,8 @@ class Layout {
   }
 
   _onclick(ev: MouseEvent): void {
+    // Offer shift+click as an alternative to right-click or ctrl+click, because browser settings might mean that they *always* show a context menu, regardless of ev.preventDefault().
+    if(ev.shiftKey) return this._oncontextmenu(ev);
     // Ignore right-clicks (handled elsewhere).  Ignoring middle-clicks etc is incidental, but not a problem.
     if(ev.button || ev.ctrlKey) return;
     const [view, x, y] = this._target_view_and_coords(ev);
@@ -303,13 +305,12 @@ class Layout {
     this._reset_handlers();
   }
 
-  _oncontextmenu(ev: MouseEvent): boolean {
+  _oncontextmenu(ev: MouseEvent): void {
     const cseq = this._target_cseq(ev);
     interrupt();
     if(cseq) doo(this._attached_game.foundation_action_for(cseq));
     this._reset_handlers();
     ev.preventDefault();
-    return false;
   }
 
   _reset_handlers(): void {

@@ -33,6 +33,13 @@ convert -crop 79x123 +page tempimage-all.png tempimage.png
 # recombine the wanted images in the correct order in a single vertical strip
 convert $USEFUL_IMAGES -colorspace sRGB -depth 16 -gravity North -append cards.png
 # reduce the filesize a little
-optipng cards.png
+optipng -quiet cards.png
 # remove the temp files
+rm tempimage-*.png
+
+# and now do it all again for the 2x Retina image
+rsvg -z 2 $1 tempimage-all.png
+convert -crop 158x246 +page tempimage-all.png tempimage.png
+convert $USEFUL_IMAGES -colorspace sRGB -depth 16 -gravity North -append cards-2x.png
+optipng -quiet cards-2x.png
 rm tempimage-*.png

@@ -252,3 +252,9 @@ class ui {
     };
   }
 };
+
+
+// We handle Retina screens by setting our <canvas> .width and .height to 2x, setting .style.width and .style.height to half that, using a 2x set of card images, and setting a 2x transform on the <canvas> context.  This is not an ideal way of doing things, but Firefox doesn't support expose backingStorePixelRatio on the context, so it's not obvious what else to do.  (It'd be nice if everything just followed the Safari approach of using a HiDPI backing-store automatically.)
+function retina_scale_factor(): number {
+  return window.devicePixelRatio > 1 ? 2 : 1;
+}

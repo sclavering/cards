@@ -25,7 +25,8 @@ function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y:
   // The "as any" is because the Card interface is a lie, and they're really just integers.
   const src_y = g_card_image_offsets[card as any] * g_card_height;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  canvascx.drawImage(ui.card_images, 0, src_y, g_card_width, g_card_height, x, y, g_card_width, g_card_height);
+  const scale_factor = retina_scale_factor();
+  canvascx.drawImage(ui.card_images, 0, src_y * scale_factor, g_card_width * scale_factor, g_card_height * scale_factor, x, y, g_card_width, g_card_height);
 }
 
 function init_card_image_offsets(): void {
@@ -105,7 +106,8 @@ abstract class _View {
   protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
-    round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width) - 3, (height || ctx.canvas.height) - 3, 5);
+    const scale_factor = retina_scale_factor();
+    round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width / scale_factor) - 3, (height || ctx.canvas.height / scale_factor) - 3, 5);
     this._context.stroke();
   }
 
@@ -134,9 +136,11 @@ abstract class _View {
     const canvas = ctx.canvas;
     this._context.globalAlpha = 0.9;
     this._context.fillStyle = "white";
-    this._context.fillRect(x + 1, y + 1, canvas.width - 2, canvas.height - 2);
+    const scale_factor = retina_scale_factor();
+    this._context.fillRect(x + 1, y + 1, canvas.width / scale_factor - 2, canvas.height / scale_factor - 2);
     this._context.globalAlpha = 0.4;
-    this._context.drawImage(canvas, x, y);
+    // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+    this._context.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width / scale_factor, canvas.height / scale_factor);
   }
 
   // Return relative CSS-pixel coords for where a card being added should be displayed, both for animated moves and for hints.
@@ -602,8 +606,13 @@ class g_temporary_canvas_context {
 };
 
 function clear_and_resize_canvas(context: CanvasRenderingContext2D, width: number, height: number): CanvasRenderingContext2D {
-  context.canvas.width = width;
-  context.canvas.height = height;
+  const scale_factor = retina_scale_factor();
+  context.canvas.width = width * scale_factor;
+  context.canvas.style.width = width + "px";
+  context.canvas.height = height * scale_factor;
+  context.canvas.style.height = height + "px";
+  // So drawing works in non-retina coords, effectively.
+  context.setTransform(scale_factor, 0, 0, scale_factor, 0, 0);
   context.clearRect(0, 0, width, height);
   return context;
 };

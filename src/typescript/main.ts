@@ -178,6 +178,9 @@ class ui {
   public static game_chooser: HTMLElement;
   public static card_images: HTMLImageElement;
 
+  // We handle Retina screens by setting our <canvas> .width and .height to 2x, setting .style.width and .style.height to half that, using a 2x set of card images, and setting a 2x transform on the <canvas> context.  This is not an ideal way of doing things, but Firefox doesn't support expose backingStorePixelRatio on the context, so it's not obvious what else to do.  (It'd be nice if everything just followed the Safari approach of using a HiDPI backing-store automatically.)  Also, rather than using window.devicePixelRatio to detect Retina screens, we just look at which .png file got loaded by our <img srcset> - that way they can't possibly be out of sync, and you can test non-Retina on a Retina screen by just removing @srcset.
+  public static retina_scale_factor: number;
+
   static init() {
     this._game_name = document.getElementById("game-name");
     this._score_panel = document.getElementById("score-panel");
@@ -193,6 +196,7 @@ class ui {
     this.game_stack = document.getElementById("games");
     this.game_chooser = document.getElementById("game-chooser");
     this.card_images = document.getElementById("cardsimg") as HTMLImageElement;
+    this.retina_scale_factor = calculate_retina_scale_factor();
   }
 
   static show_game_name(name: string) {
@@ -252,9 +256,3 @@ class ui {
     };
   }
 };
-
-
-// We handle Retina screens by setting our <canvas> .width and .height to 2x, setting .style.width and .style.height to half that, using a 2x set of card images, and setting a 2x transform on the <canvas> context.  This is not an ideal way of doing things, but Firefox doesn't support expose backingStorePixelRatio on the context, so it's not obvious what else to do.  (It'd be nice if everything just followed the Safari approach of using a HiDPI backing-store automatically.)
-function retina_scale_factor(): number {
-  return window.devicePixelRatio > 1 ? 2 : 1;
-}

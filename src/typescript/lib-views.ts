@@ -20,12 +20,17 @@ const MAGIC_PLACEHOLDER_TO_DRAW_FACEDOWN_CARD: Card = (0 as any);
 
 var g_card_image_offsets: { [card: number]: number } = null;
 
+function calculate_retina_scale_factor(): number {
+  // This is calculated here just so it's near the g_card_width definition.
+  return ui.card_images.width / g_card_width;
+}
+
 function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y: number): void {
   if(!g_card_image_offsets) init_card_image_offsets();
   // The "as any" is because the Card interface is a lie, and they're really just integers.
   const src_y = g_card_image_offsets[card as any] * g_card_height;
   // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  const scale_factor = retina_scale_factor();
+  const scale_factor = ui.retina_scale_factor;
   canvascx.drawImage(ui.card_images, 0, src_y * scale_factor, g_card_width * scale_factor, g_card_height * scale_factor, x, y, g_card_width, g_card_height);
 }
 
@@ -106,7 +111,7 @@ abstract class _View {
   protected draw_background_into(ctx: CanvasRenderingContext2D, width?: number, height?: number): void {
     this._context.strokeStyle = "white";
     this._context.lineWidth = 2;
-    const scale_factor = retina_scale_factor();
+    const scale_factor = ui.retina_scale_factor;
     round_rect_path(ctx, 1.5, 1.5, (width || ctx.canvas.width / scale_factor) - 3, (height || ctx.canvas.height / scale_factor) - 3, 5);
     this._context.stroke();
   }
@@ -136,7 +141,7 @@ abstract class _View {
     const canvas = ctx.canvas;
     this._context.globalAlpha = 0.9;
     this._context.fillStyle = "white";
-    const scale_factor = retina_scale_factor();
+    const scale_factor = ui.retina_scale_factor;
     this._context.fillRect(x + 1, y + 1, canvas.width / scale_factor - 2, canvas.height / scale_factor - 2);
     this._context.globalAlpha = 0.4;
     // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
@@ -606,7 +611,7 @@ class g_temporary_canvas_context {
 };
 
 function clear_and_resize_canvas(context: CanvasRenderingContext2D, width: number, height: number): CanvasRenderingContext2D {
-  const scale_factor = retina_scale_factor();
+  const scale_factor = ui.retina_scale_factor;
   context.canvas.width = width * scale_factor;
   context.canvas.style.width = width + "px";
   context.canvas.height = height * scale_factor;

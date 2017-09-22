@@ -126,7 +126,8 @@ abstract class _View {
     const rect = this.get_hint_source_rect(cseq);
     this._context.fillStyle = "darkgrey";
     this._context.globalAlpha = 0.3;
-    this._context.fillRect(rect.x, rect.y, rect.w, rect.h);
+    round_rect_path(this._context, rect.x, rect.y, rect.w, rect.h, 7);
+    this._context.fill();
   }
 
   protected get_hint_source_rect(cseq: CardSequence): ViewRect {
@@ -138,14 +139,18 @@ abstract class _View {
   abstract draw_hint_destination(cards: Card[]): void;
 
   _draw_hint_destination(ctx: CanvasRenderingContext2D, x: number, y: number): void {
+    // Here we're trying to draw the cards "ghosted", i.e. slightly translucent.  But if we set only the alpha, we end up with an illegible mess.  So instead we draw a tranlucent white background first, and then draw them.  We in-set the white background slightly so the borders of the card below remain firmly black (it looks weird otherwise).
+    const scale_factor = ui.retina_scale_factor;
     const canvas = ctx.canvas;
+    this._context.save();
     this._context.globalAlpha = 0.9;
     this._context.fillStyle = "white";
-    const scale_factor = ui.retina_scale_factor;
-    this._context.fillRect(x + 1, y + 1, canvas.width / scale_factor - 2, canvas.height / scale_factor - 2);
+    round_rect_path(this._context, x + 1, y + 1, canvas.width / scale_factor - 2, canvas.height / scale_factor - 2, 4);
+    this._context.fill();
     this._context.globalAlpha = 0.4;
     // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
     this._context.drawImage(canvas, 0, 0, canvas.width, canvas.height, x, y, canvas.width / scale_factor, canvas.height / scale_factor);
+    this._context.restore();
   }
 
   // Return relative CSS-pixel coords for where a card being added should be displayed, both for animated moves and for hints.

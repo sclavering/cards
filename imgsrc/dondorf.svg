@@ -445,7 +445,38 @@
 </g>
 
 <g id="faces">
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 805 13)" xlink:href="data:image/png;base64,
+    <use xlink:href="#im-jack-clubs" x="805" y="13"/>
+    <use xlink:href="#im-jack-diamonds" x="805" y="136"/>
+    <use xlink:href="#im-jack-hearts" x="805" y="259"/>
+    <use xlink:href="#im-jack-spades" x="805" y="382"/>
+    <use xlink:href="#im-queen-clubs" x="884" y="13"/>
+    <use xlink:href="#im-queen-diamonds" x="884" y="136"/>
+    <use xlink:href="#im-queen-hearts" x="884" y="259"/>
+    <use xlink:href="#im-queen-spades" x="884" y="382"/>
+    <use xlink:href="#im-king-club" x="963" y="13"/>
+    <use xlink:href="#im-king-diamond" x="963" y="136"/>
+    <use xlink:href="#im-king-hearts" x="963" y="259"/>
+    <use xlink:href="#im-king-spades" x="963" y="382"/>
+    <use xlink:href="#im-card-back" x="164" y="498.5"/>
+</g>
+
+<g id="borders" fill="none" stroke-width="1" stroke="#000000">
+    <rect x="963.5" y="13.5" width="48" height="96"/>
+    <rect x="963.5" y="136.5" width="48" height="96"/>
+    <rect x="963.5" y="259.5" width="48" height="96"/>
+    <rect x="963.5" y="382.5" width="48" height="96"/>
+    <rect x="884.5" y="13.5" width="48" height="96"/>
+    <rect x="884.5" y="259.5" width="48" height="96"/>
+    <rect x="805.5" y="13.5" width="48" height="96"/>
+    <rect x="884.5" y="136.5" width="48" height="96"/>
+    <rect x="884.5" y="382.5" width="48" height="96"/>
+    <rect x="805.5" y="136.5" width="48" height="96"/>
+    <rect x="805.5" y="259.5" width="48" height="96"/>
+    <rect x="805.5" y="382.5" width="48" height="96"/>
+</g>
+
+<defs>
+  <image id="im-jack-clubs" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzoyNzozOCAtMDAwMEHmimMA
 AAAHdElNRQfUBxQWOzLE7ok7AAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -705,7 +736,7 @@ zcnPKcjMSSvEv+bo/Xcwlq/IWLkqNRM45GTDWr1m7YrvPLLuu7mLF695dD4Q
 ZifYBd/4p28uXpKatmTpQ+nfejhl2bKU5d9+GD5S5qnrTDzATF7AhbWQu2BB
 MiclBX2y0cuiL4X4/4fLhORZQs+RAAAAAElFTkSuQmCC
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 805 136)" xlink:href="data:image/png;base64,
+  <image id="im-jack-diamonds" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo1MDowNiAtMDAwMFSx+CcA
 AAAHdElNRQfUBxQXABFb+X1GAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -982,7 +1013,7 @@ XReFvB+lVLixQiTeVCmpkkirEQHC37ChpGbzBtCpf66fjwQoCL9kQ+mGz9z1
 F59B3v0JT4Iy0Kl/xp/y9N7PkPr9cdMfnTz9/1r/DwKyhHvbk4JHAAAAAElF
 TkSuQmCC
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 805 259)" xlink:href="data:image/png;base64,
+  <image id="im-jack-hearts" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo1Njo1MiAtMDAwMOUAohcA
 AAAHdElNRQfUBxQXADr3RYQGAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -1279,7 +1310,7 @@ rheW5ubmiorkzMUiwQbxxk1ft7/+NwiPtWJlwaps/upCQaGAuUQkgkTLZbNz
 xOKcrKw1j0q+IQAsVnpGZnr6Q0uWLs3KzmFzcnJzs5flLX84f8Ujjzzy0EPp
 mX8N4f8Dz0ML7d+nNTAAAAAASUVORK5CYII=
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 805 382)" xlink:href="data:image/png;base64,
+  <image id="im-jack-spades" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxODowMzozNiAtMDAwMGcuPbAA
 AAAHdElNRQfUBxQXAQ7P6kHyAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -1552,7 +1583,7 @@ AWbcu1Jd+eiKFY/dv/7xu/CRAcgWIaYof2BNWdnf/O3fQiByEBVl/+0bypJS
 ecldGpwFpeLVZV9bs+br37j//vsBoFCyUnrPvTLJXZv+c09G5+UXLIcw3HMP
 ANy3clXRqsJ7i0UlX0bC/H917S5QXvuYIgAAAABJRU5ErkJggg==
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 884 13)" xlink:href="data:image/png;base64,
+  <image id="im-queen-clubs" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo0NDo1MiAtMDAwMCB7reoA
 AAAHdElNRQfUBxQXBjqhHyOAAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -1807,7 +1838,7 @@ aQE11HmrPvPfPvu5z6+/Z93aNf99w8aitV9YJbz3M/K77roDLb1vQE7IFwGf
 opXr/urTEsnKFZK778rLvw16P8LIL/yERLJm7Sc/dRfa3f+vQEAgd60SFxSs
 Rhto/0UIQIxwxcpPiP7rAHIgAgz7eAj/D04gnPr86SLxAAAAAElFTkSuQmCC
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 884 136)" xlink:href="data:image/png;base64,
+  <image id="im-queen-diamonds" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo1MTo1NCAtMDAwMGQMjFQA
 AAAHdElNRQfUBxQXBxKNsbo7AAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -2076,7 +2107,7 @@ EEOOzUnbJpF+O0KsW71WJHgkMXFzUnLKdx5LTUvP2PL3mVnRMd/Cp6b8EUh0
 7MaHH9n06COPPPJ3D8XFxyd8+5+PxN5GjF6/YcND69cDk/1P+vilOx/w9M07
 +AdH+tvm/3/616MpDfWXGwAAAABJRU5ErkJggg==
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 884 259)" xlink:href="data:image/png;base64,
+  <image id="im-queen-hearts" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo1OToxMyAtMDAwMDY2/NQA
 AAAHdElNRQfUBxQXCQ2eOppAAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -2363,7 +2394,7 @@ s/KKpfm3//wd3VI89eHv3l9QcP8juTk507P4ObMKpgsL+cLZBZL82yniOo3b
 /YkqhDflO1On3f9A1oMPTZ3+YHYOXzA9VyiaMTNPfCuE6x9H/j/mFEpe3LyN
 lQAAAABJRU5ErkJggg==
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 884 382)" xlink:href="data:image/png;base64,
+  <image id="im-queen-spades" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxODowNDowOCAtMDAwMFtCWncA
 AAAHdElNRQfUBxQXCRz0irqyAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -2651,7 +2682,7 @@ w0kuED4kfDA/LX9NWkbyMm5G2iqRuJArLCpOy1+Vn79ybVJamuRuKD0+AUlM
 Sk5JSUlMSk3jpII90pO5GemZ6cuylmevWLkqLSOHx8/NeyAtOenB/PzVK9PS
 Vq5My0L/ji3+P6UJvUg5uKWfAAAAAElFTkSuQmCC
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 963 13)" xlink:href="data:image/png;base64,
+  <image id="im-king-club" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo0Nzo0MSAtMDAwMDYODOoA
 AAAHdElNRQfUBxQXAybIaYuKAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -2934,7 +2965,7 @@ pWX8coEw8+v6+UvoOkwmq2D5UzkrvsFe/o3CIs7KjAwmNzPj6/wBT6gLMpZl
 5+Tm5T/x5JNMZkba5z3E+DggaTAsZ2ZmZHzZvf8/RWNYm4Y9wIQAAAAASUVO
 RK5CYII=
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 963 136)" xlink:href="data:image/png;base64,
+  <image id="im-king-diamond" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxNzo1MzozMiAtMDAwMMVGYNQA
 AAAHdElNRQfUBxQXBAPMLMkKAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -3214,7 +3245,7 @@ IHwAZMxMTs1etXJVelbKXXpDSk5uck5GyurVWVlr1t59z933rlufl59fUPjx
 EZakMSSnrlyZlp6RadB90C+Sas4I/Kyl9Yl/g5FO/6nk5JTfLmg+eOb6E/7e
 ov9P1v8Bd6e79uquthIAAAAASUVORK5CYII=
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 963 259)" xlink:href="data:image/png;base64,
+  <image id="im-king-hearts" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxODowMTozMSAtMDAwMKZ80wMA
 AAAHdElNRQfUBxQXBRPIgOgvAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -3516,7 +3547,7 @@ G+/Z+LUHVwn+XG/ABJYIVt119+o1X7xHtPbeL91331/85bp7/mrl+eo/C8AH
 IJx8Lq/gC3wBJ79QKBAIVxUJ/ntO/kSUDx4XvvmuVXf0fk7/HwpgJYaqllyU
 AAAAAElFTkSuQmCC
 "/>
-  <image width="98" height="194" transform="matrix(0.5 0 0 0.5 963 382)" xlink:href="data:image/png;base64,
+  <image id="im-king-spades" width="98" height="194" transform="matrix(0.5 0 0 0.5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAGIAAADCCAMAAACFZ+fSAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAEZyaSAxNiBKdWwgMjAwNCAxODowNToxMyAtMDAwMHotZS0A
 AAAHdElNRQfUBxQXBhkDeFLyAAAACXBIWXMAAArwAAAK8AFCrDSYAAAABGdB
@@ -3835,7 +3866,7 @@ P7Lj2w9v+U5E5E7cLjwOh8dHRRIiHg28T/CvIHwGs4n0rbDQ0Ie+teV/ffs7
 3/3ew1u+9a0tD3/rXxzBvhRp809TPfQ1f5bqK9f/B3GthontbGFtAAAAAElF
 TkSuQmCC
 "/>
-  <image width="134" height="220" transform="matrix(.5 0 0 .5 164 498.5)" xlink:href="data:image/png;base64,
+  <image id="im-card-back" width="134" height="220" transform="matrix(.5 0 0 .5 0 0)" xlink:href="data:image/png;base64,
 iVBORw0KGgoAAAANSUhEUgAAAIYAAADcCAMAAACCsikyAAAALHRFWHRDcmVh
 dGlvbiBUaW1lAFNhdCAxNyBKdWwgMjAwNCAyMTowNjozNyAtMDAwMPZSx28A
 AAAHdElNRQfUBxEVKgUaEkFPAAAACXBIWXMAAAsSAAALEgHS3X78AAAABGdB
@@ -4224,20 +4255,5 @@ xxeifBIdG1konAIpn96cWpkdIaVqUZFciccD/YtONBRYnTso6IfC2woLcw+Y
 vCUNKZIQpCjrP3ITCoW01bwogsTCgjxx025xZ28pJ8JhkELcm7qwcLpcLp67
 dCsasv8HflyVH24hDdYAAAAASUVORK5CYII=
 "/>
-</g>
-
-<g id="borders" fill="none" stroke-width="1" stroke="#000000">
-    <rect x="963.5" y="13.5" width="48" height="96"/>
-    <rect x="963.5" y="136.5" width="48" height="96"/>
-    <rect x="963.5" y="259.5" width="48" height="96"/>
-    <rect x="963.5" y="382.5" width="48" height="96"/>
-    <rect x="884.5" y="13.5" width="48" height="96"/>
-    <rect x="884.5" y="259.5" width="48" height="96"/>
-    <rect x="805.5" y="13.5" width="48" height="96"/>
-    <rect x="884.5" y="136.5" width="48" height="96"/>
-    <rect x="884.5" y="382.5" width="48" height="96"/>
-    <rect x="805.5" y="136.5" width="48" height="96"/>
-    <rect x="805.5" y="259.5" width="48" height="96"/>
-    <rect x="805.5" y="382.5" width="48" height="96"/>
-</g>
+</defs>
 </svg>

@@ -17,7 +17,7 @@ interface Action {
 
 interface GenericActionChange { pile: AnyPile, pre: Card[], post: Card[] };
 
-abstract class GenericAction implements Action {
+class GenericAction implements Action {
   private _anim: AnimationDetails | null;
   private _changes: GenericActionChange[];
   constructor(anim: AnimationDetails, changes: GenericActionChange[]) {

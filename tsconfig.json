@@ -33,6 +33,7 @@
         "src/typescript/game-pyramid.ts",
         "src/typescript/game-regiment.ts",
         "src/typescript/game-russiansol.ts",
+        "src/typescript/game-shenzhen.ts",
         "src/typescript/game-spider.ts",
         "src/typescript/game-towers.ts",
         "src/typescript/game-unionsquare.ts",

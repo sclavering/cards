@@ -15,12 +15,15 @@ enum Suit {
   H = 2 << 4,
   D = 3 << 4,
   C = 4 << 4,
+  // Rarely used.
+  GREEN_CLUBS = 5 << 4,
 };
 
 enum Colour {
   // Colour of a card is computed, not stored, so the numeric values don't matter.
-  R,
-  B,
+  R, // Red
+  B, // Black
+  G, // Green.  Not generally used.
 };
 
 // xxx Is there a better way of doing these?

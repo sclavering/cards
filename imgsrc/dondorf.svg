@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1027" height="615" viewBox="0 0 1027 615" version="1.1">
 <defs>
     <path id="card-face" fill="#FFFFFF" stroke="black" stroke-width="1.0" d="M78.25,117.25c0,2.762-2.238,5-5,5h-67.5c-2.761,0-5-2.238-5-5v-111.5c0-2.762,2.239-5,5-5h67.5c2.762,0,5,2.238,5,5V117.25z"/>

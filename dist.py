@@ -22,3 +22,4 @@ out_html_f = open(path + 'dist/cards.html', 'w')
 out_html_f.write(out_html)
 
 shutil.copy(path + "src/cards.png", path + "dist/")
+shutil.copy(path + "src/cards-2x.png", path + "dist/")

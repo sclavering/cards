@@ -18,9 +18,9 @@ def generate_card_back(out, grid_x, grid_y):
     out.append('</g>')
 
 
-def generate_suit(out, suit, colour, grid_y):
+def generate_suit(out, suit, colour, grid_y0):
     for ix in range(0, 13):
-        generate_card(out, ix, grid_y)
+        generate_card(out, 0, grid_y0 + ix)
         # The numbers
         out.append('    <use xlink:href="#num-{}" stroke="{}" x="1" y="-.5"/>'.format(ix + 1, colour))
         out.append('    <use xlink:href="#num-{}" stroke="{}" x="63" y="100.5"/>'.format(ix + 1, colour))
@@ -71,15 +71,17 @@ def generate_pips(out, suit, num):
 def generate(defs):
     out = []
 
-    out.append('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1027" height="615" viewBox="0 0 1027 615" version="1.1">')
+    height = (4 * 13 + 1) * HEIGHT
+
+    out.append('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{width}" height="{height}" viewBox="0 0 {width} {height}" version="1.1">'.format(width=WIDTH, height=height))
     out += ['<defs>', defs, '</defs>']
 
-    generate_suit(out, "club", "black", 0)
-    generate_suit(out, "diamond", "#DF0000", 1)
-    generate_suit(out, "heart", "#DF0000", 2)
-    generate_suit(out, "spade", "black", 3)
+    generate_suit(out, "spade", "black", 0)
+    generate_suit(out, "heart", "#DF0000", 13)
+    generate_suit(out, "diamond", "#DF0000", 26)
+    generate_suit(out, "club", "black", 39)
 
-    generate_card_back(out, 2, 4)
+    generate_card_back(out, 0, 52)
 
     out.append('</svg>')
 

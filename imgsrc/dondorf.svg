@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1027" height="615" viewBox="0 0 1027 615" version="1.1">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="79" height="6519" viewBox="0 0 79 6519" version="1.1">
 <defs>
     <path id="card-background" fill="#FFFFFF" stroke="black" stroke-width="1.0" d="M78.25,117.25c0,2.762-2.238,5-5,5h-67.5c-2.761,0-5-2.238-5-5v-111.5c0-2.762,2.239-5,5-5h67.5c2.762,0,5,2.238,5,5V117.25z"/>
 
@@ -90,468 +90,12 @@
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-1" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-1" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(79, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-2" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-2" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(158, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-3" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-3" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(237, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-4" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-4" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(316, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-5" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-5" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(395, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-6" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-6" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(474, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-7" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-7" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(553, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-8" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-8" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,81.5)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(632, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-9" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-9" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(711, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-10" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-10" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#club-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#club-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,34.875)" xlink:href="#club-large"/>
-    <use transform="translate(39.5,88.125)" xlink:href="#club-large"/>
-</g>
-<g transform="translate(790, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-11" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-11" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-club-11" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(869, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-12" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-12" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-club-12" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(948, 0)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-13" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-13" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-club-13" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+    <use xlink:href="#spade-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#spade-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#spade-large"/>
 </g>
 <g transform="translate(0, 123)">
     <use xlink:href="#card-background"/>
-    <use xlink:href="#num-1" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-1" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(79, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-2" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-2" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(158, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-3" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-3" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(237, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-4" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-4" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(316, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-5" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-5" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(395, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-6" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-6" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(474, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-7" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-7" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(553, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-8" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-8" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,81.5)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(632, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-9" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-9" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(711, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-10" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-10" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#diamond-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#diamond-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,34.875)" xlink:href="#diamond-large"/>
-    <use transform="translate(39.5,88.125)" xlink:href="#diamond-large"/>
-</g>
-<g transform="translate(790, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-11" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-11" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-diamond-11" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(869, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-12" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-12" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-diamond-12" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(948, 123)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-13" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-13" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-diamond-13" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(0, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-1" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-1" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(79, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-2" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-2" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(158, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-3" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-3" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,101.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(237, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-4" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-4" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(316, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-5" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-5" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(395, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-6" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-6" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(474, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-7" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-7" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(553, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-8" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-8" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,41.5)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,81.5)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(632, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-9" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-9" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(711, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-10" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-10" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,48.25)" xlink:href="#heart-large"/>
-    <use transform="translate(23.5,74.75)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,48.25)" xlink:href="#heart-large"/>
-    <use transform="translate(55.5,74.75)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,34.875)" xlink:href="#heart-large"/>
-    <use transform="translate(39.5,88.125)" xlink:href="#heart-large"/>
-</g>
-<g transform="translate(790, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-11" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-11" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-heart-11" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(869, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-12" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-12" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-heart-12" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(948, 246)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-13" stroke="#DF0000" x="1" y="-.5"/>
-    <use xlink:href="#num-13" stroke="#DF0000" x="63" y="100.5"/>
-    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
-    <use xlink:href="#im-heart-13" x="15" y="13"/>
-    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
-</g>
-<g transform="translate(0, 369)">
-    <use xlink:href="#card-background"/>
-    <use xlink:href="#num-1" stroke="black" x="1" y="-.5"/>
-    <use xlink:href="#num-1" stroke="black" x="63" y="100.5"/>
-    <use xlink:href="#spade-small" transform="translate(8.5,24.5)"/>
-    <use xlink:href="#spade-small" transform="translate(70.5,98.5)"/>
-    <use transform="translate(39.5,61.5)" xlink:href="#spade-large"/>
-</g>
-<g transform="translate(79, 369)">
-    <use xlink:href="#card-background"/>
     <use xlink:href="#num-2" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-2" stroke="black" x="63" y="100.5"/>
     <use xlink:href="#spade-small" transform="translate(8.5,24.5)"/>
@@ -559,7 +103,7 @@
     <use transform="translate(39.5,21.5)" xlink:href="#spade-large"/>
     <use transform="translate(39.5,101.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(158, 369)">
+<g transform="translate(0, 246)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-3" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-3" stroke="black" x="63" y="100.5"/>
@@ -569,7 +113,7 @@
     <use transform="translate(39.5,21.5)" xlink:href="#spade-large"/>
     <use transform="translate(39.5,101.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(237, 369)">
+<g transform="translate(0, 369)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-4" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-4" stroke="black" x="63" y="100.5"/>
@@ -580,7 +124,7 @@
     <use transform="translate(55.5,21.5)" xlink:href="#spade-large"/>
     <use transform="translate(55.5,101.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(316, 369)">
+<g transform="translate(0, 492)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-5" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-5" stroke="black" x="63" y="100.5"/>
@@ -592,7 +136,7 @@
     <use transform="translate(55.5,21.5)" xlink:href="#spade-large"/>
     <use transform="translate(55.5,101.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(395, 369)">
+<g transform="translate(0, 615)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-6" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-6" stroke="black" x="63" y="100.5"/>
@@ -605,7 +149,7 @@
     <use transform="translate(23.5,61.5)" xlink:href="#spade-large"/>
     <use transform="translate(55.5,61.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(474, 369)">
+<g transform="translate(0, 738)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-7" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-7" stroke="black" x="63" y="100.5"/>
@@ -619,7 +163,7 @@
     <use transform="translate(55.5,61.5)" xlink:href="#spade-large"/>
     <use transform="translate(39.5,41.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(553, 369)">
+<g transform="translate(0, 861)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-8" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-8" stroke="black" x="63" y="100.5"/>
@@ -634,7 +178,7 @@
     <use transform="translate(39.5,41.5)" xlink:href="#spade-large"/>
     <use transform="translate(39.5,81.5)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(632, 369)">
+<g transform="translate(0, 984)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-9" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-9" stroke="black" x="63" y="100.5"/>
@@ -650,7 +194,7 @@
     <use transform="translate(55.5,48.25)" xlink:href="#spade-large"/>
     <use transform="translate(55.5,74.75)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(711, 369)">
+<g transform="translate(0, 1107)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-10" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-10" stroke="black" x="63" y="100.5"/>
@@ -667,7 +211,7 @@
     <use transform="translate(39.5,34.875)" xlink:href="#spade-large"/>
     <use transform="translate(39.5,88.125)" xlink:href="#spade-large"/>
 </g>
-<g transform="translate(790, 369)">
+<g transform="translate(0, 1230)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-11" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-11" stroke="black" x="63" y="100.5"/>
@@ -676,7 +220,7 @@
     <use xlink:href="#im-spade-11" x="15" y="13"/>
     <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
 </g>
-<g transform="translate(869, 369)">
+<g transform="translate(0, 1353)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-12" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-12" stroke="black" x="63" y="100.5"/>
@@ -685,7 +229,7 @@
     <use xlink:href="#im-spade-12" x="15" y="13"/>
     <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
 </g>
-<g transform="translate(948, 369)">
+<g transform="translate(0, 1476)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#num-13" stroke="black" x="1" y="-.5"/>
     <use xlink:href="#num-13" stroke="black" x="63" y="100.5"/>
@@ -694,7 +238,463 @@
     <use xlink:href="#im-spade-13" x="15" y="13"/>
     <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
 </g>
-<g transform="translate(158, 492)">
+<g transform="translate(0, 1599)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-1" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-1" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 1722)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-2" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-2" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 1845)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-3" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-3" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 1968)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-4" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-4" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2091)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-5" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-5" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2214)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-6" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-6" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2337)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-7" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-7" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2460)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-8" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-8" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,81.5)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2583)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-9" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-9" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2706)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-10" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-10" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#heart-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#heart-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,34.875)" xlink:href="#heart-large"/>
+    <use transform="translate(39.5,88.125)" xlink:href="#heart-large"/>
+</g>
+<g transform="translate(0, 2829)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-11" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-11" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-heart-11" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 2952)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-12" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-12" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-heart-12" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 3075)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-13" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-13" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#heart-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#heart-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-heart-13" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 3198)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-1" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-1" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3321)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-2" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-2" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3444)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-3" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-3" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3567)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-4" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-4" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3690)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-5" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-5" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3813)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-6" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-6" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 3936)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-7" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-7" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 4059)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-8" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-8" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,81.5)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 4182)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-9" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-9" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 4305)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-10" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-10" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#diamond-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#diamond-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,34.875)" xlink:href="#diamond-large"/>
+    <use transform="translate(39.5,88.125)" xlink:href="#diamond-large"/>
+</g>
+<g transform="translate(0, 4428)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-11" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-11" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-diamond-11" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 4551)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-12" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-12" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-diamond-12" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 4674)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-13" stroke="#DF0000" x="1" y="-.5"/>
+    <use xlink:href="#num-13" stroke="#DF0000" x="63" y="100.5"/>
+    <use xlink:href="#diamond-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#diamond-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-diamond-13" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 4797)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-1" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-1" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 4920)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-2" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-2" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5043)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-3" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-3" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,101.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5166)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-4" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-4" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5289)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-5" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-5" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5412)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-6" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-6" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5535)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-7" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-7" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5658)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-8" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-8" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,41.5)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,81.5)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5781)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-9" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-9" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(39.5,61.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 5904)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-10" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-10" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use transform="translate(23.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,21.5)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,101.5)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,48.25)" xlink:href="#club-large"/>
+    <use transform="translate(23.5,74.75)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,48.25)" xlink:href="#club-large"/>
+    <use transform="translate(55.5,74.75)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,34.875)" xlink:href="#club-large"/>
+    <use transform="translate(39.5,88.125)" xlink:href="#club-large"/>
+</g>
+<g transform="translate(0, 6027)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-11" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-11" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-club-11" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 6150)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-12" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-12" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-club-12" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 6273)">
+    <use xlink:href="#card-background"/>
+    <use xlink:href="#num-13" stroke="black" x="1" y="-.5"/>
+    <use xlink:href="#num-13" stroke="black" x="63" y="100.5"/>
+    <use xlink:href="#club-small" transform="translate(8.5,24.5)"/>
+    <use xlink:href="#club-small" transform="translate(70.5,98.5)"/>
+    <use xlink:href="#im-club-13" x="15" y="13"/>
+    <rect x="15.5" y="13.5" width="48" height="96" stroke-width="1" stroke="black" fill="none"/>
+</g>
+<g transform="translate(0, 6396)">
     <use xlink:href="#card-background"/>
     <use xlink:href="#im-card-back" x="6" y="6.5"/>
 </g>

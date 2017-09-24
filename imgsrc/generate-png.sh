@@ -7,9 +7,9 @@
 #   "optipng"
 
 # convert from .svg to .png
-rsvg dondorf.svg cards.png
-optipng -quiet cards.png
+rsvg dondorf.svg cards2.png
+optipng -quiet cards2.png
 
 # generate the 2x Retina image
-rsvg -z 2 $1 dondorf.svg cards-2x.png
-optipng -quiet cards-2x.png
+rsvg -z 2 $1 dondorf.svg cards2-2x.png
+optipng -quiet cards2-2x.png

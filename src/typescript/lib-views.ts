@@ -36,8 +36,8 @@ function draw_card(canvascx: CanvasRenderingContext2D, card: Card, x: number, y:
 
 function init_card_image_offsets(): void {
   g_card_image_offsets = {};
-  const face_down_image_ix = 4 * 13; // The face-down card image is last.
-  const suit_order_in_image: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 1, [Suit.D]: 2, [Suit.C]: 3 };
+  const face_down_image_ix = 5 * 13; // The face-down card image is last.
+  const suit_order_in_image: LookupBySuit<number> = { [Suit.S]: 0, [Suit.H]: 1, [Suit.D]: 2, [Suit.C]: 3, [Suit.GREEN_CLUBS]: 4 };
   for(let s in suit_order_in_image) {
     for(let num = 1; num !== 14; ++num) {
       g_card_image_offsets[make_card(num, +s, true) as any] = suit_order_in_image[s] * 13 + num - 1;

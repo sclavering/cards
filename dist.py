@@ -21,5 +21,5 @@ out_html = in_html.replace(external_css, inline_css).replace(external_js, inline
 out_html_f = open(path + 'dist/cards.html', 'w')
 out_html_f.write(out_html)
 
-shutil.copy(path + "src/cards.png", path + "dist/")
-shutil.copy(path + "src/cards-2x.png", path + "dist/")
+shutil.copy(path + "src/cards2.png", path + "dist/")
+shutil.copy(path + "src/cards2-2x.png", path + "dist/")

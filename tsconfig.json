@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
         "noImplicitAny": true,
-        "target": "ES5",
-        "outFile": "tsc_output.js"
+        "strictNullChecks": false,
+        "target": "ES6",
+        "outDir": "js/",
+        "rootDir": "src/typescript/"
     },
     "files": [
         "src/typescript/util.ts",

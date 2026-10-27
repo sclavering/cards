@@ -16,13 +16,13 @@ Notable feature include:
 
 ## Building/Running
 
-Use "tsc" (the TypeScript command-line tool, version 2.0.2 RC) to convert src/typescript/* into tsc_output.js, then load src/cards.html
-
-For deploying, run ./dist.py, which will generate dist/ containing all the necessary files.  It also merges the CSS and (generated) JS into the HTML file, to avoid users ending with non-matching versions due to HTTP cacheing).
+First run `tsc` (the TypeScript command-line tool) to convert `src/typescript/*`
+to `js/*`.  Then run `./dist.py`, which will concatenate all the HTML/CSS/JS
+into a single file.  Then open `dist/cards.html` in a browser.
 
 ## Copyright/Licence
 
-Copyright 2003-2016 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
+Copyright 2003-2026 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
 Copyright 2003 Neil Rashbrook &lt;neil@parkwaycc.co.uk&gt;
 Copyright 2003 Derek Seabury &lt;drokzilla@seabury.net&gt;
 

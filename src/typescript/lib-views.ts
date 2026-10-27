@@ -22,6 +22,13 @@ var g_card_image_offsets: { [card: number]: number } = null;
 
 function calculate_retina_scale_factor(): number {
   // This is calculated here just so it's near the g_card_width definition.
+  //
+  // Note: the original approach here was the <img> .width one, which in Firefox
+  // 158 and earlier returned the 2x image's true width, but in 159 returns the
+  // 1x image's width instead.
+  if(ui.card_images.currentSrc) {
+    return ui.card_images.currentSrc.endsWith("-2x.png") ? 2 : 1;
+  }
   return ui.card_images.width / g_card_width;
 }
 

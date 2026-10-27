@@ -1,8 +1,10 @@
 # Cards
 
-This is a single-page web app consisting of a collection of single-player card games.
+This is collection of single-player card games, presented as a single-page web app.
 
-It's only regularly tested in Firefox (and started life as a XUL add-on for it), though in principal there's no reason it shouldn't be cross-browser.  It's unpolished on touch-screen devices, though does include basic support for touch events.
+It should work in any browser, though it's only regularly tested in Firefox.
+
+It's not tested on touch-screen devices, though does include basic support for touch events.
 
 Notable feature include:
 
@@ -22,8 +24,8 @@ into a single file.  Then open `dist/cards.html` in a browser.
 
 ## Copyright/Licence
 
-Copyright 2003-2026 Stephen Clavering &lt;stephen@clavering.me.uk&gt;
-Copyright 2003 Neil Rashbrook &lt;neil@parkwaycc.co.uk&gt;
+Copyright 2003-2026 Stephen Clavering &lt;stephen@clavering.me.uk&gt;<br>
+Copyright 2003 Neil Rashbrook &lt;neil@parkwaycc.co.uk&gt;<br>
 Copyright 2003 Derek Seabury &lt;drokzilla@seabury.net&gt;
 
 The code and documentation are distributed under the MPL version 2.
